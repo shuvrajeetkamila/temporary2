@@ -424,7 +424,7 @@ public final class NauruWorld {
     /** Suggested first-spawn position beside the runway and the Reef Runner. */
     public float[] spawnPoint() {
         float[] p = new float[2];
-        localToWorld(518f, -2196f, p);
+        localToWorld(521f, -2197f, p);
         return new float[]{p[0], heightAt(p[0], p[1]), p[1]};
     }
 
