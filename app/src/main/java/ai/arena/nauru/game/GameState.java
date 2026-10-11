@@ -22,7 +22,8 @@ public final class GameState {
     public volatile float cameraDistance = 8f;
     public volatile float worldTimeHours = 8.25f;
     public volatile float fps;
-    public volatile int quality = 1;
+    // Start safely on LOW; material shading remains active and users can opt into local sun shadows.
+    public volatile int quality = 0;
     public volatile String notification = "LEFT STICK TO MOVE • SWIPE TO LOOK";
     public volatile float notificationSeconds = 7f;
     public volatile long distanceTravelledMetres;

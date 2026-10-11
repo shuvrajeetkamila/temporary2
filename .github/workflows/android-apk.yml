@@ -56,11 +56,11 @@ jobs:
             adb shell am start -W -n ai.arena.nauru.dev/ai.arena.nauru.MainActivity
             sleep 6
             adb shell input tap 1245 530 || true
-            sleep 12
+            sleep 25
             mkdir -p qa
             adb exec-out screencap -p > qa/latest-gameplay.png
             adb logcat -d > qa/latest-full-logcat.txt
-            grep -E "FATAL EXCEPTION|AndroidRuntime|NauruShader|ai.arena.nauru|F DEBUG|signal [0-9]|backtrace|#[0-9]+ pc|libGLES|libEGL|libhwui|Abort" qa/latest-full-logcat.txt > qa/latest-runtime-log.txt || true
+            grep -E "FATAL EXCEPTION|AndroidRuntime|NauruShader|NauruRenderer|ai.arena.nauru|F DEBUG|signal [0-9]|backtrace|#[0-9]+ pc|libGLES|libEGL|libhwui|Abort" qa/latest-full-logcat.txt > qa/latest-runtime-log.txt || true
             adb shell dumpsys dropbox --print SYSTEM_TOMBSTONE > qa/latest-tombstone.txt 2>&1 || true
             echo "CAPTURED" > qa/latest-runtime-status.txt
             adb shell pidof ai.arena.nauru.dev > qa/latest-pid.txt 2>&1 || true

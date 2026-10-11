@@ -4,6 +4,7 @@ import android.content.Context;
 import android.opengl.GLES20;
 import android.opengl.GLSurfaceView;
 import android.opengl.Matrix;
+import android.util.Log;
 
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
@@ -21,6 +22,7 @@ import ai.arena.nauru.graphics.Shaders;
  * atmospheric sky, ocean Fresnel/specular lighting and smooth original character/vehicle art.
  */
 public final class GameRenderer implements GLSurfaceView.Renderer {
+    private static final String TAG = "NauruRenderer";
     private static final int SHADOW_SIZE = 1024;
 
     private final GameState state;
@@ -55,6 +57,8 @@ public final class GameRenderer implements GLSurfaceView.Renderer {
     private int frameCounter;
     private float fpsTimer;
     private float lightX, lightY, lightZ;
+    private boolean firstFrameStarted;
+    private boolean firstFrameFinished;
 
     private int detailTexture;
     private int shadowFramebuffer;
@@ -85,6 +89,7 @@ public final class GameRenderer implements GLSurfaceView.Renderer {
 
     @Override
     public void onSurfaceCreated(GL10 gl, EGLConfig config) {
+        Log.i(TAG, "surface creation started");
         GLES20.glClearDepthf(1f);
         GLES20.glEnable(GLES20.GL_DEPTH_TEST);
         GLES20.glDepthFunc(GLES20.GL_LEQUAL);
@@ -105,6 +110,9 @@ public final class GameRenderer implements GLSurfaceView.Renderer {
         skyDome.invalidateGl(); carBody.invalidateGl(); carCabin.invalidateGl();
         lastFrameNanos = System.nanoTime();
         cameraReady = false;
+        firstFrameStarted = false;
+        firstFrameFinished = false;
+        Log.i(TAG, "surface creation complete; shadowTarget=" + shadowReady);
     }
 
     private void cacheUniforms() {
@@ -187,6 +195,11 @@ public final class GameRenderer implements GLSurfaceView.Renderer {
 
     @Override
     public void onDrawFrame(GL10 gl) {
+        boolean traceFirstFrame = !firstFrameStarted;
+        if (traceFirstFrame) {
+            firstFrameStarted = true;
+            Log.i(TAG, "first frame started; quality=" + state.quality);
+        }
         long now = System.nanoTime();
         float dt = Math.min(.05f, Math.max(.001f, (now - lastFrameNanos) / 1_000_000_000f));
         lastFrameNanos = now;
@@ -205,6 +218,7 @@ public final class GameRenderer implements GLSurfaceView.Renderer {
         updateCamera(dt);
         updateSunAndShadowMatrix();
         if (shadowReady && state.quality > 0) renderShadowMap();
+        if (traceFirstFrame) Log.i(TAG, "first frame shadow stage complete");
 
         GLES20.glBindFramebuffer(GLES20.GL_FRAMEBUFFER, 0);
         GLES20.glViewport(0, 0, width, height);
@@ -218,8 +232,14 @@ public final class GameRenderer implements GLSurfaceView.Renderer {
         float sunB = .66f + daylight * .27f - warm * .16f;
 
         drawSky(daylight);
+        if (traceFirstFrame) Log.i(TAG, "first frame sky complete");
         drawOcean(fogR, fogG, fogB, fogNear, fogFar, daylight, sunR, sunG, sunB);
+        if (traceFirstFrame) Log.i(TAG, "first frame ocean complete");
         drawWorld(fogR, fogG, fogB, fogNear, fogFar, daylight, sunR, sunG, sunB);
+        if (traceFirstFrame) {
+            firstFrameFinished = true;
+            Log.i(TAG, "first frame complete");
+        }
     }
 
     private void updateCamera(float dt) {
