@@ -125,5 +125,9 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add -f artifacts/Nauru-The-Countryside-MAP-ACCURATE-v0.3.0.apk artifacts/Nauru-The-Countryside-MAP-ACCURATE-v0.3.0.apk.sha256 qa/latest-gameplay.png qa/latest-runtime-log.txt qa/latest-runtime-status.txt qa/latest-full-logcat.txt qa/latest-tombstone.txt qa/latest-pid.txt qa/latest-map-test.txt qa/latest-map-test-status.txt
-          git diff --cached --quiet || git commit -m "Publish tested realistic Android APK [skip ci]"
+          git diff --cached --quiet || git commit -m "Publish tested map-accurate Android APK [skip ci]"
           git push origin "HEAD:${GITHUB_REF_NAME}"
+
+      - name: Require map startup regression pass
+        if: always()
+        run: test "$(cat qa/latest-map-test-status.txt 2>/dev/null)" = "PASSED"
