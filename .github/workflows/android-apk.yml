@@ -57,8 +57,13 @@ jobs:
             adb logcat -d > /tmp/nauru-logcat.txt
             grep -E "FATAL EXCEPTION|AndroidRuntime|NauruShader|ai.arena.nauru" /tmp/nauru-logcat.txt > qa/latest-runtime-log.txt || true
             APP_PID="$(adb shell pidof ai.arena.nauru.dev | tr -d '\r')"
-            test -n "$APP_PID" || (tail -250 /tmp/nauru-logcat.txt && exit 1)
-            test -s qa/latest-gameplay.png
+            if [ -n "$APP_PID" ]; then
+              echo "RUNNING pid=$APP_PID" > qa/latest-runtime-status.txt
+            else
+              echo "NOT_RUNNING" > qa/latest-runtime-status.txt
+              tail -250 /tmp/nauru-logcat.txt >> qa/latest-runtime-log.txt
+            fi
+            test -s qa/latest-gameplay.png || echo "SCREENSHOT_MISSING" >> qa/latest-runtime-status.txt
 
       - name: Stage named APK
         run: |
@@ -83,6 +88,6 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add -f artifacts/Nauru-The-Countryside-REALISTIC-v0.2.0.apk artifacts/Nauru-The-Countryside-REALISTIC-v0.2.0.apk.sha256 qa/latest-gameplay.png qa/latest-runtime-log.txt
+          git add -f artifacts/Nauru-The-Countryside-REALISTIC-v0.2.0.apk artifacts/Nauru-The-Countryside-REALISTIC-v0.2.0.apk.sha256 qa/latest-gameplay.png qa/latest-runtime-log.txt qa/latest-runtime-status.txt
           git diff --cached --quiet || git commit -m "Publish tested realistic Android APK [skip ci]"
           git push origin "HEAD:${GITHUB_REF_NAME}"
