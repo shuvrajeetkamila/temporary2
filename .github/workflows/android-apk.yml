@@ -35,8 +35,8 @@ jobs:
         with:
           gradle-version: '8.9'
 
-      - name: Compile installable debug APK
-        run: gradle :app:assembleDebug --stacktrace
+      - name: Validate real map startup and compile installable APK
+        run: gradle :app:testDebugUnitTest :app:assembleDebug --stacktrace
 
       - name: Enable Android emulator acceleration
         run: |
@@ -49,10 +49,6 @@ jobs:
           api-level: 29
           arch: x86_64
           profile: pixel_2
-          cores: 2
-          ram-size: 2048M
-          heap-size: 512M
-          disable-linux-hw-accel: true
           disable-animations: true
           emulator-options: -no-window -gpu swiftshader_indirect -no-snapshot -noaudio -no-boot-anim -camera-back none
           script: |

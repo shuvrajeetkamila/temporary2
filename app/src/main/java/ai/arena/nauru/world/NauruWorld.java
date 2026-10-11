@@ -2,7 +2,6 @@ package ai.arena.nauru.world;
 
 import android.content.Context;
 import android.opengl.GLES20;
-import android.opengl.Matrix;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -27,7 +26,6 @@ public final class NauruWorld {
     private static final float RUNWAY_ELEVATION = 7.2f;
 
     private final NauruMapData map;
-    private final float[] identity = new float[16];
     private final List<Sector> sectors = new ArrayList<>();
 
     private Mesh oceanMesh;
@@ -41,7 +39,6 @@ public final class NauruWorld {
     private int visibleSectors;
 
     public NauruWorld(Context context) {
-        Matrix.setIdentityM(identity, 0);
         map = NauruMapData.load(context.getApplicationContext());
         buildWorld();
     }
@@ -463,6 +460,9 @@ public final class NauruWorld {
 
     public float[] coastlineCoordinates() { return map.coastline; }
     public List<NauruMapData.Road> mapRoads() { return map.roads; }
+    public int mappedBuildingCount() { return map.buildings.size(); }
+    public int mappedAreaCount() { return map.areas.size(); }
+    public int mappedPlaceCount() { return map.places.size(); }
 
     private static final class SectorDraft {
         final float x, z;
