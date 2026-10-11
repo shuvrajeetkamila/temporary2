@@ -30,6 +30,7 @@ public final class MainActivity extends Activity {
         InputState input = new InputState();
         NauruWorld world = new NauruWorld();
         GameState gameState = new GameState(getApplicationContext(), world, input);
+        if (getIntent().getBooleanExtra("qa_low", false)) gameState.quality = 0;
         surface = new NauruSurfaceView(this, gameState);
         GameHudView hud = new GameHudView(this, gameState, input);
 

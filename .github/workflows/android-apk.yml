@@ -53,12 +53,20 @@ jobs:
             adb install -r app/build/outputs/apk/debug/app-debug.apk
             adb shell settings put secure immersive_mode_confirmations confirmed || true
             adb logcat -c
-            adb shell am start -W -n ai.arena.nauru.dev/ai.arena.nauru.MainActivity
+            adb shell am start -W -n ai.arena.nauru.dev/ai.arena.nauru.MainActivity --ez qa_low true
             sleep 6
             adb shell input tap 1245 530 || true
             sleep 25
             mkdir -p qa
-            adb exec-out screencap -p > qa/latest-gameplay.png
+            adb exec-out screencap -p > qa/frame-a.png
+            adb shell input tap 1760 70 || true
+            sleep 12
+            adb exec-out screencap -p > qa/frame-b.png
+            sleep 10
+            adb exec-out screencap -p > qa/frame-c.png
+            LARGEST_FRAME="$(ls -S qa/frame-*.png | head -1)"
+            cp "$LARGEST_FRAME" qa/latest-gameplay.png
+            rm -f qa/frame-a.png qa/frame-b.png qa/frame-c.png
             adb logcat -d > qa/latest-full-logcat.txt
             grep -E "FATAL EXCEPTION|AndroidRuntime|NauruShader|NauruRenderer|ai.arena.nauru|F DEBUG|signal [0-9]|backtrace|#[0-9]+ pc|libGLES|libEGL|libhwui|Abort" qa/latest-full-logcat.txt > qa/latest-runtime-log.txt || true
             adb shell dumpsys dropbox --print SYSTEM_TOMBSTONE > qa/latest-tombstone.txt 2>&1 || true

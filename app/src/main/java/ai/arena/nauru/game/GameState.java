@@ -1,5 +1,6 @@
 package ai.arena.nauru.game;
 
+import android.app.ActivityManager;
 import android.content.Context;
 
 import ai.arena.nauru.entities.Player;
@@ -22,8 +23,8 @@ public final class GameState {
     public volatile float cameraDistance = 8f;
     public volatile float worldTimeHours = 8.25f;
     public volatile float fps;
-    // Start safely on LOW; material shading remains active and users can opt into local sun shadows.
-    public volatile int quality = 0;
+    // Balanced is the visual default; Android low-RAM devices automatically receive the safe preset.
+    public volatile int quality = 1;
     public volatile String notification = "LEFT STICK TO MOVE • SWIPE TO LOOK";
     public volatile float notificationSeconds = 7f;
     public volatile long distanceTravelledMetres;
@@ -36,6 +37,8 @@ public final class GameState {
         this.world = world;
         this.input = input;
         this.saveSystem = new SaveSystem(context);
+        ActivityManager activityManager = (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
+        if (activityManager != null && activityManager.isLowRamDevice()) quality = 0;
         float[] spawn = world.spawnPoint();
         float[] vehicleSpawn = world.vehicleSpawnPoint();
         float playerX = spawn[0], playerZ = spawn[2];
