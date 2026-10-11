@@ -1,40 +1,42 @@
-10-11 14:04:24.807  2509  2509 D AndroidRuntime: Calling main entry com.android.commands.input.Input
-10-11 14:04:24.994  2509  2509 D AndroidRuntime: Shutting down VM
-10-11 14:04:25.047  1661  1661 I Zygote  : Process 2619 exited due to signal 9 (Killed)
-10-11 14:04:25.475  2692  2733 D libEGL  : Emulator has host GPU support, qemu.gles is set to 1.
-10-11 14:04:25.594  2692  2733 D libEGL  : loaded /vendor/lib64/egl/libEGL_emulation.so
-10-11 14:04:25.595  2692  2733 D libEGL  : loaded /vendor/lib64/egl/libGLESv1_CM_emulation.so
-10-11 14:04:25.596  2692  2733 D libEGL  : loaded /vendor/lib64/egl/libGLESv2_emulation.so
-10-11 14:04:25.928  2654  2762 D libEGL  : Emulator has host GPU support, qemu.gles is set to 1.
-10-11 14:04:26.069  2654  2762 D libEGL  : loaded /vendor/lib64/egl/libEGL_emulation.so
-10-11 14:04:26.070  2654  2762 D libEGL  : loaded /vendor/lib64/egl/libGLESv1_CM_emulation.so
-10-11 14:04:26.071  2654  2762 D libEGL  : loaded /vendor/lib64/egl/libGLESv2_emulation.so
-10-11 14:04:27.205  1915  1954 V BackupManagerService: restoreAtInstall pkg=ai.arena.nauru.dev token=1 restoreSet=0
-10-11 14:04:28.207  1915  2723 I ActivityTaskManager: START u0 {flg=0x10000000 cmp=ai.arena.nauru.dev/ai.arena.nauru.MainActivity} from uid 2000
-10-11 14:04:28.888  1915  1942 I ActivityManager: Start proc 2933:ai.arena.nauru.dev/u0a116 for activity {ai.arena.nauru.dev/ai.arena.nauru.MainActivity}
-10-11 14:04:29.172  2933  2955 D libEGL  : Emulator has host GPU support, qemu.gles is set to 1.
-10-11 14:04:29.186  2933  2955 D libEGL  : loaded /vendor/lib64/egl/libEGL_emulation.so
-10-11 14:04:29.187  2933  2955 D libEGL  : loaded /vendor/lib64/egl/libGLESv1_CM_emulation.so
-10-11 14:04:29.188  2933  2955 D libEGL  : loaded /vendor/lib64/egl/libGLESv2_emulation.so
-10-11 14:04:29.160  2933  2933 W RenderThread: type=1400 audit(0.0:19): avc: denied { write } for name="property_service" dev="tmpfs" ino=7424 scontext=u:r:untrusted_app:s0:c116,c256,c512,c768 tcontext=u:object_r:property_socket:s0 tclass=sock_file permissive=0 app=ai.arena.nauru.dev
-10-11 14:04:35.828  1915  2720 W BroadcastQueue: Background execution not allowed: receiving Intent { act=android.intent.action.PACKAGE_ADDED dat=package:ai.arena.nauru.dev flg=0x4000010 (has extras) } to com.android.packageinstaller/.PackageInstalledReceiver
-10-11 14:04:35.830  1915  1941 W BroadcastQueue: Background execution not allowed: receiving Intent { act=android.intent.action.PACKAGE_ADDED dat=package:ai.arena.nauru.dev flg=0x4000010 (has extras) } to com.android.gallery3d/.app.PackagesMonitor
-10-11 14:04:35.830  1915  1941 W BroadcastQueue: Background execution not allowed: receiving Intent { act=android.intent.action.PACKAGE_ADDED dat=package:ai.arena.nauru.dev flg=0x4000010 (has extras) } to com.android.musicfx/.Compatibility$Receiver
-10-11 14:04:36.465  1915  1940 I ActivityTaskManager: Displayed ai.arena.nauru.dev/ai.arena.nauru.MainActivity: +6s875ms
-10-11 14:04:37.931  1661  1661 I Zygote  : Process 2317 exited due to signal 9 (Killed)
-10-11 14:04:38.210  1661  1661 I Zygote  : Process 2453 exited due to signal 9 (Killed)
-10-11 14:04:40.916  1661  1661 I Zygote  : Process 2600 exited due to signal 9 (Killed)
-10-11 14:04:41.122  1661  1661 I Zygote  : Process 2756 exited due to signal 9 (Killed)
-10-11 14:04:42.173  1661  1661 I Zygote  : Process 2813 exited due to signal 9 (Killed)
-10-11 14:04:42.425  3335  3335 D AndroidRuntime: >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
-10-11 14:04:42.506  3335  3335 I AndroidRuntime: Using default boot image
-10-11 14:04:42.506  3335  3335 I AndroidRuntime: Leaving lock profiling enabled
-10-11 14:04:43.700  1661  1661 I Zygote  : Process 2692 exited due to signal 9 (Killed)
-10-11 14:04:43.848  3335  3335 D AndroidRuntime: Calling main entry com.android.commands.input.Input
-10-11 14:04:43.887  3335  3335 D AndroidRuntime: Shutting down VM
-10-11 14:04:44.874  1661  1661 I Zygote  : Process 2863 exited due to signal 9 (Killed)
-10-11 14:04:45.004  1661  1661 I Zygote  : Process 2841 exited due to signal 9 (Killed)
-10-11 14:04:45.774  1661  1661 I Zygote  : Process 3436 exited due to signal 9 (Killed)
-10-11 14:04:45.783  1661  1661 I Zygote  : Process 2956 exited due to signal 9 (Killed)
-10-11 14:04:46.403  1661  1661 I Zygote  : Process 3014 exited due to signal 9 (Killed)
-10-11 14:04:52.003  1661  1661 I Zygote  : Process 3112 exited due to signal 9 (Killed)
+10-11 14:08:36.696  2708  2708 D AndroidRuntime: Shutting down VM
+10-11 14:08:38.835  1910  1949 V BackupManagerService: restoreAtInstall pkg=ai.arena.nauru.dev token=1 restoreSet=0
+10-11 14:08:39.375  1910  2587 I ActivityTaskManager: START u0 {flg=0x10000000 cmp=ai.arena.nauru.dev/ai.arena.nauru.MainActivity} from uid 2000
+10-11 14:08:39.671  1910  1937 I ActivityManager: Start proc 3093:ai.arena.nauru.dev/u0a116 for activity {ai.arena.nauru.dev/ai.arena.nauru.MainActivity}
+10-11 14:08:40.046  3093  3122 D libEGL  : Emulator has host GPU support, qemu.gles is set to 1.
+10-11 14:08:40.110  3093  3122 D libEGL  : loaded /vendor/lib64/egl/libEGL_emulation.so
+10-11 14:08:40.111  3093  3122 D libEGL  : loaded /vendor/lib64/egl/libGLESv1_CM_emulation.so
+10-11 14:08:40.134  3093  3122 D libEGL  : loaded /vendor/lib64/egl/libGLESv2_emulation.so
+10-11 14:08:40.372  3093  3127 I NauruRenderer: surface creation started
+10-11 14:08:40.030  3093  3093 W RenderThread: type=1400 audit(0.0:19): avc: denied { write } for name="property_service" dev="tmpfs" ino=7284 scontext=u:r:untrusted_app:s0:c116,c256,c512,c768 tcontext=u:object_r:property_socket:s0 tclass=sock_file permissive=0 app=ai.arena.nauru.dev
+10-11 14:08:41.234  3093  3127 I NauruRenderer: surface creation complete; shadowTarget=true
+10-11 14:08:41.234  3093  3127 I NauruRenderer: first frame started; quality=0
+10-11 14:08:41.234  3093  3127 I NauruRenderer: first frame shadow stage complete
+10-11 14:08:41.261  3093  3127 I NauruRenderer: first frame sky complete
+10-11 14:08:41.386  3093  3127 I NauruRenderer: first frame ocean complete
+10-11 14:08:41.453  1910  1930 W WindowManager: Force clearing orientation change: Window{d1eb9 u0 ai.arena.nauru.dev/ai.arena.nauru.MainActivity}
+10-11 14:08:41.486  1910  1931 I WindowManager: Screen frozen for +2s33ms due to Window{d1eb9 u0 ai.arena.nauru.dev/ai.arena.nauru.MainActivity}
+10-11 14:08:42.153  1910  2698 W BroadcastQueue: Background execution not allowed: receiving Intent { act=android.intent.action.PACKAGE_ADDED dat=package:ai.arena.nauru.dev flg=0x4000010 (has extras) } to com.android.packageinstaller/.PackageInstalledReceiver
+10-11 14:08:42.191  1910  1936 W BroadcastQueue: Background execution not allowed: receiving Intent { act=android.intent.action.PACKAGE_ADDED dat=package:ai.arena.nauru.dev flg=0x4000010 (has extras) } to com.android.gallery3d/.app.PackagesMonitor
+10-11 14:08:42.192  1910  1936 W BroadcastQueue: Background execution not allowed: receiving Intent { act=android.intent.action.PACKAGE_ADDED dat=package:ai.arena.nauru.dev flg=0x4000010 (has extras) } to com.android.musicfx/.Compatibility$Receiver
+10-11 14:08:42.438  3093  3127 I NauruRenderer: first frame complete
+10-11 14:08:43.231  1664  1664 I Zygote  : Process 2314 exited due to signal 9 (Killed)
+10-11 14:08:44.952  1910  1935 I ActivityTaskManager: Displayed ai.arena.nauru.dev/ai.arena.nauru.MainActivity: +3s97ms
+10-11 14:08:47.599  1664  1664 I Zygote  : Process 2557 exited due to signal 9 (Killed)
+10-11 14:08:48.091  1664  1664 I Zygote  : Process 2679 exited due to signal 9 (Killed)
+10-11 14:08:48.249  1664  1664 I Zygote  : Process 2729 exited due to signal 9 (Killed)
+10-11 14:08:48.400  1664  1664 I Zygote  : Process 2812 exited due to signal 9 (Killed)
+10-11 14:08:48.919  1664  1664 I Zygote  : Process 2713 exited due to signal 9 (Killed)
+10-11 14:08:49.632  3362  3362 D AndroidRuntime: >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
+10-11 14:08:49.649  3362  3362 I AndroidRuntime: Using default boot image
+10-11 14:08:49.649  3362  3362 I AndroidRuntime: Leaving lock profiling enabled
+10-11 14:08:50.107  1664  1664 I Zygote  : Process 2890 exited due to signal 9 (Killed)
+10-11 14:08:50.416  3362  3362 D AndroidRuntime: Calling main entry com.android.commands.input.Input
+10-11 14:08:50.521  1664  1664 I Zygote  : Process 2927 exited due to signal 9 (Killed)
+10-11 14:08:50.919  3362  3362 D AndroidRuntime: Shutting down VM
+10-11 14:08:51.152  1664  1664 I Zygote  : Process 3431 exited due to signal 9 (Killed)
+10-11 14:08:51.346  1664  1664 I Zygote  : Process 2996 exited due to signal 9 (Killed)
+10-11 14:08:52.125  1664  1664 I Zygote  : Process 2854 exited due to signal 9 (Killed)
+10-11 14:09:03.209  1664  1664 I Zygote  : Process 3016 exited due to signal 9 (Killed)
+10-11 14:09:03.209  1664  1664 I Zygote  : Process 3132 exited due to signal 9 (Killed)
+10-11 14:09:07.382  1664  1664 I Zygote  : Process 3057 exited due to signal 9 (Killed)
+10-11 14:09:12.979  1664  1664 I Zygote  : Process 2957 exited due to signal 9 (Killed)
