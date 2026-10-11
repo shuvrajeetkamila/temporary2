@@ -51,9 +51,12 @@ jobs:
           script: |
             set +e
             adb install -r app/build/outputs/apk/debug/app-debug.apk
+            adb shell settings put secure immersive_mode_confirmations confirmed || true
             adb logcat -c
             adb shell am start -W -n ai.arena.nauru.dev/ai.arena.nauru.MainActivity
-            sleep 18
+            sleep 6
+            adb shell input tap 1245 530 || true
+            sleep 12
             mkdir -p qa
             adb exec-out screencap -p > qa/latest-gameplay.png
             adb logcat -d > qa/latest-full-logcat.txt
