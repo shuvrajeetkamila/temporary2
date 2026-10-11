@@ -7,6 +7,7 @@ on:
       - main
     paths-ignore:
       - 'artifacts/**'
+      - 'qa/**'
   workflow_dispatch:
 
 permissions:
@@ -34,6 +35,31 @@ jobs:
       - name: Compile installable debug APK
         run: gradle :app:assembleDebug --stacktrace
 
+      - name: Enable Android emulator acceleration
+        run: |
+          sudo chmod 666 /dev/kvm || true
+
+      - name: Launch and capture the game on Android
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: 29
+          arch: x86_64
+          profile: pixel_2
+          disable-animations: true
+          emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
+          script: |
+            adb install -r app/build/outputs/apk/debug/app-debug.apk
+            adb logcat -c
+            adb shell am start -W -n ai.arena.nauru.dev/ai.arena.nauru.MainActivity
+            sleep 18
+            mkdir -p qa
+            adb exec-out screencap -p > qa/latest-gameplay.png
+            adb logcat -d > /tmp/nauru-logcat.txt
+            grep -E "FATAL EXCEPTION|AndroidRuntime|NauruShader|ai.arena.nauru" /tmp/nauru-logcat.txt > qa/latest-runtime-log.txt || true
+            APP_PID="$(adb shell pidof ai.arena.nauru.dev | tr -d '\r')"
+            test -n "$APP_PID" || (tail -250 /tmp/nauru-logcat.txt && exit 1)
+            test -s qa/latest-gameplay.png
+
       - name: Stage named APK
         run: |
           mkdir -p artifacts
@@ -57,6 +83,6 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add -f artifacts/Nauru-The-Countryside-REALISTIC-v0.2.0.apk artifacts/Nauru-The-Countryside-REALISTIC-v0.2.0.apk.sha256
-          git diff --cached --quiet || git commit -m "Publish realistic Android APK [skip ci]"
+          git add -f artifacts/Nauru-The-Countryside-REALISTIC-v0.2.0.apk artifacts/Nauru-The-Countryside-REALISTIC-v0.2.0.apk.sha256 qa/latest-gameplay.png qa/latest-runtime-log.txt
+          git diff --cached --quiet || git commit -m "Publish tested realistic Android APK [skip ci]"
           git push origin "HEAD:${GITHUB_REF_NAME}"
