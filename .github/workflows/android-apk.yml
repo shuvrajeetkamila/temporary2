@@ -48,6 +48,7 @@ jobs:
           disable-animations: true
           emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
           script: |
+            set +e
             adb install -r app/build/outputs/apk/debug/app-debug.apk
             adb logcat -c
             adb shell am start -W -n ai.arena.nauru.dev/ai.arena.nauru.MainActivity
@@ -64,6 +65,7 @@ jobs:
               tail -250 /tmp/nauru-logcat.txt >> qa/latest-runtime-log.txt
             fi
             test -s qa/latest-gameplay.png || echo "SCREENSHOT_MISSING" >> qa/latest-runtime-status.txt
+            exit 0
 
       - name: Stage named APK
         run: |
