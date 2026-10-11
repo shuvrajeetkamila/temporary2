@@ -56,7 +56,11 @@ public final class GameState {
         }
         player = new Player(playerX, world.heightAt(playerX, playerZ), playerZ);
         vehicle = new Vehicle(carX, world.heightAt(carX, carZ) + .48f, carZ, carYaw);
-        cameraYaw = carYaw + (float) Math.PI;
+        float initialCarDistance = (float) Math.hypot(carX - playerX, carZ - playerZ);
+        cameraYaw = initialCarDistance < 20f
+                ? (float) Math.atan2(carX - playerX, carZ - playerZ)
+                : carYaw;
+        player.yaw = cameraYaw;
         lastVehicleX = carX; lastVehicleZ = carZ;
     }
 

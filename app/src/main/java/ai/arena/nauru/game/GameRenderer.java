@@ -61,6 +61,7 @@ public final class GameRenderer implements GLSurfaceView.Renderer {
     private boolean firstFrameFinished;
 
     private int detailTexture;
+    private int[] surfaceTextures;
     private int shadowFramebuffer;
     private int shadowTexture;
     private int shadowDepthBuffer;
@@ -70,6 +71,7 @@ public final class GameRenderer implements GLSurfaceView.Renderer {
     private int uWorldViewProjection, uWorldLightViewProjection, uWorldModel, uWorldCamera, uWorldLight;
     private int uWorldSun, uWorldFog, uWorldTint, uWorldAmbient, uWorldFogNear, uWorldFogFar;
     private int uWorldMaterial, uWorldDaylight, uWorldShadows, uWorldDetailTexture, uWorldShadowTexture;
+    private int uWorldGrassTexture, uWorldAsphaltTexture, uWorldCoralTexture, uWorldStructureTexture;
     private int uWaterViewProjection, uWaterCamera, uWaterTime, uWaterLight, uWaterSun, uWaterDaylight;
     private int uWaterFog, uWaterFogNear, uWaterFogFar;
     private int uSkyViewProjection, uSkyModel, uSkySun, uSkyDaylight, uSkyTime;
@@ -103,6 +105,7 @@ public final class GameRenderer implements GLSurfaceView.Renderer {
         shadowShader = new ShaderProgram(Shaders.SHADOW_VERTEX, Shaders.SHADOW_FRAGMENT);
         cacheUniforms();
         detailTexture = ProceduralTexture.createMaterialDetail();
+        surfaceTextures = ProceduralTexture.createSurfaceSet();
         createShadowTarget();
 
         state.world.invalidateGl();
@@ -132,6 +135,10 @@ public final class GameRenderer implements GLSurfaceView.Renderer {
         uWorldShadows = worldShader.uniform("uShadows");
         uWorldDetailTexture = worldShader.uniform("uDetailTexture");
         uWorldShadowTexture = worldShader.uniform("uShadowTexture");
+        uWorldGrassTexture = worldShader.uniform("uGrassTexture");
+        uWorldAsphaltTexture = worldShader.uniform("uAsphaltTexture");
+        uWorldCoralTexture = worldShader.uniform("uCoralTexture");
+        uWorldStructureTexture = worldShader.uniform("uStructureTexture");
 
         uWaterViewProjection = waterShader.uniform("uViewProjection");
         uWaterCamera = waterShader.uniform("uCamera");
@@ -351,6 +358,18 @@ public final class GameRenderer implements GLSurfaceView.Renderer {
         GLES20.glActiveTexture(GLES20.GL_TEXTURE1);
         GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, shadowTexture);
         GLES20.glUniform1i(uWorldShadowTexture, 1);
+        GLES20.glActiveTexture(GLES20.GL_TEXTURE2);
+        GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, surfaceTextures[0]);
+        GLES20.glUniform1i(uWorldGrassTexture, 2);
+        GLES20.glActiveTexture(GLES20.GL_TEXTURE3);
+        GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, surfaceTextures[1]);
+        GLES20.glUniform1i(uWorldAsphaltTexture, 3);
+        GLES20.glActiveTexture(GLES20.GL_TEXTURE4);
+        GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, surfaceTextures[2]);
+        GLES20.glUniform1i(uWorldCoralTexture, 4);
+        GLES20.glActiveTexture(GLES20.GL_TEXTURE5);
+        GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, surfaceTextures[3]);
+        GLES20.glUniform1i(uWorldStructureTexture, 5);
         setModelAndTint(identity, 1, 1, 1, 1);
         state.world.drawLand(smoothedCameraX, smoothedCameraZ, state.quality, uWorldMaterial);
 
@@ -372,7 +391,13 @@ public final class GameRenderer implements GLSurfaceView.Renderer {
                     car.z, 1.42f, 2.62f, car.yaw, .22f);
         }
         drawMeshAtParent(carBody, baseModel, .035f, .49f, .47f, 1);
-        drawMeshAtParent(carCabin, baseModel, .055f, .14f, .17f, .96f);
+        drawMeshAtParent(carCabin, baseModel, .045f, .115f, .145f, .96f);
+        drawChild(cube, baseModel, 0, 1.42f, -.15f, 1.18f, .08f, 1.30f,
+                0, 0, 0, .035f, .43f, .42f, 1);
+        drawChild(cube, baseModel, -.64f, 1.02f, -.16f, .075f, .72f, .10f,
+                0, 0, 0, .035f, .43f, .42f, 1);
+        drawChild(cube, baseModel, .64f, 1.02f, -.16f, .075f, .72f, .10f,
+                0, 0, 0, .035f, .43f, .42f, 1);
         drawChild(cube, baseModel, 0, .72f, -.12f, 1.57f, .055f, 2.34f,
                 0, 0, 0, .16f, .68f, .65f, 1);
         drawChild(cube, baseModel, 0, .35f, 2.06f, 1.52f, .18f, .13f,
@@ -426,8 +451,18 @@ public final class GameRenderer implements GLSurfaceView.Renderer {
         }
         drawChild(sphere, baseModel, 0, 1.34f, 0, .70f, .91f, .43f,
                 0, 0, 0, .91f, .40f, .12f, 1);
+        drawChild(cylinder, baseModel, 0, 1.79f, 0, .22f, .25f, .22f,
+                0, 0, 0, .38f, .22f, .14f, 1);
         drawChild(sphere, baseModel, 0, 2.06f, .01f, .50f, .55f, .50f,
                 0, 0, 0, .39f, .235f, .155f, 1);
+        drawChild(sphere, baseModel, 0, 2.25f, -.035f, .51f, .24f, .51f,
+                0, 0, 0, .055f, .035f, .025f, 1);
+        drawChild(sphere, baseModel, 0, 2.05f, .27f, .12f, .14f, .14f,
+                0, 0, 0, .40f, .235f, .15f, 1);
+        drawChild(cube, baseModel, -.09f, 2.11f, .263f, .045f, .035f, .025f,
+                0, 0, 0, .025f, .025f, .022f, 1);
+        drawChild(cube, baseModel, .09f, 2.11f, .263f, .045f, .035f, .025f,
+                0, 0, 0, .025f, .025f, .022f, 1);
         drawChild(cylinder, baseModel, -.20f, .62f, 0, .26f, .84f, .26f,
                 swing, 0, 0, .095f, .17f, .23f, 1);
         drawChild(cylinder, baseModel, .20f, .62f, 0, .26f, .84f, .26f,
@@ -436,6 +471,10 @@ public final class GameRenderer implements GLSurfaceView.Renderer {
                 -swing * .8f, 0, 0, .39f, .235f, .155f, 1);
         drawChild(cylinder, baseModel, .48f, 1.34f, 0, .20f, .78f, .20f,
                 swing * .8f, 0, 0, .39f, .235f, .155f, 1);
+        drawChild(sphere, baseModel, -.48f, .91f, 0, .22f, .25f, .22f,
+                0, 0, 0, .40f, .235f, .15f, 1);
+        drawChild(sphere, baseModel, .48f, .91f, 0, .22f, .25f, .22f,
+                0, 0, 0, .40f, .235f, .15f, 1);
         drawChild(sphere, baseModel, -.20f, .17f, .11f, .31f, .22f, .53f,
                 0, 0, 0, .035f, .045f, .05f, 1);
         drawChild(sphere, baseModel, .20f, .17f, .11f, .31f, .22f, .53f,
@@ -522,9 +561,29 @@ public final class GameRenderer implements GLSurfaceView.Renderer {
     }
 
     private static Mesh buildCarCabin() {
-        MeshBuilder b = new MeshBuilder();
-        b.addEllipsoid(0, 1.02f, -.14f, .77f, .61f, 1.18f, 7, 14, 1, 1, 1);
-        return b.build();
+        MeshBuilder builder = new MeshBuilder();
+        float[][] p = {
+                {-.78f,.67f,.94f},{.78f,.67f,.94f},{.78f,.67f,-1.16f},{-.78f,.67f,-1.16f},
+                {-.57f,1.40f,.49f},{.57f,1.40f,.49f},{.57f,1.40f,-.80f},{-.57f,1.40f,-.80f}
+        };
+        addCabinFace(builder,p,0,1,5,4,0,.48f,.88f);
+        addCabinFace(builder,p,1,2,6,5,1,.20f,0);
+        addCabinFace(builder,p,2,3,7,6,0,.43f,-.90f);
+        addCabinFace(builder,p,3,0,4,7,-1,.20f,0);
+        addCabinFace(builder,p,4,5,6,7,0,1,0);
+        return builder.build();
+    }
+
+    private static void addCabinFace(MeshBuilder builder, float[][] p,
+                                     int ia, int ib, int ic, int id,
+                                     float nx, float ny, float nz) {
+        float inv = 1f / Math.max(.001f, (float) Math.sqrt(nx * nx + ny * ny + nz * nz));
+        nx *= inv; ny *= inv; nz *= inv;
+        int a = builder.vertex(p[ia][0],p[ia][1],p[ia][2],nx,ny,nz,1,1,1);
+        int b = builder.vertex(p[ib][0],p[ib][1],p[ib][2],nx,ny,nz,1,1,1);
+        int c = builder.vertex(p[ic][0],p[ic][1],p[ic][2],nx,ny,nz,1,1,1);
+        int d = builder.vertex(p[id][0],p[id][1],p[id][2],nx,ny,nz,1,1,1);
+        builder.quad(a,b,c,d);
     }
 
     private static Mesh buildRoundedCarBody() {

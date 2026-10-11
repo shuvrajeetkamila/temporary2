@@ -105,12 +105,13 @@ public final class NauruWorld {
         // The southern airport corridor is deliberately graded flat near real-world scale.
         float airportAlong = Math.abs(lx);
         float airportAcross = Math.abs(lz + 2440f);
-        float airportMask = (1f - smoothStep(150f, 280f, airportAcross))
+        float airportMask = (1f - smoothStep(250f, 430f, airportAcross))
                 * (1f - smoothStep(1080f, 1330f, airportAlong));
         plateau *= (1f - airportMask);
 
         float h = 2.7f + coastalRipple * (1f - plateau * .45f);
         h += plateau * (40f + noise(x * .68f, z * .68f) * 7f);
+        h = h * (1f - airportMask) + 3.50f * airportMask;
 
         // Buada Lagoon: a small inland depression naturally filled by the global water plane.
         float dx = lx + 520f, dz = lz + 270f;
@@ -220,6 +221,13 @@ public final class NauruWorld {
         // Nauru International Airport: approximately 2.15 km, aligned with the southern coast.
         addLocalRectangle(shoulder, 0f, -2440f, 2190f, 58f, 3.60f, .36f, .35f, .31f);
         addLocalRectangle(road, 0f, -2440f, 2160f, 47f, 3.68f, .095f, .105f, .11f);
+        // Terminal apron and taxi connection provide a detailed, believable first-play location.
+        addLocalRectangle(shoulder, 230f, -2315f, 525f, 215f, 3.57f, .35f, .34f, .30f);
+        addLocalRectangle(road, 230f, -2315f, 505f, 197f, 3.66f, .105f, .115f, .12f);
+        addLocalRectangle(marks, 230f, -2410f, 92f, .55f, 3.72f, .88f, .76f, .34f);
+        for (int bay = -4; bay <= 4; bay++) {
+            addLocalRectangle(marks, 230f + bay * 42f, -2230f, 24f, .42f, 3.72f, .90f, .82f, .48f);
+        }
         addLocalRectangle(marks, 0f, -2440f, 1940f, .65f, 3.73f, .92f, .92f, .87f);
         for (int i = -8; i <= 8; i++) {
             addLocalRectangle(marks, i * 105f, -2440f, 38f, 1.2f, 3.75f, .95f, .95f, .9f);
@@ -281,6 +289,21 @@ public final class NauruWorld {
         float towerY = heightAt(p[0], p[1]);
         b.addBox(p[0], towerY, p[1], 10, 23, 10, -WORLD_ROTATION, .58f, .61f, .57f);
         b.addBox(p[0], towerY + 23, p[1], 16, 5, 16, -WORLD_ROTATION, .18f, .39f, .45f);
+
+        // Apron lighting and landscaped airport edge create human-scale depth at first spawn.
+        for (int i = -2; i <= 2; i++) {
+            float[] lamp = new float[2];
+            localToWorld(230f + i * 92f, -2218f, lamp);
+            b.addCylinder(lamp[0], 3.68f, lamp[1], .16f, 10.5f, 8, .31f, .34f, .34f);
+            b.addBox(lamp[0], 14.0f, lamp[1], 2.4f, .38f, .55f,
+                    -WORLD_ROTATION, .76f, .78f, .72f);
+        }
+        for (int i = -3; i <= 3; i++) {
+            float[] tree = new float[2];
+            localToWorld(230f + i * 52f, -2115f - (i & 1) * 12f, tree);
+            float treeY = heightAt(tree[0], tree[1]);
+            b.addPalm(tree[0], treeY, tree[1], 8.5f + (i & 1) * 1.4f, .82f);
+        }
 
         // Aiwo-inspired west-coast industrial silhouettes and cantilever remnants.
         coastPoint((float) Math.PI, .82f, p);
@@ -491,13 +514,13 @@ public final class NauruWorld {
     /** Suggested first-spawn position beside the runway and the Reef Runner. */
     public float[] spawnPoint() {
         float[] p = new float[2];
-        localToWorld(521f, -2197f, p);
+        localToWorld(340f, -2300f, p);
         return new float[]{p[0], heightAt(p[0], p[1]), p[1]};
     }
 
     public float[] vehicleSpawnPoint() {
         float[] p = new float[2];
-        localToWorld(525f, -2200f, p);
+        localToWorld(335f, -2296f, p);
         return new float[]{p[0], heightAt(p[0], p[1]) + .15f, p[1]};
     }
 
