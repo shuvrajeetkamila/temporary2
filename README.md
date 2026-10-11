@@ -1,1 +1,72 @@
-# temporary2
+# NAURU: THE COUNTRYSIDE
+
+A playable, original Android open-world prototype of Nauru. This repository contains the actual game source—not a design-only mock-up.
+
+## Download / install
+
+The GitHub Actions workflow produces **`Nauru-The-Countryside-v0.1.0.apk`**. Download the `Nauru-The-Countryside-Android` artifact from the latest **Build Android APK** run, unzip it, and install the APK on an Android 8.0+ device. Android may ask you to allow installation from your browser/files app.
+
+The APK is a debug-signed development build so it can be installed directly without a Play Store account.
+
+## What is playable now (Phase 1)
+
+- Approximately 1:1 world units (`1 unit = 1 metre`) with a ~6 km × 4 km procedural Nauru silhouette
+- Continuous island, surrounding animated ocean, beaches, coastal belt, central plateau, mining terrain and Buada Lagoon
+- Ring road, a ~2.15 km runway, airport buildings, harbour/industrial landmarks and procedural settlements
+- Streamed high/low-detail coastal sectors and three graphics presets
+- Third-person walking, running, jumping, camera orbit and pinch zoom
+- Original drivable **Reef Runner** vehicle with acceleration, braking/reverse, steering, off-road traction, suspension attitude, handbrake and collisions with the coast
+- Enter/exit vehicle interaction
+- Day/night lighting, atmospheric distance fog and live in-game time
+- Island minimap, compass, district/location names, vehicle marker, speedometer and touch HUD
+- Automatic checkpoint save/restore
+
+All geometry, shaders, UI and vehicle/building designs in this prototype are original and generated from source code. No proprietary game assets, Google imagery, Street View imagery, or GTA assets are included.
+
+## Touch controls
+
+### On foot
+- **Left stick:** move
+- **RUN:** hold to sprint
+- **JUMP:** jump
+- **CAR / ENTER:** locate or enter the nearby Reef Runner
+- **Swipe open screen area:** orbit camera
+- **Two-finger pinch:** camera distance
+
+### Driving
+- **Left stick:** steer
+- **GO:** accelerate
+- **BRAKE:** brake, then reverse
+- **DRIFT:** handbrake
+- **EXIT:** leave vehicle
+
+Tap the graphics/FPS pill in the top-right to cycle **LOW → MEDIUM → HIGH**.
+
+## Build
+
+The app is dependency-free native Java + OpenGL ES 2.0 and uses Android Gradle Plugin 8.7.3.
+
+```bash
+gradle :app:assembleDebug
+```
+
+Output: `app/build/outputs/apk/debug/app-debug.apk`
+
+GitHub CI installs Java 17 and Gradle 8.9, compiles the project, calculates a SHA-256 checksum, and publishes the installable APK as an artifact.
+
+## Source layout
+
+```text
+app/src/main/java/ai/arena/nauru/
+├── entities/   # player and vehicle simulation
+├── game/       # game state, renderer and EGL surface
+├── graphics/   # shaders, GPU mesh and procedural mesh builder
+├── input/      # thread-safe touch input bridge
+├── save/       # checkpoint persistence
+├── ui/         # multitouch HUD and geographic minimap
+└── world/      # island terrain, roads, airport, sectors and landmarks
+```
+
+## Scope
+
+This is the first playable milestone of a long-term project. Terrain and landmarks are plausible procedural approximations designed to be replaceable with appropriately licensed survey/GIS data later; they are not claimed as survey-accurate navigation data.
