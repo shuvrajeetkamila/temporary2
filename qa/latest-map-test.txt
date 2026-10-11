@@ -22,16 +22,16 @@ Daemon will be stopped at the end of the build
 > Task :app:compileDebugShaders NO-SOURCE
 > Task :app:generateDebugAssets UP-TO-DATE
 > Task :app:mergeDebugAssets UP-TO-DATE
-> Task :app:javaPreCompileDebugUnitTest
-> Task :app:bundleDebugClassesToCompileJar
 > Task :app:bundleDebugClassesToRuntimeJar
+> Task :app:bundleDebugClassesToCompileJar
+> Task :app:javaPreCompileDebugUnitTest
 > Task :app:packageDebugUnitTestForUnitTest
 > Task :app:compileDebugUnitTestJavaWithJavac
 > Task :app:processDebugJavaRes NO-SOURCE
 > Task :app:processDebugUnitTestJavaRes NO-SOURCE
 > Task :app:generateDebugUnitTestConfig
 > Task :app:testDebugUnitTest
-gradle/actions: Writing build results to /home/runner/work/_temp/.gradle-actions/build-results/__run_2-1791737057689.json
+gradle/actions: Writing build results to /home/runner/work/_temp/.gradle-actions/build-results/__run_2-1791737619976.json
 
-BUILD SUCCESSFUL in 29s
+BUILD SUCCESSFUL in 31s
 24 actionable tasks: 7 executed, 17 up-to-date
