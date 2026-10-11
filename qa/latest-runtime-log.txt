@@ -1,56 +1,60 @@
-10-11 14:17:47.283  2495  2495 D AndroidRuntime: >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
-10-11 14:17:47.300  2495  2495 I AndroidRuntime: Using default boot image
-10-11 14:17:47.300  2495  2495 I AndroidRuntime: Leaving lock profiling enabled
-10-11 14:17:47.543  2495  2495 D AndroidRuntime: Calling main entry com.android.commands.input.Input
-10-11 14:17:47.553  2495  2495 D AndroidRuntime: Shutting down VM
-10-11 14:17:48.248  2617  2676 D libEGL  : Emulator has host GPU support, qemu.gles is set to 1.
-10-11 14:17:48.272  2617  2676 D libEGL  : loaded /vendor/lib64/egl/libEGL_emulation.so
-10-11 14:17:48.272  2617  2676 D libEGL  : loaded /vendor/lib64/egl/libGLESv1_CM_emulation.so
-10-11 14:17:48.273  2617  2676 D libEGL  : loaded /vendor/lib64/egl/libGLESv2_emulation.so
-10-11 14:17:48.526  1665  1665 I Zygote  : Process 2617 exited due to signal 9 (Killed)
-10-11 14:17:48.810  2730  2810 D libEGL  : Emulator has host GPU support, qemu.gles is set to 1.
-10-11 14:17:48.877  2730  2810 D libEGL  : loaded /vendor/lib64/egl/libEGL_emulation.so
-10-11 14:17:48.879  2730  2810 D libEGL  : loaded /vendor/lib64/egl/libGLESv1_CM_emulation.so
-10-11 14:17:48.880  2730  2810 D libEGL  : loaded /vendor/lib64/egl/libGLESv2_emulation.so
-10-11 14:17:48.890  2637  2827 D libEGL  : Emulator has host GPU support, qemu.gles is set to 1.
-10-11 14:17:48.892  2637  2827 D libEGL  : loaded /vendor/lib64/egl/libEGL_emulation.so
-10-11 14:17:48.892  2637  2827 D libEGL  : loaded /vendor/lib64/egl/libGLESv1_CM_emulation.so
-10-11 14:17:48.893  2637  2827 D libEGL  : loaded /vendor/lib64/egl/libGLESv2_emulation.so
-10-11 14:17:49.302  1912  1957 V BackupManagerService: restoreAtInstall pkg=ai.arena.nauru.dev token=1 restoreSet=0
-10-11 14:17:50.335  1912  2131 I ActivityTaskManager: START u0 {flg=0x10000000 cmp=ai.arena.nauru.dev/ai.arena.nauru.MainActivity} from uid 2000
-10-11 14:17:50.908  1912  1945 I ActivityManager: Start proc 2947:ai.arena.nauru.dev/u0a116 for activity {ai.arena.nauru.dev/ai.arena.nauru.MainActivity}
-10-11 14:17:51.306  2947  2995 D libEGL  : Emulator has host GPU support, qemu.gles is set to 1.
-10-11 14:17:51.477  2947  2995 D libEGL  : loaded /vendor/lib64/egl/libEGL_emulation.so
-10-11 14:17:51.481  2947  2995 D libEGL  : loaded /vendor/lib64/egl/libGLESv1_CM_emulation.so
-10-11 14:17:51.482  2947  2995 D libEGL  : loaded /vendor/lib64/egl/libGLESv2_emulation.so
-10-11 14:17:52.727  1912  1929 W BroadcastQueue: Background execution not allowed: receiving Intent { act=android.intent.action.PACKAGE_ADDED dat=package:ai.arena.nauru.dev flg=0x4000010 (has extras) } to com.android.packageinstaller/.PackageInstalledReceiver
-10-11 14:17:52.728  1912  1944 W BroadcastQueue: Background execution not allowed: receiving Intent { act=android.intent.action.PACKAGE_ADDED dat=package:ai.arena.nauru.dev flg=0x4000010 (has extras) } to com.android.gallery3d/.app.PackagesMonitor
-10-11 14:17:52.728  1912  1944 W BroadcastQueue: Background execution not allowed: receiving Intent { act=android.intent.action.PACKAGE_ADDED dat=package:ai.arena.nauru.dev flg=0x4000010 (has extras) } to com.android.musicfx/.Compatibility$Receiver
-10-11 14:17:51.290  2947  2947 W RenderThread: type=1400 audit(0.0:19): avc: denied { write } for name="property_service" dev="tmpfs" ino=7424 scontext=u:r:untrusted_app:s0:c116,c256,c512,c768 tcontext=u:object_r:property_socket:s0 tclass=sock_file permissive=0 app=ai.arena.nauru.dev
-10-11 14:17:53.284  2947  3034 I NauruRenderer: surface creation started
-10-11 14:17:54.772  2947  3034 I NauruRenderer: surface creation complete; shadowTarget=true
-10-11 14:17:54.775  2947  3034 I NauruRenderer: first frame started; quality=0
-10-11 14:17:54.775  2947  3034 I NauruRenderer: first frame shadow stage complete
-10-11 14:17:55.104  2947  3034 I NauruRenderer: first frame sky complete
-10-11 14:17:55.215  2947  3034 I NauruRenderer: first frame ocean complete
-10-11 14:17:59.114  2947  3034 I NauruRenderer: first frame complete
-10-11 14:17:59.261  1912  1943 I ActivityTaskManager: Displayed ai.arena.nauru.dev/ai.arena.nauru.MainActivity: +8s923ms
-10-11 14:18:02.721  1665  1665 I Zygote  : Process 2312 exited due to signal 9 (Killed)
-10-11 14:18:03.193  1665  1665 I Zygote  : Process 2598 exited due to signal 9 (Killed)
-10-11 14:18:03.971  1665  1665 I Zygote  : Process 2768 exited due to signal 9 (Killed)
-10-11 14:18:04.359  1665  1665 I Zygote  : Process 2807 exited due to signal 9 (Killed)
-10-11 14:18:04.364  1665  1665 I Zygote  : Process 2877 exited due to signal 9 (Killed)
-10-11 14:18:04.709  1665  1665 I Zygote  : Process 2730 exited due to signal 9 (Killed)
-10-11 14:18:04.809  1665  1665 I Zygote  : Process 2690 exited due to signal 9 (Killed)
-10-11 14:18:05.591  1665  1665 I Zygote  : Process 3381 exited due to signal 9 (Killed)
-10-11 14:18:05.759  1665  1665 I Zygote  : Process 3012 exited due to signal 9 (Killed)
-10-11 14:18:05.860  3398  3398 D AndroidRuntime: >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
-10-11 14:18:05.867  3398  3398 I AndroidRuntime: Using default boot image
-10-11 14:18:05.867  3398  3398 I AndroidRuntime: Leaving lock profiling enabled
-10-11 14:18:06.313  3398  3398 D AndroidRuntime: Calling main entry com.android.commands.input.Input
-10-11 14:18:06.580  3398  3398 D AndroidRuntime: Shutting down VM
-10-11 14:18:15.954  1665  1665 I Zygote  : Process 3132 exited due to signal 9 (Killed)
-10-11 14:18:16.050  1665  1665 I Zygote  : Process 3047 exited due to signal 9 (Killed)
-10-11 14:18:32.165  1665  1665 I Zygote  : Process 2964 exited due to signal 9 (Killed)
-10-11 14:18:32.165  1665  1665 I Zygote  : Process 3081 exited due to signal 9 (Killed)
-10-11 14:18:32.165  1665  1665 I Zygote  : Process 3257 exited due to signal 9 (Killed)
+10-11 14:23:24.749  2517  2517 D AndroidRuntime: >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
+10-11 14:23:24.756  2517  2517 I AndroidRuntime: Using default boot image
+10-11 14:23:24.756  2517  2517 I AndroidRuntime: Leaving lock profiling enabled
+10-11 14:23:24.822  2517  2517 D AndroidRuntime: Calling main entry com.android.commands.input.Input
+10-11 14:23:24.847  2517  2517 D AndroidRuntime: Shutting down VM
+10-11 14:23:25.771  2642  2699 D libEGL  : Emulator has host GPU support, qemu.gles is set to 1.
+10-11 14:23:25.837  2642  2699 D libEGL  : loaded /vendor/lib64/egl/libEGL_emulation.so
+10-11 14:23:25.840  2642  2699 D libEGL  : loaded /vendor/lib64/egl/libGLESv1_CM_emulation.so
+10-11 14:23:25.841  2642  2699 D libEGL  : loaded /vendor/lib64/egl/libGLESv2_emulation.so
+10-11 14:23:25.947  1665  1665 I Zygote  : Process 2642 exited due to signal 9 (Killed)
+10-11 14:23:26.254  2719  2777 D libEGL  : Emulator has host GPU support, qemu.gles is set to 1.
+10-11 14:23:26.286  2719  2777 D libEGL  : loaded /vendor/lib64/egl/libEGL_emulation.so
+10-11 14:23:26.287  2719  2777 D libEGL  : loaded /vendor/lib64/egl/libGLESv1_CM_emulation.so
+10-11 14:23:26.287  2719  2777 D libEGL  : loaded /vendor/lib64/egl/libGLESv2_emulation.so
+10-11 14:23:26.387  1919  1960 V BackupManagerService: restoreAtInstall pkg=ai.arena.nauru.dev token=1 restoreSet=0
+10-11 14:23:26.536  2673  2816 D libEGL  : Emulator has host GPU support, qemu.gles is set to 1.
+10-11 14:23:26.599  2673  2816 D libEGL  : loaded /vendor/lib64/egl/libEGL_emulation.so
+10-11 14:23:26.600  2673  2816 D libEGL  : loaded /vendor/lib64/egl/libGLESv1_CM_emulation.so
+10-11 14:23:26.636  2673  2816 D libEGL  : loaded /vendor/lib64/egl/libGLESv2_emulation.so
+10-11 14:23:28.194  1919  2670 I ActivityTaskManager: START u0 {flg=0x10000000 cmp=ai.arena.nauru.dev/ai.arena.nauru.MainActivity} from uid 2000
+10-11 14:23:28.641  1919  1948 I ActivityManager: Start proc 2930:ai.arena.nauru.dev/u0a116 for activity {ai.arena.nauru.dev/ai.arena.nauru.MainActivity}
+10-11 14:23:28.890  2930  2962 D libEGL  : Emulator has host GPU support, qemu.gles is set to 1.
+10-11 14:23:28.906  2930  2962 D libEGL  : loaded /vendor/lib64/egl/libEGL_emulation.so
+10-11 14:23:28.907  2930  2962 D libEGL  : loaded /vendor/lib64/egl/libGLESv1_CM_emulation.so
+10-11 14:23:28.908  2930  2962 D libEGL  : loaded /vendor/lib64/egl/libGLESv2_emulation.so
+10-11 14:23:28.880  2930  2930 W RenderThread: type=1400 audit(0.0:19): avc: denied { write } for name="property_service" dev="tmpfs" ino=841 scontext=u:r:untrusted_app:s0:c116,c256,c512,c768 tcontext=u:object_r:property_socket:s0 tclass=sock_file permissive=0 app=ai.arena.nauru.dev
+10-11 14:23:30.204  1919  1941 W WindowManager: Force clearing orientation change: Window{d04b81 u0 Splash Screen ai.arena.nauru.dev}
+10-11 14:23:30.204  1919  1941 W WindowManager: Force clearing orientation change: Window{e8a689f u0 ai.arena.nauru.dev/ai.arena.nauru.MainActivity}
+10-11 14:23:30.268  1919  1942 I WindowManager: Screen frozen for +2s65ms due to Window{d04b81 u0 Splash Screen ai.arena.nauru.dev}
+10-11 14:23:30.635  2930  3012 I NauruRenderer: surface creation started
+10-11 14:23:31.049  1919  2273 W BroadcastQueue: Background execution not allowed: receiving Intent { act=android.intent.action.PACKAGE_ADDED dat=package:ai.arena.nauru.dev flg=0x4000010 (has extras) } to com.android.packageinstaller/.PackageInstalledReceiver
+10-11 14:23:31.051  1919  1947 W BroadcastQueue: Background execution not allowed: receiving Intent { act=android.intent.action.PACKAGE_ADDED dat=package:ai.arena.nauru.dev flg=0x4000010 (has extras) } to com.android.gallery3d/.app.PackagesMonitor
+10-11 14:23:31.051  1919  1947 W BroadcastQueue: Background execution not allowed: receiving Intent { act=android.intent.action.PACKAGE_ADDED dat=package:ai.arena.nauru.dev flg=0x4000010 (has extras) } to com.android.musicfx/.Compatibility$Receiver
+10-11 14:23:33.710  2930  3012 I NauruRenderer: surface creation complete; shadowTarget=true
+10-11 14:23:33.711  2930  3012 I NauruRenderer: first frame started; quality=0
+10-11 14:23:33.711  2930  3012 I NauruRenderer: first frame shadow stage complete
+10-11 14:23:33.835  2930  3012 I NauruRenderer: first frame sky complete
+10-11 14:23:34.023  2930  3012 I NauruRenderer: first frame ocean complete
+10-11 14:23:36.577  1665  1665 I Zygote  : Process 2332 exited due to signal 9 (Killed)
+10-11 14:23:37.153  2930  3012 I NauruRenderer: first frame complete
+10-11 14:23:37.163  1919  1946 I ActivityTaskManager: Displayed ai.arena.nauru.dev/ai.arena.nauru.MainActivity: +8s965ms
+10-11 14:23:37.740  1665  1665 I Zygote  : Process 2475 exited due to signal 9 (Killed)
+10-11 14:23:38.646  1665  1665 I Zygote  : Process 2610 exited due to signal 9 (Killed)
+10-11 14:23:38.705  1665  1665 I Zygote  : Process 2735 exited due to signal 9 (Killed)
+10-11 14:23:39.237  1665  1665 I Zygote  : Process 2794 exited due to signal 9 (Killed)
+10-11 14:23:39.547  1665  1665 I Zygote  : Process 2719 exited due to signal 9 (Killed)
+10-11 14:23:40.668  1665  1665 I Zygote  : Process 2887 exited due to signal 9 (Killed)
+10-11 14:23:40.938  1665  1665 I Zygote  : Process 2843 exited due to signal 9 (Killed)
+10-11 14:23:41.380  1665  1665 I Zygote  : Process 3411 exited due to signal 9 (Killed)
+10-11 14:23:41.480  1665  1665 I Zygote  : Process 2987 exited due to signal 9 (Killed)
+10-11 14:23:42.777  1665  1665 I Zygote  : Process 3033 exited due to signal 9 (Killed)
+10-11 14:23:43.887  3483  3483 D AndroidRuntime: >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
+10-11 14:23:43.949  3483  3483 I AndroidRuntime: Using default boot image
+10-11 14:23:43.949  3483  3483 I AndroidRuntime: Leaving lock profiling enabled
+10-11 14:23:45.013  3483  3483 D AndroidRuntime: Calling main entry com.android.commands.input.Input
+10-11 14:23:45.046  3483  3483 D AndroidRuntime: Shutting down VM
+10-11 14:23:52.597  1665  1665 I Zygote  : Process 3097 exited due to signal 9 (Killed)
+10-11 14:24:04.947  1665  1665 I Zygote  : Process 3241 exited due to signal 9 (Killed)
+10-11 14:24:05.028  1665  1665 I Zygote  : Process 3120 exited due to signal 9 (Killed)
+10-11 14:24:05.047  1665  1665 I Zygote  : Process 2544 exited due to signal 9 (Killed)
