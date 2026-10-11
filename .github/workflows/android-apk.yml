@@ -56,15 +56,12 @@ jobs:
             sleep 18
             mkdir -p qa
             adb exec-out screencap -p > qa/latest-gameplay.png
-            adb logcat -d > /tmp/nauru-logcat.txt
-            grep -E "FATAL EXCEPTION|AndroidRuntime|NauruShader|ai.arena.nauru" /tmp/nauru-logcat.txt > qa/latest-runtime-log.txt || true
-            APP_PID="$(adb shell pidof ai.arena.nauru.dev | tr -d '\r')"
-            if [ -n "$APP_PID" ]; then
-              echo "RUNNING pid=$APP_PID" > qa/latest-runtime-status.txt
-            else
-              echo "NOT_RUNNING" > qa/latest-runtime-status.txt
-              tail -250 /tmp/nauru-logcat.txt >> qa/latest-runtime-log.txt
-            fi
+            adb logcat -d > qa/latest-full-logcat.txt
+            grep -E "FATAL EXCEPTION|AndroidRuntime|NauruShader|ai.arena.nauru|F DEBUG|signal [0-9]|backtrace|#[0-9]+ pc|libGLES|libEGL|libhwui|Abort" qa/latest-full-logcat.txt > qa/latest-runtime-log.txt || true
+            adb shell dumpsys dropbox --print SYSTEM_TOMBSTONE > qa/latest-tombstone.txt 2>&1 || true
+            echo "CAPTURED" > qa/latest-runtime-status.txt
+            adb shell pidof ai.arena.nauru.dev > qa/latest-pid.txt 2>&1 || true
+            cat qa/latest-pid.txt >> qa/latest-runtime-status.txt
             test -s qa/latest-gameplay.png || echo "SCREENSHOT_MISSING" >> qa/latest-runtime-status.txt
             exit 0
 
@@ -72,7 +69,7 @@ jobs:
         if: always()
         run: |
           mkdir -p qa
-          touch qa/latest-runtime-log.txt
+          touch qa/latest-runtime-log.txt qa/latest-full-logcat.txt qa/latest-tombstone.txt qa/latest-pid.txt
           test -f qa/latest-runtime-status.txt || echo "EMULATOR_ACTION_FAILED" > qa/latest-runtime-status.txt
           if [ ! -s qa/latest-gameplay.png ]; then
             echo 'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNk+A8AAQUBAScY42YAAAAASUVORK5CYII=' | base64 -d > qa/latest-gameplay.png
@@ -101,6 +98,6 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add -f artifacts/Nauru-The-Countryside-REALISTIC-v0.2.0.apk artifacts/Nauru-The-Countryside-REALISTIC-v0.2.0.apk.sha256 qa/latest-gameplay.png qa/latest-runtime-log.txt qa/latest-runtime-status.txt
+          git add -f artifacts/Nauru-The-Countryside-REALISTIC-v0.2.0.apk artifacts/Nauru-The-Countryside-REALISTIC-v0.2.0.apk.sha256 qa/latest-gameplay.png qa/latest-runtime-log.txt qa/latest-runtime-status.txt qa/latest-full-logcat.txt qa/latest-tombstone.txt qa/latest-pid.txt
           git diff --cached --quiet || git commit -m "Publish tested realistic Android APK [skip ci]"
           git push origin "HEAD:${GITHUB_REF_NAME}"
