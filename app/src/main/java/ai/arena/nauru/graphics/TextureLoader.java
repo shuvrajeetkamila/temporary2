@@ -16,7 +16,8 @@ public final class TextureLoader {
         return new int[] {
                 loadRepeatTexture(context, R.drawable.nauru_grass_albedo),
                 loadRepeatTexture(context, R.drawable.nauru_asphalt_albedo),
-                loadRepeatTexture(context, R.drawable.nauru_coral_ground_albedo)
+                loadRepeatTexture(context, R.drawable.nauru_coral_ground_albedo),
+                ProceduralTexture.createStructureSurface()
         };
     }
 

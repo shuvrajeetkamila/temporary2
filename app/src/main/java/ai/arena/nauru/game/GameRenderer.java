@@ -113,7 +113,10 @@ public final class GameRenderer implements GLSurfaceView.Renderer {
         detailTexture = ProceduralTexture.createMaterialDetail();
         try {
             surfaceTextures = TextureLoader.loadPhotorealSurfaceSet(context);
-            Log.i(TAG, "loaded 1024px photographic Nauru surface materials");
+            if (surfaceTextures == null || surfaceTextures.length != 4) {
+                throw new IllegalStateException("surface material set must contain exactly four textures");
+            }
+            Log.i(TAG, "loaded four Nauru surface materials (three photographic, one structural)");
         } catch (RuntimeException textureError) {
             Log.w(TAG, "photographic material load failed; using procedural fallback", textureError);
             surfaceTextures = ProceduralTexture.createSurfaceSet();

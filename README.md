@@ -4,7 +4,7 @@ A playable, original Android open-world prototype of Nauru. This repository cont
 
 ## Download / install
 
-The GitHub Actions workflow produces **`Nauru-The-Countryside-REALISTIC-v0.2.1.apk`**. Download the `Nauru-The-Countryside-Realistic-Android` artifact from the latest **Build Android APK** run, unzip it, and install the APK on an Android 8.0+ device. Android may ask you to allow installation from your browser/files app.
+The GitHub Actions workflow produces **`Nauru-The-Countryside-REALISTIC-v0.2.2.apk`**. Download the `Nauru-The-Countryside-Realistic-Android` artifact from the latest **Build Android APK** run, unzip it, and install the APK on an Android 8.0+ device. Android may ask you to allow installation from your browser/files app.
 
 The APK is a debug-signed development build so it can be installed directly without a Play Store account.
 

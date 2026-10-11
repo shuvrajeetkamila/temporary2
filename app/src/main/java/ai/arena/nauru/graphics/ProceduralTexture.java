@@ -52,6 +52,11 @@ public final class ProceduralTexture {
         return textures;
     }
 
+    /** Fourth material used by the photographic set for concrete and building finishes. */
+    public static int createStructureSurface() {
+        return createSurface(3);
+    }
+
     private static int createSurface(int type) {
         final int size = 256;
         float[][] coarse = periodicNoise(16, 0x53455246L + type * 97L);
