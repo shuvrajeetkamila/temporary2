@@ -52,6 +52,12 @@ public final class MeshBuilder {
     /** Extrudes a real GIS footprint, retaining its orientation and irregular shape. */
     public void addFootprintBuilding(float[] points, float baseY, float height,
                                      float r, float g, float b) {
+        addFootprintBuilding(points, baseY, height, r, g, b, false);
+    }
+
+    /** Adds scalable recessed window/door geometry to selected near-detail buildings. */
+    public void addFootprintBuilding(float[] points, float baseY, float height,
+                                     float r, float g, float b, boolean facadeDetails) {
         int count = points.length / 2;
         if (count < 3) return;
         float signedArea = 0f, cx = 0f, cz = 0f;
@@ -87,6 +93,48 @@ public final class MeshBuilder {
             int c = vertex(x1, baseY + height, z1, nx, 0, nz, r, g, b);
             int d = vertex(x0, baseY + height, z0, nx, 0, nz, r, g, b);
             quad(a, bb, c, d);
+
+            if (facadeDetails) {
+                float edgeLength = 1f / inv;
+                int windowCount = Math.min(5, Math.max(0, (int) (edgeLength / 4.2f)));
+                int levels = Math.min(3, Math.max(1, (int) ((height - .8f) / 3.1f)));
+                float tx = dx * inv, tz = dz * inv;
+                for (int level = 0; level < levels; level++) {
+                    float bottom = baseY + 1.15f + level * 2.85f;
+                    float top = Math.min(baseY + height - .48f, bottom + 1.28f);
+                    if (top <= bottom + .25f) continue;
+                    for (int window = 0; window < windowCount; window++) {
+                        float along = (window + 1f) / (windowCount + 1f) * edgeLength;
+                        float halfWidth = Math.min(.72f, edgeLength / (windowCount + 1f) * .28f);
+                        float wx = x0 + tx * along + nx * .045f;
+                        float wz = z0 + tz * along + nz * .045f;
+                        int wa = vertex(wx - tx * halfWidth, bottom, wz - tz * halfWidth,
+                                nx, 0, nz, .055f, .064f, .082f);
+                        int wb = vertex(wx + tx * halfWidth, bottom, wz + tz * halfWidth,
+                                nx, 0, nz, .065f, .078f, .098f);
+                        int wc = vertex(wx + tx * halfWidth, top, wz + tz * halfWidth,
+                                nx, 0, nz, .10f, .12f, .14f);
+                        int wd = vertex(wx - tx * halfWidth, top, wz - tz * halfWidth,
+                                nx, 0, nz, .075f, .09f, .115f);
+                        quad(wa, wb, wc, wd);
+                    }
+                }
+                if (i == 0 && edgeLength > 4f && height > 3.1f) {
+                    float along = edgeLength * .5f;
+                    float halfWidth = .58f;
+                    float wx = x0 + tx * along + nx * .055f;
+                    float wz = z0 + tz * along + nz * .055f;
+                    int da = vertex(wx - tx * halfWidth, baseY + .08f, wz - tz * halfWidth,
+                            nx, 0, nz, .21f, .14f, .095f);
+                    int db = vertex(wx + tx * halfWidth, baseY + .08f, wz + tz * halfWidth,
+                            nx, 0, nz, .24f, .16f, .10f);
+                    int dc = vertex(wx + tx * halfWidth, baseY + 2.45f, wz + tz * halfWidth,
+                            nx, 0, nz, .19f, .12f, .08f);
+                    int dd = vertex(wx - tx * halfWidth, baseY + 2.45f, wz - tz * halfWidth,
+                            nx, 0, nz, .18f, .11f, .075f);
+                    quad(da, db, dc, dd);
+                }
+            }
         }
         float roofLift = Math.min(1.6f, .32f + (float) Math.sqrt(Math.abs(signedArea) * .5f) * .055f);
         int centre = vertex(cx, baseY + height + roofLift, cz, 0, 1, 0,

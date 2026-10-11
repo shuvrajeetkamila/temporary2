@@ -116,6 +116,8 @@ def road_definition(tag: dict[str, str]) -> tuple[int, float] | None:
         return 4, parse_number(tag.get("width"), 45.0)
     if aeroway == "taxiway":
         return 5, parse_number(tag.get("width"), 11.0)
+    if tag.get("man_made") in {"pier", "groyne"}:
+        return 6, parse_number(tag.get("width"), 4.0)
     highway = tag.get("highway")
     widths = {
         "primary": 9.5, "primary_link": 8.0,
@@ -150,7 +152,9 @@ def parse_number(value: str | None, default: float) -> float:
 
 def building_definition(tag: dict[str, str]) -> tuple[int, float]:
     kind = tag.get("building", "yes")
-    if kind in {"industrial", "hangar", "warehouse", "container"}:
+    if tag.get("man_made") == "storage_tank":
+        category, default_height = 3, 5.5
+    elif kind in {"industrial", "hangar", "warehouse", "container"}:
         category, default_height = 1, 7.5
     elif kind in {"church", "school", "university", "retail", "commercial", "hotel", "transportation", "fire_station"}:
         category, default_height = 2, 8.0
@@ -168,6 +172,8 @@ def building_definition(tag: dict[str, str]) -> tuple[int, float]:
 def area_definition(tag: dict[str, str]) -> int | None:
     if tag.get("aeroway") == "apron":
         return 6
+    if tag.get("power") == "generator" and tag.get("generator:source") == "solar":
+        return 7
     natural = tag.get("natural")
     landuse = tag.get("landuse")
     leisure = tag.get("leisure")
@@ -235,7 +241,8 @@ def main() -> None:
         if road and len(points) >= 2:
             material, width = road
             roads.append((material, width, simplify(points, 0.55 if material < 2 else 1.0)))
-        if "building" in way.tags and len(points) >= 3 and way.refs[0] == way.refs[-1]:
+        is_structure = "building" in way.tags or way.tags.get("man_made") == "storage_tank"
+        if is_structure and len(points) >= 3 and way.refs[0] == way.refs[-1]:
             category, height = building_definition(way.tags)
             footprint = simplify(points, 0.12)
             if len(footprint) >= 3:
@@ -245,6 +252,22 @@ def main() -> None:
             polygon = simplify(points, 0.8)
             if len(polygon) >= 3:
                 areas.append((area, polygon))
+
+    # Point-mapped utility poles, beacons and towers become slender real-position structures.
+    for ident, (latitude, longitude) in nodes.items():
+        tag = node_tags[ident]
+        man_made = tag.get("man_made")
+        if tag.get("power") != "pole" and man_made not in {"flagpole", "beacon", "tower"}:
+            continue
+        x, z = project(latitude, longitude)
+        radius = .20 if tag.get("power") == "pole" else .28
+        height = parse_number(tag.get("height"), 8.5 if tag.get("power") == "pole" else 12.0)
+        footprint = [
+            (x + math.cos(index * math.pi / 3) * radius,
+             z + math.sin(index * math.pi / 3) * radius)
+            for index in range(6)
+        ]
+        buildings.append((4, max(4.0, min(35.0, height)), footprint))
 
     # Multipolygon water/land-cover relations, notably the real Buada Lagoon outline.
     for relation in root.findall("relation"):

@@ -89,9 +89,10 @@ public final class Shaders {
             "   n=normalize(n+vec3(detailB.r-detailB.g,0.0,detailB.b-detailB.r)*0.055); roughness=0.84;\n" +
             " }else if(uMaterial<2.5){ base*=0.93+detailB.r*0.10; roughness=0.58;\n" +
             " }else if(uMaterial<3.5){\n" +
-            "   if(base.g>base.r*1.18){ vec3 foliage=texture2D(uGrassTexture,surfaceUv*.65).rgb; base=mix(base,foliage,0.38); }\n" +
+            "   bool isFoliage=base.g>base.r*1.32 && base.g>base.b*1.22;\n" +
+            "   if(isFoliage){ vec3 foliage=texture2D(uGrassTexture,surfaceUv*.65).rgb; base=mix(base,foliage,0.38); }\n" +
             "   else { vec3 wall=texture2D(uStructureTexture,surfaceUv*.52).rgb; base*=0.58+wall*0.86; }\n" +
-            "   roughness=base.g>base.r*1.22?0.74:0.68;\n" +
+            "   roughness=isFoliage?0.74:0.68;\n" +
             " }else if(uMaterial<4.5){\n" +
             "   vec3 coral=texture2D(uCoralTexture,surfaceUv*.92).rgb;\n" +
             "   float strata=0.76+0.18*sin(vWorldPosition.y*2.8+detailA.r*4.0);\n" +

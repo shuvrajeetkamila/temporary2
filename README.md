@@ -1,10 +1,10 @@
 # NAURU: THE COUNTRYSIDE
 
-A playable Android open-world prototype covering Nauru at real-world metre scale. Version 0.3 replaces the earlier invented procedural oval and settlements with offline open geospatial data for the actual island.
+A playable Android open-world prototype covering Nauru at real-world metre scale. Version 0.3.1 replaces the earlier invented procedural oval and settlements with offline open geospatial data for the actual island.
 
 ## Download / install
 
-The GitHub Actions workflow produces **`Nauru-The-Countryside-MAP-ACCURATE-v0.3.0.apk`**. Install it on Android 8.0 or newer. Remove an older development build first if Android reports a signing conflict.
+The GitHub Actions workflow produces **`Nauru-The-Countryside-MAP-ACCURATE-v0.3.1.apk`**. Install it on Android 8.0 or newer. Remove an older development build first if Android reports a signing conflict.
 
 The APK is a debug-signed development build and does not require a Play Store account.
 
@@ -12,10 +12,11 @@ The APK is a debug-signed development build and does not require a Play Store ac
 
 - Actual Nauru coastline projected from WGS84 into a metre-based local coordinate system
 - Real 30 m SRTM elevation instead of invented hills, including Nauru's central plateau and coastal shelf
-- 561 mapped OpenStreetMap road, track, footpath, runway and taxiway features at their real coordinates
-- 2,634 mapped building footprints, extruded with scalable near/far geometry
+- 570 mapped OpenStreetMap road, track, footpath, runway, taxiway, pier and groyne features at their real coordinates
+- 2,754 mapped buildings and infrastructure objects, including footprint-based facade windows, storage tanks, utility poles, beacons and towers
 - Real Nauru International Airport runway alignment, apron, taxiways and terminal footprint
 - Mapped Buada Lagoon, beaches, vegetation, residential areas, phosphate quarries and industrial land
+- 363 mapped photovoltaic panel footprints with reflective solar material
 - Mapped district labels and a minimap drawn from the real coastline and main road network
 - Visible in-game OpenStreetMap attribution and fully offline map data
 - Background world preparation screen so large GIS geometry does not freeze Android startup
@@ -24,7 +25,7 @@ The APK is a debug-signed development build and does not require a Play Store ac
 
 - Third-person walking, running, jumping, orbit camera and pinch zoom
 - Original drivable **Reef Runner** with acceleration, braking/reverse, steering and exit/enter controls
-- Actual-road traction and coastline collision
+- Actual-road traction, mapped centre markings and coastline collision
 - Animated tropical ocean, reef shallows, atmospheric sky and day/night lighting
 - Original photographic grass, asphalt and coral-limestone materials
 - Dynamic shadows, material roughness and LOW/MEDIUM/HIGH graphics presets

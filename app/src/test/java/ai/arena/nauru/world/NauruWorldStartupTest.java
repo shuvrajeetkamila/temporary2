@@ -21,9 +21,9 @@ public final class NauruWorldStartupTest {
         NauruWorld world = new NauruWorld(context);
 
         assertTrue("detailed real coastline expected", world.coastlineCoordinates().length >= 500);
-        assertTrue("mapped road network expected", world.mapRoads().size() >= 550);
-        assertTrue("mapped buildings expected", world.mappedBuildingCount() >= 2600);
-        assertTrue("mapped land cover expected", world.mappedAreaCount() >= 280);
+        assertTrue("mapped road and maritime network expected", world.mapRoads().size() >= 570);
+        assertTrue("mapped buildings and infrastructure expected", world.mappedBuildingCount() >= 2750);
+        assertTrue("mapped land cover and solar panels expected", world.mappedAreaCount() >= 650);
         assertTrue("mapped labels expected", world.mappedPlaceCount() >= 50);
 
         float[] player = world.spawnPoint();

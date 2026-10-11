@@ -35,6 +35,7 @@ public final class NauruWorld {
     private Mesh trackMesh;
     private Mesh markingMesh;
     private Mesh mappedSurfaceMesh;
+    private Mesh solarMesh;
     private Mesh miningMesh;
     private int visibleSectors;
 
@@ -152,6 +153,7 @@ public final class NauruWorld {
             case 4: return new float[]{.76f + variation, .69f + variation, .49f + variation};
             case 5: return new float[]{.27f + variation, .47f + variation, .24f};
             case 6: return new float[]{.12f, .13f, .135f};
+            case 7: return new float[]{.24f, .37f, .22f};
             default:
                 if (height > 28f) return new float[]{.43f + variation, .42f + variation, .31f};
                 return new float[]{.19f + variation, .44f + variation, .18f};
@@ -167,7 +169,9 @@ public final class NauruWorld {
 
         for (NauruMapData.Road road : map.roads) {
             MeshBuilder target = road.material <= 1 || road.material >= 4 ? paved : tracks;
-            float[] roadColor = road.material >= 4
+            float[] roadColor = road.material == 6
+                    ? new float[]{.38f, .40f, .39f}
+                    : road.material >= 4
                     ? new float[]{.085f, .095f, .10f}
                     : road.material <= 1
                     ? new float[]{.115f, .125f, .13f}
@@ -175,7 +179,8 @@ public final class NauruWorld {
             for (int i = 0; i + 3 < road.points.length; i += 2) {
                 float x0 = road.points[i], z0 = road.points[i + 1];
                 float x1 = road.points[i + 2], z1 = road.points[i + 3];
-                if (road.material <= 1 || road.material >= 4) {
+                boolean hasShoulder = road.material <= 1 || road.material == 4 || road.material == 5;
+                if (hasShoulder) {
                     addRibbonSegment(shoulders, x0, z0, x1, z1,
                             road.width + (road.material == 4 ? 5f : 2.2f),
                             .36f, .33f, .25f, .08f);
@@ -184,6 +189,8 @@ public final class NauruWorld {
                         roadColor[0], roadColor[1], roadColor[2], .14f);
                 if (road.material == 4) {
                     addDashedMarkings(markings, x0, z0, x1, z1);
+                } else if (road.material == 0 && road.width >= 7f) {
+                    addRoadCentreMarkings(markings, x0, z0, x1, z1);
                 }
             }
         }
@@ -229,11 +236,32 @@ public final class NauruWorld {
         }
     }
 
+    private void addRoadCentreMarkings(MeshBuilder builder, float x0, float z0,
+                                       float x1, float z1) {
+        float dx = x1 - x0, dz = z1 - z0;
+        float length = (float) Math.sqrt(dx * dx + dz * dz);
+        if (length < 5f) return;
+        for (float start = 0; start < length; start += 14f) {
+            float end = Math.min(length, start + 6.5f);
+            float t0 = start / length, t1 = end / length;
+            addRibbonSegment(builder, x0 + dx * t0, z0 + dz * t0,
+                    x0 + dx * t1, z0 + dz * t1,
+                    .18f, .86f, .76f, .38f, .22f);
+        }
+    }
+
     private void buildMappedLandscape() {
         MeshBuilder mining = new MeshBuilder();
+        MeshBuilder solar = new MeshBuilder();
         Random random = new Random(0x4e41555255L);
         int pinnacles = 0;
         for (NauruMapData.Area area : map.areas) {
+            if (area.category == 7) {
+                float[] centre = centroid(area.points);
+                solar.addPolygonSurface(area.points, heightAt(centre[0], centre[1]) + .72f,
+                        .055f, .15f, .20f);
+                continue;
+            }
             if (area.category != 3) continue;
             float boxArea = Math.max(0, area.maxX - area.minX) * Math.max(0, area.maxZ - area.minZ);
             int requested = Math.min(55, Math.max(1, (int) (boxArea / 22_000f)));
@@ -255,6 +283,7 @@ public final class NauruWorld {
                 .40f, .31f, .20f);
         mining.addBox(cantileverX + 23f, base + 20f, cantileverZ - 3f,
                 55f, 4f, 6f, -.12f, .45f, .34f, .21f);
+        solarMesh = solar.build();
         miningMesh = mining.build();
     }
 
@@ -269,17 +298,36 @@ public final class NauruWorld {
             int hash = buildingIndex++ * 1103515245 + 12345;
             float[][] residential = {{.72f,.64f,.50f},{.68f,.73f,.65f},{.72f,.53f,.42f},
                     {.54f,.68f,.68f},{.79f,.74f,.62f},{.68f,.67f,.60f}};
+            float[] bounds = bounds(building.points);
+            float sizeX = Math.max(.35f, bounds[2] - bounds[0]);
+            float sizeZ = Math.max(.35f, bounds[3] - bounds[1]);
+            if (building.category == 3) {
+                float radius = Math.max(.55f, (sizeX + sizeZ) * .25f);
+                draft.high.addCylinder(centre[0], base, centre[1], radius,
+                        building.height, 14, .56f, .58f, .56f);
+                draft.low.addCylinder(centre[0], base, centre[1], radius,
+                        building.height, 8, .49f, .51f, .50f);
+                continue;
+            }
+            if (building.category == 4) {
+                float radius = Math.max(.11f, Math.min(.32f, (sizeX + sizeZ) * .22f));
+                draft.high.addCylinder(centre[0], base, centre[1], radius,
+                        building.height, 8, .35f, .38f, .37f);
+                draft.low.addCylinder(centre[0], base, centre[1], radius,
+                        building.height, 5, .31f, .33f, .32f);
+                continue;
+            }
             float[] color;
             if (building.category == 1) color = new float[]{.49f, .52f, .50f};
             else if (building.category == 2) color = new float[]{.74f, .72f, .64f};
             else color = residential[(hash >>> 16 & 0x7fffffff) % residential.length];
+            boolean facadeDetails = building.category == 2 || (hash & 3) != 0;
             draft.high.addFootprintBuilding(building.points, base, building.height,
-                    color[0], color[1], color[2]);
-            float[] bounds = bounds(building.points);
+                    color[0], color[1], color[2], facadeDetails);
             draft.low.addBox((bounds[0] + bounds[2]) * .5f, base,
                     (bounds[1] + bounds[3]) * .5f,
-                    Math.max(2f, bounds[2] - bounds[0]), building.height,
-                    Math.max(2f, bounds[3] - bounds[1]), 0,
+                    Math.max(2f, sizeX), building.height,
+                    Math.max(2f, sizeZ), 0,
                     color[0] * .88f, color[1] * .88f, color[2] * .88f);
         }
 
@@ -291,7 +339,7 @@ public final class NauruWorld {
             if (!map.containsLand(x, z) || distanceToSegment(x, z,
                     RUNWAY_AX, RUNWAY_AZ, RUNWAY_BX, RUNWAY_BZ) < 175f) continue;
             int area = areaCategoryAt(x, z);
-            if (area == 0 || area == 3 || area == 4 || area == 6) continue;
+            if (area == 0 || area == 3 || area == 4 || area == 6 || area == 7) continue;
             if (area == 5 && random.nextFloat() < .72f) continue;
             float coastDistance = distanceToCoast(x, z);
             if (area != 1 && area != 2 && coastDistance > 420f && random.nextFloat() < .62f) continue;
@@ -333,7 +381,7 @@ public final class NauruWorld {
         for (NauruMapData.Area area : map.areas) {
             if (x < area.minX || x > area.maxX || z < area.minZ || z > area.maxZ) continue;
             if (!NauruMapData.contains(area.points, x, z)) continue;
-            if (area.category == 0 || area.category == 6) return area.category;
+            if (area.category == 0 || area.category == 6 || area.category == 7) return area.category;
             if (area.category == 3 || result < 0) result = area.category;
             else if (area.category == 4 && result != 3) result = 4;
             else if (result != 3 && result != 4) result = area.category;
@@ -386,7 +434,7 @@ public final class NauruWorld {
     public void invalidateGl() {
         oceanMesh.invalidateGl(); terrainMesh.invalidateGl(); shoulderMesh.invalidateGl();
         roadMesh.invalidateGl(); trackMesh.invalidateGl(); markingMesh.invalidateGl();
-        mappedSurfaceMesh.invalidateGl(); miningMesh.invalidateGl();
+        mappedSurfaceMesh.invalidateGl(); solarMesh.invalidateGl(); miningMesh.invalidateGl();
         for (Sector sector : sectors) sector.invalidateGl();
     }
 
@@ -401,6 +449,7 @@ public final class NauruWorld {
         setMaterial(materialUniform, 1); roadMesh.draw();
         setMaterial(materialUniform, 1); mappedSurfaceMesh.draw();
         setMaterial(materialUniform, 2); markingMesh.draw();
+        setMaterial(materialUniform, 5); solarMesh.draw();
 
         if (Math.hypot(cameraX, cameraZ) < (quality == 0 ? 1750f : 3000f)) {
             setMaterial(materialUniform, 4); miningMesh.draw();
