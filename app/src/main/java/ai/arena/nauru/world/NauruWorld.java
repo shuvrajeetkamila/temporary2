@@ -272,13 +272,23 @@ public final class NauruWorld {
         float[] p = new float[2];
         localToWorld(230f, -2180f, p);
         float terminalY = heightAt(p[0], p[1]);
-        b.addBox(p[0], terminalY, p[1], 95, 9, 26, -WORLD_ROTATION, .74f, .71f, .61f);
+        b.addBox(p[0], terminalY, p[1], 95, 9, 26, -WORLD_ROTATION, .84f, .81f, .70f);
         b.addHipRoof(p[0], terminalY + 9, p[1], 98, 4, 29, -WORLD_ROTATION, .22f, .36f, .40f);
         for (int i = -4; i <= 4; i++) {
             float[] window = new float[2];
-            localToWorld(230f + i * 9.2f, -2166.9f, window);
+            localToWorld(230f + i * 9.2f, -2193.1f, window);
             b.addBox(window[0], terminalY + 2.2f, window[1], 5.6f, 3.7f, .16f,
                     -WORLD_ROTATION, .045f, .19f, .25f);
+        }
+        float[] entrance = new float[2];
+        localToWorld(230f, -2197f, entrance);
+        b.addBox(entrance[0], terminalY + 3.4f, entrance[1], 34f, .32f, 6.5f,
+                -WORLD_ROTATION, .24f, .34f, .36f);
+        for (int side = -1; side <= 1; side += 2) {
+            float[] column = new float[2];
+            localToWorld(230f + side * 14f, -2198f, column);
+            b.addCylinder(column[0], terminalY, column[1], .34f, 3.5f, 10,
+                    .70f, .69f, .62f);
         }
         localToWorld(-230f, -2180f, p);
         b.addBox(p[0], heightAt(p[0], p[1]), p[1], 70, 12, 32, -WORLD_ROTATION, .64f, .68f, .66f);

@@ -269,7 +269,7 @@ public final class GameHudView extends View {
         paint.setLetterSpacing(0);
         paint.setTextSize(9 * density);
         paint.setColor(Color.argb((int) (190 * alpha), 235, 240, 230));
-        canvas.drawText("PLAYABLE GEOGRAPHIC PROTOTYPE  •  1 WORLD UNIT = 1 METRE", cx, cy + 46 * density, paint);
+        canvas.drawText("REALISTIC MOBILE WORLD  •  1 WORLD UNIT = 1 METRE", cx, cy + 46 * density, paint);
     }
 
     @Override

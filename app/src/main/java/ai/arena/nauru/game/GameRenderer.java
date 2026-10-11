@@ -37,6 +37,7 @@ public final class GameRenderer implements GLSurfaceView.Renderer {
     private final Mesh skyDome;
     private final Mesh carBody;
     private final Mesh carCabin;
+    private final Mesh humanTorso;
 
     private final float[] projection = new float[16];
     private final float[] view = new float[16];
@@ -57,6 +58,7 @@ public final class GameRenderer implements GLSurfaceView.Renderer {
     private int frameCounter;
     private float fpsTimer;
     private float lightX, lightY, lightZ;
+    private float shadowRefreshTimer;
     private boolean firstFrameStarted;
     private boolean firstFrameFinished;
 
@@ -86,6 +88,7 @@ public final class GameRenderer implements GLSurfaceView.Renderer {
         skyDome = buildSkyDome();
         carBody = buildRoundedCarBody();
         carCabin = buildCarCabin();
+        humanTorso = buildHumanTorso();
         Matrix.setIdentityM(identity, 0);
     }
 
@@ -110,7 +113,7 @@ public final class GameRenderer implements GLSurfaceView.Renderer {
 
         state.world.invalidateGl();
         cube.invalidateGl(); cylinder.invalidateGl(); sphere.invalidateGl(); disc.invalidateGl();
-        skyDome.invalidateGl(); carBody.invalidateGl(); carCabin.invalidateGl();
+        skyDome.invalidateGl(); carBody.invalidateGl(); carCabin.invalidateGl(); humanTorso.invalidateGl();
         lastFrameNanos = System.nanoTime();
         cameraReady = false;
         firstFrameStarted = false;
@@ -224,7 +227,12 @@ public final class GameRenderer implements GLSurfaceView.Renderer {
 
         updateCamera(dt);
         updateSunAndShadowMatrix();
-        if (shadowReady && state.quality > 0) renderShadowMap();
+        shadowRefreshTimer -= dt;
+        if (shadowReady && state.quality > 0
+                && (state.quality == 2 || shadowRefreshTimer <= 0f)) {
+            renderShadowMap();
+            shadowRefreshTimer = .14f;
+        }
         if (traceFirstFrame) Log.i(TAG, "first frame shadow stage complete");
 
         GLES20.glBindFramebuffer(GLES20.GL_FRAMEBUFFER, 0);
@@ -391,6 +399,14 @@ public final class GameRenderer implements GLSurfaceView.Renderer {
                     car.z, 1.42f, 2.62f, car.yaw, .22f);
         }
         drawMeshAtParent(carBody, baseModel, .035f, .49f, .47f, 1);
+        drawChild(sphere, baseModel, -.86f, .29f, 1.34f, .55f, .46f, .88f,
+                0, 0, 0, .035f, .49f, .47f, 1);
+        drawChild(sphere, baseModel, .86f, .29f, 1.34f, .55f, .46f, .88f,
+                0, 0, 0, .035f, .49f, .47f, 1);
+        drawChild(sphere, baseModel, -.86f, .29f, -1.33f, .55f, .46f, .88f,
+                0, 0, 0, .035f, .49f, .47f, 1);
+        drawChild(sphere, baseModel, .86f, .29f, -1.33f, .55f, .46f, .88f,
+                0, 0, 0, .035f, .49f, .47f, 1);
         drawMeshAtParent(carCabin, baseModel, .045f, .115f, .145f, .96f);
         drawChild(cube, baseModel, 0, 1.42f, -.15f, 1.18f, .08f, 1.30f,
                 0, 0, 0, .035f, .43f, .42f, 1);
@@ -449,8 +465,7 @@ public final class GameRenderer implements GLSurfaceView.Renderer {
             drawShadow(player.x, state.world.heightAt(player.x, player.z) + .03f,
                     player.z, .48f, .66f, player.yaw, .20f);
         }
-        drawChild(sphere, baseModel, 0, 1.34f, 0, .70f, .91f, .43f,
-                0, 0, 0, .91f, .40f, .12f, 1);
+        drawMeshAtParent(humanTorso, baseModel, .80f, .255f, .075f, 1);
         drawChild(cylinder, baseModel, 0, 1.79f, 0, .22f, .25f, .22f,
                 0, 0, 0, .38f, .22f, .14f, 1);
         drawChild(sphere, baseModel, 0, 2.06f, .01f, .50f, .55f, .50f,
@@ -558,6 +573,21 @@ public final class GameRenderer implements GLSurfaceView.Renderer {
         MeshBuilder b = new MeshBuilder();
         b.addEllipsoid(0, 0, 0, 1, 1, 1, 14, 28, 1, 1, 1);
         return b.build();
+    }
+
+    private static Mesh buildHumanTorso() {
+        MeshBuilder builder = new MeshBuilder();
+        float[][] p = {
+                {-.28f,.92f,.19f},{.28f,.92f,.19f},{.28f,.92f,-.19f},{-.28f,.92f,-.19f},
+                {-.40f,1.70f,.23f},{.40f,1.70f,.23f},{.40f,1.70f,-.23f},{-.40f,1.70f,-.23f}
+        };
+        addCabinFace(builder,p,0,1,5,4,0,0,1);
+        addCabinFace(builder,p,1,2,6,5,1,0,0);
+        addCabinFace(builder,p,2,3,7,6,0,0,-1);
+        addCabinFace(builder,p,3,0,4,7,-1,0,0);
+        addCabinFace(builder,p,4,5,6,7,0,1,0);
+        addCabinFace(builder,p,3,2,1,0,0,-1,0);
+        return builder.build();
     }
 
     private static Mesh buildCarCabin() {

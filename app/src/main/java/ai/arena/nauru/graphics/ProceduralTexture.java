@@ -71,8 +71,8 @@ public final class ProceduralTexture {
                     g = .255f + c * .25f + m * .08f + blade * .24f + dry * .58f;
                     b = .075f + c * .095f + blade * .055f + dry * .12f;
                 } else if (type == 1) { // aggregate asphalt, not a flat grey sheet
-                    float stone = f > .955f ? .20f + f * .13f : 0f;
-                    float tar = .075f + c * .055f + m * .035f;
+                    float stone = f > .994f ? .10f + f * .07f : 0f;
+                    float tar = .085f + c * .060f + m * .025f;
                     r = tar + stone; g = tar * 1.03f + stone; b = tar * 1.07f + stone;
                 } else if (type == 2) { // pale coral sand and limestone grit
                     float ripple = .5f + .5f * (float) Math.sin((x + y * .18f) * .16f + c * 3f);
