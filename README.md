@@ -1,31 +1,45 @@
 # NAURU: THE COUNTRYSIDE
 
-A playable, original Android open-world prototype of Nauru. This repository contains the actual game source—not a design-only mock-up.
+A playable Android open-world prototype covering Nauru at real-world metre scale. Version 0.3 replaces the earlier invented procedural oval and settlements with offline open geospatial data for the actual island.
 
 ## Download / install
 
-The GitHub Actions workflow produces **`Nauru-The-Countryside-REALISTIC-v0.2.2.apk`**. Download the `Nauru-The-Countryside-Realistic-Android` artifact from the latest **Build Android APK** run, unzip it, and install the APK on an Android 8.0+ device. Android may ask you to allow installation from your browser/files app.
+The GitHub Actions workflow produces **`Nauru-The-Countryside-MAP-ACCURATE-v0.3.0.apk`**. Install it on Android 8.0 or newer. Remove an older development build first if Android reports a signing conflict.
 
-The APK is a debug-signed development build so it can be installed directly without a Play Store account.
+The APK is a debug-signed development build and does not require a Play Store account.
 
-## What is playable now (Phase 1)
+## Map-accurate v0.3 world
 
-- Approximately 1:1 world units (`1 unit = 1 metre`) with a ~6 km × 4 km procedural Nauru silhouette
-- Continuous island, surrounding animated ocean, beaches, coastal belt, central plateau, mining terrain and Buada Lagoon
-- Original 1024 px photographic grass, weathered airport asphalt and coral-limestone albedo materials with mipmapped filtering
-- Physically-inspired material shading with multi-scale ground detail, tone mapping, specular response and material roughness
-- Dynamic 1024 px sun-shadow map, atmospheric cloud/star sky and Fresnel ocean with sun glint, reef shallows and shoreline foam
-- Higher-density terrain, curved palms, rounded tropical trees, facade windows/doors/porches, detailed airport and road shoulders
-- Ring road, a ~2.15 km runway, airport buildings, harbour/industrial landmarks and procedural settlements
-- Streamed high/low-detail coastal sectors and three graphics presets
-- Third-person walking, running, jumping, camera orbit and pinch zoom with rounded character geometry
-- Smooth original **Reef Runner** vehicle model with acceleration, braking/reverse, steering, off-road traction, suspension attitude, handbrake and collisions with the coast
-- Enter/exit vehicle interaction
-- Day/night lighting, atmospheric distance fog and live in-game time
-- Island minimap, compass, district/location names, vehicle marker, speedometer and touch HUD
-- Automatic checkpoint save/restore
+- Actual Nauru coastline projected from WGS84 into a metre-based local coordinate system
+- Real 30 m SRTM elevation instead of invented hills, including Nauru's central plateau and coastal shelf
+- 561 mapped OpenStreetMap road, track, footpath, runway and taxiway features at their real coordinates
+- 2,634 mapped building footprints, extruded with scalable near/far geometry
+- Real Nauru International Airport runway alignment, apron, taxiways and terminal footprint
+- Mapped Buada Lagoon, beaches, vegetation, residential areas, phosphate quarries and industrial land
+- Mapped district labels and a minimap drawn from the real coastline and main road network
+- Visible in-game OpenStreetMap attribution and fully offline map data
+- Background world preparation screen so large GIS geometry does not freeze Android startup
 
-All geometry, shaders, UI, vehicle/building designs and surface artwork in this prototype are original and created for this project. No proprietary game assets, Google imagery, Street View imagery, or GTA assets are included.
+## Playable systems
+
+- Third-person walking, running, jumping, orbit camera and pinch zoom
+- Original drivable **Reef Runner** with acceleration, braking/reverse, steering and exit/enter controls
+- Actual-road traction and coastline collision
+- Animated tropical ocean, reef shallows, atmospheric sky and day/night lighting
+- Original photographic grass, asphalt and coral-limestone materials
+- Dynamic shadows, material roughness and LOW/MEDIUM/HIGH graphics presets
+- Island minimap, compass, real district/location names, speedometer and touch HUD
+- Automatic checkpoint saving in a map-versioned save slot
+
+This is **geographically map-accurate**, not a claim of Google-Earth-level street photogrammetry. Buildings use real footprints but procedural heights/materials where open source data has no facade detail. No Google Maps, Google Earth, Street View, GTA or other proprietary imagery/assets are included.
+
+## Data sources and licensing
+
+- Map geometry: © OpenStreetMap contributors, [Open Database License](https://www.openstreetmap.org/copyright)
+- Elevation: NASA/NGA SRTM 1 arc-second data, obtained through AWS Terrain Tiles; public domain in the United States
+- Renderer, game code, vehicle, character, generated building finishes and surface art: original project work
+
+Detailed provenance and checksums are in [`data/geodata/SOURCES.md`](data/geodata/SOURCES.md) and [`data/geodata/SHA256SUMS`](data/geodata/SHA256SUMS).
 
 ## Touch controls
 
@@ -44,33 +58,22 @@ All geometry, shaders, UI, vehicle/building designs and surface artwork in this 
 - **DRIFT:** handbrake
 - **EXIT:** leave vehicle
 
-Tap the graphics/FPS pill in the top-right to cycle **LOW → MEDIUM → HIGH**. Fresh installs start at **MEDIUM** on normal devices and automatically select **LOW** when Android reports a low-RAM device.
+Tap the graphics/FPS pill in the top-right to cycle **LOW → MEDIUM → HIGH**. Normal devices start at MEDIUM; Android low-RAM devices automatically start at LOW.
 
-## Build
+## Build and geodata pipeline
 
-The app is dependency-free native Java + OpenGL ES 2.0 and uses Android Gradle Plugin 8.7.3.
+The app is native Java + OpenGL ES 2.0 and uses Android Gradle Plugin 8.7.3.
 
 ```bash
 gradle :app:assembleDebug
 ```
 
-Output: `app/build/outputs/apk/debug/app-debug.apk`
+The open-data import workflow downloads the Nauru OSM extract and SRTM tile. To regenerate the compact runtime map locally:
 
-GitHub CI installs Java 17 and Gradle 8.9, compiles the project, calculates a SHA-256 checksum, and publishes the installable APK as an artifact.
-
-## Source layout
-
-```text
-app/src/main/java/ai/arena/nauru/
-├── entities/   # player and vehicle simulation
-├── game/       # game state, renderer and EGL surface
-├── graphics/   # shaders, GPU mesh and procedural mesh builder
-├── input/      # thread-safe touch input bridge
-├── save/       # checkpoint persistence
-├── ui/         # multitouch HUD and geographic minimap
-└── world/      # island terrain, roads, airport, sectors and landmarks
+```bash
+python3 tools/build_nauru_game_map.py \
+  data/geodata/nauru.osm.gz app/src/main/res/raw/nauru_map.bin
+cp data/geodata/nauru-dem-30m.bin app/src/main/res/raw/nauru_dem_30m.bin
 ```
 
-## Scope
-
-This is the first playable milestone of a long-term project. Terrain and landmarks are plausible procedural approximations designed to be replaceable with appropriately licensed survey/GIS data later; they are not claimed as survey-accurate navigation data.
+The generated binary contains only the features needed by the game, keeping the APK small and allowing fully offline play.

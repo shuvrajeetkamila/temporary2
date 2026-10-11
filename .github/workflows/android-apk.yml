@@ -92,16 +92,16 @@ jobs:
       - name: Stage named APK
         run: |
           mkdir -p artifacts
-          cp app/build/outputs/apk/debug/app-debug.apk artifacts/Nauru-The-Countryside-REALISTIC-v0.2.2.apk
-          sha256sum artifacts/Nauru-The-Countryside-REALISTIC-v0.2.2.apk > artifacts/Nauru-The-Countryside-REALISTIC-v0.2.2.apk.sha256
+          cp app/build/outputs/apk/debug/app-debug.apk artifacts/Nauru-The-Countryside-MAP-ACCURATE-v0.3.0.apk
+          sha256sum artifacts/Nauru-The-Countryside-MAP-ACCURATE-v0.3.0.apk > artifacts/Nauru-The-Countryside-MAP-ACCURATE-v0.3.0.apk.sha256
 
       - name: Upload APK artifact
         uses: actions/upload-artifact@v4
         with:
-          name: Nauru-The-Countryside-Realistic-Android
+          name: Nauru-The-Countryside-Map-Accurate-Android
           path: |
-            artifacts/Nauru-The-Countryside-REALISTIC-v0.2.2.apk
-            artifacts/Nauru-The-Countryside-REALISTIC-v0.2.2.apk.sha256
+            artifacts/Nauru-The-Countryside-MAP-ACCURATE-v0.3.0.apk
+            artifacts/Nauru-The-Countryside-MAP-ACCURATE-v0.3.0.apk.sha256
           if-no-files-found: error
           retention-days: 30
 
@@ -112,6 +112,6 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add -f artifacts/Nauru-The-Countryside-REALISTIC-v0.2.2.apk artifacts/Nauru-The-Countryside-REALISTIC-v0.2.2.apk.sha256 qa/latest-gameplay.png qa/latest-runtime-log.txt qa/latest-runtime-status.txt qa/latest-full-logcat.txt qa/latest-tombstone.txt qa/latest-pid.txt
+          git add -f artifacts/Nauru-The-Countryside-MAP-ACCURATE-v0.3.0.apk artifacts/Nauru-The-Countryside-MAP-ACCURATE-v0.3.0.apk.sha256 qa/latest-gameplay.png qa/latest-runtime-log.txt qa/latest-runtime-status.txt qa/latest-full-logcat.txt qa/latest-tombstone.txt qa/latest-pid.txt
           git diff --cached --quiet || git commit -m "Publish tested realistic Android APK [skip ci]"
           git push origin "HEAD:${GITHUB_REF_NAME}"

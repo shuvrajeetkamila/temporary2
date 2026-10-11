@@ -7,12 +7,12 @@ import android.opengl.GLSurfaceView;
 public final class NauruSurfaceView extends GLSurfaceView {
     private final GameRenderer gameRenderer;
 
-    public NauruSurfaceView(Context context, GameState state) {
+    public NauruSurfaceView(Context context, GameRenderer renderer) {
         super(context);
         setEGLContextClientVersion(2);
         setEGLConfigChooser(8, 8, 8, 8, 16, 0);
         setPreserveEGLContextOnPause(true);
-        gameRenderer = new GameRenderer(context, state);
+        gameRenderer = renderer;
         setRenderer(gameRenderer);
         setRenderMode(GLSurfaceView.RENDERMODE_CONTINUOUSLY);
     }

@@ -14,7 +14,7 @@ import android.view.View;
 
 import ai.arena.nauru.game.GameState;
 import ai.arena.nauru.input.InputState;
-import ai.arena.nauru.world.NauruWorld;
+import ai.arena.nauru.world.NauruMapData;
 
 /** Multi-touch mobile controls and diegetic island map. No bitmap UI assets are required. */
 public final class GameHudView extends View {
@@ -121,13 +121,11 @@ public final class GameHudView extends View {
         paint.setColor(Color.argb(210, 8, 57, 72));
         canvas.drawCircle(cx, cy, radius, paint);
 
-        float mapScale = radius / 3420f;
+        float mapScale = radius / 3500f;
+        float[] coast = state.world.coastlineCoordinates();
         path.reset();
-        float[] p = new float[2];
-        for (int i = 0; i <= 96; i++) {
-            float theta = (float) (i * Math.PI * 2 / 96.0);
-            NauruWorld.coastPoint(theta, 1f, p);
-            float px = cx + p[0] * mapScale, py = cy - p[1] * mapScale;
+        for (int i = 0; i < coast.length; i += 2) {
+            float px = cx + coast[i] * mapScale, py = cy - coast[i + 1] * mapScale;
             if (i == 0) path.moveTo(px, py); else path.lineTo(px, py);
         }
         path.close();
@@ -135,25 +133,23 @@ public final class GameHudView extends View {
         paint.setStyle(Paint.Style.FILL);
         canvas.drawPath(path, paint);
 
-        path.reset();
-        for (int i = 0; i <= 96; i++) {
-            float theta = (float) (i * Math.PI * 2 / 96.0);
-            NauruWorld.coastPoint(theta, .875f, p);
-            float px = cx + p[0] * mapScale, py = cy - p[1] * mapScale;
-            if (i == 0) path.moveTo(px, py); else path.lineTo(px, py);
-        }
+        // Draw the mapped main road network and exact runway rather than a synthetic oval.
         paint.setStyle(Paint.Style.STROKE);
-        paint.setStrokeWidth(2.2f * density);
-        paint.setColor(Color.rgb(221, 211, 176));
-        canvas.drawPath(path, paint);
-
-        float[] a = new float[2], b = new float[2];
-        NauruWorld.localToWorld(-1080, -2440, a);
-        NauruWorld.localToWorld(1080, -2440, b);
-        paint.setStrokeWidth(3f * density);
-        paint.setColor(Color.rgb(225, 231, 224));
-        canvas.drawLine(cx + a[0] * mapScale, cy - a[1] * mapScale,
-                cx + b[0] * mapScale, cy - b[1] * mapScale, paint);
+        paint.setStrokeCap(Paint.Cap.ROUND);
+        for (NauruMapData.Road road : state.world.mapRoads()) {
+            if (road.material != 0 && road.material != 4) continue;
+            path.reset();
+            for (int i = 0; i < road.points.length; i += 2) {
+                float px = cx + road.points[i] * mapScale;
+                float py = cy - road.points[i + 1] * mapScale;
+                if (i == 0) path.moveTo(px, py); else path.lineTo(px, py);
+            }
+            paint.setStrokeWidth((road.material == 4 ? 3.0f : 1.35f) * density);
+            paint.setColor(road.material == 4
+                    ? Color.rgb(225, 231, 224) : Color.rgb(221, 211, 176));
+            canvas.drawPath(path, paint);
+        }
+        paint.setStrokeCap(Paint.Cap.BUTT);
         paint.setStyle(Paint.Style.FILL);
 
         drawMapMarker(canvas, cx + state.vehicle.x * mapScale, cy - state.vehicle.z * mapScale,
@@ -171,6 +167,9 @@ public final class GameHudView extends View {
         paint.setTextSize(9 * density);
         paint.setColor(Color.WHITE);
         canvas.drawText("N", cx, cy - radius + 11 * density, paint);
+        paint.setTextSize(6.8f * density);
+        paint.setColor(Color.argb(205, 225, 236, 231));
+        canvas.drawText("© OpenStreetMap contributors", cx, cy + radius + 11 * density, paint);
     }
 
     private void drawMapMarker(Canvas canvas, float x, float y, float yaw, int color, float size) {
@@ -269,7 +268,7 @@ public final class GameHudView extends View {
         paint.setLetterSpacing(0);
         paint.setTextSize(9 * density);
         paint.setColor(Color.argb((int) (190 * alpha), 235, 240, 230));
-        canvas.drawText("REALISTIC MOBILE WORLD  •  1 WORLD UNIT = 1 METRE", cx, cy + 46 * density, paint);
+        canvas.drawText("REAL NAURU MAP  •  1 WORLD UNIT = 1 METRE", cx, cy + 46 * density, paint);
     }
 
     @Override

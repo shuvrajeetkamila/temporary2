@@ -25,8 +25,7 @@ public final class Vehicle {
         float targetSteering = Math.max(-1f, Math.min(1f, input.moveX));
         steering += (targetSteering - steering) * Math.min(1f, dt * 7.5f);
 
-        float ratio = NauruWorld.coastRatio(x, z);
-        boolean nearRoad = ratio > .84f && ratio < .91f;
+        boolean nearRoad = world.isNearMappedRoad(x, z);
         float traction = nearRoad ? 1f : .72f;
         float acceleration = 8.4f * traction;
         if (input.throttle > .02f) speed += acceleration * input.throttle * dt;

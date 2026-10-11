@@ -45,6 +45,79 @@ public final class MeshBuilder {
         triangle(a, c, d);
     }
 
+    public int vertexCount() {
+        return vertexFloats / 9;
+    }
+
+    /** Extrudes a real GIS footprint, retaining its orientation and irregular shape. */
+    public void addFootprintBuilding(float[] points, float baseY, float height,
+                                     float r, float g, float b) {
+        int count = points.length / 2;
+        if (count < 3) return;
+        float signedArea = 0f, cx = 0f, cz = 0f;
+        for (int i = 0; i < count; i++) {
+            int j = (i + 1) % count;
+            float x0 = points[i * 2], z0 = points[i * 2 + 1];
+            float x1 = points[j * 2], z1 = points[j * 2 + 1];
+            float cross = x0 * z1 - x1 * z0;
+            signedArea += cross;
+            cx += (x0 + x1) * cross;
+            cz += (z0 + z1) * cross;
+        }
+        if (Math.abs(signedArea) > .001f) {
+            cx /= 3f * signedArea;
+            cz /= 3f * signedArea;
+        } else {
+            cx = 0; cz = 0;
+            for (int i = 0; i < count; i++) { cx += points[i * 2]; cz += points[i * 2 + 1]; }
+            cx /= count; cz /= count;
+        }
+        boolean counterClockwise = signedArea > 0;
+        for (int i = 0; i < count; i++) {
+            int j = (i + 1) % count;
+            float x0 = points[i * 2], z0 = points[i * 2 + 1];
+            float x1 = points[j * 2], z1 = points[j * 2 + 1];
+            float dx = x1 - x0, dz = z1 - z0;
+            float inv = 1f / Math.max(.001f, (float) Math.sqrt(dx * dx + dz * dz));
+            float nx = (counterClockwise ? dz : -dz) * inv;
+            float nz = (counterClockwise ? -dx : dx) * inv;
+            float shade = .84f + .12f * Math.abs(nx);
+            int a = vertex(x0, baseY, z0, nx, 0, nz, r * shade, g * shade, b * shade);
+            int bb = vertex(x1, baseY, z1, nx, 0, nz, r * shade, g * shade, b * shade);
+            int c = vertex(x1, baseY + height, z1, nx, 0, nz, r, g, b);
+            int d = vertex(x0, baseY + height, z0, nx, 0, nz, r, g, b);
+            quad(a, bb, c, d);
+        }
+        float roofLift = Math.min(1.6f, .32f + (float) Math.sqrt(Math.abs(signedArea) * .5f) * .055f);
+        int centre = vertex(cx, baseY + height + roofLift, cz, 0, 1, 0,
+                Math.min(1f, r * .58f + .12f), Math.min(1f, g * .55f + .10f),
+                Math.min(1f, b * .52f + .09f));
+        for (int i = 0; i < count; i++) {
+            int j = (i + 1) % count;
+            int a = vertex(points[i * 2], baseY + height, points[i * 2 + 1], 0, 1, 0,
+                    r * .66f, g * .62f, b * .58f);
+            int bb = vertex(points[j * 2], baseY + height, points[j * 2 + 1], 0, 1, 0,
+                    r * .72f, g * .67f, b * .62f);
+            if (counterClockwise) triangle(a, bb, centre); else triangle(bb, a, centre);
+        }
+    }
+
+    /** Flat polygon fan used for mapped lagoon, apron and land-cover overlays. */
+    public void addPolygonSurface(float[] points, float y, float r, float g, float b) {
+        int count = points.length / 2;
+        if (count < 3) return;
+        float cx = 0, cz = 0;
+        for (int i = 0; i < count; i++) { cx += points[i * 2]; cz += points[i * 2 + 1]; }
+        cx /= count; cz /= count;
+        int centre = vertex(cx, y, cz, 0, 1, 0, r, g, b);
+        for (int i = 0; i < count; i++) {
+            int j = (i + 1) % count;
+            int a = vertex(points[i * 2], y, points[i * 2 + 1], 0, 1, 0, r, g, b);
+            int bb = vertex(points[j * 2], y, points[j * 2 + 1], 0, 1, 0, r, g, b);
+            triangle(centre, a, bb);
+        }
+    }
+
     public void addBox(float cx, float baseY, float cz, float sx, float sy, float sz,
                        float yaw, float r, float g, float b) {
         float hx = sx * 0.5f, hz = sz * 0.5f;
