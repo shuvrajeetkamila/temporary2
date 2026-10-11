@@ -121,19 +121,81 @@ public final class MeshBuilder {
     }
 
     public void addPalm(float x, float y, float z, float height, float scale) {
-        addCylinder(x, y, z, .18f * scale, height, 6, .34f, .23f, .12f);
+        // A faceted but slender trunk and curved ribbon fronds read naturally at gameplay distance.
+        addCylinder(x, y, z, .16f * scale, height, 9, .34f, .245f, .145f);
         float top = y + height;
-        addCylinder(x, top - .2f, z, .52f * scale, .65f * scale, 7, .28f, .48f, .15f);
-        for (int i = 0; i < 8; i++) {
-            double a = i * Math.PI * .25;
-            float dx = (float) Math.cos(a), dz = (float) Math.sin(a);
-            float sideX = -dz * .34f * scale, sideZ = dx * .34f * scale;
-            float len = (3.0f + (i % 3) * .28f) * scale;
-            int p0 = vertex(x - sideX, top + .32f, z - sideZ, 0, 1, 0, .12f, .48f, .18f);
-            int p1 = vertex(x + sideX, top + .32f, z + sideZ, 0, 1, 0, .18f, .62f, .22f);
-            int p2 = vertex(x + dx * len, top - .75f * scale, z + dz * len, 0, 1, 0, .08f, .38f, .13f);
-            triangle(p0, p1, p2);
-            triangle(p2, p1, p0);
+        addEllipsoid(x, top + .05f, z, .48f * scale, .34f * scale, .48f * scale,
+                5, 8, .20f, .39f, .115f);
+        for (int i = 0; i < 10; i++) {
+            double angle = i * Math.PI * 2.0 / 10.0 + (i % 2) * .11;
+            float dx = (float) Math.cos(angle), dz = (float) Math.sin(angle);
+            float sideX = -dz, sideZ = dx;
+            float length = (3.15f + (i % 3) * .32f) * scale;
+            float previousT = 0f;
+            for (int segment = 0; segment < 4; segment++) {
+                float nextT = (segment + 1) / 4f;
+                float previousWidth = (.42f * (1f - previousT) + .055f) * scale;
+                float nextWidth = (.42f * (1f - nextT) + .055f) * scale;
+                float px0 = x + dx * length * previousT;
+                float pz0 = z + dz * length * previousT;
+                float py0 = top + .38f * scale - previousT * previousT * 1.38f * scale;
+                float px1 = x + dx * length * nextT;
+                float pz1 = z + dz * length * nextT;
+                float py1 = top + .38f * scale - nextT * nextT * 1.38f * scale;
+                float green = .47f + .08f * ((i + segment) % 3);
+                int a = vertex(px0 - sideX * previousWidth, py0, pz0 - sideZ * previousWidth,
+                        0, .92f, 0, .085f, green, .13f);
+                int bb = vertex(px0 + sideX * previousWidth, py0, pz0 + sideZ * previousWidth,
+                        0, .92f, 0, .12f, green + .06f, .16f);
+                int c = vertex(px1 + sideX * nextWidth, py1, pz1 + sideZ * nextWidth,
+                        0, .82f, 0, .07f, green * .83f, .105f);
+                int d = vertex(px1 - sideX * nextWidth, py1, pz1 - sideZ * nextWidth,
+                        0, .82f, 0, .06f, green * .77f, .09f);
+                quad(a, bb, c, d);
+                previousT = nextT;
+            }
+        }
+        // Small coconuts add recognisable scale and break up the crown silhouette.
+        for (int i = 0; i < 3; i++) {
+            double a = i * Math.PI * 2.0 / 3.0;
+            addEllipsoid(x + (float) Math.cos(a) * .28f * scale, top - .22f * scale,
+                    z + (float) Math.sin(a) * .28f * scale,
+                    .16f * scale, .19f * scale, .16f * scale, 4, 6, .29f, .22f, .09f);
+        }
+    }
+
+    public void addTropicalTree(float x, float y, float z, float height, float scale) {
+        addCylinder(x, y, z, .22f * scale, height * .58f, 8, .29f, .22f, .13f);
+        float crownY = y + height * .70f;
+        addEllipsoid(x, crownY, z, 1.65f * scale, 1.42f * scale, 1.50f * scale,
+                6, 9, .105f, .35f, .12f);
+        addEllipsoid(x - .92f * scale, crownY - .25f * scale, z + .35f * scale,
+                1.05f * scale, 1.02f * scale, 1.08f * scale, 5, 8, .13f, .43f, .15f);
+        addEllipsoid(x + .84f * scale, crownY - .18f * scale, z - .28f * scale,
+                1.12f * scale, .94f * scale, 1.06f * scale, 5, 8, .08f, .31f, .10f);
+    }
+
+    public void addEllipsoid(float cx, float cy, float cz, float rx, float ry, float rz,
+                             int stacks, int slices, float r, float g, float b) {
+        int[][] ids = new int[stacks + 1][slices + 1];
+        for (int iy = 0; iy <= stacks; iy++) {
+            float latitude = (float) (-Math.PI * .5 + Math.PI * iy / stacks);
+            float cosLat = (float) Math.cos(latitude), sinLat = (float) Math.sin(latitude);
+            for (int ix = 0; ix <= slices; ix++) {
+                float longitude = (float) (Math.PI * 2.0 * ix / slices);
+                float cosLon = (float) Math.cos(longitude), sinLon = (float) Math.sin(longitude);
+                float px = cosLat * cosLon, py = sinLat, pz = cosLat * sinLon;
+                float nx = px / Math.max(.001f, rx), ny = py / Math.max(.001f, ry), nz = pz / Math.max(.001f, rz);
+                float inv = 1f / Math.max(.001f, (float) Math.sqrt(nx * nx + ny * ny + nz * nz));
+                float variation = .93f + .07f * (float) Math.sin(ix * 2.7f + iy * 1.9f);
+                ids[iy][ix] = vertex(cx + px * rx, cy + py * ry, cz + pz * rz,
+                        nx * inv, ny * inv, nz * inv, r * variation, g * variation, b * variation);
+            }
+        }
+        for (int iy = 0; iy < stacks; iy++) {
+            for (int ix = 0; ix < slices; ix++) {
+                quad(ids[iy][ix], ids[iy][ix + 1], ids[iy + 1][ix + 1], ids[iy + 1][ix]);
+            }
         }
     }
 

@@ -4,7 +4,7 @@ A playable, original Android open-world prototype of Nauru. This repository cont
 
 ## Download / install
 
-The GitHub Actions workflow produces **`Nauru-The-Countryside-v0.1.0.apk`**. Download the `Nauru-The-Countryside-Android` artifact from the latest **Build Android APK** run, unzip it, and install the APK on an Android 8.0+ device. Android may ask you to allow installation from your browser/files app.
+The GitHub Actions workflow produces **`Nauru-The-Countryside-REALISTIC-v0.2.0.apk`**. Download the `Nauru-The-Countryside-Realistic-Android` artifact from the latest **Build Android APK** run, unzip it, and install the APK on an Android 8.0+ device. Android may ask you to allow installation from your browser/files app.
 
 The APK is a debug-signed development build so it can be installed directly without a Play Store account.
 
@@ -12,10 +12,13 @@ The APK is a debug-signed development build so it can be installed directly with
 
 - Approximately 1:1 world units (`1 unit = 1 metre`) with a ~6 km × 4 km procedural Nauru silhouette
 - Continuous island, surrounding animated ocean, beaches, coastal belt, central plateau, mining terrain and Buada Lagoon
+- Physically-inspired material shading with multi-scale ground detail, tone mapping, specular response and material roughness
+- Dynamic 1024 px sun-shadow map, atmospheric cloud/star sky and Fresnel ocean with sun glint, reef shallows and shoreline foam
+- Higher-density terrain, curved palms, rounded tropical trees, facade windows/doors/porches, detailed airport and road shoulders
 - Ring road, a ~2.15 km runway, airport buildings, harbour/industrial landmarks and procedural settlements
 - Streamed high/low-detail coastal sectors and three graphics presets
-- Third-person walking, running, jumping, camera orbit and pinch zoom
-- Original drivable **Reef Runner** vehicle with acceleration, braking/reverse, steering, off-road traction, suspension attitude, handbrake and collisions with the coast
+- Third-person walking, running, jumping, camera orbit and pinch zoom with rounded character geometry
+- Smooth original **Reef Runner** vehicle model with acceleration, braking/reverse, steering, off-road traction, suspension attitude, handbrake and collisions with the coast
 - Enter/exit vehicle interaction
 - Day/night lighting, atmospheric distance fog and live in-game time
 - Island minimap, compass, district/location names, vehicle marker, speedometer and touch HUD

@@ -26,6 +26,7 @@ public final class NauruWorld {
 
     private Mesh oceanMesh;
     private Mesh terrainMesh;
+    private Mesh shoulderMesh;
     private Mesh roadMesh;
     private Mesh markingMesh;
     private Mesh landmarkMesh;
@@ -157,7 +158,8 @@ public final class NauruWorld {
     }
 
     private Mesh buildTerrain() {
-        final int countX = 129, countZ = 145;
+        // Dense enough that coastal shelves and mining undulation remain smooth at road speed.
+        final int countX = 161, countZ = 181;
         final float minX = -3500f, maxX = 3500f, minZ = -3900f, maxZ = 3900f;
         MeshBuilder b = new MeshBuilder();
         int[][] ids = new int[countZ][countX];
@@ -198,6 +200,7 @@ public final class NauruWorld {
     }
 
     private void buildRoadsAndAirport() {
+        MeshBuilder shoulder = new MeshBuilder();
         MeshBuilder road = new MeshBuilder();
         MeshBuilder marks = new MeshBuilder();
         final int segments = 360;
@@ -207,14 +210,16 @@ public final class NauruWorld {
             float t1 = (float) ((i + 1) * Math.PI * 2.0 / segments);
             coastPoint(t0, .875f, p0);
             coastPoint(t1, .875f, p1);
-            addRibbonSegment(road, p0[0], p0[1], p1[0], p1[1], 10.5f, .16f, .18f, .18f, .28f);
+            addRibbonSegment(shoulder, p0[0], p0[1], p1[0], p1[1], 15.5f, .38f, .34f, .26f, .20f);
+            addRibbonSegment(road, p0[0], p0[1], p1[0], p1[1], 10.5f, .115f, .13f, .135f, .28f);
             if ((i & 1) == 0) {
                 addRibbonSegment(marks, p0[0], p0[1], p1[0], p1[1], .28f, .91f, .82f, .49f, .34f);
             }
         }
 
         // Nauru International Airport: approximately 2.15 km, aligned with the southern coast.
-        addLocalRectangle(road, 0f, -2440f, 2160f, 47f, 3.68f, .12f, .14f, .15f);
+        addLocalRectangle(shoulder, 0f, -2440f, 2190f, 58f, 3.60f, .36f, .35f, .31f);
+        addLocalRectangle(road, 0f, -2440f, 2160f, 47f, 3.68f, .095f, .105f, .11f);
         addLocalRectangle(marks, 0f, -2440f, 1940f, .65f, 3.73f, .92f, .92f, .87f);
         for (int i = -8; i <= 8; i++) {
             addLocalRectangle(marks, i * 105f, -2440f, 38f, 1.2f, 3.75f, .95f, .95f, .9f);
@@ -224,6 +229,7 @@ public final class NauruWorld {
             addLocalRectangle(marks, -1015f, -2440f + j * 4.8f, 31f, 2.8f, 3.76f, .95f, .95f, .9f);
             addLocalRectangle(marks, 1015f, -2440f + j * 4.8f, 31f, 2.8f, 3.76f, .95f, .95f, .9f);
         }
+        shoulderMesh = shoulder.build();
         roadMesh = road.build();
         markingMesh = marks.build();
     }
@@ -260,6 +266,12 @@ public final class NauruWorld {
         float terminalY = heightAt(p[0], p[1]);
         b.addBox(p[0], terminalY, p[1], 95, 9, 26, -WORLD_ROTATION, .74f, .71f, .61f);
         b.addHipRoof(p[0], terminalY + 9, p[1], 98, 4, 29, -WORLD_ROTATION, .22f, .36f, .40f);
+        for (int i = -4; i <= 4; i++) {
+            float[] window = new float[2];
+            localToWorld(230f + i * 9.2f, -2166.9f, window);
+            b.addBox(window[0], terminalY + 2.2f, window[1], 5.6f, 3.7f, .16f,
+                    -WORLD_ROTATION, .045f, .19f, .25f);
+        }
         localToWorld(-230f, -2180f, p);
         b.addBox(p[0], heightAt(p[0], p[1]), p[1], 70, 12, 32, -WORLD_ROTATION, .64f, .68f, .66f);
         b.addHipRoof(p[0], heightAt(p[0], p[1]) + 12, p[1], 73, 4, 35, -WORLD_ROTATION, .33f, .37f, .39f);
@@ -316,6 +328,47 @@ public final class NauruWorld {
         miningMesh = b.build();
     }
 
+    private void addDetailedHouse(MeshBuilder b, float x, float y, float z,
+                                  float sx, float sy, float sz, float yaw,
+                                  float r, float g, float blue, Random random) {
+        // Foundation, plaster/timber walls and overhanging roof are separate materials by colour.
+        b.addBox(x, y, z, sx + .7f, .34f, sz + .7f, yaw, .42f, .40f, .34f);
+        b.addBox(x, y + .34f, z, sx, sy, sz, yaw, r, g, blue);
+        float roofR = .25f + random.nextFloat() * .28f;
+        b.addHipRoof(x, y + sy + .34f, z, sx + 1.25f, 2.15f, sz + 1.25f,
+                yaw, roofR, .22f + random.nextFloat() * .12f, .18f);
+
+        float sin = (float) Math.sin(yaw), cos = (float) Math.cos(yaw);
+        float forwardX = -sin, forwardZ = cos;
+        float sideX = cos, sideZ = sin;
+        float faceOffset = sz * .5f + .08f;
+        float doorOffset = -sx * .18f;
+        float doorX = x + forwardX * faceOffset + sideX * doorOffset;
+        float doorZ = z + forwardZ * faceOffset + sideZ * doorOffset;
+        b.addBox(doorX, y + .35f, doorZ, Math.min(1.45f, sx * .13f), 2.35f, .16f,
+                yaw, .24f, .20f, .15f);
+        // Two reflective, recessed windows on the road-facing facade.
+        for (int side = -1; side <= 1; side += 2) {
+            float offset = side * sx * .25f;
+            float wx = x + forwardX * (faceOffset + .015f) + sideX * offset;
+            float wz = z + forwardZ * (faceOffset + .015f) + sideZ * offset;
+            b.addBox(wx, y + 1.42f, wz, Math.min(2.25f, sx * .20f), 1.35f, .12f,
+                    yaw, .055f, .16f, .205f);
+            // Pale lintel catches sunlight and gives the opening readable depth.
+            b.addBox(wx, y + 2.78f, wz, Math.min(2.48f, sx * .22f), .13f, .18f,
+                    yaw, .78f, .77f, .68f);
+        }
+        // A thin shaded porch canopy, plus a small service unit on varied homes.
+        b.addBox(doorX, y + 2.72f, doorZ + forwardZ * .58f,
+                Math.min(3.2f, sx * .28f), .14f, 1.35f, yaw, .31f, .34f, .32f);
+        if (random.nextBoolean()) {
+            float unitX = x - sideX * (sx * .5f + .28f);
+            float unitZ = z - sideZ * (sx * .5f + .28f);
+            b.addBox(unitX, y + 1.0f, unitZ, .52f, .72f, 1.05f,
+                    yaw, .60f, .62f, .57f);
+        }
+    }
+
     private void buildCoastalSectors() {
         final int sectorCount = 12;
         for (int sectorIndex = 0; sectorIndex < sectorCount; sectorIndex++) {
@@ -342,9 +395,8 @@ public final class NauruWorld {
                 float yaw = theta + (float) Math.PI * .5f;
                 float[][] palette = {{.72f,.62f,.47f},{.68f,.75f,.67f},{.73f,.54f,.43f},{.50f,.67f,.69f},{.78f,.73f,.61f}};
                 float[] color = palette[random.nextInt(palette.length)];
-                high.addBox(p[0], y, p[1], sx, sy, sz, yaw, color[0], color[1], color[2]);
-                high.addHipRoof(p[0], y + sy, p[1], sx + 1, 2.3f, sz + 1, yaw,
-                        .30f + random.nextFloat() * .24f, .24f, .19f);
+                addDetailedHouse(high, p[0], y, p[1], sx, sy, sz, yaw,
+                        color[0], color[1], color[2], random);
                 low.addBox(p[0], y, p[1], sx, sy + 1.4f, sz, yaw,
                         color[0] * .9f, color[1] * .9f, color[2] * .9f);
             }
@@ -359,17 +411,23 @@ public final class NauruWorld {
                 if (local[1] < -2110 && Math.abs(local[0]) < 1250) continue;
                 float y = heightAt(p[0], p[1]);
                 if (y < .4f) continue;
-                high.addPalm(p[0], y, p[1], 6.5f + random.nextFloat() * 6f, .8f + random.nextFloat() * .5f);
-                // A low-cost crossed crown reads as vegetation at distance.
-                low.addCylinder(p[0], y, p[1], .2f, 6f, 4, .27f, .25f, .13f);
-                low.addBox(p[0], y + 5.5f, p[1], 3.8f, 2.4f, 3.8f, theta, .12f, .39f, .16f);
+                float treeScale = .78f + random.nextFloat() * .48f;
+                if (i % 4 == 0) {
+                    high.addTropicalTree(p[0], y, p[1], 7.5f + random.nextFloat() * 4f, treeScale);
+                } else {
+                    high.addPalm(p[0], y, p[1], 7.5f + random.nextFloat() * 6f, treeScale);
+                }
+                // Rounded distant crowns avoid the old block-shaped vegetation silhouette.
+                low.addCylinder(p[0], y, p[1], .19f, 6f, 5, .27f, .25f, .13f);
+                low.addEllipsoid(p[0], y + 6.1f, p[1], 2.2f, 1.5f, 2.2f,
+                        4, 6, .10f, .36f, .13f);
             }
             sectors.add(new Sector(centre[0], centre[1], high.build(), low.build()));
         }
     }
 
     public void invalidateGl() {
-        oceanMesh.invalidateGl(); terrainMesh.invalidateGl(); roadMesh.invalidateGl();
+        oceanMesh.invalidateGl(); terrainMesh.invalidateGl(); shoulderMesh.invalidateGl(); roadMesh.invalidateGl();
         markingMesh.invalidateGl(); landmarkMesh.invalidateGl(); miningMesh.invalidateGl();
         for (Sector sector : sectors) sector.invalidateGl();
     }
@@ -378,15 +436,20 @@ public final class NauruWorld {
         oceanMesh.draw();
     }
 
-    public void drawLand(float cameraX, float cameraZ, int quality) {
-        terrainMesh.draw();
-        roadMesh.draw();
-        markingMesh.draw();
-        landmarkMesh.draw();
+    /** Draws streamed world categories while selecting their physically-inspired material class. */
+    public void drawLand(float cameraX, float cameraZ, int quality, int materialUniform) {
+        setMaterial(materialUniform, 0); terrainMesh.draw();
+        setMaterial(materialUniform, 0); shoulderMesh.draw();
+        setMaterial(materialUniform, 1); roadMesh.draw();
+        setMaterial(materialUniform, 2); markingMesh.draw();
+        setMaterial(materialUniform, 3); landmarkMesh.draw();
 
         float miningDistance = (float) Math.hypot(cameraX, cameraZ);
-        if (miningDistance < (quality == 0 ? 1350f : 2300f)) miningMesh.draw();
+        if (miningDistance < (quality == 0 ? 1350f : 2300f)) {
+            setMaterial(materialUniform, 4); miningMesh.draw();
+        }
 
+        setMaterial(materialUniform, 3);
         visibleSectors = 0;
         float highRange = quality == 0 ? 650f : quality == 1 ? 1050f : 1450f;
         float lowRange = quality == 0 ? 1450f : quality == 1 ? 2150f : 3000f;
@@ -399,6 +462,10 @@ public final class NauruWorld {
                 sector.low.draw(); visibleSectors++;
             }
         }
+    }
+
+    private static void setMaterial(int uniform, int material) {
+        if (uniform >= 0) GLES20.glUniform1f(uniform, material);
     }
 
     public int getVisibleSectors() {
