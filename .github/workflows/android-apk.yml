@@ -5,10 +5,12 @@ on:
     branches:
       - arena/8288058f-temporary2
       - main
+    paths-ignore:
+      - 'artifacts/**'
   workflow_dispatch:
 
 permissions:
-  contents: read
+  contents: write
 
 jobs:
   build-apk:
@@ -45,3 +47,14 @@ jobs:
           path: artifacts/
           if-no-files-found: error
           retention-days: 30
+
+      # Keeping this small APK on the game branch also provides a direct repository
+      # deliverable in environments that cannot follow Actions' external blob redirect.
+      - name: Publish APK on the source branch
+        if: github.ref == 'refs/heads/arena/8288058f-temporary2'
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -f artifacts/Nauru-The-Countryside-v0.1.0.apk artifacts/Nauru-The-Countryside-v0.1.0.apk.sha256
+          git diff --cached --quiet || git commit -m "Publish compiled Android APK [skip ci]"
+          git push origin "HEAD:${GITHUB_REF_NAME}"
