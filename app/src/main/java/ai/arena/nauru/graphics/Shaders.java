@@ -77,15 +77,15 @@ public final class Shaders {
             "   float organic=detailA.r*0.62+detailB.g*0.38;\n" +
             "   if(base.g>base.r*1.10){\n" +
             "     vec3 grass=texture2D(uGrassTexture,surfaceUv).rgb;\n" +
-            "     base=mix(base*(0.72+organic*0.42),grass,0.58);\n" +
+            "     base=mix(base*(0.72+organic*0.42),grass,0.74);\n" +
             "   }else{\n" +
             "     vec3 coral=texture2D(uCoralTexture,surfaceUv*0.72).rgb;\n" +
-            "     base=mix(base*(0.78+organic*0.30),coral,0.46);\n" +
+            "     base=mix(base*(0.78+organic*0.30),coral,0.62);\n" +
             "   }\n" +
             "   n=normalize(n+vec3(detailB.r-detailB.g,0.0,detailB.b-detailB.r)*0.13); roughness=0.92;\n" +
             " }else if(uMaterial<1.5){\n" +
             "   vec3 asphalt=texture2D(uAsphaltTexture,surfaceUv*1.28).rgb;\n" +
-            "   base=mix(base,asphalt,0.76);\n" +
+            "   base=mix(base,asphalt,0.82);\n" +
             "   n=normalize(n+vec3(detailB.r-detailB.g,0.0,detailB.b-detailB.r)*0.055); roughness=0.84;\n" +
             " }else if(uMaterial<2.5){ base*=0.93+detailB.r*0.10; roughness=0.58;\n" +
             " }else if(uMaterial<3.5){\n" +
@@ -95,7 +95,7 @@ public final class Shaders {
             " }else if(uMaterial<4.5){\n" +
             "   vec3 coral=texture2D(uCoralTexture,surfaceUv*.92).rgb;\n" +
             "   float strata=0.76+0.18*sin(vWorldPosition.y*2.8+detailA.r*4.0);\n" +
-            "   base=mix(base,coral,0.48)*strata; n=normalize(n+vec3(detailB.r-detailB.g,0.0,detailB.b-detailB.r)*.18); roughness=0.94;\n" +
+            "   base=mix(base,coral,0.64)*strata; n=normalize(n+vec3(detailB.r-detailB.g,0.0,detailB.b-detailB.r)*.18); roughness=0.94;\n" +
             " }else if(uMaterial<5.5){ base*=0.96+detailB.r*0.035; roughness=0.18;\n" +
             " }else { base*=0.91+detailA.r*0.12; roughness=0.72; }\n" +
             " float ndl=max(dot(n,l),0.0); float shadow=shadowVisibility(n,l);\n" +

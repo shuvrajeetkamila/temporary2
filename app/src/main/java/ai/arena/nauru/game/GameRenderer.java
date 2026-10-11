@@ -16,6 +16,7 @@ import ai.arena.nauru.graphics.MeshBuilder;
 import ai.arena.nauru.graphics.ProceduralTexture;
 import ai.arena.nauru.graphics.ShaderProgram;
 import ai.arena.nauru.graphics.Shaders;
+import ai.arena.nauru.graphics.TextureLoader;
 
 /**
  * Mobile physically-inspired renderer: procedural material detail, soft local sun shadows,
@@ -25,6 +26,7 @@ public final class GameRenderer implements GLSurfaceView.Renderer {
     private static final String TAG = "NauruRenderer";
     private static final int SHADOW_SIZE = 1024;
 
+    private final Context context;
     private final GameState state;
     private ShaderProgram worldShader;
     private ShaderProgram waterShader;
@@ -80,6 +82,7 @@ public final class GameRenderer implements GLSurfaceView.Renderer {
     private int uShadowLightViewProjection, uShadowModel;
 
     public GameRenderer(Context context, GameState state) {
+        this.context = context.getApplicationContext();
         this.state = state;
         cube = buildCube();
         cylinder = buildCylinder();
@@ -108,7 +111,13 @@ public final class GameRenderer implements GLSurfaceView.Renderer {
         shadowShader = new ShaderProgram(Shaders.SHADOW_VERTEX, Shaders.SHADOW_FRAGMENT);
         cacheUniforms();
         detailTexture = ProceduralTexture.createMaterialDetail();
-        surfaceTextures = ProceduralTexture.createSurfaceSet();
+        try {
+            surfaceTextures = TextureLoader.loadPhotorealSurfaceSet(context);
+            Log.i(TAG, "loaded 1024px photographic Nauru surface materials");
+        } catch (RuntimeException textureError) {
+            Log.w(TAG, "photographic material load failed; using procedural fallback", textureError);
+            surfaceTextures = ProceduralTexture.createSurfaceSet();
+        }
         createShadowTarget();
 
         state.world.invalidateGl();

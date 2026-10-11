@@ -4,7 +4,7 @@ A playable, original Android open-world prototype of Nauru. This repository cont
 
 ## Download / install
 
-The GitHub Actions workflow produces **`Nauru-The-Countryside-REALISTIC-v0.2.0.apk`**. Download the `Nauru-The-Countryside-Realistic-Android` artifact from the latest **Build Android APK** run, unzip it, and install the APK on an Android 8.0+ device. Android may ask you to allow installation from your browser/files app.
+The GitHub Actions workflow produces **`Nauru-The-Countryside-REALISTIC-v0.2.1.apk`**. Download the `Nauru-The-Countryside-Realistic-Android` artifact from the latest **Build Android APK** run, unzip it, and install the APK on an Android 8.0+ device. Android may ask you to allow installation from your browser/files app.
 
 The APK is a debug-signed development build so it can be installed directly without a Play Store account.
 
@@ -12,6 +12,7 @@ The APK is a debug-signed development build so it can be installed directly with
 
 - Approximately 1:1 world units (`1 unit = 1 metre`) with a ~6 km × 4 km procedural Nauru silhouette
 - Continuous island, surrounding animated ocean, beaches, coastal belt, central plateau, mining terrain and Buada Lagoon
+- Original 1024 px photographic grass, weathered airport asphalt and coral-limestone albedo materials with mipmapped filtering
 - Physically-inspired material shading with multi-scale ground detail, tone mapping, specular response and material roughness
 - Dynamic 1024 px sun-shadow map, atmospheric cloud/star sky and Fresnel ocean with sun glint, reef shallows and shoreline foam
 - Higher-density terrain, curved palms, rounded tropical trees, facade windows/doors/porches, detailed airport and road shoulders
@@ -24,7 +25,7 @@ The APK is a debug-signed development build so it can be installed directly with
 - Island minimap, compass, district/location names, vehicle marker, speedometer and touch HUD
 - Automatic checkpoint save/restore
 
-All geometry, shaders, UI and vehicle/building designs in this prototype are original and generated from source code. No proprietary game assets, Google imagery, Street View imagery, or GTA assets are included.
+All geometry, shaders, UI, vehicle/building designs and surface artwork in this prototype are original and created for this project. No proprietary game assets, Google imagery, Street View imagery, or GTA assets are included.
 
 ## Touch controls
 
