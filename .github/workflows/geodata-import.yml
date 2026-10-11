@@ -1,0 +1,51 @@
+name: Import open Nauru geodata
+
+on:
+  push:
+    branches:
+      - arena/8288058f-temporary2
+    paths:
+      - 'tools/geodata-request.txt'
+
+permissions:
+  contents: write
+
+jobs:
+  import-geodata:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Check out importer
+        uses: actions/checkout@v4
+
+      - name: Download OpenStreetMap features for Nauru
+        run: |
+          mkdir -p data/geodata /tmp/nauru-geodata
+          curl --fail --location --retry 4 --retry-all-errors \
+            --user-agent 'NauruTheCountryside/0.3 geodata importer' \
+            'https://api.openstreetmap.org/api/0.6/map?bbox=166.88,-0.59,167.02,-0.45' \
+            --output /tmp/nauru-geodata/nauru.osm
+          gzip -9 -c /tmp/nauru-geodata/nauru.osm > data/geodata/nauru.osm.gz
+
+      - name: Download and crop public SRTM elevation
+        run: |
+          curl --fail --location --retry 4 --retry-all-errors \
+            'https://s3.amazonaws.com/elevation-tiles-prod/skadi/S01/S01E166.hgt.gz' \
+            --output /tmp/nauru-geodata/S01E166.hgt.gz
+          python3 tools/extract_nauru_dem.py \
+            /tmp/nauru-geodata/S01E166.hgt.gz data/geodata/nauru-dem-30m.bin
+
+      - name: Record source checksums
+        run: |
+          sha256sum data/geodata/nauru.osm.gz data/geodata/nauru-dem-30m.bin \
+            > data/geodata/SHA256SUMS
+          gzip -t data/geodata/nauru.osm.gz
+          ls -lh data/geodata
+
+      - name: Publish imported data to this branch
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/geodata
+          git diff --cached --quiet || git commit -m "Import open Nauru map and elevation data [skip ci]"
+          git push origin "HEAD:${GITHUB_REF_NAME}"

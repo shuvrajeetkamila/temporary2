@@ -8,6 +8,9 @@ on:
     paths-ignore:
       - 'artifacts/**'
       - 'qa/**'
+      - 'data/**'
+      - 'tools/**'
+      - '.github/workflows/geodata-import.yml'
   workflow_dispatch:
 
 permissions:
