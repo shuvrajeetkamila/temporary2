@@ -1,0 +1,18 @@
+10-11 13:57:33.793  2486  2486 D AndroidRuntime: >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
+10-11 13:57:33.794  2486  2486 I AndroidRuntime: Using default boot image
+10-11 13:57:33.794  2486  2486 I AndroidRuntime: Leaving lock profiling enabled
+10-11 13:57:34.044  2486  2486 D AndroidRuntime: Calling main entry com.android.commands.input.Input
+10-11 13:57:34.235  2486  2486 D AndroidRuntime: Shutting down VM
+10-11 13:57:35.231  1911  1950 V BackupManagerService: restoreAtInstall pkg=ai.arena.nauru.dev token=1 restoreSet=0
+10-11 13:57:35.453  1911  1982 I ActivityTaskManager: START u0 {flg=0x10000000 cmp=ai.arena.nauru.dev/ai.arena.nauru.MainActivity} from uid 2000
+10-11 13:57:36.139  1911  1938 I ActivityManager: Start proc 2702:ai.arena.nauru.dev/u0a116 for activity {ai.arena.nauru.dev/ai.arena.nauru.MainActivity}
+10-11 13:57:36.270  2702  2702 W RenderThread: type=1400 audit(0.0:19): avc: denied { write } for name="property_service" dev="tmpfs" ino=7790 scontext=u:r:untrusted_app:s0:c116,c256,c512,c768 tcontext=u:object_r:property_socket:s0 tclass=sock_file permissive=0 app=ai.arena.nauru.dev
+10-11 13:57:37.100  2809  2809 F DEBUG   : pid: 2702, tid: 2747, name: RenderThread  >>> ai.arena.nauru.dev <<<
+10-11 13:57:37.531  1911  1926 W BroadcastQueue: Background execution not allowed: receiving Intent { act=android.intent.action.PACKAGE_ADDED dat=package:ai.arena.nauru.dev flg=0x4000010 (has extras) } to com.android.packageinstaller/.PackageInstalledReceiver
+10-11 13:57:37.534  1911  1937 W BroadcastQueue: Background execution not allowed: receiving Intent { act=android.intent.action.PACKAGE_ADDED dat=package:ai.arena.nauru.dev flg=0x4000010 (has extras) } to com.android.gallery3d/.app.PackagesMonitor
+10-11 13:57:37.534  1911  1937 W BroadcastQueue: Background execution not allowed: receiving Intent { act=android.intent.action.PACKAGE_ADDED dat=package:ai.arena.nauru.dev flg=0x4000010 (has extras) } to com.android.musicfx/.Compatibility$Receiver
+10-11 13:57:38.369  1911  2957 W ActivityTaskManager:   Force finishing activity ai.arena.nauru.dev/ai.arena.nauru.MainActivity
+10-11 13:57:38.468  1911  2668 I WindowManager: WIN DEATH: Window{29444cb u0 ai.arena.nauru.dev/ai.arena.nauru.MainActivity}
+10-11 13:57:38.468  1911  2693 I ActivityManager: Process ai.arena.nauru.dev (pid 2702) has died: fore TOP 
+10-11 13:57:38.473  1911  2686 E InputDispatcher: Window handle Window{29444cb u0 ai.arena.nauru.dev/ai.arena.nauru.MainActivity} has no registered input channel
+10-11 13:57:39.469  1911  1931 W ActivityTaskManager: Activity top resumed state loss timeout for ActivityRecord{d7a5d2c u0 ai.arena.nauru.dev/ai.arena.nauru.MainActivity t-1 f}
