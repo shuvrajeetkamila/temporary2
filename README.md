@@ -44,7 +44,7 @@ All geometry, shaders, UI, vehicle/building designs and surface artwork in this 
 - **DRIFT:** handbrake
 - **EXIT:** leave vehicle
 
-Tap the graphics/FPS pill in the top-right to cycle **LOW → MEDIUM → HIGH**.
+Tap the graphics/FPS pill in the top-right to cycle **LOW → MEDIUM → HIGH**. Fresh installs start at **MEDIUM** on normal devices and automatically select **LOW** when Android reports a low-RAM device.
 
 ## Build
 
