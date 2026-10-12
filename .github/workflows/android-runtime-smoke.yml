@@ -45,33 +45,34 @@ jobs:
             -no-snapshot -no-snapshot-save -gpu swiftshader_indirect \
             > qa/qatar-runtime/emulator-boot.log 2>&1 &
           echo $! > qa/qatar-runtime/emulator-host-pid.txt
-          adb wait-for-device
-          timeout 420 bash -c 'until [ "$(adb shell getprop sys.boot_completed 2>/dev/null | tr -d "\r")" = "1" ]; do sleep 3; done'
-          adb shell settings put global window_animation_scale 0
-          adb shell settings put global transition_animation_scale 0
-          adb shell settings put global animator_duration_scale 0
-          adb shell wm size 1280x720
+          "$ANDROID_HOME/platform-tools/adb" wait-for-device
+          timeout 420 bash -c 'until [ "$("$ANDROID_HOME/platform-tools/adb" shell getprop sys.boot_completed 2>/dev/null | tr -d "\r")" = "1" ]; do sleep 3; done'
+          "$ANDROID_HOME/platform-tools/adb" shell settings put global window_animation_scale 0
+          "$ANDROID_HOME/platform-tools/adb" shell settings put global transition_animation_scale 0
+          "$ANDROID_HOME/platform-tools/adb" shell settings put global animator_duration_scale 0
+          "$ANDROID_HOME/platform-tools/adb" shell wm size 1280x720
 
       - name: Install, launch, exercise, and capture
         id: runtime
         continue-on-error: true
         run: |
           set +e
+          ADB="$ANDROID_HOME/platform-tools/adb"
           APK='artifacts/Qatar-The-Peninsula-FULL-MAP-STREAMING-v0.1.0.apk'
-          adb install -r "$APK" > qa/qatar-runtime/install.txt 2>&1
+          "$ADB" install -r "$APK" > qa/qatar-runtime/install.txt 2>&1
           INSTALL_EXIT=$?
-          adb logcat -c
-          adb shell am start -W -n ai.arena.qatar.peninsula/ai.arena.qatar.MainActivity \
+          "$ADB" logcat -c
+          "$ADB" shell am start -W -n ai.arena.qatar.peninsula/ai.arena.qatar.MainActivity \
             > qa/qatar-runtime/activity-start.txt 2>&1
           START_EXIT=$?
           sleep 35
-          adb shell input tap 150 600 || true
-          adb shell input swipe 150 600 150 430 900 || true
+          "$ADB" shell input tap 150 600 || true
+          "$ADB" shell input swipe 150 600 150 430 900 || true
           sleep 8
-          adb exec-out screencap -p > qa/qatar-runtime/gameplay.png
-          adb logcat -d > qa/qatar-runtime/logcat.txt
-          adb shell dumpsys activity activities > qa/qatar-runtime/activity-dump.txt
-          PID="$(adb shell pidof ai.arena.qatar.peninsula | tr -d '\r')"
+          "$ADB" exec-out screencap -p > qa/qatar-runtime/gameplay.png
+          "$ADB" logcat -d > qa/qatar-runtime/logcat.txt
+          "$ADB" shell dumpsys activity activities > qa/qatar-runtime/activity-dump.txt
+          PID="$("$ADB" shell pidof ai.arena.qatar.peninsula | tr -d '\r')"
           printf '%s\n' "$PID" > qa/qatar-runtime/app-pid.txt
           FATALS="$(grep -E 'FATAL EXCEPTION|Fatal signal|Process: ai\.arena\.qatar\.peninsula|UnsatisfiedLinkError|AndroidRuntime' qa/qatar-runtime/logcat.txt || true)"
           {
