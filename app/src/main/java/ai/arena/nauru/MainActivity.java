@@ -37,13 +37,13 @@ public final class MainActivity extends Activity {
         super.onCreate(savedInstanceState);
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
-        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON
-                | WindowManager.LayoutParams.FLAG_FULLSCREEN);
+        // Respect Android's screen timeout so an unattended game cannot keep heating the device.
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
         enterImmersiveMode();
 
         root = new FrameLayout(this);
         root.setBackgroundColor(Color.rgb(4, 20, 27));
-        showLoadingScreen("PREPARING THE REAL MAP OF NAURU…");
+        showLoadingScreen("BUILDING THE 1:25 GRAPHICS WORLD…");
         setContentView(root);
         startWorldLoad();
     }
@@ -80,7 +80,7 @@ public final class MainActivity extends Activity {
         panel.addView(loadingStatus, statusParams);
 
         TextView source = new TextView(this);
-        source.setText("REAL COASTLINE • ROADS • BUILDINGS • ELEVATION\n© OpenStreetMap contributors • SRTM");
+        source.setText("REAL GEOGRAPHY • HUMAN-SCALE GAMEPLAY • THERMAL ECO MODE\n© OpenStreetMap contributors • SRTM");
         source.setTextColor(Color.rgb(174, 196, 190));
         source.setTextSize(9);
         source.setGravity(Gravity.CENTER);
@@ -104,7 +104,7 @@ public final class MainActivity extends Activity {
                 GameState gameState = new GameState(appContext, world, input);
                 if (getIntent().getBooleanExtra("qa_low", false)) gameState.quality = 0;
                 GameRenderer renderer = new GameRenderer(appContext, gameState);
-                Log.i(TAG, "map-accurate world prepared in "
+                Log.i(TAG, "compact 1:25 world prepared in "
                         + ((System.nanoTime() - started) / 1_000_000L) + " ms");
                 runOnUiThread(() -> attachGame(generation, renderer, gameState, input));
             } catch (Throwable error) {
@@ -142,7 +142,7 @@ public final class MainActivity extends Activity {
                 + error.getClass().getSimpleName()
                 + "\n\nTAP TO RETRY WITH A FRESH WORLD");
         failure.setOnClickListener(view -> {
-            showLoadingScreen("RETRYING MAP INITIALIZATION…");
+            showLoadingScreen("RETRYING WORLD INITIALIZATION…");
             startWorldLoad();
         });
         root.addView(failure, new FrameLayout.LayoutParams(

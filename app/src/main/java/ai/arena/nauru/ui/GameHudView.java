@@ -44,7 +44,6 @@ public final class GameHudView extends View {
         this.input = input;
         density = getResources().getDisplayMetrics().density;
         setFocusable(true);
-        setKeepScreenOn(true);
     }
 
     @Override
@@ -70,7 +69,8 @@ public final class GameHudView extends View {
         drawControls(canvas);
         drawNotification(canvas);
         drawOpeningTitle(canvas);
-        postInvalidateOnAnimation();
+        // HUD telemetry does not need display-refresh-rate redraws; 20 Hz saves battery and heat.
+        postInvalidateDelayed(50L);
     }
 
     private void drawTopBar(Canvas canvas) {
@@ -98,7 +98,8 @@ public final class GameHudView extends View {
         paint.setTextAlign(Paint.Align.CENTER);
         paint.setTextSize(10 * density);
         paint.setColor(Color.rgb(221, 235, 229));
-        canvas.drawText(state.qualityName().toUpperCase() + "  •  " + Math.round(state.fps) + " FPS",
+        String activeProfile = state.thermalLimited ? "ECO" : state.qualityName().toUpperCase();
+        canvas.drawText(activeProfile + "  •  " + Math.round(state.fps) + " FPS",
                 right - 60 * density, 38 * density, paint);
 
         if (state.driving) {
@@ -121,7 +122,7 @@ public final class GameHudView extends View {
         paint.setColor(Color.argb(210, 8, 57, 72));
         canvas.drawCircle(cx, cy, radius, paint);
 
-        float mapScale = radius / 3500f;
+        float mapScale = radius / state.world.minimapRadiusMetres();
         float[] coast = state.world.coastlineCoordinates();
         path.reset();
         for (int i = 0; i < coast.length; i += 2) {
@@ -268,7 +269,7 @@ public final class GameHudView extends View {
         paint.setLetterSpacing(0);
         paint.setTextSize(9 * density);
         paint.setColor(Color.argb((int) (190 * alpha), 235, 240, 230));
-        canvas.drawText("REAL NAURU MAP  •  1 WORLD UNIT = 1 METRE", cx, cy + 46 * density, paint);
+        canvas.drawText("REBUILT GRAPHICS WORLD  •  NAURU AT 1:25", cx, cy + 46 * density, paint);
     }
 
     @Override

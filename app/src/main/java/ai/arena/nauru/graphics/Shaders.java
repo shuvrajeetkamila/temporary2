@@ -59,14 +59,13 @@ public final class Shaders {
             " vec3 p=vShadowPosition.xyz/vShadowPosition.w; p=p*0.5+0.5;\n" +
             " if(p.x<=0.002||p.x>=0.998||p.y<=0.002||p.y>=0.998||p.z>=1.0)return 1.0;\n" +
             " float bias=max(0.00028,0.00072*(1.0-max(dot(normal,light),0.0)));\n" +
-            " vec2 t=vec2(0.00098); float sum=0.0;\n" +
+            " vec2 t=vec2(0.00195); float sum=0.0;\n" +
             " sum+=step(p.z-bias,unpackDepth(texture2D(uShadowTexture,p.xy+vec2(-t.x,-t.y))));\n" +
-            " sum+=step(p.z-bias,unpackDepth(texture2D(uShadowTexture,p.xy+vec2(t.x,-t.y))));\n" +
-            " sum+=step(p.z-bias,unpackDepth(texture2D(uShadowTexture,p.xy+vec2(-t.x,t.y))));\n" +
             " sum+=step(p.z-bias,unpackDepth(texture2D(uShadowTexture,p.xy+vec2(t.x,t.y))));\n" +
-            " return 0.28+0.72*(sum*0.25);\n" +
+            " return 0.28+0.72*(sum*0.5);\n" +
             "}\n" +
             "void main(){\n" +
+            " if(vDistance>=uFogFar){ vec3 farColor=uFogColor/(uFogColor+vec3(0.72)); gl_FragColor=vec4(pow(farColor,vec3(0.4545)),1.0); return; }\n" +
             " vec3 n=normalize(vNormal); vec3 l=normalize(uLightDirection);\n" +
             " vec3 v=normalize(uCamera-vWorldPosition); vec3 h=normalize(l+v);\n" +
             " vec3 base=vColor*uTint.rgb; float roughness=0.78;\n" +
@@ -91,7 +90,10 @@ public final class Shaders {
             " }else if(uMaterial<3.5){\n" +
             "   bool isFoliage=base.g>base.r*1.32 && base.g>base.b*1.22;\n" +
             "   if(isFoliage){ vec3 foliage=texture2D(uGrassTexture,surfaceUv*.65).rgb; base=mix(base,foliage,0.38); }\n" +
-            "   else { vec3 wall=texture2D(uStructureTexture,surfaceUv*.52).rgb; base*=0.58+wall*0.86; }\n" +
+            "   else {\n" +
+            "     vec2 wallUv=abs(n.y)>0.72?vWorldPosition.xz:(abs(n.x)>abs(n.z)?vWorldPosition.zy:vWorldPosition.xy);\n" +
+            "     vec3 wall=texture2D(uStructureTexture,wallUv*.16).rgb; base*=0.58+wall*0.86;\n" +
+            "   }\n" +
             "   roughness=isFoliage?0.74:0.68;\n" +
             " }else if(uMaterial<4.5){\n" +
             "   vec3 coral=texture2D(uCoralTexture,surfaceUv*.92).rgb;\n" +
@@ -152,11 +154,12 @@ public final class Shaders {
             "varying float vWave;\n" +
             "varying float vDistance;\n" +
             "void main(){\n" +
+            " if(vDistance>=uFogFar){ vec3 farColor=uFogColor/(uFogColor+vec3(0.68)); gl_FragColor=vec4(pow(farColor,vec3(0.4545)),1.0); return; }\n" +
             " vec3 n=normalize(vNormal); vec3 v=normalize(uCamera-vWorldPosition);\n" +
             " vec3 l=normalize(uLightDirection); vec3 h=normalize(l+v);\n" +
             " float lx=vWorldPosition.x*0.9872-vWorldPosition.z*0.1593;\n" +
             " float lz=vWorldPosition.x*0.1593+vWorldPosition.z*0.9872;\n" +
-            " float coast=sqrt((lx/2100.0)*(lx/2100.0)+(lz/3000.0)*(lz/3000.0));\n" +
+            " float coast=sqrt((lx/84.0)*(lx/84.0)+(lz/120.0)*(lz/120.0));\n" +
             " float shallow=1.0-smoothstep(1.02,1.42,coast);\n" +
             " vec3 deep=vec3(0.006,0.115,0.18); vec3 reef=vec3(0.018,0.38,0.40);\n" +
             " vec3 base=mix(deep,reef,shallow*0.78);\n" +

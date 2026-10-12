@@ -7,7 +7,7 @@ import ai.arena.nauru.game.GameState;
 
 /** Tiny versioned checkpoint save; deliberately independent of renderer and scene code. */
 public final class SaveSystem {
-    private static final String FILE = "nauru_countryside_save_v3_map_accurate";
+    private static final String FILE = "nauru_countryside_save_v4_compact_1x25";
     private final SharedPreferences preferences;
 
     public SaveSystem(Context context) {

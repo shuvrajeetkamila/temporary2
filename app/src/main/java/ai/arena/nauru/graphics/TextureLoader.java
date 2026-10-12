@@ -17,14 +17,16 @@ public final class TextureLoader {
                 loadRepeatTexture(context, R.drawable.nauru_grass_albedo),
                 loadRepeatTexture(context, R.drawable.nauru_asphalt_albedo),
                 loadRepeatTexture(context, R.drawable.nauru_coral_ground_albedo),
-                ProceduralTexture.createStructureSurface()
+                loadRepeatTexture(context, R.drawable.nauru_tropical_facade_albedo)
         };
     }
 
     private static int loadRepeatTexture(Context context, int resource) {
         BitmapFactory.Options options = new BitmapFactory.Options();
         options.inScaled = false;
-        options.inPreferredConfig = Bitmap.Config.ARGB_8888;
+        // 512 px RGB565 materials halve texture bandwidth and memory with little mobile visual loss.
+        options.inSampleSize = 2;
+        options.inPreferredConfig = Bitmap.Config.RGB_565;
         Bitmap bitmap = BitmapFactory.decodeResource(context.getResources(), resource, options);
         if (bitmap == null) throw new IllegalStateException("Unable to decode material texture " + resource);
         int[] ids = new int[1];
@@ -38,7 +40,7 @@ public final class TextureLoader {
         if (extensions != null && extensions.contains("GL_EXT_texture_filter_anisotropic")) {
             float[] maximum = new float[1];
             GLES20.glGetFloatv(0x84FF, maximum, 0); // GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT
-            GLES20.glTexParameterf(GLES20.GL_TEXTURE_2D, 0x84FE, Math.min(4f, maximum[0]));
+            GLES20.glTexParameterf(GLES20.GL_TEXTURE_2D, 0x84FE, Math.min(2f, maximum[0]));
         }
         GLUtils.texImage2D(GLES20.GL_TEXTURE_2D, 0, bitmap, 0);
         GLES20.glGenerateMipmap(GLES20.GL_TEXTURE_2D);

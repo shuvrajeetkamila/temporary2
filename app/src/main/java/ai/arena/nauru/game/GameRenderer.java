@@ -24,7 +24,7 @@ import ai.arena.nauru.graphics.TextureLoader;
  */
 public final class GameRenderer implements GLSurfaceView.Renderer {
     private static final String TAG = "NauruRenderer";
-    private static final int SHADOW_SIZE = 1024;
+    private static final int SHADOW_SIZE = 512;
 
     private final Context context;
     private final GameState state;
@@ -212,7 +212,7 @@ public final class GameRenderer implements GLSurfaceView.Renderer {
         this.width = Math.max(1, width);
         this.height = Math.max(1, height);
         GLES20.glViewport(0, 0, this.width, this.height);
-        Matrix.perspectiveM(projection, 0, 60f, this.width / (float) this.height, .15f, 12000f);
+        Matrix.perspectiveM(projection, 0, 60f, this.width / (float) this.height, .12f, 520f);
     }
 
     @Override
@@ -220,7 +220,7 @@ public final class GameRenderer implements GLSurfaceView.Renderer {
         boolean traceFirstFrame = !firstFrameStarted;
         if (traceFirstFrame) {
             firstFrameStarted = true;
-            Log.i(TAG, "first frame started; quality=" + state.quality);
+            Log.i(TAG, "first frame started; quality=" + effectiveQuality());
         }
         long now = System.nanoTime();
         float dt = Math.min(.05f, Math.max(.001f, (now - lastFrameNanos) / 1_000_000_000f));
@@ -239,11 +239,11 @@ public final class GameRenderer implements GLSurfaceView.Renderer {
 
         updateCamera(dt);
         updateSunAndShadowMatrix();
+        int renderQuality = effectiveQuality();
         shadowRefreshTimer -= dt;
-        if (shadowReady && state.quality > 0
-                && (state.quality == 2 || shadowRefreshTimer <= 0f)) {
+        if (shadowReady && renderQuality > 0 && shadowRefreshTimer <= 0f) {
             renderShadowMap();
-            shadowRefreshTimer = .14f;
+            shadowRefreshTimer = renderQuality == 2 ? .28f : .65f;
         }
         if (traceFirstFrame) Log.i(TAG, "first frame shadow stage complete");
 
@@ -252,8 +252,8 @@ public final class GameRenderer implements GLSurfaceView.Renderer {
         GLES20.glClearColor(fogR, fogG, fogB, 1f);
         GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT | GLES20.GL_DEPTH_BUFFER_BIT);
 
-        float fogNear = state.quality == 0 ? 620f : state.quality == 1 ? 1050f : 1550f;
-        float fogFar = state.quality == 0 ? 2350f : state.quality == 1 ? 3900f : 5450f;
+        float fogNear = renderQuality == 0 ? 62f : renderQuality == 1 ? 92f : 125f;
+        float fogFar = renderQuality == 0 ? 125f : renderQuality == 1 ? 205f : 285f;
         float sunR = .72f + daylight * .48f + warm * .24f;
         float sunG = .66f + daylight * .39f;
         float sunB = .66f + daylight * .27f - warm * .16f;
@@ -301,11 +301,11 @@ public final class GameRenderer implements GLSurfaceView.Renderer {
 
         float targetX = state.focusX(), targetZ = state.focusZ();
         float targetY = state.world.heightAt(targetX, targetZ) + 20f;
-        float distance = 1050f;
+        float distance = 145f;
         Matrix.setLookAtM(lightView, 0,
                 targetX + lightX * distance, targetY + lightY * distance,
                 targetZ + lightZ * distance, targetX, targetY, targetZ, 0, 1, 0);
-        Matrix.orthoM(lightProjection, 0, -620f, 620f, -620f, 620f, 8f, 2350f);
+        Matrix.orthoM(lightProjection, 0, -82f, 82f, -82f, 82f, 2f, 360f);
         Matrix.multiplyMM(lightViewProjection, 0, lightProjection, 0, lightView, 0);
     }
 
@@ -319,7 +319,7 @@ public final class GameRenderer implements GLSurfaceView.Renderer {
         GLES20.glUniformMatrix4fv(uShadowLightViewProjection, 1, false, lightViewProjection, 0);
         GLES20.glUniformMatrix4fv(uShadowModel, 1, false, identity, 0);
         shadowPass = true;
-        state.world.drawLand(smoothedCameraX, smoothedCameraZ, state.quality, -1);
+        state.world.drawLand(smoothedCameraX, smoothedCameraZ, effectiveQuality(), -1);
         drawVehicle(state.vehicle);
         if (!state.driving) drawPlayer(state.player);
         shadowPass = false;
@@ -332,7 +332,7 @@ public final class GameRenderer implements GLSurfaceView.Renderer {
         skyShader.use();
         Matrix.setIdentityM(model, 0);
         Matrix.translateM(model, 0, smoothedCameraX, smoothedCameraY, smoothedCameraZ);
-        Matrix.scaleM(model, 0, 6000f, 6000f, 6000f);
+        Matrix.scaleM(model, 0, 480f, 480f, 480f);
         GLES20.glUniformMatrix4fv(uSkyViewProjection, 1, false, viewProjection, 0);
         GLES20.glUniformMatrix4fv(uSkyModel, 1, false, model, 0);
         GLES20.glUniform3f(uSkySun, lightX, lightY, lightZ);
@@ -371,7 +371,7 @@ public final class GameRenderer implements GLSurfaceView.Renderer {
         GLES20.glUniform1f(uWorldFogNear, fogNear);
         GLES20.glUniform1f(uWorldFogFar, fogFar);
         GLES20.glUniform1f(uWorldDaylight, daylight);
-        GLES20.glUniform1f(uWorldShadows, shadowReady && state.quality > 0 ? 1f : 0f);
+        GLES20.glUniform1f(uWorldShadows, shadowReady && effectiveQuality() > 0 ? 1f : 0f);
         GLES20.glActiveTexture(GLES20.GL_TEXTURE0);
         GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, detailTexture);
         GLES20.glUniform1i(uWorldDetailTexture, 0);
@@ -391,7 +391,7 @@ public final class GameRenderer implements GLSurfaceView.Renderer {
         GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, surfaceTextures[3]);
         GLES20.glUniform1i(uWorldStructureTexture, 5);
         setModelAndTint(identity, 1, 1, 1, 1);
-        state.world.drawLand(smoothedCameraX, smoothedCameraZ, state.quality, uWorldMaterial);
+        state.world.drawLand(smoothedCameraX, smoothedCameraZ, effectiveQuality(), uWorldMaterial);
 
         drawVehicle(state.vehicle);
         if (!state.driving) drawPlayer(state.player);
@@ -552,6 +552,14 @@ public final class GameRenderer implements GLSurfaceView.Renderer {
             state.fps = frameCounter / fpsTimer;
             frameCounter = 0; fpsTimer = 0;
         }
+    }
+
+    /** Called by the UI-thread frame pacer; volatile GameState fields cross to the GL thread. */
+    public void setThermalLimited(boolean limited) { state.thermalLimited = limited; }
+
+    private int effectiveQuality() {
+        // ECO disables dynamic shadow sampling and selects the tightest world-sector LOD range.
+        return state.thermalLimited ? 0 : state.quality;
     }
 
     public void save() { state.save(); }

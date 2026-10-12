@@ -25,6 +25,8 @@ public final class GameState {
     public volatile float fps;
     // Balanced is the visual default; Android low-RAM devices automatically receive the safe preset.
     public volatile int quality = 1;
+    /** True while the renderer is enforcing its battery-saver/thermal ECO profile. */
+    public volatile boolean thermalLimited;
     public volatile String notification = "LEFT STICK TO MOVE • SWIPE TO LOOK";
     public volatile float notificationSeconds = 7f;
     public volatile long distanceTravelledMetres;
