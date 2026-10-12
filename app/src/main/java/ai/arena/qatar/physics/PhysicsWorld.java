@@ -14,7 +14,6 @@ import com.badlogic.gdx.physics.bullet.collision.btCollisionShape;
 import com.badlogic.gdx.physics.bullet.collision.btCompoundShape;
 import com.badlogic.gdx.physics.bullet.collision.btDefaultCollisionConfiguration;
 import com.badlogic.gdx.physics.bullet.collision.btDbvtBroadphase;
-import com.badlogic.gdx.physics.bullet.collision.btDynamicsWorld;
 import com.badlogic.gdx.physics.bullet.dynamics.btDiscreteDynamicsWorld;
 import com.badlogic.gdx.physics.bullet.dynamics.btRigidBody;
 import com.badlogic.gdx.physics.bullet.dynamics.btSequentialImpulseConstraintSolver;
@@ -312,7 +311,6 @@ public final class PhysicsWorld implements Disposable {
     public double originZ() { return originZ; }
     public float headingRadians() { return headingRadians; }
     public Mode mode() { return mode; }
-    public btDynamicsWorld bulletWorld() { return world; }
 
     @Override public void dispose() {
         clearChunkBodies();

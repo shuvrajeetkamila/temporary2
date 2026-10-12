@@ -16,8 +16,6 @@ public final class MainActivity extends AndroidApplication {
         config.useGL30=true;
         config.numSamples=2;
         config.r=8;config.g=8;config.b=8;config.a=8;config.depth=24;config.stencil=0;
-        config.foregroundFPS=30;
-        config.backgroundFPS=5;
         initialize(new QatarGame(()->new AndroidAssetDataSource(getAssets(),"world/qatar-national.qpak")),config);
     }
 }
