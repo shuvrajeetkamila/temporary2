@@ -1,1 +1,1 @@
-Run 4: capture unobstructed gameplay and app-scoped crash logs.
+Run 5: verify inland spawn, stable terrain collision, and corrected human model.
