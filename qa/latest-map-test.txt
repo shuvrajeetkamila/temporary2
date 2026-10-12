@@ -28,10 +28,10 @@ Daemon will be stopped at the end of the build
 > Task :app:packageDebugUnitTestForUnitTest
 > Task :app:compileDebugUnitTestJavaWithJavac
 > Task :app:processDebugJavaRes NO-SOURCE
-> Task :app:processDebugUnitTestJavaRes NO-SOURCE
 > Task :app:generateDebugUnitTestConfig
+> Task :app:processDebugUnitTestJavaRes NO-SOURCE
 > Task :app:testDebugUnitTest
-gradle/actions: Writing build results to /home/runner/work/_temp/.gradle-actions/build-results/__run_2-1791737619976.json
+gradle/actions: Writing build results to /home/runner/work/_temp/.gradle-actions/build-results/__run_3-1791795114171.json
 
-BUILD SUCCESSFUL in 31s
+BUILD SUCCESSFUL in 30s
 24 actionable tasks: 7 executed, 17 up-to-date
