@@ -1,1 +1,1 @@
-Run 3: explicit Android platform-tools adb.
+Run 4: capture unobstructed gameplay and app-scoped crash logs.
