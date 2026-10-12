@@ -1,1 +1,1 @@
-Run Qatar Android runtime smoke test after v0.1.0 build.
+Run 2: explicit Android AVD home.
