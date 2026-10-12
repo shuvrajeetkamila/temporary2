@@ -1,0 +1,1354 @@
+MUMBAI ISLAND / SALSETTE OPEN-WORLD ANDROID GAME
+MASTER BUILD PROMPT FOR A FROM-SCRATCH REALISTIC APK
+
+Copy everything between BEGIN MASTER PROMPT and END MASTER PROMPT into a capable coding-agent session. Give that agent a clean Git repository and permission to use GitHub Actions when the local environment has no Android SDK.
+
+IMPORTANT GEOGRAPHIC INTERPRETATION
+-----------------------------------
+In this document, “entire Mumbai island” means the complete physical Mumbai/Salsette landmass and connected reclaimed southern city from the southern bank of Vasai Creek in the north to Colaba/Navy Nagar in the south, and from the Arabian Sea in the west to the western shoreline of Thane Creek and Mumbai Harbour in the east. This intentionally covers more than only the historic seven islands or only the core South Mumbai district. It must not stop at Bandra, Andheri, Borivali, or the municipal core. The obvious directional correction is Arabian Sea on the WEST and Thane Creek/Mumbai Harbour on the EAST.
+
+============================== BEGIN MASTER PROMPT ==============================
+
+You are the lead Android game engineer, rendering engineer, physics programmer, technical artist, GIS engineer, world-streaming engineer, AI/traffic engineer, build engineer, and QA owner for a new project named:
+
+    MUMBAI: THE ISLAND CITY
+
+MISSION
+-------
+Start from a clean repository and build a genuinely installable Android APK containing a realistic, fully rendered, offline 3D open-world interpretation of the complete Mumbai/Salsette island region.
+
+The playable coverage must extend continuously:
+
+- NORTH: the southern bank and mouth of Vasai Creek.
+- SOUTH: Colaba, Navy Nagar, and the southern shoreline.
+- WEST: the Arabian Sea shoreline, including the western beaches, peninsulas, creeks, and near-shore islands that fall inside the defined area.
+- EAST: the western bank of Thane Creek and Mumbai Harbour.
+
+The world must include the entire intervening landmass, not only famous tourist areas and not only Greater Mumbai’s downtown. Where physical-island boundaries and administrative boundaries differ, physical coverage takes priority: include all connected Salsette land south of Vasai Creek and west of Thane Creek that falls inside the verified area-of-interest polygon. Mainland Navi Mumbai and land east of Thane Creek are outside the required playable land area, but may appear as low-detail distant skyline/terrain across the water.
+
+Do not merely create a plan, web map, static satellite viewer, video, mock-up, or source-only demo. Work incrementally until a real APK compiles and passes current packaged-world startup and coverage tests.
+
+The game must include:
+
+1. The full Mumbai/Salsette area at true 1:1 local metre scale, streamed in chunks.
+2. A physically interactive human character with believable locomotion, swimming, falling, vehicle entry/exit, and animation.
+3. An original drivable car with suspension, tires, engine, gearbox, braking, wet-road behavior, and collision response.
+4. An original pilotable helicopter with rotor, collective, cyclic, yaw, translational lift, ground effect, urban wind, and landing behavior.
+5. An original flyable light aeroplane with lift, drag, stall, propeller, control surfaces, landing gear, takeoff, and landing physics.
+6. An original controllable boat with buoyancy, hydrodynamic drag, tide/current/waves, propulsion, steering, and beaching behavior.
+7. Real Mumbai geography and recognizable districts, roads, rail corridors, shorelines, creeks, lakes, airports, ports, bridges, and important landmarks derived from legal open data.
+8. Scalable left-hand traffic, pedestrians, local/metro rail ambience, and city activity appropriate to Mumbai, after the core world and player vehicles are stable.
+9. Thermal-aware rendering and simulation suitable for Android phones despite the large offline world.
+10. A final downloadable APK, SHA-256 checksum, build record, and source/data/asset licensing documentation.
+
+Do not stop after generating scaffolding. If the local environment has no Android SDK, use GitHub Actions to compile and test the APK. Produce a compilable APK at every major milestone.
+
+
+1. NON-NEGOTIABLE PRODUCT RULES
+--------------------------------
+
+A. Final deliverable
+- The primary deliverable is a directly installable Android .apk.
+- Support Android 8.0/API 26 or newer unless a verified engine dependency requires a documented higher minimum.
+- Use a fresh application ID such as:
+
+      ai.example.mumbai.islandcity
+
+  Replace ai.example with the repository owner’s namespace where appropriate.
+- Expose a valid launcher activity that opens a loading/progress screen and then gameplay.
+- Produce a universal debug-signed APK for direct testing. A release build is optional, but never commit a private signing key or request credentials.
+- Provide the exact APK filename, byte size, SHA-256, package ID, version code/name, minimum Android version, supported ABIs, and download link.
+
+B. Fully rendered graphics
+- Render terrain, shorelines, water, roads, bridges, railways, buildings, vegetation, people, traffic, and vehicles as 3D geometry.
+- Do not use a satellite image, Google Earth capture, Google Maps tile, Street View image, or static aerial photograph as the world.
+- A vector minimap is allowed, but it must not substitute for a rendered 3D city.
+
+C. Complete geographic coverage
+- Do not build only Colaba/South Mumbai.
+- Do not stop at Mahim/Bandra.
+- Do not stop at Andheri, Borivali, Dahisar, or the BMC municipal edge if the physical Salsette land continues to Vasai Creek.
+- Include the entire required polygon between Vasai Creek, Colaba, Arabian Sea, and Thane Creek/Mumbai Harbour.
+- Establish automated geographic checkpoint tests so missing northern, western, eastern, or southern chunks fail the build.
+
+D. Original and legal content
+- Do not copy GTA, another commercial game, copyrighted vehicle packs, Google imagery, proprietary photogrammetry, or ripped city models.
+- All custom code and assets must be original, or use documented permissive/CC0/open-source assets that permit APK redistribution.
+- Maintain ASSET_LICENSES.md with source URL, author, license, and modifications for every external asset.
+- Maintain DATA_SOURCES.md with retrieval date, checksum, license, attribution, and conversion steps for every dataset.
+- Show “© OpenStreetMap contributors” visibly in the application when OSM-derived geometry is used.
+- Use fictional, unbranded vehicle designs and liveries.
+- Public map-level geometry of airports, ports, railways, and government areas is acceptable; do not invent or include restricted interiors, security procedures, hidden infrastructure, access credentials, or operationally sensitive detail.
+
+E. Honest scope and evidence
+- Aim for ambitious mobile open-world realism, but do not claim commercial AAA equivalence.
+- Do not call a static picture or blockout a completed city.
+- Do not claim a physical-device frame rate, temperature, memory result, or control quality unless measured on that device.
+- Never use an old screenshot or old PASSED status as evidence for a new build.
+
+F. Offline-first
+- The required city data and gameplay assets must be packaged in the APK.
+- The game must launch and remain playable without a network connection.
+- Do not require login, ads, telemetry, cloud APIs, or a backend.
+
+G. APK size policy
+- Do not omit northern Mumbai, eastern suburbs, rail lines, neighborhoods, or landmarks merely to make a tiny APK.
+- There is no arbitrary small-APK target. Prioritize full coverage, correct data, original models, and quality LODs.
+- Still compress textures/meshes and stream chunks because install size is different from runtime RAM/GPU bandwidth.
+- Git repositories normally reject individual files above approximately 100 MB. If the APK is too large for a normal Git push, publish it through GitHub Actions artifacts or a GitHub Release rather than reducing required coverage or using Git LFS without approval.
+- Deliver one self-contained offline APK unless the user explicitly authorizes an Android App Bundle or external asset packs.
+
+
+2. EXACT AREA OF INTEREST
+-------------------------
+
+Before rendering work, create a versioned MUMBAI_AOI.geojson polygon and an accompanying human-readable boundary report.
+
+The area-of-interest must follow physical coast/creek boundaries rather than a crude rectangular crop:
+
+North boundary:
+- Follow the southern shoreline of Vasai Creek from its Arabian Sea mouth eastward around the northern Salsette edge.
+- Include the connected land south of the creek, including northern urban/suburban and mangrove areas that fall on the island side.
+
+West boundary:
+- Follow the Arabian Sea coastline southward.
+- Include applicable island-side/near-shore Mumbai features such as the Manori/Gorai/Madh/Versova/Juhu/Bandra/Worli/Malabar/Colaba coastal sequence when they fall inside the verified polygon.
+- Include mapped beaches, fishing settlements, mangroves, seawalls, promenades, reclaimed coastal works, and creek mouths.
+
+East boundary:
+- Follow the western bank of Thane Creek southward into Mumbai Harbour.
+- Include the island-side eastern suburbs, marshes/mangroves, port-facing shoreline, Trombay/Chembur-side geography, docks, and reclaimed land where legally represented in open data.
+- Exclude mainland Navi Mumbai and the eastern bank from high-detail playable land; render low-detail distant context if useful.
+
+South boundary:
+- Include the entire southern city through Colaba and Navy Nagar to the shoreline.
+- Include the public map-level coastal outline and adjacent navigable harbor/sea water.
+
+Water buffer:
+- Include a navigable/rendered water and airspace buffer, preferably at least 5–10 km where data and floating-origin design allow, around the playable shoreline.
+- The extra buffer gives boats, helicopters, and aeroplanes room to operate and provides a believable horizon.
+
+Administrative/data reconciliation:
+- Use physical geography as the coverage authority.
+- Keep BMC wards, Mumbai City District, Mumbai Suburban District, and other intersecting administrative labels as metadata.
+- Do not use an administrative clipping choice that accidentally removes physical Salsette land up to Vasai Creek.
+- List any disconnected islands included inside the AOI and explain why.
+- Represent land outside the AOI only as distant low-detail context, not as a replacement for required island coverage.
+
+Mandatory geographic checkpoint categories:
+
+- Vasai Creek northern edge.
+- Northern Salsette/Mira-Bhayandar-side land that lies within the physical AOI.
+- Dahisar/Borivali/Kandivali/Malad/Goregaon belt.
+- Sanjay Gandhi National Park and the major lake system.
+- Thane Creek western shoreline and mangroves.
+- Powai/Vikhroli/Ghatkopar/Chembur/Trombay eastern areas.
+- CSMIA and Juhu airport areas.
+- Andheri/Juhu/Versova.
+- Bandra/Kurla/BKC/Dharavi/Mahim.
+- Bandra-Worli and central Mumbai.
+- South Mumbai, Fort, Marine Drive, docks, Colaba, and Navy Nagar shoreline.
+
+The startup/coverage regression must verify that the packaged world contains chunks intersecting every checkpoint group.
+
+
+3. SCALE AND COORDINATE SYSTEM
+------------------------------
+
+Unlike a tiny island, Mumbai requires true geographic travel distance for realistic road, boat, helicopter, and aeroplane operation. Use 1:1 local metre scale.
+
+- One projected metre equals one game metre.
+- Humans, roads, buildings, cars, boats, helicopters, and aeroplanes use real-world-scale dimensions.
+- Do not globally compress Mumbai into a few hundred metres.
+- Real airport runways remain real length; do not use hidden takeoff impulses or airport warping.
+
+Coordinate strategy:
+
+- Store master geographic positions in double precision.
+- Project WGS84 into a suitable local East-North-Up system or verified UTM zone for Mumbai.
+- Keep a documented geodetic origin.
+- Render and simulate near the player in float local coordinates.
+- Use a floating origin: when the focus moves beyond a tested threshold, shift render/physics origins while preserving double-precision global positions.
+- Rebase terrain chunks, dynamic bodies, cameras, particles, audio, AI paths, and water consistently.
+- Never pass raw latitude/longitude directly to the physics engine.
+
+Floating-origin tests must verify:
+
+- No visible teleport or velocity change during rebasing.
+- Constraints and occupied vehicles survive a shift.
+- Boat wave phase remains stable.
+- Helicopter/aeroplane controls remain continuous.
+- Traffic, trains, and pedestrians preserve route progress.
+- Save/load round-trips global positions without kilometre-scale drift.
+
+
+4. RECOMMENDED CLEAN TECHNICAL FOUNDATION
+------------------------------------------
+
+Use this default stack unless a compile spike proves a component incompatible:
+
+- Java 17 for shared/core game code.
+- Gradle Android launcher/application module.
+- libGDX for Android lifecycle, input, audio, files, and OpenGL ES integration.
+- Bullet via gdx-bullet for broadphase, contacts, rigid bodies, constraints, and stable collision response.
+- OpenGL ES 3.0 mobile renderer with custom PBR-lite shaders.
+- A verified Android-compatible glTF 2.0 loader for original models and animation.
+- Python 3 deterministic GIS/asset compilers.
+- JUnit for pure data and physics models.
+- Packaged-resource startup tests through Robolectric/Android testing or equivalent.
+- GitHub Actions for clean compilation, testing, checksum generation, and APK publication.
+
+Create a toolchain-proof APK before building the city. It must:
+
+- Launch successfully.
+- Clear and draw a lit textured mesh with GLES3.
+- Initialize Bullet.
+- Read one packaged binary resource.
+- Show touch input.
+- Pause/resume without crashing.
+- Pass CI startup tests.
+
+If a dependency cannot be fetched or compiled, record the exact failure and select a maintained alternative. Do not silently replace physical vehicles with scripted motion.
+
+Suggested repository structure:
+
+    android/                       launcher, manifest, Android services
+    core/src/.../game/             state, fixed clock, save/recovery
+    core/src/.../render/           GLES3, PBR-lite, shadows, atmosphere
+    core/src/.../physics/          common force models and Bullet bridge
+    core/src/.../human/            locomotion, animation, IK, ragdoll
+    core/src/.../vehicles/car/
+    core/src/.../vehicles/boat/
+    core/src/.../vehicles/heli/
+    core/src/.../vehicles/plane/
+    core/src/.../world/            chunks, origin rebasing, weather, time
+    core/src/.../traffic/          lanes, signals, traffic agents
+    core/src/.../pedestrians/      navigation, crowds, crossings
+    core/src/.../transit/          local/metro/monorail ambience
+    core/src/.../input/            touch and gamepad action maps
+    core/src/.../ui/               HUD, minimap, settings, attribution
+    tools/                         GIS, mesh, texture, package compilers
+    data/geodata/                  source manifests/provenance/checksums
+    assets/source/                 editable source art
+    android/assets/world/          compiled streamable world chunks
+    tests/                         force models, world, streaming, startup
+    artifacts/                     final APK/checksum if repository limits allow
+    .github/workflows/             clean build/test/publication
+
+Do not commit Gradle caches, Android SDKs, secret keys, raw temporary extracts, node_modules, or unnecessary intermediate texture/mesh files.
+
+
+5. MUMBAI GIS AND WORLD-COMPILATION PIPELINE
+--------------------------------------------
+
+Use legal open data, with recorded provenance:
+
+- OpenStreetMap for coastline, creeks, water, roads, lanes, one-way rules, bridges, tunnels, flyovers, railways, stations, airports, runways, taxiways, buildings, land use, parks, lakes, docks, piers, ferry terminals, barriers, places, and public landmarks.
+- NASA/NGA SRTM, Copernicus DEM, or another redistributable elevation source whose license is documented.
+- Open bathymetry/tide/current data only when redistribution is permitted; otherwise use a documented deterministic coastal-depth approximation.
+- Additional open building-height, transit, administrative, or vegetation data only after verifying license and coordinate quality.
+- Never scrape proprietary map tiles or photogrammetry.
+
+Pipeline requirements:
+
+1. Save exact source URLs, retrieval dates, license texts, and SHA-256 checksums.
+2. Define and version MUMBAI_AOI.geojson.
+3. Clip by the AOI polygon plus water/airspace buffer, not only a bounding box.
+4. Project WGS84 data to the chosen metre-based coordinate system.
+5. Normalize polygon winding, repair or reject invalid geometry, deduplicate points, and validate numeric ranges.
+6. Preserve elevation, bridge/tunnel/layer, width, lanes, one-way, surface, railway, waterway, and building-level metadata where present.
+7. Infer missing values through documented deterministic rules, never random unrecorded guesses.
+8. Divide the world into streamable chunks.
+9. Build multiple mesh and collision LODs.
+10. Create lane graphs, pedestrian graph/nav regions, rail splines, and marine navigation data.
+11. Compile textures/material references into atlases and region bundles.
+12. Write versioned binary chunks with magic bytes, bounds, checksums, dependency tables, and strict count limits.
+13. Produce a manifest listing every chunk, geographic bounds, feature counts, byte size, LODs, and checksum.
+14. Build host tests that load the exact packaged manifest and representative chunks.
+
+Chunk design:
+
+- Dense urban core chunks may be approximately 128–256 m.
+- Less dense/natural chunks may be approximately 256–512 m.
+- Use a hierarchy so distant city massing does not require loading every street-level asset.
+- High-detail ring around player: roughly 300–800 m depending on profile.
+- Medium city ring: approximately 1–3 km.
+- Distant skyline/terrain/water ring: several kilometres to the horizon.
+- Chunk metadata must be lightweight enough to query before decoding geometry.
+- Decode and prepare chunks on worker threads.
+- Upload GPU data in bounded per-frame budgets on the GL thread.
+- Use cancellation when the player/aircraft changes direction rapidly.
+- Never block the UI thread while decoding the entire city.
+
+Road processing:
+
+- Retain the complete routable public road network inside the AOI.
+- Respect left-hand traffic, one-way direction, lane counts, turn restrictions where available, road class, speed class, bridges, tunnels, and layers.
+- Generate human-scale road widths, curbs, medians, sidewalks, lane markings, crossings, barriers, and guardrails according to tags and documented defaults.
+- Preserve vertical separation at flyovers/bridges; never flatten stacked roads into one intersection.
+- Use spline/ribbon simplification with error tolerances that preserve intersections and curves.
+
+Rail/transit processing:
+
+- Include Western, Central, Harbour, Trans-Harbour/intersecting relevant corridors within the AOI, metro alignments, monorail where mapped, stations, yards visible from public map data, and bridges/tunnels.
+- Keep rail layer/elevation separate from roads.
+- Build spline paths for ambient trains.
+- Use fictional/unbranded train art unless a specific livery’s licensing is verified.
+- Trains need not be player-drivable for the first release, but visible rail movement is important to Mumbai’s identity after core systems are stable.
+
+Building processing:
+
+- Preserve all valid source footprints in chunk data where practical.
+- Use mapped levels/heights/roof tags when present.
+- Infer missing height from building type, footprint, neighborhood class, and a deterministic seed.
+- Generate believable floors, windows, balconies, awnings, rooftop tanks, AC units, parapets, shopfront depth, and roof variation through LOD-aware procedural rules.
+- Dense informal areas require compact representative geometry and facade density, not a single giant slab and not millions of individual collision objects.
+- Merge static far geometry by material/chunk.
+- Use simple static collision proxies; only important gameplay buildings need detailed collision.
+- Never load the entire city’s building geometry into RAM at once.
+
+Land/water processing:
+
+- Preserve Arabian Sea coastline, Vasai Creek, Thane Creek, Mumbai Harbour, Mahim Creek, Mithi River, major nullahs where mapped, Powai/Vihar/Tulsi lakes, marshes, mangroves, beaches, docks, seawalls, and reclaimed land.
+- Model tide level and coastal depth consistently for rendering and boat physics.
+- Keep drinking-water/restricted lake boundaries as world barriers where appropriate; do not make every mapped water body freely navigable.
+- Generate a reef/shallow shelf only from legal data or documented procedural coastline-distance rules.
+
+Vegetation/natural processing:
+
+- Include Sanjay Gandhi National Park, Aarey/green areas, mangroves, coastal palms, street trees, parks, and lake vegetation according to mapped land use.
+- Use GPU instancing/impostors and deterministic placement masks.
+- Collision only on nearby important trunks/objects.
+- Mangrove density and tidal edge transitions must be distinct from ordinary parks.
+
+
+6. REQUIRED CITY CONTENT
+------------------------
+
+The full world must be continuous, but use hero-detail zones for recognizability. Include, at minimum, legally sourced public exterior representations of the following categories and representative places.
+
+Natural geography:
+
+- Vasai Creek and northern estuary.
+- Arabian Sea western shoreline.
+- Thane Creek and western mangrove shoreline.
+- Mumbai Harbour.
+- Sanjay Gandhi National Park.
+- Powai Lake, Vihar Lake, and Tulsi Lake.
+- Mithi River and Mahim Creek.
+- Gorai/Manori/Madh/Versova creek and coastal geography where inside AOI.
+- Juhu, Versova, Aksa/Gorai-side applicable beaches, Marine Drive shoreline, Worli and Bandra coastal edges.
+
+Transport geography:
+
+- Chhatrapati Shivaji Maharaj International Airport public exterior/runway/taxiway geometry.
+- Juhu Aerodrome public exterior/runway geometry for light-aircraft gameplay.
+- Western Express Highway.
+- Eastern Express Highway and island-side approaches.
+- Eastern Freeway.
+- Major east-west links such as JVLR/SCLR where mapped.
+- Bandra-Worli Sea Link with an original model and correct approximate alignment/proportions.
+- Coastal Road/open public alignment as represented by the selected dated dataset; record the data date.
+- Major flyovers, bridges, causeways, tunnels, and arterial junctions.
+- Railway and metro station/corridor coverage throughout the island.
+- Docks, ferry points, fishing harbors, and public waterfront access relevant to boat gameplay.
+
+Representative hero zones:
+
+- Colaba and Gateway of India waterfront.
+- Fort/CSMT civic core using original exterior geometry derived from legal references.
+- Marine Drive and Nariman Point skyline.
+- Malabar Hill/Chowpatty-side topography.
+- Worli/Lower Parel central skyline transition.
+- Bandra waterfront and Bandra-Worli connection.
+- Dharavi/BKC/Mahim transition represented respectfully and without caricature.
+- Airport/Juhu/Andheri area.
+- Powai/lake-side area.
+- Eastern waterfront/port-facing areas at public map detail.
+- Northern suburban centers and the approach to Vasai Creek.
+
+Do not hand-detail only affluent/tourist districts while leaving the rest of the island empty. At minimum, every chunk must contain correct terrain/water, road/rail massing, and representative building/vegetation coverage even if only hero zones receive bespoke architecture.
+
+Do not put copyrighted logos or brand marks on landmarks, vehicles, billboards, shops, trains, or airports unless permission is documented. Use generic signage and fictional brands. Factual district/station/road names may be displayed where appropriate.
+
+
+7. MOBILE-REALISTIC GRAPHICS TARGET
+------------------------------------
+
+Create a coherent realistic city rather than a blocky voxel/primitive world.
+
+A. Original models
+
+Create original, unbranded models for:
+
+- Human character with skeleton and animation set.
+- Compact city car/4x4 suitable for Mumbai roads.
+- Light utility helicopter.
+- Light single-engine propeller aeroplane suitable for Juhu/CSMIA runway testing.
+- Small harbor/work/fishing boat or center-console craft.
+- Representative traffic cars, bus, taxi-like vehicle, auto-rickshaw-like three-wheeler, motorcycle/scooter, and delivery vehicle using fictional designs.
+- Local/metro/monorail-inspired unbranded transit vehicles where included.
+- Street furniture, signals, lamps, barriers, signs, bus stops, rail equipment, harbor props, and airport props.
+
+Models need smooth normals, curved silhouettes, bevels, believable proportions, dedicated low-cost collision shapes, and multiple LODs. Vehicle moving parts must be separate: wheels/suspension/steering, rotor/tail rotor, propeller/control surfaces/gear, and boat rudder/propeller.
+
+B. Materials
+
+Use a mobile PBR-lite metallic/roughness workflow:
+
+- Base color.
+- Normal map.
+- Roughness.
+- Metallic where appropriate.
+- Ambient occlusion where useful.
+- Optional emissive for windows/signage/vehicle lights.
+
+Required material families include asphalt, wet asphalt, concrete, weathered plaster, painted walls, brick, glass, metal, corrugated sheet, stone, vegetation, soil, mangrove mud, beach sand, rubber, rail ballast, airport surfaces, and seawalls.
+
+Use atlases and trim sheets for procedural buildings. Compress/downsample runtime textures even though APK size is not tightly capped; unbounded texture residency will still overheat or crash phones.
+
+C. Mumbai atmosphere and weather
+
+- Tropical coastal daylight with humid haze.
+- Distinct sunrise, midday, sunset, and night exposure.
+- Urban atmospheric perspective and skyline haze.
+- Optional smog/humidity controls without obscuring navigation.
+- Monsoon rain after core stability: wet-road roughness, puddle approximation, rain particles, reduced visibility, water spray, and altered tire grip.
+- Clouds and wind shared by water and flight physics.
+- Night skyline with emissive-window patterns and strictly culled local lights.
+- Do not render thousands of real-time shadowed lights.
+
+D. Water
+
+- Arabian Sea, creeks, harbor, river, and lakes require different water material parameters.
+- Animated multi-scale waves, normal maps, Fresnel, depth color, foam, wake, sun glint, tide level, and shoreline transitions.
+- Creek/harbor water may be calmer/murkier than open sea.
+- Analytic wave data used by boat buoyancy must match visible wave phase and amplitude.
+- Reflections must have quality tiers; avoid a full-resolution planar reflection on low/balanced phones.
+
+E. Lighting and shadows
+
+- One primary directional sun shadow system.
+- Approximately 512–1024 px mobile shadow target depending on quality.
+- Cascades only if profiling proves them affordable; otherwise use a camera-centered shadow volume and contact/blob shadows.
+- Throttle shadow updates when possible.
+- ECO mode disables or simplifies dynamic shadow sampling.
+- Use compact ambient probes or baked ambient terms for hero zones.
+- Limit dynamic point/spot lights by distance and screen influence.
+
+F. LOD and city massing
+
+- Near buildings: full procedural facade depth, windows/doors/balconies, rooftop detail.
+- Medium buildings: simplified facade material and silhouette.
+- Far city: merged skyline/massing meshes or impostors.
+- Maintain recognizable tower/landmark silhouettes in distant LOD.
+- Use frustum culling, hierarchical chunk culling, distance culling, optional occlusion approximations, instancing, and merged static meshes.
+- Never issue one draw call per building for the entire city.
+
+G. Shader reliability
+
+- Parse/compile all shaders in automated checks where practical.
+- Log compile/link failures with line numbers.
+- Provide visible fallback materials for noncritical shader/material failure.
+- Verify GLES3 syntax and limits rather than desktop GLSL.
+
+
+8. WORLD STREAMING AND MEMORY
+-----------------------------
+
+Full Mumbai coverage is impossible if loaded all at once. Streaming is a core feature, not a late optimization.
+
+Required streamer states:
+
+- UNLOADED.
+- QUEUED_IO.
+- DECODING.
+- READY_CPU.
+- QUEUED_GPU.
+- ACTIVE_HIGH/MEDIUM/LOW.
+- EVICTING.
+
+Requirements:
+
+- Select chunks from camera position, speed, direction, altitude, graphics profile, and occupied vehicle.
+- Preload farther ahead for fast aeroplane/helicopter movement than for walking.
+- Keep a coarse whole-city navigation/massing layer available without detailed assets.
+- Use bounded worker pools and cancellation.
+- Apply a per-frame GPU upload time/byte budget.
+- Avoid duplicate material/mesh data through shared registries.
+- Reference-count assets used by multiple chunks.
+- Evict least-recently-needed chunks without removing the current collision safety ring.
+- Keep a larger collision ring ahead of fast vehicles.
+- Save using global coordinates, not transient chunk-local addresses.
+
+Suggested streaming rings:
+
+On foot:
+- High detail/collision: 250–500 m.
+- Medium: 500 m–1.5 km.
+- Low skyline/massing: several km.
+
+Car/boat:
+- High detail/collision: 400–800 m, biased forward.
+- Medium: 1–2.5 km.
+- Low: horizon.
+
+Helicopter/aeroplane:
+- High collision safety corridor based on speed and stopping/turn radius.
+- Medium terrain/building massing several kilometres ahead.
+- Distant whole-city skyline/terrain layer.
+
+Streaming tests:
+
+- Drive from Colaba toward the northern AOI without a world hole.
+- Fly from north to south at representative aircraft speed without outrunning terrain/collision streaming.
+- Cross an origin-rebase threshold while chunks load.
+- Reverse direction rapidly and confirm canceled requests do not leak memory.
+- Repeatedly traverse chunk boundaries and verify stable RAM/GPU usage.
+- Pause/resume during loading.
+- Recover from one corrupt optional chunk with an error/fallback; fail clearly if a required manifest/core chunk is corrupt.
+
+
+9. FIXED-STEP SIMULATION FOUNDATION
+-----------------------------------
+
+All local physics uses SI units:
+
+- Metres, kilograms, seconds.
+- Metres/second internally.
+- Newtons and newton-metres.
+- km/h or knots only for HUD presentation.
+
+Use a fixed 60 Hz physics timestep independent from rendering:
+
+    fixedDt = 1 / 60 second
+    accumulator += min(realFrameDt, 0.1)
+    while accumulator >= fixedDt and substeps < 4:
+        sample buffered controls
+        apply forces/torques
+        step Bullet by fixedDt
+        synchronize gameplay state
+        accumulator -= fixedDt
+    render using interpolation alpha = accumulator / fixedDt
+
+Do not apply variable-frame force calculations to a fixed-step solver. Separate pure force models from Bullet adapters for unit testing.
+
+Physics architecture:
+
+- Collision layers for terrain, static architecture, human, traffic, car, boat, helicopter, aeroplane, trains, water triggers, interaction triggers, and debris.
+- Static triangle meshes only for terrain/architecture.
+- Convex/compound collision for dynamic vehicles.
+- Continuous collision detection or swept tests for aircraft/fast vehicles.
+- Sleeping for inactive bodies.
+- Full simulation only near the focus/occupied vehicle; distant traffic and transit use lower-cost route simulation.
+- No per-frame creation of physics shapes or large arrays.
+- Origin rebasing must update physics broadphase safely.
+
+
+10. HUMAN PHYSICS AND ANIMATION
+-------------------------------
+
+Implement a hybrid physical character, not a floating/sliding camera.
+
+Controller requirements:
+
+- Human-scale capsule, approximately 1.7–1.9 m.
+- Stable ground sweep/raycast state.
+- Acceleration/deceleration for walk, jog, and sprint.
+- Jump based on target height:
+
+      jumpVelocity = sqrt(2 * gravity * desiredJumpHeight)
+
+- Limited air control.
+- Slope limit, controlled sliding, curb/step handling, head clearance, moving surfaces, and ledge rejection.
+- Surface response for dry/wet asphalt, dirt, grass, sand, mud, stairs, rail platforms, shallow water, and steep terrain.
+- Wade and swim modes; buoyancy/stroke approximation in deep navigable water.
+- Fall/hard-landing response based on impact velocity.
+- Bounded impulses against lightweight bodies without launching cars or crowd agents.
+- Vehicle entry/exit through validated seat and exit transforms.
+- Prevent entry through walls, moving rotors/propellers, deep water, or unsafe traffic-side exits.
+
+Animation requirements:
+
+- Original rigged human.
+- Idle, walk, jog, sprint, jump, fall, land, stairs, swim, tread water, enter/exit each vehicle, driving, boating, helicopter, and aeroplane control poses.
+- Blend animation speed to physical movement.
+- Foot IK and slope adaptation on balanced/high.
+- Hand IK for wheels/yokes/controls where affordable.
+- Reduced ragdoll for severe impacts, with animation-to-ragdoll blending and sleeping.
+- ECO mode may use simpler hit reactions.
+
+Urban interaction:
+
+- Sidewalk/crosswalk awareness for player and pedestrians.
+- Stairs/platforms must be traversable.
+- Track/platform danger boundaries and train collisions need safe behavior.
+- Restrict entry into nonplayable building interiors using clear collision, not invisible holes.
+
+Human tests:
+
+- Curbs, stairs, normal slopes, steep-slope rejection.
+- Jump height and landing velocity.
+- Wet/sand/mud speed/traction differences.
+- Swimming transition.
+- Vehicle entry/exit safety.
+- Origin rebase while moving.
+- No falling through unloaded chunk edges inside the collision safety ring.
+
+
+11. CAR PHYSICS AND LEFT-HAND URBAN DRIVING
+-------------------------------------------
+
+Create an original compact city car/4x4 suitable for Mumbai traffic.
+
+Required physical model:
+
+- Realistic chassis mass, dimensions, wheelbase, center of mass, and inertia.
+- Four raycast or validated physical wheels.
+- Per-wheel spring/damper suspension:
+
+      springForce = springRate * compression
+      damperForce = damperRate * relativeSuspensionVelocity
+      normalLoad  = clamp(springForce - damperForce, 0, maximumLoad)
+
+- Wheel inertia and angular velocity.
+- Engine torque curve versus RPM.
+- Idle, redline, throttle response, engine braking, clutch approximation, forward gears, neutral, reverse, final drive, and differential.
+- Speed-sensitive steering and approximate Ackermann geometry.
+- Longitudinal slip ratio and lateral slip angle.
+- Saturating tire-force curves and friction ellipse/circle.
+- Dry/wet asphalt, painted marking, concrete, dirt, grass, sand, mud, and standing-water grip.
+- Brake balance, rear handbrake, optional bounded ABS/traction assists.
+- Rolling resistance and aerodynamic drag.
+- Stable anti-roll behavior without locking chassis orientation.
+- Pothole/uneven-road impulses bounded for playability.
+- Damage state that can affect alignment/engine without soft-body simulation.
+
+Visual/audio integration:
+
+- Physical wheel rotation, steering, and suspension travel.
+- Brake/reverse/head lights.
+- Rain/water spray, dust, mud, and tire marks with strict particle limits.
+- Engine/gear/tire/suspension audio driven by RPM, slip, load, and surface.
+
+Mumbai driving requirements:
+
+- Left-hand traffic.
+- Lane graph respects one-way and turn restrictions.
+- Dense roads require low-speed control and progressive steering.
+- Major highways allow stable higher speed.
+- Flyovers/tunnels/bridges preserve correct layer separation.
+- Traffic-side vehicle exit checks.
+
+Car tests:
+
+- Suspension settles without endless oscillation.
+- Plausible acceleration through gears.
+- Documented stopping distance from 50 km/h on dry and wet surfaces.
+- Progressive understeer/oversteer.
+- Reduced grip in rain/mud.
+- Stable bridge/flyover transitions.
+- No tunneling through city collision at maximum speed.
+- Physics remains stable when rendering is 20–30 FPS.
+
+
+12. BOAT, TIDE, AND HARBOR PHYSICS
+----------------------------------
+
+Create an original small Mumbai harbor/work/fishing boat or center-console craft.
+
+Required model:
+
+- Rigid hull with 6–12 distributed buoyancy points.
+- Each point samples analytic water height and normal.
+- Buoyancy from displaced volume:
+
+      buoyancy = waterDensity * displacedVolume * gravity
+
+- Apply buoyancy at sample points to create natural pitch/roll.
+- Vertical damping to remove energy rather than add it.
+- Directional hydrodynamic drag: forward, lateral, vertical.
+- Propeller thrust based on throttle, RPM, submersion, and speed.
+- Rudder/vectored-thrust steering dependent on water flow.
+- Planing lift approximation at speed, strictly clamped.
+- Wind drag above water.
+- Tide/current zones for Arabian Sea, harbor, and creeks using documented simplified data.
+- Wave spectrum differences between open sea, harbor, creek, and protected water.
+- Shallow-water, mudflat, collision, and beaching behavior.
+- Engine thrust reduction if propeller exits water or strikes shallow terrain.
+- Wake/spray/foam tied to physical speed and hull loading.
+
+Boat gameplay locations:
+
+- At least one safe western coastal launch/jetty.
+- At least one Mumbai Harbour/port-side public launch area.
+- Optional creek route where depth/navigation data supports it.
+- Clear restricted/non-navigable water barriers for reservoirs and unsuitable channels.
+
+Boat tests:
+
+- Correct designed waterline and stable equilibrium.
+- Wave-driven pitch/roll that damps naturally.
+- Better steering while moving than stationary unless thrust is vectored.
+- Natural coasting after throttle release.
+- Current/tide affects drift without overwhelming controls.
+- Beaching does not fall through terrain or climb vertical seawalls.
+- No energy explosion from overlapping buoyancy/damping.
+- Boat and visible waves remain synchronized through origin rebases.
+
+
+13. HELICOPTER PHYSICS IN AN URBAN COASTAL ENVIRONMENT
+------------------------------------------------------
+
+Create an original light utility helicopter.
+
+Required model:
+
+- Fuselage mass/inertia/center of mass.
+- Main rotor and tail rotor positions, radius, RPM, inertia, and spool state.
+- Collective controls thrust magnitude.
+- Cyclic tilts rotor thrust and creates pitch/roll moments.
+- Main rotor reaction torque acts on fuselage.
+- Tail rotor/anti-torque controls yaw.
+- Translational lift as horizontal airflow develops.
+- Ground effect fading smoothly with rotor height and surface extent.
+- Parasite drag and bounded high-speed control loss.
+- Simplified vortex-ring/settling-with-power effect for steep low-forward-speed descent.
+- Engine loss and simplified autorotation/rotor decay.
+- Skid contact/compliance and hard-landing damage.
+- Wind, coastal gust, and simplified building-wake turbulence near tall structures.
+- Optional stability augmentation uses bounded torques, never position/velocity locking.
+
+Starting relation:
+
+      thrustMagnitude = Ct * airDensity * rotorArea * tipSpeed^2 * collective
+      thrustDirection = normalized(rotorUp + cyclicPitchTerm + cyclicRollTerm)
+      mainRotorForce  = thrustDirection * thrustMagnitude
+
+Keep all coefficients in a named HelicopterConfig with units and comments.
+
+Urban safety/gameplay:
+
+- Spawn at a legal game-design helipad/open-airfield area, using fictional operations if necessary.
+- Rotor collision/danger volume.
+- Prevent exit while airborne or rotors are dangerously active.
+- High-rise collisions use coarse but reliable hulls.
+- Stream collision/massing far enough ahead for current airspeed.
+- Public map geometry only; do not add operationally sensitive rooftop/security details.
+
+Helicopter tests:
+
+- Rotor spool required before takeoff.
+- Force-based hover around documented collective.
+- Cyclic accelerates by tilting thrust.
+- Pedal counters reaction torque.
+- Translational lift and ground effect are noticeable but bounded.
+- Stable gentle skid landing and damaging hard landing.
+- Engine loss causes descent/rotor behavior rather than suspended flight.
+- North-south flight does not outrun world streaming.
+- Floating-origin shift preserves velocity/orientation/control.
+
+
+14. AEROPLANE PHYSICS AND REAL AIRPORTS
+---------------------------------------
+
+Create an original light single-engine propeller aeroplane suitable for realistic operations from Juhu Aerodrome and/or public-surface CSMIA runway geometry. Do not use an airliner unless its complexity and runway operations are fully implemented and legally/technically appropriate.
+
+Required model:
+
+- Fuselage mass, center of mass, inertia.
+- Wing area/span/chord and aerodynamic center.
+- Horizontal/vertical stabilizers.
+- Propeller/engine.
+- Three landing-gear contact points with suspension, wheel friction, steering, brakes, and visual compression.
+- Local airflow from global velocity, angular velocity, wind, and optional prop wash.
+
+Dynamic pressure:
+
+      q = 0.5 * airDensity * airspeed^2
+
+Lift:
+
+      lift = q * wingArea * Cl(angleOfAttack, flapSetting)
+
+Drag:
+
+      drag = q * wingArea * (Cd0 + inducedDragFactor * Cl^2)
+
+Requirements:
+
+- Cl rises in the normal range, peaks near stall, and decreases after stall.
+- Separate wing/tail/yaw contributions where practical.
+- Elevator, aileron, rudder, trim, and flap response.
+- Propeller thrust versus engine RPM, throttle, and airspeed.
+- Ground effect near runway.
+- Crosswind from the shared weather system.
+- Rolling friction, braking, nose/tail steering, and gear damping.
+- Bounded overspeed, excessive-G, and hard-landing damage.
+- Continuous collision detection/swept checks at speed.
+- No hidden upward impulse, position setting, or minimum-altitude lock.
+
+Airport/world requirements:
+
+- Keep real projected runway lengths and headings at 1:1 scale.
+- Preserve public exterior runway/taxiway/apron geometry and markings from legal open data.
+- Do not model restricted interiors or operational security systems.
+- Use fictional aircraft registration/livery and gameplay operations.
+- The streamer must load terrain/building massing several kilometres ahead of flight.
+- Provide sufficient sea/airspace buffer for circuits and approach.
+
+Aeroplane tests:
+
+- Physical runway acceleration and wheel behavior.
+- Takeoff only after sufficient airspeed/lift.
+- Documented ground roll and climb behavior.
+- Stall at high angle-of-attack/low speed, reduced control, bounded recoverability.
+- Aileron roll, elevator pitch, rudder yaw.
+- Flaps reduce takeoff/landing speed and increase drag.
+- Crosswind affects takeoff/landing.
+- Gear compression and braking on landing.
+- Engine-off glide behavior.
+- North/south and sea circuits do not outrun chunks or break floating origin.
+
+
+15. VEHICLE INTERACTION, TOUCH CONTROLS, AND CAMERAS
+----------------------------------------------------
+
+Interaction system:
+
+- Data-driven seats, entry/exit transforms, camera anchors, control profiles, and danger zones.
+- Validate distance, line of sight, obstruction, speed, water depth, and rotor/propeller state.
+- Search multiple safe exit locations.
+- Never place the player inside traffic, a wall, deep water, moving rotor, propeller, or train.
+- Save each vehicle’s global transform, safe checkpoint, damage, and engine state.
+- Provide explicit recovery/reset for flipped, sunk, stranded, or crashed vehicles.
+
+Touch controls:
+
+On foot:
+- Left stick movement.
+- Right-screen camera orbit.
+- Run, jump, interact/enter, optional crouch/swim controls.
+
+Car:
+- Steering.
+- Throttle.
+- Brake/reverse.
+- Handbrake.
+- Exit.
+
+Boat:
+- Steering/tiller.
+- Throttle/reverse.
+- Camera.
+- Exit only at a safe speed/location.
+
+Helicopter:
+- Left stick collective/yaw.
+- Right stick cyclic pitch/roll.
+- Rotor/engine toggle.
+- Camera.
+- Exit only safely landed with rotor safety checks.
+- Optional clearly labeled bounded stability assist.
+
+Aeroplane:
+- Virtual yoke/stick for pitch/roll.
+- Rudder.
+- Throttle slider.
+- Brakes.
+- Flaps/trim as usable mobile controls.
+- Engine toggle.
+- Exit only stopped safely.
+- Optional coordinated-turn assist without removing stall physics.
+
+Support Android gamepads through the same action map. Expose sensitivity, dead zone, inversion, and assist settings.
+
+Cameras:
+
+- Collision-aware third-person spring camera on foot.
+- Chase and close/hood views for car/boat.
+- Chase and cockpit/near-cockpit views for helicopter/aeroplane.
+- Timestep-independent smoothing.
+- Bounded shake and configurable field of view.
+- Optional horizon stabilization to reduce motion sickness.
+
+
+16. TRAFFIC, PEDESTRIANS, AND TRANSIT
+-------------------------------------
+
+These systems are important for Mumbai realism but must come after the world, human, and four player vehicles compile and run.
+
+Traffic:
+
+- Left-hand lane graph generated from OSM and documented defaults.
+- One-way restrictions, lane count, turn connectivity, signals, crossings, speed classes, bridge/tunnel layers.
+- Microscopic nearby agents with car-following, lane keeping, intersection rules, stopping, yielding, and obstacle response.
+- Mesoscopic route-only simulation for distant agents.
+- Pool agents and cap counts by graphics/thermal profile.
+- Spawn/despawn outside clear player view, never in collision proximity.
+- Avoid deadlocks through timeout/recovery logic that does not teleport visibly near the player.
+- Use fictional cars, buses, taxis, rickshaw-like vehicles, motorcycles, and delivery vehicles.
+
+Pedestrians:
+
+- Sidewalk/crossing graph or tiled navmesh.
+- Contextual density by land use/time/profile.
+- Crossing signals/road avoidance.
+- Simple local collision/avoidance.
+- Never simulate the real city population one-for-one.
+- Distant crowds may use low-rate/impostor systems.
+- Respectful neutral behavior and appearance; no caricatures.
+
+Transit:
+
+- Ambient local/metro/monorail trains follow verified splines and station stops.
+- Distant trains use low-cost path simulation.
+- Nearby train collision and platform safety are reliable.
+- Audio and visual doors/stops may be simplified.
+- Player train driving is outside the minimum release unless explicitly requested after core completion.
+
+Thermal profile behavior:
+
+- Reduce traffic/pedestrian caps.
+- Lower AI update frequency with interpolation.
+- Preserve nearby collision safety.
+- Disable nonessential distant transit detail.
+
+
+17. GAMEPLAY, HUD, AUDIO, AND CITY PRESENTATION
+-----------------------------------------------
+
+Minimum loop:
+
+- Spawn at a safe recognizable location with a car nearby.
+- Walk and drive through continuously streamed streets.
+- Reach public waterfront/jetty gameplay and operate the boat.
+- Reach an airport/helipad gameplay zone and operate the helicopter.
+- Operate the light aeroplane, take off, view the full island, and land.
+- Use fast travel only between already discovered safe hubs to make the 1:1 city manageable; never use it to hide missing chunks.
+- Include vehicle recovery and last-safe-location recovery.
+
+HUD:
+
+- Real mapped district/location name.
+- Compass and time.
+- Vector minimap from current streamed road/coast data plus coarse full-city data.
+- Current graphics profile, FPS, and thermal ECO indicator.
+- Car speed/RPM/gear.
+- Boat speed/heading/engine.
+- Helicopter rotor RPM/collective/altitude/vertical speed.
+- Aeroplane airspeed/altitude/vertical speed/RPM/flap/gear state.
+- Contextual controls/help overlay.
+- Visible compact OSM attribution and full Credits/Data Sources screen.
+
+Audio:
+
+- Original or permissively licensed engine, rotor, propeller, boat, tire, suspension, wind, wave, rain, rail, traffic, footsteps, and city ambience.
+- Vehicle audio driven by RPM/load/slip, not only speed.
+- Neighborhood ambience must be original/permissive and avoid copyrighted music/broadcasts.
+- Spatial audio with strict source limits and LOD.
+- Record licenses.
+
+Weather/time:
+
+- Day/night cycle.
+- Coastal wind shared by vegetation, water, helicopter, and aeroplane.
+- Optional monsoon mode only after baseline performance.
+- Wet roads alter roughness and tire friction.
+- Rain does not allocate particles without bound.
+
+
+18. THERMAL, BATTERY, AND PERFORMANCE REQUIREMENTS
+--------------------------------------------------
+
+Excessive phone heat is a release blocker even if APK size is unrestricted.
+
+Frame pacing:
+
+- Never default to an unrestricted 60/90/120 FPS loop.
+- Balanced default target: approximately 30 FPS.
+- Battery saver or moderate thermal status: approximately 20 FPS ECO.
+- Severe thermal status: approximately 15 FPS.
+- Pause rendering/physics/streaming correctly when Activity pauses or screen turns off.
+- Respect Android screen timeout rather than forcing unattended GPU use.
+- Poll thermal state at low frequency or use a listener, not a system call every frame.
+
+ECO must reduce work, not only FPS:
+
+- Lower dynamic resolution.
+- Disable/simplify dynamic shadow sampling.
+- Shorten high-detail/vegetation/particle/light ranges.
+- Reduce traffic/pedestrian/transit caps and update rates.
+- Reduce reflection, rain, and window-light updates.
+- Use more aggressive building/vehicle LOD.
+- Preserve occupied-vehicle physics stability and immediate controls.
+
+Suggested balanced budgets:
+
+- Frame: 33.3 ms at 30 FPS.
+- Main simulation/game logic: ideally below 6–8 ms average.
+- Draw calls: preferably below 150–250 depending on device.
+- Visible triangles: roughly 200k–500k after LOD, verified by profiling.
+- Nearby fully simulated dynamic bodies: below approximately 100–150.
+- One main directional shadow system.
+- Texture residency target: approximately 256–384 MB on balanced, lower on LOW/ECO.
+- No unbounded Java/native heap growth.
+- No major per-frame allocations/GC spikes.
+
+Required optimization:
+
+- Hierarchical chunk streaming.
+- Frustum/distance/sector culling.
+- Static batching by chunk/material.
+- Mesh and collision LOD.
+- Texture atlases, mipmaps, compression, shared materials.
+- Instancing/impostors for vegetation/repeated props.
+- Object pools for particles/agents.
+- Sleeping/proxy simulation for distant physics.
+- Altitude-aware city detail for aircraft.
+- Bounded asynchronous decoding/GPU upload.
+- Development diagnostics overlay: FPS, CPU/GPU frame time, draw calls, triangles, chunks, pending loads, RAM, texture bytes, active bodies/traffic/pedestrians, and thermal profile.
+
+Profiles:
+
+LOW:
+- Short near-detail ranges, aggressive massing LOD, low particles/lights, reduced traffic, 512/no shadow depending on capability.
+
+BALANCED:
+- Default 30 FPS, compact throttled shadows, moderate city rings, normal material set.
+
+HIGH:
+- Better shadows/LOD/reflections/city lights, still protected by thermal override.
+
+ECO:
+- Automatic battery/thermal override visibly shown in HUD and not bypassable at severe temperature.
+
+APK install size does not excuse high runtime memory, GPU bandwidth, or thermal load.
+
+
+19. SAVE, RECOVERY, AND FAILURE HANDLING
+----------------------------------------
+
+- Version save format, AOI, world manifest, coordinate projection, and floating-origin scheme.
+- Save global double-precision positions and orientation/state for player and owned/active vehicles.
+- Save time, discovered fast-travel hubs, graphics/assist settings, last safe checkpoints, vehicle damage/engine state.
+- Reject incompatible/stale world coordinates with a safe migration/reset.
+- Keep save I/O off render thread.
+- World loading screen shows meaningful progress and current stage.
+- Fatal core-manifest corruption shows a retry/error screen instead of closing.
+- Optional asset failure uses visible fallback and precise logging.
+- Missing required coverage chunk is a test/build failure.
+- Recover any out-of-bounds player/vehicle to last safe global coordinate.
+- Never silently ignore NaN/infinite physics state.
+
+
+20. AUTOMATED TESTING REQUIREMENTS
+----------------------------------
+
+A. GIS/world tests
+
+- AOI polygon exists, is valid, and encloses required physical checkpoints.
+- Northern extent reaches Vasai Creek.
+- Southern extent reaches Colaba/Navy Nagar shoreline.
+- Western extent reaches Arabian Sea coastline.
+- Eastern extent reaches western Thane Creek/Mumbai Harbour shoreline.
+- AOI does not accidentally replace the island with mainland east of Thane Creek.
+- All mandatory checkpoint groups have packaged chunks.
+- Projection round-trip and metre distances.
+- Chunk adjacency has no terrain/road seam beyond tolerance.
+- Bridge/tunnel/layer separation.
+- Coast/water polygon validity.
+- Full-city coarse massing manifest.
+- Buildings/roads/rail/water counts are compared to recorded compiler output and protected from accidental large drops.
+- Mesh vertex/index limits.
+- Checksums and corrupt-count rejection.
+- Deterministic rebuild with fixed inputs.
+
+B. Floating-origin and streaming tests
+
+- Shift at threshold without player/vehicle velocity change.
+- Human, car, boat, helicopter, aeroplane, AI, trains, particles, and audio anchors rebase consistently.
+- Walk/drive/fly across repeated chunk boundaries.
+- Fast aircraft forward-preload corridor.
+- Rapid direction reversal cancels stale loads.
+- Memory stabilizes after repeated north/south traversal.
+- Save/load at both northern and southern extremes.
+
+C. Pure physics tests
+
+Human:
+- Jump velocity/height, slope classification, surface acceleration, swim transition.
+
+Car:
+- Spring/damper signs and force bounds.
+- Torque/gear/RPM behavior.
+- Tire slip saturation/friction ellipse.
+- Dry versus wet stopping.
+
+Boat:
+- Buoyancy equilibrium.
+- Damping removes energy.
+- Propeller/rudder force direction.
+- Tide/current drift.
+
+Helicopter:
+- Hover thrust near weight.
+- Reaction/tail torque signs.
+- Cyclic moment signs.
+- Ground-effect/translational-lift bounds.
+
+Aeroplane:
+- Lift/drag versus speed and angle of attack.
+- Stall peak/decline.
+- Flap/control-surface effects.
+- Engine-off glide tendency.
+
+Shared:
+- Fixed-step results remain close across different render-frame sequences.
+- No NaN/infinite configuration/forces.
+
+D. Packaged-resource startup test
+
+Load resources from the built Android variant and construct enough CPU world state to verify:
+
+- World manifest, AOI, projection, terrain, material index, and representative chunks exist.
+- All geographic checkpoint groups exist.
+- Character/car spawn is walkable and collision-ready.
+- Boat spawn is navigable water with sufficient depth.
+- Helicopter spawn has clearance.
+- Aeroplane spawn aligns with a valid runway.
+- Coarse city layer spans north-to-south and west-to-east required bounds.
+- Required vehicle configs/models/colliders/control maps exist.
+- No mesh/config exceeds format or numeric limits.
+
+E. Physics integration scenarios
+
+- Human walk, stairs, jump, fall, swim.
+- Car settle, accelerate, turn, brake dry/wet, collide.
+- Boat float, throttle, turn, waves/current.
+- Helicopter spool, hover, cyclic, yaw, land.
+- Aeroplane ground roll, takeoff, stall, recover, approach, land.
+- Origin rebase during each occupied vehicle mode.
+
+F. Android runtime QA
+
+- Clean CI compile.
+- Unit and packaged startup tests before APK staging.
+- Emulator install/launch where infrastructure supports it.
+- Capture and scan logcat for FATAL EXCEPTION, ANR, native tombstones, shader failures, EGL errors, missing resources, and out-of-memory.
+- Treat emulator-infrastructure failure separately from app failure.
+- Never claim emulator QA proves phone temperature.
+
+G. APK validation
+
+- ZIP integrity.
+- Manifest package, launcher, version, min/target SDK.
+- DEX files and intended native ABIs.
+- Required world manifests/chunks, textures, models, shaders, sounds, licenses, and attributions.
+- APK signature.
+- SHA-256 and matching sidecar.
+- Publish only after the current compile and startup/coverage regression passes.
+
+
+21. GITHUB ACTIONS BUILD AND LARGE-APK PUBLICATION
+--------------------------------------------------
+
+Create a workflow for the working branch and manual dispatch:
+
+1. Checkout.
+2. Set up maintained Java 17.
+3. Use verified Gradle wrapper/version.
+4. Reset old QA status files before build.
+5. Validate data/asset manifests and licenses.
+6. Run deterministic compiler checks; avoid rebuilding enormous sources unnecessarily when packaged outputs are unchanged and verified.
+7. Assemble the Android APK.
+8. Run unit, streaming, geodata, physics, and packaged startup tests.
+9. Optionally launch an emulator and persist diagnostics.
+10. Require current startup/coverage status PASSED.
+11. Stage a versioned filename, for example:
+
+      Mumbai-The-Island-City-REALISTIC-PHYSICS-v1.0.0.apk
+
+12. Generate .sha256.
+13. Upload through GitHub Actions artifact storage.
+14. If below ordinary Git file limits and repository policy allows, optionally commit the tested APK to artifacts/.
+15. If too large for Git, create/use a GitHub Release asset or Actions artifact and provide its download URL. Do not truncate or reduce required geographic coverage merely to fit a Git push.
+16. On failure, persist diagnostics but never publish the failed APK as the final build.
+
+Do not embed credentials or private keys. Use the repository-provided GitHub token with minimum permissions.
+
+
+22. MANDATORY INCREMENTAL MILESTONES
+------------------------------------
+
+Every milestone ends with a compiled installable APK and tests. Keep the prior known-good APK until the next passes.
+
+MILESTONE 0 — Toolchain proof
+- Android/libGDX/GLES3/Bullet setup, clear scene, lit mesh, touch input, packaged resource, CI APK.
+- Exit: APK compiles and startup test passes.
+
+MILESTONE 1 — AOI, projection, whole-island coarse shell
+- Verified Vasai-to-Colaba / Arabian-Sea-to-Thane-Creek AOI.
+- 1:1 projection, floating origin, chunk manifest, coarse terrain/coast/water/road/rail/building massing for the entire area.
+- Exit: automated checkpoint coverage proves no section is missing.
+
+MILESTONE 2 — Streaming and human exploration
+- Async chunk streaming, origin rebasing, near road/building generation, human controller, camera, minimap, attribution, saves.
+- Exit: walk/teleport test hubs across north, center, east, west, and south without holes/crashes.
+
+MILESTONE 3 — City road/rail/bridge correctness
+- Full routable roads, layers, flyovers/tunnels, rail splines/stations, sidewalks/crossings, hero-zone framework.
+- Exit: route/layer/chunk seam tests pass.
+
+MILESTONE 4 — Car and basic traffic
+- Car force model/art/collision/controls/audio, left-hand lane graph, limited traffic, enter/exit.
+- Exit: suspension/drive/brake/wet-road tests and continuous city drive APK pass.
+
+MILESTONE 5 — Boat and marine world
+- Harbor/coastal/creek water classes, tide/current/waves, boat model/physics/controls/spawns.
+- Exit: float/turn/current/beaching tests pass.
+
+MILESTONE 6 — Helicopter
+- Rotor model, urban/coastal wind, helipad/open-zone spawn, controls/assist, collision streaming.
+- Exit: spool/hover/yaw/landing/origin-rebase tests pass.
+
+MILESTONE 7 — Aeroplane and airports
+- Public airport exterior/runway geometry, light prop aircraft, flight model, gear, takeoff/stall/landing, air streaming.
+- Exit: physical takeoff/landing and north-south flight tests pass.
+
+MILESTONE 8 — Hero zones and Mumbai identity
+- Original detailed landmarks, Marine Drive/Colaba/Fort/Bandra/airport/lake/north/east representative zones, procedural facade variety, night skyline.
+- Exit: hero zones are recognizable without proprietary assets; full island remains populated.
+
+MILESTONE 9 — Pedestrians, transit, weather, audio
+- Scalable pedestrians, ambient rail, richer traffic, monsoon/wet-road mode, city ambience.
+- Exit: agent caps/LOD/thermal reductions work and core vehicles remain stable.
+
+MILESTONE 10 — Thermal/performance release
+- Profiling, culling, batching, texture compression, dynamic resolution, memory audit, ECO behavior, shader fallback, final APK QA.
+- Exit: 30/20/15 pacing and current startup/coverage tests pass; final APK validated and linked.
+
+Do not start high-density crowds, rain, or bespoke interiors before full geographic coverage, streaming, human, and four player vehicles are stable.
+
+
+23. QUANTITATIVE RELEASE ACCEPTANCE CHECKLIST
+---------------------------------------------
+
+Coverage
+[ ] AOI follows Vasai Creek north, Colaba south, Arabian Sea west, Thane Creek/Mumbai Harbour east.
+[ ] Full physical Salsette/Mumbai land inside the AOI is represented.
+[ ] Northern, western, eastern, central, and southern checkpoint chunks are packaged.
+[ ] 1:1 metre scale and projection are tested.
+[ ] Floating origin is stable.
+[ ] Coarse whole-city massing is continuous.
+[ ] Roads, rail, coastline, water, buildings, and natural zones have no major empty band.
+[ ] OSM attribution and data licenses are present.
+
+Human
+[ ] Grounding, acceleration, slopes, curbs/stairs, jump, fall, swim, collision work.
+[ ] Animation follows physical state.
+[ ] Vehicle entry/exit safety works.
+
+Car
+[ ] Suspension, tire slip, engine/gears, steering, braking, wet/surface grip, collision work.
+[ ] Left-hand urban driving and road layers work.
+[ ] Wheels visually steer/rotate/suspend.
+
+Boat
+[ ] Distributed buoyancy, damping, drag, tide/current/waves, propulsion, steering, beaching work.
+[ ] Visible and physical water remain synchronized.
+
+Helicopter
+[ ] Rotor spool, collective, cyclic, reaction torque, tail/yaw, drag, translational lift, ground effect, landing work.
+[ ] Hover is force-based.
+
+Aeroplane
+[ ] Lift, drag, stall, propeller, controls, flaps, gear, brakes, takeoff, flight, landing work.
+[ ] Real runway scale is retained.
+[ ] No hidden takeoff impulse.
+
+City activity
+[ ] Traffic uses left-hand lane graph and has profile caps.
+[ ] Pedestrians stay on valid public navigation areas and use crossings.
+[ ] Rail ambience follows mapped corridors with LOD.
+[ ] ECO reduces agent counts safely.
+
+Graphics
+[ ] Original smooth vehicle/human models with LOD/collision meshes.
+[ ] Procedural buildings have varied believable facades/roofs.
+[ ] Hero zones use original legal geometry/art.
+[ ] Atmosphere, water, day/night, weather tiers, shadows, fog, and skyline LOD function.
+[ ] Missing optional assets use visible fallback instead of crashing.
+
+Streaming/performance
+[ ] No entire-city load at startup.
+[ ] Player cannot outrun collision chunks in car/boat/aircraft tests.
+[ ] Memory stabilizes after repeated traversal.
+[ ] Default approximately 30 FPS cap.
+[ ] Moderate thermal/battery ECO approximately 20 FPS.
+[ ] Severe thermal approximately 15 FPS.
+[ ] ECO reduces actual GPU/CPU work.
+[ ] Pause/screen-off stops unnecessary work.
+[ ] No major per-frame allocations.
+
+Build/delivery
+[ ] Clean GitHub Actions compile passes.
+[ ] Current geodata/coverage/startup result is PASSED.
+[ ] Physics and streaming tests pass.
+[ ] APK manifest, launcher, DEX/native libraries, packaged world, ZIP, and signature validate.
+[ ] SHA-256 matches sidecar.
+[ ] Large APK is delivered via a working Actions/Release/direct link.
+[ ] Physical-device testing limits are disclosed honestly.
+
+
+24. WORKING RULES FOR THE CODING AGENT
+--------------------------------------
+
+- Inspect the repository before editing.
+- Keep work on the user-designated branch.
+- Build code/assets/tests, not only documentation.
+- Compile after every major subsystem.
+- Use deterministic generators and fixed seeds.
+- Never weaken a failing coverage/startup/physics test only to get green CI.
+- Never reuse stale PASSED files.
+- Do not claim a feature because a class/button exists; validate behavior.
+- Keep all physics constants in named configuration files with units/comments.
+- Normal vehicle operation must be force/torque based, not direct transform/velocity assignment.
+- Explicit recovery/reset may reposition only when the user requests recovery or a fatal out-of-bounds condition occurs.
+- Persist exact errors and diagnostics.
+- Do not ask for passwords, tokens, private keys, or proprietary datasets.
+- Do not include copied brands, logos, music, maps, or game assets.
+- Do not omit the north or east because South Mumbai is easier to recognize.
+- Do not publish a failed APK.
+- Do not call an HTML map, image, or video an Android APK.
+
+
+25. REQUIRED FINAL RESPONSE
+---------------------------
+
+When the release candidate passes, provide:
+
+1. A prominent clickable APK link.
+2. Exact filename and byte size.
+3. SHA-256.
+4. Package ID, version code/name, minimum Android version, target SDK, and ABIs.
+5. GitHub Actions build/test run ID and conclusion.
+6. Confirmation that packaged checkpoint tests cover Vasai Creek to Colaba and Arabian Sea to Thane Creek/Mumbai Harbour.
+7. Concise implemented-system summary for streaming, human, car, boat, helicopter, aeroplane, traffic/transit, graphics, and thermal protection.
+8. Honest limits, especially physical-phone performance/thermal testing and any optional detail not finished.
+9. Paths/links for checksum, DATA_SOURCES.md, ASSET_LICENSES.md, AOI report, and test status.
+
+Do not replace the APK with a plan in the final response.
+
+=============================== END MASTER PROMPT ===============================
+
+NOTES FOR THE PERSON USING THIS PROMPT
+--------------------------------------
+
+1. The phrase “entire Mumbai island” is interpreted geographically: the physical Mumbai/Salsette landmass south of Vasai Creek, west of Thane Creek/Mumbai Harbour, through Colaba, with the Arabian Sea on the west. This is broader than only South Mumbai and may cross administrative boundaries.
+2. Mumbai is large enough to keep real 1:1 distances. The prompt therefore uses chunk streaming and a floating origin instead of the 1:25 compression used for a much smaller island project.
+3. Allowing a large APK helps retain world data and original art, but it does not remove Android RAM, GPU, storage-installation, thermal, Git file-size, or CI artifact limits. The build should use Actions artifacts or Releases when the APK is too large for a normal Git push.
+4. Full Mumbai coverage does not mean every building needs a hand-made model. Correct GIS coverage, procedural facade quality, LOD, hero zones, streaming, and reliable collision are the scalable solution.
+5. Public airport/port/rail geometry should remain at public map-level detail. Do not include restricted interiors or operationally sensitive information.
+6. A CI emulator does not prove a physical phone remains cool. Test final north-south driving/flight, memory, battery drain, and Android thermal status on intended phones.
+7. Keep every dataset and asset license so the APK can be redistributed legally.
