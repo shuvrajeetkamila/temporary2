@@ -1,3 +1,0 @@
-Import request: map-accurate Nauru v0.3
-Bounding box: 166.88,-0.59,167.02,-0.45
-Requested: 2026-10-11

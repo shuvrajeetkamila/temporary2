@@ -1,0 +1,16 @@
+QATAR: THE PENINSULA — DATA AND SOFTWARE CREDITS
+
+Country and municipality geometry:
+geoBoundaries gbOpen / William & Mary geoLab, CC BY 4.0.
+Retrieved through a pinned MapCraft mirror. See DATA_SOURCES.md in the source repository.
+
+Independent country cross-check:
+Natural Earth public-domain data through geojson-regions (Unlicense).
+
+Engine:
+libGDX 1.13.1, Apache License 2.0.
+Bullet Physics through gdx-bullet, zlib license.
+
+All early vehicle, building, terrain, interface, and material blockouts are original/generated for this project. No proprietary satellite imagery, commercial game assets, map tiles, logos, music, or photogrammetry are included.
+
+This game is not real navigation, aviation, maritime, border, or security guidance.

@@ -1,0 +1,138 @@
+{
+  "format": "QTPK",
+  "version": 1,
+  "worldEpoch": "2026-10-12-coarse-foundation",
+  "epsg": 32639,
+  "chunkMetres": 2000,
+  "maskDimension": 16,
+  "grid": {
+    "columns": 55,
+    "rows": 103,
+    "chunks": 5665
+  },
+  "coverage": {
+    "fullLandChunks": 2671,
+    "coastChunks": 450,
+    "waterBufferChunks": 2544,
+    "adm0PolygonCount": 7
+  },
+  "municipalities": [
+    {
+      "id": 0,
+      "iso": "QA-DA",
+      "name": "Doha",
+      "arabic": "الدوحة",
+      "landChunks": 58
+    },
+    {
+      "id": 1,
+      "iso": "QA-RA",
+      "name": "Al Rayyan",
+      "arabic": "الريان",
+      "landChunks": 643
+    },
+    {
+      "id": 2,
+      "iso": "QA-WA",
+      "name": "Al Wakrah",
+      "arabic": "الوكرة",
+      "landChunks": 692
+    },
+    {
+      "id": 3,
+      "iso": "QA-ZA",
+      "name": "Al Daayen",
+      "arabic": "الظعاين",
+      "landChunks": 83
+    },
+    {
+      "id": 4,
+      "iso": "QA-US",
+      "name": "Umm Salal",
+      "arabic": "أم صلال",
+      "landChunks": 88
+    },
+    {
+      "id": 5,
+      "iso": "QA-KH",
+      "name": "Al Khor and Al Thakhira",
+      "arabic": "الخور والذخيرة",
+      "landChunks": 437
+    },
+    {
+      "id": 6,
+      "iso": "QA-MS",
+      "name": "Al Shamal",
+      "arabic": "الشمال",
+      "landChunks": 251
+    },
+    {
+      "id": 7,
+      "iso": "QA-SH",
+      "name": "Al Shahaniya",
+      "arabic": "الشحانية",
+      "landChunks": 869
+    }
+  ],
+  "biomes": [
+    {
+      "id": 0,
+      "name": "GULF_WATER",
+      "chunks": 2544
+    },
+    {
+      "id": 1,
+      "name": "URBAN",
+      "chunks": 371
+    },
+    {
+      "id": 2,
+      "name": "LIMESTONE_GRAVEL",
+      "chunks": 1248
+    },
+    {
+      "id": 3,
+      "name": "SAND_DUNES",
+      "chunks": 214
+    },
+    {
+      "id": 4,
+      "name": "SABKHA",
+      "chunks": 666
+    },
+    {
+      "id": 5,
+      "name": "MANGROVE_TIDAL",
+      "chunks": 36
+    },
+    {
+      "id": 6,
+      "name": "FARM_RAWDA",
+      "chunks": 94
+    },
+    {
+      "id": 7,
+      "name": "INDUSTRIAL_PORT",
+      "chunks": 117
+    },
+    {
+      "id": 8,
+      "name": "ROCK_FORMATION",
+      "chunks": 95
+    },
+    {
+      "id": 9,
+      "name": "BEACH_SHALLOW",
+      "chunks": 280
+    }
+  ],
+  "hubs": 25,
+  "coarseRoadSegments": 1249,
+  "generatedMassingBuildings": 28313,
+  "qpakBytes": 1170493,
+  "qpakSha256": "6aa220910d0214b3d38fb5c7764534c5242b1ddab24ae6ffddb377d95a22a6b7",
+  "limitations": [
+    "Milestone 1 uses geoBoundaries geometry and deterministic coarse road/settlement derivatives.",
+    "Complete OpenStreetMap roads and footprints plus DEM are scheduled for subsequent compiler milestones."
+  ]
+}

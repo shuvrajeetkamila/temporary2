@@ -1,27 +1,28 @@
-name: Build Android APK
+name: Build Qatar Android APK
 
 on:
   push:
     branches:
       - arena/8288058f-temporary2
-      - main
     paths-ignore:
       - 'artifacts/**'
       - 'qa/**'
-      - 'data/**'
-      - 'tools/**'
-      - '.github/workflows/geodata-import.yml'
+      - '*.txt'
   workflow_dispatch:
 
 permissions:
   contents: write
 
+concurrency:
+  group: qatar-apk-${{ github.ref }}
+  cancel-in-progress: false
+
 jobs:
   build-apk:
     runs-on: ubuntu-latest
-    timeout-minutes: 25
+    timeout-minutes: 30
     steps:
-      - name: Check out game source
+      - name: Check out exact Qatar source
         uses: actions/checkout@v4
 
       - name: Set up Java 17
@@ -35,116 +36,83 @@ jobs:
         with:
           gradle-version: '8.9'
 
-      - name: Reset persisted QA state for this build
+      - name: Reset current-build evidence
         run: |
-          rm -f qa/latest-gameplay.png qa/latest-runtime-log.txt qa/latest-runtime-status.txt \
-            qa/latest-full-logcat.txt qa/latest-tombstone.txt qa/latest-pid.txt \
-            qa/latest-map-test.txt qa/latest-map-test-status.txt
+          rm -rf qa/qatar-current
+          mkdir -p qa/qatar-current
 
-      - name: Compile installable debug APK
-        run: gradle :app:assembleDebug --stacktrace
-
-      - name: Validate packaged real-map startup
-        continue-on-error: true
+      - name: Verify deterministic full-country pack
         run: |
-          mkdir -p qa
-          set +e
-          gradle :app:testDebugUnitTest --stacktrace > qa/latest-map-test.txt 2>&1
-          TEST_EXIT=$?
-          if [ "$TEST_EXIT" -eq 0 ]; then echo PASSED > qa/latest-map-test-status.txt; else echo "FAILED:$TEST_EXIT" > qa/latest-map-test-status.txt; fi
-          tail -120 qa/latest-map-test.txt
-          exit 0
+          python3 tools/compile_qatar_world.py --verify | tee qa/qatar-current/world-validation.txt
+          sha256sum -c data/qatar/SHA256SUMS | tee qa/qatar-current/source-checksums.txt
 
-      - name: Enable Android emulator acceleration
+      - name: Test and compile fresh installable APK
         run: |
-          sudo chmod 666 /dev/kvm || true
+          set -o pipefail
+          gradle :app:testDebugUnitTest :app:assembleDebug --stacktrace | tee qa/qatar-current/gradle-build.txt
+          echo PASSED > qa/qatar-current/test-status.txt
 
-      - name: Launch and capture the game on Android
-        continue-on-error: true
-        uses: reactivecircus/android-emulator-runner@v2
-        with:
-          api-level: 29
-          arch: x86_64
-          profile: pixel_2
-          disable-animations: true
-          emulator-options: -no-window -gpu swiftshader_indirect -no-snapshot -noaudio -no-boot-anim -camera-back none
-          script: |
-            set +e
-            adb install -r app/build/outputs/apk/debug/app-debug.apk
-            adb shell settings put secure immersive_mode_confirmations confirmed || true
-            adb logcat -c
-            adb shell am start -W -n ai.arena.nauru.countryside.dev/ai.arena.nauru.MainActivity --ez qa_low true
-            sleep 6
-            adb shell input tap 1245 530 || true
-            sleep 25
-            mkdir -p qa
-            adb exec-out screencap -p > qa/frame-a.png
-            adb shell input tap 1760 70 || true
-            sleep 12
-            adb exec-out screencap -p > qa/frame-b.png
-            sleep 10
-            adb exec-out screencap -p > qa/frame-c.png
-            LARGEST_FRAME="$(ls -S qa/frame-*.png | head -1)"
-            cp "$LARGEST_FRAME" qa/latest-gameplay.png
-            rm -f qa/frame-a.png qa/frame-b.png qa/frame-c.png
-            adb logcat -d > qa/latest-full-logcat.txt
-            grep -E "FATAL EXCEPTION|AndroidRuntime|NauruShader|NauruRenderer|ai.arena.nauru|F DEBUG|signal [0-9]|backtrace|#[0-9]+ pc|libGLES|libEGL|libhwui|Abort" qa/latest-full-logcat.txt > qa/latest-runtime-log.txt || true
-            adb shell dumpsys dropbox --print SYSTEM_TOMBSTONE > qa/latest-tombstone.txt 2>&1 || true
-            echo "CAPTURED" > qa/latest-runtime-status.txt
-            adb shell pidof ai.arena.nauru.countryside.dev > qa/latest-pid.txt 2>&1 || true
-            cat qa/latest-pid.txt >> qa/latest-runtime-status.txt
-            test -s qa/latest-gameplay.png || echo "SCREENSHOT_MISSING" >> qa/latest-runtime-status.txt
-            exit 0
-
-      - name: Finalize emulator diagnostics
-        if: always()
+      - name: Validate final APK structure and uncompressed random-access pack
         run: |
-          mkdir -p qa
-          touch qa/latest-runtime-log.txt qa/latest-full-logcat.txt qa/latest-tombstone.txt qa/latest-pid.txt qa/latest-map-test.txt
-          test -f qa/latest-map-test-status.txt || echo "NOT_RUN" > qa/latest-map-test-status.txt
-          test -f qa/latest-runtime-status.txt || echo "EMULATOR_ACTION_FAILED" > qa/latest-runtime-status.txt
-          if [ ! -s qa/latest-gameplay.png ]; then
-            echo 'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNk+A8AAQUBAScY42YAAAAASUVORK5CYII=' | base64 -d > qa/latest-gameplay.png
-          fi
+          python3 - <<'PY' | tee qa/qatar-current/apk-validation.txt
+          import json, zipfile, hashlib, pathlib, sys
+          apk=pathlib.Path('app/build/outputs/apk/debug/app-debug.apk')
+          if not apk.is_file() or apk.stat().st_size < 1_000_000:
+              raise SystemExit('APK missing or implausibly small')
+          with zipfile.ZipFile(apk) as z:
+              bad=z.testzip()
+              if bad: raise SystemExit('ZIP corruption: '+bad)
+              names=set(z.namelist())
+              required=['AndroidManifest.xml','classes.dex','assets/world/qatar-national.qpak','assets/world/qatar-manifest.json']
+              for name in required:
+                  if name not in names: raise SystemExit('Missing '+name)
+              q=z.getinfo('assets/world/qatar-national.qpak')
+              if q.compress_type != zipfile.ZIP_STORED:
+                  raise SystemExit('qpak was compressed; random access would fail')
+              abis={p.split('/')[1] for p in names if p.startswith('lib/') and p.endswith('/libgdx.so')}
+              if abis != {'arm64-v8a','armeabi-v7a','x86_64'}:
+                  raise SystemExit('ABI set mismatch: '+repr(abis))
+              if not all(f'lib/{abi}/libgdx-bullet.so' in names for abi in abis):
+                  raise SystemExit('Bullet native library missing')
+          digest=hashlib.sha256(apk.read_bytes()).hexdigest()
+          print(json.dumps({'apkBytes':apk.stat().st_size,'sha256':digest,'qpakStoredBytes':q.file_size,'abis':sorted(abis),'zipEntries':len(names)},indent=2))
+          PY
+          AAPT="$(find "$ANDROID_HOME/build-tools" -type f -name aapt | sort -V | tail -1)"
+          "$AAPT" dump badging app/build/outputs/apk/debug/app-debug.apk | tee qa/qatar-current/aapt-badging.txt
+          grep -q "package: name='ai.arena.qatar.peninsula' versionCode='1' versionName='0.1.0-national-streaming-foundation'" qa/qatar-current/aapt-badging.txt
+          ! grep -q "android.permission.INTERNET" qa/qatar-current/aapt-badging.txt
 
-      - name: Persist failed-build diagnostics without publishing an APK
-        if: always() && github.ref == 'refs/heads/arena/8288058f-temporary2'
-        run: |
-          if [ "$(cat qa/latest-map-test-status.txt 2>/dev/null)" != "PASSED" ]; then
-            git config user.name "github-actions[bot]"
-            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-            git add -f qa/latest-gameplay.png qa/latest-runtime-log.txt qa/latest-runtime-status.txt qa/latest-full-logcat.txt qa/latest-tombstone.txt qa/latest-pid.txt qa/latest-map-test.txt qa/latest-map-test-status.txt
-            git diff --cached --quiet || git commit -m "Persist failed 1:25 build diagnostics [skip ci]"
-            git push origin "HEAD:${GITHUB_REF_NAME}"
-          fi
-
-      - name: Require compact-world startup regression pass
-        if: always()
-        run: test "$(cat qa/latest-map-test-status.txt 2>/dev/null)" = "PASSED"
-
-      - name: Stage named APK
+      - name: Stage named APK and checksum
         run: |
           mkdir -p artifacts
-          cp app/build/outputs/apk/debug/app-debug.apk artifacts/Nauru-The-Countryside-1x25-THERMAL-v0.4.0.apk
-          sha256sum artifacts/Nauru-The-Countryside-1x25-THERMAL-v0.4.0.apk > artifacts/Nauru-The-Countryside-1x25-THERMAL-v0.4.0.apk.sha256
+          NAME='Qatar-The-Peninsula-FULL-MAP-STREAMING-v0.1.0.apk'
+          cp app/build/outputs/apk/debug/app-debug.apk "artifacts/$NAME"
+          (cd artifacts && sha256sum "$NAME" > "$NAME.sha256")
+          cp data/qatar/compiled/qatar-world-report.json qa/qatar-current/world-report.json
+          python3 - <<'PY'
+          import json,hashlib,pathlib,subprocess
+          apk=pathlib.Path('artifacts/Qatar-The-Peninsula-FULL-MAP-STREAMING-v0.1.0.apk')
+          report=json.loads(pathlib.Path('data/qatar/compiled/qatar-world-report.json').read_text())
+          result={'sourceCommit':subprocess.check_output(['git','rev-parse','HEAD'],text=True).strip(),'apk':apk.name,'apkBytes':apk.stat().st_size,'apkSha256':hashlib.sha256(apk.read_bytes()).hexdigest(),'packageId':'ai.arena.qatar.peninsula','versionCode':1,'versionName':'0.1.0-national-streaming-foundation','minSdk':26,'targetSdk':35,'abis':['arm64-v8a','armeabi-v7a','x86_64'],'countryChunks':report['grid']['chunks'],'municipalities':len(report['municipalities']),'adm0Polygons':report['coverage']['adm0PolygonCount'],'qpakSha256':report['qpakSha256'],'status':'PASSED'}
+          pathlib.Path('qa/qatar-current/build-record.json').write_text(json.dumps(result,indent=2)+'\n')
+          PY
 
-      - name: Upload APK artifact
+      - name: Upload current APK artifact
         uses: actions/upload-artifact@v4
         with:
-          name: Nauru-The-Countryside-1x25-Thermal-Android
+          name: Qatar-The-Peninsula-v0.1.0-Android
           path: |
-            artifacts/Nauru-The-Countryside-1x25-THERMAL-v0.4.0.apk
-            artifacts/Nauru-The-Countryside-1x25-THERMAL-v0.4.0.apk.sha256
+            artifacts/Qatar-The-Peninsula-FULL-MAP-STREAMING-v0.1.0.apk
+            artifacts/Qatar-The-Peninsula-FULL-MAP-STREAMING-v0.1.0.apk.sha256
+            qa/qatar-current/**
           if-no-files-found: error
           retention-days: 30
 
-      # Keeping this small APK on the game branch also provides a direct repository
-      # deliverable in environments that cannot follow Actions' external blob redirect.
-      - name: Publish APK on the source branch
+      - name: Publish tested APK on this fixed branch
         if: github.ref == 'refs/heads/arena/8288058f-temporary2'
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add -f artifacts/Nauru-The-Countryside-1x25-THERMAL-v0.4.0.apk artifacts/Nauru-The-Countryside-1x25-THERMAL-v0.4.0.apk.sha256 qa/latest-gameplay.png qa/latest-runtime-log.txt qa/latest-runtime-status.txt qa/latest-full-logcat.txt qa/latest-tombstone.txt qa/latest-pid.txt qa/latest-map-test.txt qa/latest-map-test-status.txt
-          git diff --cached --quiet || git commit -m "Publish tested 1:25 thermal Android APK [skip ci]"
+          git add -f artifacts/Qatar-The-Peninsula-FULL-MAP-STREAMING-v0.1.0.apk artifacts/Qatar-The-Peninsula-FULL-MAP-STREAMING-v0.1.0.apk.sha256 qa/qatar-current
+          git diff --cached --quiet || git commit -m "Publish tested Qatar streaming APK v0.1.0 [skip ci]"
           git push origin "HEAD:${GITHUB_REF_NAME}"

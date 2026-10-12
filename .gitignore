@@ -9,3 +9,6 @@
 .externalNativeBuild/
 .cxx/
 artifacts/*.apk
+__pycache__/
+*.py[cod]
+/app/libs/**/*.so
