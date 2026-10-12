@@ -1,0 +1,2378 @@
+QATAR: THE PENINSULA
+EXTREME-DETAIL MASTER BUILD PROMPT FOR A FROM-SCRATCH REALISTIC ANDROID APK
+
+PURPOSE OF THIS FILE
+--------------------
+Copy everything between BEGIN MASTER PROMPT and END MASTER PROMPT into a capable coding-agent session. Give that agent a clean Git repository and permission to use GitHub Actions when the local environment has no Android SDK.
+
+This specification is intentionally long and explicit. It defines the geographic scope, technical architecture, data pipeline, landscape types, settlements, infrastructure, rendering, streaming, physics, controls, cultural presentation, performance constraints, testing, build workflow, and acceptance gates. The coding agent must still inspect real source data and verify licenses; it must not “fill gaps” by inventing geography or copying proprietary imagery.
+
+The requested coverage is the ENTIRE COUNTRY OF QATAR at true 1:1 local metre scale, including the complete peninsula, the Saudi land border, all municipalities, all legally recognized Qatari land islands represented by the selected authoritative/open boundary dataset, and enough surrounding Gulf water/airspace for boats and aircraft. No municipality or remote region may be replaced by an empty desert placeholder.
+
+============================== BEGIN MASTER PROMPT ==============================
+
+You are the lead Android game engineer, rendering engineer, physics programmer, technical artist, GIS engineer, world-streaming engineer, environment artist, AI/traffic engineer, localization engineer, build engineer, and QA owner for a new project named:
+
+    QATAR: THE PENINSULA
+
+MISSION
+-------
+Start from a clean repository and build a genuinely installable Android APK containing a realistic, fully rendered, offline, open-world interpretation of the entire country of Qatar.
+
+The final playable world must include:
+
+1. The complete State of Qatar land territory at 1:1 local metre scale, from the Saudi border in the south to the northern tip and from the western Gulf coast to the eastern Gulf coast.
+2. Every municipality and every major city/town/settlement, connected by the actual open-data road network and represented with appropriate density and regional character.
+3. All Qatari land islands included by the chosen authoritative/open national boundary dataset, plus navigable surrounding Gulf water and airspace.
+4. Doha as a detailed capital city, but not at the expense of Al Rayyan, Al Wakrah, Al Khor/Al Thakhira, Lusail/Al Daayen, Umm Salal, Al Shahaniya, Dukhan, Mesaieed, Ras Laffan, Al Ruwais/Madinat ash Shamal, Abu Samra, Zekreet/Ras Abrouq, Al Zubarah, Khor Al Adaid, farms, desert roads, coast, mangroves, sabkha, dunes, rocky plains, industrial areas, ports, and remote settlements.
+5. A physically interactive human character with realistic locomotion, falling, swimming/wading, heat/stamina response, animation, and safe vehicle entry/exit.
+6. An original drivable car/4x4 with realistic suspension, tires, engine, gearbox, braking, highway behavior, loose-sand traction, dune response, heat, and collision physics.
+7. An original pilotable helicopter with realistic rotor, collective, cyclic, yaw, translational lift, ground effect, high-temperature air-density effects, dust/brownout, wind, and landing behavior.
+8. An original flyable light aeroplane with realistic lift, drag, stall, propeller, control surfaces, landing gear, density altitude, crosswind, takeoff, and landing behavior.
+9. An original controllable boat/dhow-inspired workboat with realistic buoyancy, shallow Gulf water, tides, currents, waves, propulsion, steering, wake, and beaching behavior.
+10. Scalable right-hand traffic, pedestrians, Doha Metro/Lusail Tram ambience, buses, and regional activity after the core world and player vehicles are stable.
+11. Realistic Qatari desert/coastal atmosphere: intense sun, humid coast, dry interior, shamal winds, dust haze, heat shimmer, occasional rain, turquoise shallows, mangroves, sabkha, dunes, limestone/gravel plains, modern skyline, traditional architecture, industrial massing, and night lighting.
+12. Arabic and English place names/signage with correct UTF-8 handling, right-to-left shaping, licensed fonts, and respectful cultural presentation.
+13. Thermal-aware Android rendering and simulation with explicit 30/20/15 FPS profiles.
+14. A final downloadable APK, SHA-256 checksum, build/test record, and complete data/asset licensing documentation.
+
+Do not provide only a plan, source skeleton, web map, picture viewer, cinematic, or video. Build incrementally until a current APK compiles and passes packaged-country startup, coverage, streaming, and physics tests.
+
+If the local environment lacks Android SDK/Gradle/adb, use GitHub Actions. Do not use the missing local SDK as a reason to stop. Produce an installable APK after every major milestone.
+
+
+1. NON-NEGOTIABLE PRODUCT RULES
+--------------------------------
+
+A. Deliverable
+
+- The primary deliverable is a directly installable Android .apk.
+- Support Android 8.0/API 26 or newer unless a verified required dependency forces a documented higher minimum.
+- Use a new application ID such as:
+
+      ai.example.qatar.peninsula
+
+  Replace ai.example with the repository owner’s namespace when appropriate.
+- Provide a launcher activity, loading/progress screen, recoverable error screen, main gameplay, settings, credits, attribution, and exit/pause lifecycle.
+- Produce a universal debug-signed APK for direct installation. A release build is optional, but never commit/request a private signing key.
+- Final response must include filename, exact bytes, SHA-256, package ID, version name/code, min/target SDK, ABIs, CI run, validation limits, and download link.
+
+B. Entire-country coverage
+
+- Doha alone is not acceptable.
+- A disconnected collection of landmark scenes is not acceptable.
+- A generic desert outside Doha is not acceptable.
+- The complete country boundary must be covered by continuous streamed terrain/world chunks.
+- Every municipality must have validated roads, terrain class, settlements, coast/interior features, and representative structures.
+- Remote areas must still use real geography and appropriate procedural detail, not an empty flat plane.
+- Automated tests must fail if any required region, municipality, coast segment, island, border checkpoint, airport/port category, or world-manifest band is absent.
+
+C. Fully rendered graphics
+
+- Terrain, desert, dunes, sabkha, water, roads, bridges, buildings, vegetation, vehicles, people, traffic, transit, ports, airports, and landmarks must be actual 3D graphics.
+- Do not use Google Earth, Google Maps, Street View, proprietary photogrammetry, or static satellite imagery as the playable world.
+- Do not use a flat aerial picture as terrain.
+- A vector minimap and distant procedural skyline are permitted, but cannot replace the 3D world.
+
+D. Original/legal assets
+
+- Do not copy GTA or any commercial game’s code, world, vehicle, sound, shader, animation, or asset.
+- Use original fictional vehicle designs and liveries.
+- Use original art or documented permissive/CC0/open-source assets that explicitly allow redistribution in an APK.
+- Maintain ASSET_LICENSES.md with asset name, author, source URL, exact license, downloaded version/date, modifications, and shipped path.
+- Maintain DATA_SOURCES.md with dataset name, source URL, retrieval date, geographic scope, checksum, license, attribution, processing, and shipped derivative.
+- Show “© OpenStreetMap contributors” visibly if OSM-derived geometry is used.
+- Never scrape or redistribute proprietary map tiles, commercial 3D models, airline liveries, logos, music, broadcasts, or photos.
+
+E. Public-map detail and sensitive sites
+
+- Airports, ports, industrial areas, energy facilities, military areas, government compounds, and utilities may be represented only at public, legally obtained map-level exterior detail.
+- Do not invent restricted interiors, operational workflows, access routes, patrol/security behavior, credentials, control systems, pipeline operating data, or hidden infrastructure.
+- Generalize restricted compounds into exterior massing, fences/barriers, and no-entry gameplay zones.
+- Do not make a sensitive industrial/military location a mission target.
+- Use public civilian airfields/game-design aviation hubs for player aircraft; military locations must not be player spawn/mission areas.
+
+F. Offline-first
+
+- Required world and gameplay assets must be in one self-contained APK unless the user explicitly authorizes asset packs.
+- No login, network map request, cloud backend, ads, telemetry, or always-online dependency.
+- The game must launch and remain playable in airplane mode.
+
+G. Size policy
+
+- Do not omit a municipality, remote coast, island, settlement, road corridor, or environmental class merely to make a tiny APK.
+- There is no arbitrary small-APK target. Geographic completeness and quality take priority.
+- Still compress and LOD assets because APK size does not remove Android RAM, GPU bandwidth, storage installation, loading-time, or thermal constraints.
+- Normal Git pushes often reject individual files around/above 100 MB. If the APK is larger, publish it through GitHub Actions artifacts or a GitHub Release instead of deleting required content.
+- Keep raw source rasters/PBFs/intermediate meshes outside Git when large; preserve fetch manifests/checksums and compiled runtime data according to repository policy.
+
+H. Honest evidence
+
+- Never claim commercial AAA equivalence.
+- Never claim physical-device frame rate/temperature/battery results without measuring them.
+- Never use an old screenshot, log, checksum, or PASSED file as proof for the current commit.
+- Treat emulator infrastructure failure separately from an application failure.
+
+
+2. AUTHORITATIVE COUNTRY SCOPE AND BOUNDARY
+------------------------------------------
+
+Before world rendering, create and version:
+
+    data/geodata/QATAR_NATIONAL_AOI.geojson
+    data/geodata/QATAR_MUNICIPALITIES.geojson
+    data/geodata/QATAR_ISLANDS_MANIFEST.json
+    data/geodata/QATAR_BOUNDARY_REPORT.md
+    data/geodata/QATAR_WORLD_EPOCH.md
+
+Boundary rules:
+
+- Use a legally redistributable authoritative/open national boundary source.
+- Do not draw the national border from memory.
+- Preserve the actual Saudi land-border alignment from the chosen source.
+- Follow the complete western, northern, and eastern coastline of the peninsula.
+- Include all land polygons/islands assigned to Qatar by the selected consistent source.
+- Record disputed/uncertain maritime/border metadata without inventing a political resolution.
+- Keep the playable high-detail land on recognized Qatari land; neighboring Saudi, Bahrain, UAE, and offshore foreign territory may appear only as distant generalized context when relevant.
+- Use a water/airspace buffer beyond the coast for boat and flight gameplay. This buffer is a gameplay area, not a political boundary claim.
+- If a legally usable maritime-boundary dataset is included, store it as metadata and explain the source; otherwise do not draw invented territorial-water lines.
+
+Country coverage must include all current municipalities represented by the chosen dated dataset, expected to include at least:
+
+- Ad Dawhah / Doha.
+- Al Rayyan.
+- Al Wakrah.
+- Al Daayen.
+- Umm Salal.
+- Al Khor and Al Thakhira.
+- Al Shamal.
+- Al Shahaniya.
+
+Do not silently merge, omit, or use outdated municipal boundaries. QATAR_WORLD_EPOCH.md must state the selected data date because Qatar’s construction, coastline reclamation, roads, stadium status, metro/tram, and neighborhoods change rapidly.
+
+Mandatory national checkpoint groups:
+
+SOUTH AND BORDER
+- Abu Samra/Salwa land-border region at safe public map-level detail.
+- Southern desert and border-adjacent road network.
+- Khor Al Adaid/Inland Sea landscape and southeastern dunes/coast.
+- Mesaieed/Umm Sa’id region and public exterior industrial/port massing.
+- Hamad Port public exterior and coastline.
+
+CENTRAL AND CAPITAL
+- Doha urban core and suburban extent.
+- Hamad International Airport public exterior/runways/taxiways.
+- Doha International Airport public exterior where current data shows it.
+- Doha Corniche and Doha Bay.
+- West Bay skyline.
+- Msheireb, Souq Waqif, MIA/National Museum waterfront areas.
+- Al Rayyan/Education City/Aspire Zone.
+- Major orbital/expressway/interchange network.
+
+NORTH AND NORTHEAST
+- Lusail and Al Daayen.
+- The Pearl-Qatar and connected reclaimed/artificial coast represented at the selected epoch.
+- Al Khor.
+- Al Thakhira mangroves/Purple Island area.
+- Ras Laffan public exterior industrial/port massing.
+- Fuwairit/northern beaches.
+- Al Ruwais and Madinat ash Shamal.
+- Northern tip and complete north coast.
+
+WEST AND NORTHWEST
+- Dukhan.
+- Zekreet/Ras Abrouq limestone/rock formations and coast.
+- Al Shahaniya interior.
+- Al Zubarah archaeological/fort region using respectful public exterior representation.
+- Western coastal roads, settlements, beaches, sabkha, and industrial massing.
+
+ISLANDS AND WATER
+- Every land island in QATAR_ISLANDS_MANIFEST.json.
+- Public/generalized representation of remote industrial islands if included by the boundary source; no sensitive operational detail.
+- Navigable Gulf water buffer around the peninsula.
+- Shallow banks, channels, seagrass/mudflat/mangrove areas only from legal data or documented procedural approximations.
+
+The packaged-country coverage test must prove that every checkpoint group and every municipality has valid chunk entries. A visually detailed Doha cannot compensate for a failed remote-region checkpoint.
+
+
+3. TRUE 1:1 SCALE, GLOBAL COORDINATES, AND FLOATING ORIGIN
+----------------------------------------------------------
+
+Use true 1:1 local metre scale.
+
+- One projected metre equals one game metre.
+- Human, car, boat, helicopter, aeroplane, roads, runways, ports, buildings, and terrain use physically meaningful dimensions.
+- Do not compress the peninsula into a small theme park.
+- Do not enlarge airport runways or use hidden aircraft takeoff impulses.
+
+Coordinate system:
+
+- Store master positions in double precision.
+- Default to WGS84 / UTM zone 39N (EPSG:32639), which covers Qatar, after verifying it against source metadata and known checkpoints. If an authoritative source uses Qatar National Grid or another CRS, perform a documented verified conversion into the single runtime master CRS rather than guessing offsets.
+- Verify EPSG definition, axis order, units, false easting/northing, datum, and transform with known checkpoints.
+- Keep latitude/longitude only for metadata and conversion; do not feed degrees to physics/render calculations.
+- Use local float coordinates around the active focus for GLES/Bullet.
+- Implement a floating origin for the full-country distances.
+- Keep global double transform plus local float transform for every streamed/static/dynamic entity.
+
+Origin rebase:
+
+- Trigger beyond a profiled local-distance threshold, not every frame.
+- Shift terrain chunks, rigid bodies, constraints, vehicles, human, camera, particles, audio, water-wave origin, traffic, pedestrians, transit, AI paths, decals, tire tracks, and sky/environment anchors coherently.
+- Preserve linear/angular velocity, forces, gear state, wheel state, rotor/propeller phase, route progress, and render interpolation.
+- Rebuild/update Bullet broadphase safely after a shift.
+- Ensure asynchronous chunk requests use immutable global keys and cannot apply stale pre-shift local coordinates.
+
+Required coordinate tests:
+
+- WGS84 to projected to WGS84 round-trip at north, south, east, west, and Doha checkpoints.
+- Projected distance/orientation against known open-data road/runway lengths/headings.
+- Save/load at opposite country extremes.
+- Human walking during rebase.
+- Car at highway speed during rebase.
+- Boat during waves/current during rebase.
+- Helicopter and aeroplane during rebase.
+- Traffic/transit paths during rebase.
+- No visible jump greater than a small documented render tolerance.
+- No change in local velocity/acceleration beyond numeric tolerance.
+
+
+4. RECOMMENDED TECHNICAL FOUNDATION
+-----------------------------------
+
+Use this default stack unless an early compile spike proves a component incompatible:
+
+- Java 17 for core/shared code.
+- Gradle Android application/launcher.
+- libGDX for Android lifecycle, OpenGL ES, input, audio, files, and asset interfaces.
+- Bullet via gdx-bullet for broadphase, rigid bodies, contacts, constraints, and collision.
+- OpenGL ES 3.0 mobile renderer with custom PBR-lite shaders.
+- Verified Android-compatible glTF 2.0 loader for original models/animation.
+- Python 3 deterministic GIS, terrain, mesh, texture, signage, and package compilers.
+- JUnit for pure models/data.
+- Robolectric/Android or equivalent packaged-resource startup tests.
+- GitHub Actions for clean build/test/APK publication.
+
+Before country development, build a toolchain-proof APK that:
+
+- Opens a launcher/loading screen.
+- Initializes GLES3.
+- Compiles all initial shaders and draws a lit textured mesh.
+- Initializes Bullet and drops a rigid body onto a static surface.
+- Loads a small packaged binary with version/checksum validation.
+- Accepts touch input.
+- Pauses/resumes/recreates EGL without losing state or crashing.
+- Passes GitHub Actions assemble and startup tests.
+
+If a dependency fails, document exact coordinates/version/error and choose a maintained compatible alternative. Do not silently replace physical simulation with animation.
+
+Suggested repository layout:
+
+    android/                         Android launcher, services, manifest
+    core/src/.../game/               state, clocks, saves, recovery
+    core/src/.../render/             GLES3, shaders, materials, shadows
+    core/src/.../physics/            common force models, Bullet bridge
+    core/src/.../human/              controller, animation, IK, ragdoll
+    core/src/.../vehicles/car/
+    core/src/.../vehicles/boat/
+    core/src/.../vehicles/heli/
+    core/src/.../vehicles/plane/
+    core/src/.../world/              chunks, origin, time, environment
+    core/src/.../terrain/            elevation, dunes, sabkha, roads
+    core/src/.../water/              Gulf, tides, waves, currents
+    core/src/.../weather/            sun, heat, haze, shamal, rain/dust
+    core/src/.../traffic/            lanes, signals, vehicles
+    core/src/.../pedestrians/        paths, crossings, crowds
+    core/src/.../transit/            metro/tram/bus ambience
+    core/src/.../wildlife/           optional desert/coastal fauna LOD
+    core/src/.../localization/       Arabic/English/RTL shaping
+    core/src/.../input/              touch/gamepad action maps
+    core/src/.../ui/                 HUD, minimap, settings, credits
+    tools/                           deterministic compilers/validators
+    data/geodata/                    provenance, AOI, checksums/manifests
+    assets/source/                   editable original/licensed sources
+    android/assets/world/            compiled streamable country bundles
+    tests/                           data, environment, physics, streaming
+    artifacts/                       final APK/checksum when policy permits
+    .github/workflows/               build/test/publication
+
+Never commit Android SDKs, Gradle caches, secret keystores, node_modules, raw temporary exports, or unneeded multi-gigabyte intermediates.
+
+
+5. DATA PROVENANCE AND WORLD EPOCH
+----------------------------------
+
+Qatar develops rapidly. Do not combine arbitrary data years without disclosure.
+
+QATAR_WORLD_EPOCH.md must record:
+
+- Target world snapshot date/range.
+- National/municipal boundary date.
+- OSM extract timestamp.
+- Airport/runway/taxiway date.
+- Road/expressway date.
+- Doha Metro/Lusail Tram date.
+- Stadium/venue status date.
+- Reclaimed coast/artificial island date.
+- Major construction assumptions.
+- Elevation/bathymetry date/resolution.
+- Weather/climate normal period.
+- Known mismatches and intentionally generalized zones.
+
+Potential legal open sources, subject to verification:
+
+- OpenStreetMap for coastline, roads, lanes, buildings, airports, ports, rail/transit, land use, places, barriers, and public landmarks.
+- An authoritative/open Qatar national/municipal boundary source.
+- Copernicus DEM, NASA/NGA SRTM, or another redistributable DEM.
+- GEBCO or another open bathymetry source only if the selected license/version permits the intended redistribution and attribution.
+- Legally open weather/climate normals for sun/temperature/humidity/wind profiles.
+- Legally open GTFS/transit data if available and redistributable.
+- Open protected-area/land-cover/mangrove data with recorded licenses.
+
+Do not assume “publicly viewable” means redistributable. Verify each license. If a source cannot ship in the APK, use it only if legally permitted to derive a non-reconstructive result; otherwise reject it and use another source.
+
+Maintain SHA256SUMS for every preserved source and compiled bundle. A compiler must fail on unexpected source hash unless deliberately updated with a documented epoch change.
+
+
+6. DETERMINISTIC GIS AND WORLD-COMPILATION PIPELINE
+---------------------------------------------------
+
+Pipeline stages:
+
+STAGE 1 — Acquire and verify
+- Fetch from recorded URLs.
+- Verify transport success, byte size, format magic, checksum, expected date, and geographic intersection.
+- Never commit an HTML error page as data.
+
+STAGE 2 — Normalize coordinates
+- Parse WGS84 safely.
+- Project into selected metre CRS.
+- Normalize axis order.
+- Reject NaN/infinity/out-of-range coordinates.
+- Preserve source IDs/tags needed for reproducibility.
+
+STAGE 3 — Validate geometry
+- Repair only safely repairable polygons.
+- Reject self-intersections that cannot be deterministically resolved.
+- Normalize winding.
+- Remove duplicate/near-duplicate points.
+- Snap shared road/intersection endpoints within a documented tolerance.
+- Preserve bridge/tunnel/layer separation.
+- Validate coastline rings/holes/islands.
+
+STAGE 4 — Clip and classify
+- Clip land/detail to national AOI.
+- Retain a configurable water/airspace buffer.
+- Classify municipalities, settlements, land use, terrain class, road class, water class, protected/restricted/generalized zones, and material region.
+- Keep source confidence/provenance on inferred values.
+
+STAGE 5 — Terrain synthesis
+- Resample DEM without inventing mountains.
+- Qatar is low/flat; preserve subtle relief and avoid exaggerated fantasy terrain.
+- Generate microrelief only through documented biome-specific rules.
+- Constrain roads, runways, building pads, ports, and shore structures.
+- Generate dune/sabkha/rock detail layers separately from base elevation.
+
+STAGE 6 — Networks
+- Build routable right-hand road/lane graph.
+- Build sidewalk/crossing graph.
+- Build metro/tram rail splines and station metadata.
+- Build marine navigability/depth/current zones.
+- Build aircraft runway/taxiway data.
+
+STAGE 7 — Structures
+- Compile all valid building footprints/levels/heights/roof types/tags.
+- Build deterministic procedural style parameters.
+- Preserve important landmark/skyline identifiers.
+- Generate collision proxies and LOD hierarchy.
+
+STAGE 8 — Chunking
+- Create hierarchical country/region/chunk IDs.
+- Dense Doha/Lusail chunks may be 128–256 m.
+- Other towns may be 256–512 m.
+- sparse desert/coast may use 512 m–2 km data tiles with subcells for collision/detail.
+- Create coarse whole-country terrain/road/city massing independent of near chunks.
+
+STAGE 9 — Runtime compilation
+- Versioned binary magic/header.
+- CRS/origin/epoch version.
+- Bounds/count limits.
+- Material/asset dependency table.
+- Geometry quantization only within measured error limits.
+- LODs/collision/nav metadata.
+- Compression suitable for random chunk access.
+- Per-chunk checksum.
+- Master manifest checksum.
+
+STAGE 10 — Validation report
+- Country/municipality feature counts.
+- Missing/invalid geometry counts.
+- Chunk coverage map.
+- Seam report.
+- Road/rail connectivity report.
+- Coast/island report.
+- Height/material inference statistics.
+- Runtime byte totals.
+- Determinism hash.
+
+The build must never silently substitute an old compiled world when source/compiler version changed.
+
+
+7. STREAMING ARCHITECTURE FOR THE ENTIRE COUNTRY
+------------------------------------------------
+
+The complete country cannot be loaded in full detail. Streaming is foundational.
+
+Chunk lifecycle:
+
+- UNLOADED.
+- REQUESTED.
+- QUEUED_IO.
+- DECODING_CPU.
+- READY_CPU.
+- QUEUED_GPU.
+- ACTIVE_HIGH.
+- ACTIVE_MEDIUM.
+- ACTIVE_LOW.
+- EVICT_PENDING.
+- EVICTED.
+- FAILED_OPTIONAL or FAILED_REQUIRED.
+
+Required behavior:
+
+- Select chunks using global focus, camera, altitude, velocity, heading, vehicle mode, braking/turn radius, graphics profile, and thermal profile.
+- Walking/car/boat/heli/aeroplane have different predictive load corridors.
+- Aeroplane high-altitude view uses coarse country terrain/settlement/road massing plus high detail only near camera/flight corridor.
+- Keep collision terrain farther ahead than visible high-detail props for fast vehicles.
+- Decode on bounded worker threads.
+- GL uploads only on GL thread under per-frame time/byte budget.
+- Prioritize safety collision, terrain, roads, and runway before decoration.
+- Cancel stale requests after rapid turns/teleports.
+- Reference-count shared materials/meshes/textures.
+- Evict with hysteresis to prevent boundary thrash.
+- Never evict occupied-vehicle collision support.
+- Keep water analytic globally and load coast/harbor detail by chunk.
+- Use deterministic fallback coarse terrain if an optional decoration bundle fails; required terrain/collision failure must show a safe error, not an invisible hole.
+
+Suggested rings:
+
+ON FOOT
+- High detail/collision: 250–500 m.
+- Medium structures/vegetation: 0.5–1.5 km.
+- Low city/desert massing: several km.
+
+CAR/4X4
+- High road/collision: 500–1,000 m biased forward.
+- Medium: 1–3 km.
+- Coarse horizon and route graph: farther.
+
+BOAT
+- High shore/obstacle/depth: based on speed, typically 500–1,500 m.
+- Medium coast/port/islands: multiple km.
+- Analytic sea/horizon: global.
+
+HELICOPTER
+- Collision/building high corridor scaled by speed/altitude.
+- Medium city/terrain multiple km.
+- Coarse country/skyline to horizon.
+
+AEROPLANE
+- Coarse whole-country terrain always available.
+- Runway/airport high detail for departure/approach.
+- Predictive terrain/building corridor many seconds ahead.
+- Altitude-aware suppression of street props.
+
+Memory rules:
+
+- No entire-country building mesh in RAM.
+- No entire-country road render mesh in RAM.
+- Global route graph uses compact topology/attributes.
+- Coarse whole-country representation has a strict budget.
+- Texture pages are shared and evicted by material region/LOD.
+- Avoid duplicate vertex arrays after GPU upload where CPU copies are not needed.
+- Keep collision data only in safety rings and route-specific caches.
+- Record CPU heap, native heap, Bullet memory, texture bytes, vertex/index bytes, audio, and pending decode bytes separately.
+
+Streaming tests:
+
+- Abu Samra to Doha to Al Ruwais drive.
+- Doha to Dukhan drive.
+- Doha to Al Khor/Ras Laffan region.
+- Doha to Mesaieed/Khor Al Adaid approach.
+- Coastline boat trip through multiple water/coast classes.
+- Helicopter cross-country route.
+- Aeroplane full peninsula circuit.
+- Repeated north-south traversal with stable memory.
+- Pause/resume during decode/upload.
+- Teleport between every municipal test hub.
+- Reverse direction at high speed.
+- Corrupt optional decoration chunk fallback.
+- Missing required terrain chunk hard failure before publication.
+
+
+8. QATAR TERRAIN AND ENVIRONMENT BIOME SYSTEM
+---------------------------------------------
+
+Do not depict Qatar as one uniform yellow dune texture. Implement distinct physically plausible environmental classes from legal mapped data and deterministic procedural masks.
+
+A. Rocky limestone/gravel desert (hamada)
+
+- Common flat/rolling stony surface.
+- Pale limestone/gravel albedo variation.
+- Sparse stones, low microrelief, compacted vehicle tracks.
+- Roughness/normal detail at multiple scales.
+- Sparse hardy shrubs only where land-cover/confidence supports them.
+- Do not add dense vegetation.
+
+B. Sand sheets and dunes
+
+- Concentrated where data/terrain rules indicate, especially relevant southern/southeastern zones.
+- Dune orientation influenced by prevailing wind configuration and constrained by roads/coast.
+- Multi-scale shape: base DEM, broad dune form, ripple normal/detail.
+- No sharp fantasy mountains.
+- Loose-sand physical material, wheel sinkage/rolling resistance, dust, tire tracks.
+- Windward/leeward shading and sand accumulation near barriers.
+- Distinct wet/compacted sand near shore.
+
+C. Sabkha/salt flats
+
+- Very flat, pale/gray-white crust, polygonal/cracked detail, occasional darker damp patches.
+- Strong sun reflection but high roughness variation.
+- Soft/damp traction zones where appropriate.
+- Avoid placing ordinary vegetation/buildings without mapped evidence.
+- Seasonal/rare wetness configuration must be data-driven and bounded.
+
+D. Rawda/depressions and vegetated pockets
+
+- Slightly lower terrain where runoff/soil permits more vegetation.
+- Greener after rare rain according to seasonal profile.
+- Farms/compounds only from mapped data or documented regional procedural selection.
+- Do not create permanent streams without evidence.
+
+E. Coastal mudflat/tidal flat
+
+- Gentle elevation/depth transition.
+- Wet mud/sand roughness and waterline darkening.
+- Tide-dependent exposed area if data resolution supports it.
+- Boat grounding and pedestrian sinking/slowing only in designated material zones.
+- Wading birds optional through wildlife LOD.
+
+F. Mangroves
+
+- Especially important around Al Thakhira and other mapped mangrove zones.
+- Distinct mangrove roots/canopy clusters, shallow channels, mudflat transition.
+- GPU instancing/impostors.
+- Collision only near player/boat.
+- Protected/no-damage gameplay treatment; no missions encouraging destruction.
+
+G. Urban/industrial/reclaimed land
+
+- Engineered flat pads, drainage, roads, walls, lots, warehouses, skyline, cranes, tanks, port surfaces, and construction zones based on epoch.
+- Public exterior/generalized industrial massing only.
+- Reclaimed/artificial coastline must match the world epoch.
+- No fictional chemical hazards or sensitive operational labels.
+
+H. Agricultural/farm areas
+
+- Mapped farms/greenhouses/compounds, irrigation geometry only from legal public data or generic non-operational visuals.
+- Date palm/windbreak rows where supported.
+- Restricted/private boundaries respected.
+
+Terrain blending:
+
+- Use splat/material weights generated by classification and slope/elevation/coast distance.
+- Normalize weights.
+- Avoid repeating visible texture grids.
+- Use macro color variation, detail normals, stochastic/rotated samples where affordable.
+- Roads/building pads override terrain safely without z-fighting.
+- Terrain normals derive consistently from final height field.
+- Collision height matches rendered terrain within documented tolerance.
+
+Microdetail/performance:
+
+- Near stones/shrubs/debris are instanced and pooled.
+- Far terrain bakes macro detail.
+- Tire/foot tracks use decals/virtual texture-like clipmaps with strict lifetime/budget.
+- ECO shortens microdetail/track distance.
+
+
+9. COAST, GULF WATER, TIDES, AND MARINE WORLD
+---------------------------------------------
+
+Water classes:
+
+- Open Gulf water.
+- Doha Bay/harbor.
+- Port/industrial harbor water.
+- Shallow turquoise coastal water.
+- Tidal/mudflat/mangrove channels.
+- Khor Al Adaid inland-sea water.
+- Marina/canal/artificial-island water.
+
+Rendering:
+
+- Physically plausible Fresnel.
+- Depth-dependent color using legal bathymetry or documented generated depth.
+- Multiple wave bands appropriate to protected/open water.
+- Wind direction/speed shared with weather and boat physics.
+- Sun glitter path.
+- Foam/wake near shore/boats, not a uniform white border.
+- Turbidity/roughness differences by water class.
+- Underwater rendering is optional; if included, use fog/caustics conservatively.
+- Reflection quality tiers; no mandatory full-resolution planar reflection.
+
+Tides/currents:
+
+- Use open data if licensing/resolution allows.
+- Otherwise use a clearly documented simplified periodic tide model with region-specific phase/amplitude configuration.
+- Do not claim navigational accuracy.
+- Current vectors must be bounded and tested.
+- Water level changes cannot expose holes in coast meshes.
+- Marine navigation depth uses conservative game classification, not real navigation advice.
+
+Bathymetry fallback:
+
+- Build from coastline-distance and known open depth contours only if legal detailed bathymetry is absent.
+- Smooth gradients.
+- Preserve mapped channels/harbors where open data supports them.
+- Mark generated values in metadata.
+- Never label game depth as suitable for real boating.
+
+Marine props/activity:
+
+- Generic/original dhows, workboats, fishing boats, ferries, buoys, marina craft, port cranes, piers, breakwaters.
+- Public map-level port exteriors.
+- Distant shipping uses low-rate spline/route simulation and generic liveries.
+- Avoid real shipping schedules/cargo/security operation detail.
+
+
+10. SETTLEMENTS, URBAN FORM, AND BUILDING GENERATION
+----------------------------------------------------
+
+Doha must be detailed, but every settlement must have correct footprint density and local character.
+
+Building source hierarchy:
+
+1. Mapped footprint + mapped height/levels/roof/material.
+2. Mapped footprint + inferred height/style from tags/zone/footprint.
+3. Mapped land-use block + deterministic representative structures only where building footprints are absent.
+4. Never invent a dense settlement where no source/land-use evidence exists.
+
+Procedural building archetypes:
+
+DOHA/WEST BAY/LUSAIL HIGH-RISE
+- Tower podiums, glass/concrete/metal facades, curtain-wall variation, setbacks, roof equipment, night emissive windows.
+- Preserve important skyline silhouettes using original legal models/approximations.
+- Far skyline merged by material/region.
+
+MID-RISE COMMERCIAL/RESIDENTIAL
+- 3–12+ floor configurable blocks.
+- Balconies, shading fins, storefront depth, rooftop parapets/tanks/HVAC, parking/service edges.
+- Avoid identical repeated window grids through seeded variants.
+
+VILLA/COMPOUND
+- Boundary walls/gates, villa massing, shaded entries, carports, flat/varied roofs, courtyards, sparse landscaping/palms according to mapped land use.
+- Private compounds are exterior-only unless explicitly designed as public gameplay.
+
+TRADITIONAL/HERITAGE
+- Courtyard massing, plaster/stone texture, timber/door details, arcades/shading where appropriate.
+- Use respectful original interpretation based on legal references.
+- Do not turn heritage/religious sites into destructive props.
+
+SOUQ/OLD URBAN FABRIC
+- Narrow shaded paths, awnings, shopfront variation, signs generated from validated Arabic/English strings, clutter with strict LOD.
+- No copyrighted shop brands or music.
+
+MOSQUE EXTERIORS
+- Public exterior massing/minaret/dome only from mapped/legal references.
+- Respect no-entry/interior decisions.
+- No combat/destruction gameplay.
+- Use respectful signage/audio policy.
+
+STADIUM/SPORT/EDUCATION/CULTURAL
+- Original exterior interpretation matching public footprint/silhouette and world epoch.
+- Record stadium status at epoch; do not automatically include dismantled/temporary structures as current.
+- Large meshes need custom LOD/collision.
+
+INDUSTRIAL/PORT/LOGISTICS
+- Warehouses, tanks, pipes only as generic public exterior massing, cranes, yards, fences, lights, service roads.
+- No operational labels/contents/control detail.
+- Restricted collision/perimeter.
+
+FARM/GREENHOUSE
+- Low compounds, shade houses/greenhouses, rows/windbreaks where mapped, service tracks.
+
+REMOTE TOWN/VILLAGE
+- Correct street/footprint density, villas/shops/mosques/public buildings, less skyline clutter, surrounding desert transition.
+
+Construction:
+
+- World epoch controls completed versus active-construction plots.
+- Generic cranes/scaffolding if mapped/current.
+- No perpetual random construction over landmarks.
+
+Facade system:
+
+- Trim sheets/atlases.
+- Correct floor scale.
+- Horizontal/vertical wall UV selected by normal.
+- Windows should not wrap around corners improperly.
+- Near windows use recessed geometry/parallax approximation; far windows material only.
+- Seeded facade palette based on zone, not rainbow random.
+- Dust/weathering stronger near ground/industrial/coast as appropriate.
+- AC/HVAC/rooftop props instanced and LODed.
+
+Collision:
+
+- Static chunk collision merged/simplified.
+- Important entries/stairs/ramps custom collision.
+- Far/nonplayable building interiors are closed shells.
+- Do not create one Bullet body per window/prop.
+
+
+11. REQUIRED CITIES, REGIONS, AND LANDMARK CATEGORIES
+-----------------------------------------------------
+
+Use actual open-data positions and current epoch. The following list is a minimum coverage guide, not permission to fabricate missing detail.
+
+DOHA CAPITAL REGION
+- Doha Corniche and bay.
+- West Bay skyline.
+- Msheireb Downtown.
+- Souq Waqif public exterior/lanes.
+- Museum of Islamic Art waterfront exterior.
+- National Museum of Qatar exterior silhouette/grounds at public detail.
+- Katara Cultural Village public exterior.
+- The Pearl-Qatar and connected causeways/marinas according to epoch.
+- Old Doha Port/Mina District public exterior.
+- HIA approach/coast/public airport exterior.
+- Major neighborhoods through mapped procedural coverage, not only landmarks.
+
+AL RAYYAN / EDUCATION / SPORTS
+- Al Rayyan urban extent.
+- Education City public exterior massing/transit.
+- Aspire Zone/Khalifa International Stadium region.
+- Al Wajba/nearby mapped areas.
+- Western urban-to-desert transition.
+
+LUSAIL / AL DAAYEN / UMM SALAL
+- Lusail skyline, roads, waterfront/marina, tram corridors according to epoch.
+- Lusail Stadium exterior if current for selected epoch.
+- Al Daayen neighborhoods and coast/interior transition.
+- Umm Salal settlements, roads, compounds, and surrounding land-use.
+
+AL WAKRAH / MESAIEED / SOUTH
+- Al Wakrah city/waterfront.
+- Al Janoub Stadium exterior if current.
+- Mesaieed public town/industrial exterior.
+- Hamad Port exterior/coast.
+- Southern desert roads.
+- Khor Al Adaid/Inland Sea and dunes.
+- Abu Samra public border-region roads/buildings without sensitive operations.
+
+AL KHOR / AL THAKHIRA / RAS LAFFAN
+- Al Khor city/coast/harbor.
+- Al Bayt Stadium exterior if current.
+- Al Thakhira mangroves/Purple Island landscape.
+- Ras Laffan public exterior generalized industrial/port massing and restricted boundaries.
+- Northeast coast/settlements.
+
+AL SHAMAL / NORTH
+- Madinat ash Shamal.
+- Al Ruwais port/town public exterior.
+- Northern tip/coast.
+- Fuwairit and mapped beach/settlement ecology.
+- Farms/roads/remote compounds from data.
+
+AL SHAHANIYA / WEST / NORTHWEST
+- Al Shahaniya settlement/interior road network.
+- Camel/racing-related public exterior venue massing only if legally mapped, with respectful neutral gameplay.
+- Dukhan town/coast/public exterior industrial massing.
+- Zekreet/Ras Abrouq limestone formations/desert/coast.
+- Al Zubarah fort/archaeological region respectful exterior representation.
+- Western sabkha/coast/roads.
+
+AIRPORTS
+- Hamad International Airport public runways/taxiways/aprons/exterior terminals according to epoch.
+- Doha International Airport public exterior according to epoch.
+- A suitable public civilian/light-aircraft game spawn such as a legally mapped civilian airfield; verify current status/access concept.
+- Military airfields generalized/restricted, not player operating hubs.
+
+PORTS/MARINAS
+- Hamad Port public exterior.
+- Doha/Old Port public exterior.
+- Al Ruwais public exterior.
+- Ras Laffan/Mesaieed generalized public exterior.
+- Doha/Lusail/The Pearl/other mapped marinas.
+
+ISLANDS
+- Every island in authoritative QATAR_ISLANDS_MANIFEST.json.
+- Remote/industrial islands use generalized public exterior terrain/massing and no sensitive operations.
+- Island chunk coverage/checksum/spawn safety tests.
+
+Do not place every landmark into one “tourist district.” Maintain true positions and road/coast relationships.
+
+
+12. ROADS, HIGHWAYS, INTERCHANGES, AND SIGNAGE
+-----------------------------------------------
+
+Qatar uses right-hand traffic. Build road rendering/routing from open tags and documented defaults.
+
+Required road metadata:
+
+- Road class.
+- One-way.
+- Lane count/direction.
+- Width.
+- Surface.
+- Speed class for game AI, not real navigation advice.
+- Turn restrictions.
+- Bridge/tunnel/layer.
+- Ramp/link.
+- Median/barrier.
+- Sidewalk/crossing where present.
+- Lighting/shoulder/parking/service-road indicators where available.
+
+Major corridor categories to preserve from current open data include:
+
+- Doha expressways/ring roads.
+- Al Majd Road/orbital corridors.
+- Salwa Road toward Saudi border.
+- Shamal Road/northern corridor.
+- Dukhan Highway/western corridor.
+- Al Khor/Ras Laffan corridors.
+- Lusail Expressway/Doha-Lusail connections.
+- Sabah Al Ahmad and other current major urban corridors.
+- Mesaieed/Hamad Port/southern corridors.
+- Local urban streets, service roads, industrial roads, and desert tracks.
+
+Rendering:
+
+- Human-scale lane widths, medians, curbs, shoulders, guardrails, barriers, lights, reflectors, markings, crossings.
+- Grade-separated interchange geometry.
+- Tunnel interior only where public road gameplay passes through; use modular original assets.
+- Road camber/superelevation bounded and collision-matched.
+- Road pads flatten/blend terrain without vertical cliffs.
+- Sand encroachment/dust by biome.
+- Wet appearance only during/after rain profile.
+
+Bilingual signage:
+
+- Arabic and English strings sourced from verified name:ar/name:en or curated factual names.
+- Correct Arabic shaping, joining, RTL order, numerals, line layout, and font.
+- Never reverse raw Arabic code points manually.
+- Use a licensed font with Arabic glyphs and record it.
+- Use factual route/destination text without copying proprietary sign artwork; generate original sign layouts following general public conventions.
+- Provide fallback when one language is missing; do not show gibberish.
+
+Routing tests:
+
+- Municipality-to-municipality connectivity.
+- Border-to-Doha-to-north route.
+- Doha-to-Dukhan.
+- Doha-to-Mesaieed.
+- Doha-to-Al Khor/Al Shamal.
+- Interchange lane/layer continuity.
+- No bridge connected to water/ground incorrectly.
+- Desert track does not become a multi-lane highway through default inference.
+
+
+13. METRO, TRAM, BUS, AND PEDESTRIAN SYSTEMS
+---------------------------------------------
+
+Implement only after core world/human/four vehicles work.
+
+Doha Metro:
+
+- Red/Green/Gold and any selected-epoch changes from legal open data.
+- Correct above/below-ground segmentation at public map detail.
+- Stations and route splines.
+- Original unbranded train model/livery unless branding permission exists.
+- Nearby train movement/doors/stops; distant trains route-only.
+- Underground station interiors optional and only if original; exterior/entrance coverage is minimum.
+
+Lusail Tram/other transit:
+
+- Current mapped alignments/stations at selected epoch.
+- Original vehicles/art.
+- Shared rail-spline framework.
+
+Buses:
+
+- Route ambience from legal data if redistributable.
+- Otherwise traffic-integrated generic buses with plausible arterial/station behavior, not invented official schedules.
+
+Pedestrians:
+
+- Sidewalk/crossing graph or tiled navmesh.
+- Density by land use, time, weather, temperature, event profile, and graphics tier.
+- Lower outdoor density during extreme midday heat; more activity in shaded/evening areas as configured.
+- Local avoidance and crossing signals.
+- No one-for-one population simulation.
+- Distant crowds use low-rate/impostor systems.
+- Spawn/despawn outside clear view and collision proximity.
+
+Traffic:
+
+- Microscopic nearby lane-following, car-following, lane changes, signals, roundabouts, merging, yielding, obstacle response.
+- Mesoscopic distant route simulation.
+- Right-hand behavior.
+- Original diverse cars/SUVs/pickups/buses/taxis/delivery vehicles, no copied brands.
+- Agent pools and profile caps.
+- Deadlock recovery that is invisible near player.
+- Parked vehicles by land-use with deterministic placement.
+
+ECO:
+
+- Reduce agents/update rates.
+- Preserve nearby collision.
+- Disable optional distant transit detail.
+- Never spawn traffic into an unloaded collision chunk.
+
+
+14. MOBILE-REALISTIC RENDERER
+-----------------------------
+
+A. PBR-lite material model
+
+- Base color.
+- Normal.
+- Roughness.
+- Metallic.
+- Ambient occlusion where useful.
+- Emissive for controlled lights/windows.
+- Optional clearcoat approximation for vehicles/high settings.
+
+Material families:
+
+- Limestone/gravel desert.
+- Fine/loose/compacted/wet sand.
+- Sabkha crust/mud.
+- Asphalt/dusty asphalt/wet asphalt.
+- Concrete/pavers/curbs.
+- Glass/steel/aluminum.
+- Painted plaster/stone/brick.
+- Corrugated/industrial metal.
+- Vegetation/palms/mangroves.
+- Rubber/vehicle paint/interior.
+- Gulf water classes.
+- Airport/port/rail surfaces.
+
+B. Lighting
+
+- Physical-ish sun direction from Qatar latitude, date, local time, timezone configuration.
+- Correct timezone handling; do not invent daylight-saving changes.
+- Directional sun and sky ambient.
+- Compact image-based lighting or prefiltered environment approximation.
+- Exposure adaptation bounded to avoid flicker.
+- Golden-hour color and long shadows.
+- Night city emissive windows/street lighting with strict culling.
+- One main shadowed directional light.
+- Local light clustering/tile list or strict nearest-light budget.
+
+C. Atmosphere
+
+- Dry interior haze versus humid coast.
+- Dust aerosol amount driven by weather.
+- Heat shimmer near ground on high/balanced; never distort UI.
+- Distance fog hides LOD transitions without making the country permanently opaque.
+- Mirage effect optional and subtle, disabled in ECO.
+- Star visibility lower in Doha light pollution and higher in remote desert.
+
+D. Shadows
+
+- 512–1024 px based on profile/device.
+- Camera-centered or limited cascades only after profiling.
+- Throttled updates when possible.
+- Stable texel snapping to reduce shimmer.
+- Blob/contact shadows for small agents/low profile.
+- ECO disables sampled dynamic shadows or uses cheapest form.
+
+E. Reflections
+
+- IBL/environment reflections for vehicles/glass/water.
+- Local reflection probes for hero zones if affordable.
+- Planar reflection only selectively/high profile and low update rate.
+- No full-country real-time reflection pass.
+
+F. Anti-aliasing/dynamic resolution
+
+- FXAA or efficient post AA by default.
+- Optional modest MSAA only if profiling supports it.
+- Dynamic internal resolution with hysteresis and UI rendered native resolution.
+- ECO lowers resolution before destabilizing physics.
+
+G. Post-processing
+
+- Tone mapping.
+- Gamma-correct output.
+- Subtle color grade.
+- Bloom limited to bright skyline/lights.
+- No excessive chromatic aberration, blur, or fake lens dirt.
+- Rain/dust effects profile-controlled.
+
+H. Shader safety
+
+- Offline GLSL parse/compile checks where possible.
+- Runtime compile/link logs with line numbers.
+- Fallback materials.
+- GLES3 precision/texture unit/uniform/attribute limits.
+- Far-fog early exits or simplified far shader paths where safe.
+
+
+15. ORIGINAL ART AND LOD REQUIREMENTS
+------------------------------------
+
+Create original, unbranded models:
+
+PLAYER
+- Rigged human with culturally neutral configurable appearance and animation set.
+
+PLAYER CAR/4X4
+- Gulf-suitable fictional SUV/4X4, separate wheels/suspension/steering/doors/lights.
+
+HELICOPTER
+- Fictional light utility helicopter, separate main/tail rotors, skids, controls, doors where practical.
+
+AEROPLANE
+- Fictional light single-engine propeller aircraft, separate propeller, wheels/gear, ailerons, elevator, rudder, flaps.
+
+BOAT
+- Fictional workboat/dhow-inspired or center-console craft, separate propeller/rudder/wheel/controls.
+
+TRAFFIC
+- Fictional sedans, SUVs, pickups, buses, vans, delivery vehicles, taxis with generic liveries.
+
+TRANSIT
+- Generic original metro/tram vehicles inspired only by system requirements, not copied copyrighted models/liveries.
+
+PROPS
+- Street lights, signals, barriers, signs, bollards, benches, shade structures, bus stops, palms, mangroves, rocks, port/airport modules, utility cabinets, bins, market props.
+
+Every important model:
+
+- Correct metre proportions.
+- Smooth normals/bevels/curved silhouettes.
+- UV/material setup.
+- High/medium/low LOD.
+- Separate cheap collision proxy.
+- Documented triangle/material/texture budgets.
+- Automated asset validation for missing texture/material/bone/numeric issues.
+
+Do not leave primitive cubes/cylinders as final critical vehicles or landmarks. Primitive/procedural blockouts are acceptable only in early milestones.
+
+
+16. SHARED SIMULATION, UNITS, COLLISION, AND FIXED TIMESTEP
+----------------------------------------------------------
+
+Use explicit conventions everywhere. Do not let individual vehicle modules invent incompatible units or axes.
+
+Units:
+
+- Distance: metres.
+- Mass: kilograms.
+- Time: seconds.
+- Linear speed: metres/second internally.
+- Angular speed: radians/second internally.
+- Force: newtons.
+- Torque: newton-metres.
+- Pressure: pascals when needed.
+- Temperature: degrees Celsius for configuration/UI and kelvin where a formula requires absolute temperature.
+- Vehicle HUD: km/h by default; optional knots for boat/aircraft.
+- Gravity magnitude: configurable near 9.80665 m/s², applied consistently.
+- Salt-water density: named regional configuration near a physically plausible value, never a scattered magic number.
+- Air density: supplied by the weather/atmosphere model and clamped to a physically plausible game range.
+
+Coordinate convention:
+
+- Document one right-handed world convention, preferably X east, Y up, Z north (or another engine-native convention used consistently).
+- Document positive yaw/pitch/roll and quaternion multiplication order.
+- Convert GIS axes exactly once in WorldTransform.
+- Render, physics, audio, AI, and save systems use the same transform contract.
+- Unit tests verify cardinal directions, runway headings, vehicle forward vectors, and Arabic/English compass labels.
+
+Fixed simulation:
+
+- Bullet and all force models run at a fixed 60 Hz physics step:
+
+      fixedDt = 1.0 / 60.0
+
+- Rendering remains independently capped at 30/20/15 FPS.
+- Use a bounded accumulator:
+
+      frameDt = clamp(monotonicNow - previousNow, 0, 0.10)
+      accumulator += frameDt
+      substeps = 0
+      while accumulator >= fixedDt and substeps < 4:
+          sample buffered controls for this simulation time
+          update deterministic weather forces needed by physics
+          update pure force models
+          apply forces and torques to Bullet bodies
+          step Bullet exactly fixedDt
+          synchronize contacts, wheels, seats, damage, and gameplay state
+          accumulator -= fixedDt
+          substeps += 1
+      interpolationAlpha = accumulator / fixedDt
+      render interpolated previous/current transforms
+
+- If the accumulator exceeds the substep cap, discard or gradually recover excess according to a documented anti-spiral policy; never run hundreds of catch-up steps after pause.
+- Reset timing safely after pause/resume/loading/debugger stalls.
+- Buffer touch/gamepad input so short button presses are not lost between render and physics ticks.
+- Apply one-shot actions exactly once.
+- Camera and visual interpolation never feed a fake transform back into physics.
+
+Simulation ordering per fixed tick:
+
+1. Resolve queued origin rebase before stepping.
+2. Activate/deactivate safe streamed collision bodies.
+3. Read control snapshot.
+4. Update environment samples: wind, air density, water height/current, surface material.
+5. Human/vehicle force calculation.
+6. Apply external forces/torques.
+7. Bullet step/contact solve.
+8. Read contacts/suspension/wheels/landing gear.
+9. Update damage, seats, interactions, AI safety, and last-safe state.
+10. Store current transform for render interpolation.
+11. Dispatch bounded audio/particle events without allocating in hot loops.
+
+Collision layers/masks:
+
+- TERRAIN.
+- STATIC_BUILDING.
+- ROAD_BARRIER.
+- HUMAN.
+- PLAYER_CAR.
+- TRAFFIC_VEHICLE.
+- BOAT.
+- HELICOPTER.
+- AEROPLANE.
+- TRANSIT.
+- WILDLIFE.
+- DYNAMIC_PROP.
+- WATER_TRIGGER.
+- INTERACTION_TRIGGER.
+- RESTRICTED_ZONE_TRIGGER.
+- PARTICLE/VISUAL_ONLY where no physics collision is required.
+
+Define a collision matrix in one tested configuration file. Triggers must not create solid contact impulses. Never rely on undocumented default masks.
+
+Collision geometry rules:
+
+- Static terrain/buildings may use optimized static triangle/heightfield shapes.
+- Dynamic objects use convex hulls, primitives, or compound convex shapes.
+- Never use a concave dynamic triangle mesh for a moving vehicle.
+- Render mesh and collider are separate assets with bounds validation.
+- Fast car/aircraft bodies use continuous collision detection or explicit swept safety checks.
+- Runways/roads/bridge decks have continuous collision with no tiny seam gaps.
+- Coast/water triggers overlap terrain predictably without double solid surfaces.
+- Collision chunks activate before visible focus can reach them and deactivate only outside a hysteresis safety ring.
+
+Physics materials:
+
+- Central registry maps compiled terrain/road/water/structure material IDs to friction, restitution, rolling resistance, human traction, tire model coefficients, dust/spray effects, footstep audio, and track/decal type.
+- Separate Bullet contact friction from higher-level tire/hydrodynamic models; avoid multiplying incompatible friction twice.
+- Restitution remains low for ordinary terrain/vehicles unless a specific material requires bounce.
+- Material lookups are allocation-free.
+- Unknown material uses a safe conservative fallback and logs once.
+
+Solver/body policy:
+
+- Configure Bullet solver iterations and contact thresholds through named quality-tested settings.
+- Sleeping enabled for unoccupied/inactive dynamic objects.
+- The occupied vehicle and immediate safety objects remain active.
+- Distant traffic/transit uses route/proxy simulation, not thousands of awake rigid bodies.
+- No direct transform changes on a dynamic body during normal operation.
+- Teleport only for explicit spawn/recovery/origin-rebase operations; clear/update broadphase and interpolation state correctly.
+- Constraints, compound child offsets, center of mass, and inertia must be finite and validated.
+- Clamp only pathological forces; do not hide an unstable model with arbitrary velocity caps.
+
+Determinism expectations:
+
+- Pure force/configuration tests must be deterministic for the same inputs.
+- Chunk generation/selection must be deterministic.
+- Bullet does not need bit-identical cross-device output, but scenarios must remain within numeric tolerances.
+- Random gameplay/environment events use explicit seeded streams separated by subsystem so a visual particle change does not alter vehicle physics.
+
+Configuration validation at startup/build:
+
+- Positive finite mass/inertia dimensions.
+- Center of mass inside a documented plausible envelope.
+- Nonzero wheel/rotor/wing/hull dimensions.
+- Force coefficients finite and bounded.
+- Suspension rest/travel valid.
+- Collider scale matches render scale and SI metres.
+- No NaN/infinity in spawn transforms or configuration.
+- Control axes/dead zones/rates valid.
+
+Shared simulation tests:
+
+- Same 10-second force scenario rendered through 15, 20, 30, 60, and irregular FPS sequences produces close final physics state.
+- Pause/resume causes no giant impulse.
+- Origin rebase preserves active constraints and velocities.
+- Sleeping body wakes on valid contact.
+- CCD catches representative maximum-speed barrier impact.
+- Material registry returns expected road/sand/sabkha/water behavior.
+- Trigger overlaps do not create solid impulses.
+- No hot-loop allocation in a profiled fixed-step sequence.
+
+
+17. HUMAN PHYSICS, HEAT, AND ANIMATION
+--------------------------------------
+
+Controller:
+
+- Human-scale capsule roughly 1.7–1.9 m.
+- Stable ground sweep/raycast.
+- Walk, jog, sprint, crouch if supported, jump, fall, land, wade, swim.
+- Acceleration/deceleration, not instant velocity.
+- Limited air control.
+- Slope limit, sliding, curb/step, stairs, head clearance, ledge rejection, moving surfaces.
+- Materials: pavement, polished floor exterior, gravel, rock, compact sand, loose sand, wet sand, sabkha/mud, shallow water.
+- Bounded push impulses.
+- Fall/hard-landing response from impact velocity.
+
+Jump:
+
+      jumpVelocity = sqrt(2 * gravity * desiredJumpHeight)
+
+Heat/stamina:
+
+- Environmental heat affects sprint stamina/recovery through a configurable, accessibility-friendly model.
+- Shade, nighttime, and indoor/covered public hubs improve recovery.
+- Hydration is optional; never create a punishing survival requirement unless explicitly enabled.
+- Heat status must not make basic exploration impossible.
+- Do not imply game values are medical advice.
+- ECO/device thermal status is separate from in-game weather; never confuse phone temperature with character heat.
+
+Animation:
+
+- Idle, walk, jog, sprint, crouch if enabled, jump, fall, land, slope/stairs, wade, swim, enter/exit each vehicle, car/boat/heli/plane seated control poses.
+- Speed/stride matching.
+- Foot IK high/balanced.
+- Hand IK for controls where affordable.
+- Head/torso look limits.
+- Reduced ragdoll for severe impact, sleep/recovery safely.
+- ECO simplifies IK/ragdoll updates.
+
+Vehicle entry/exit:
+
+- Seat/door/exit transforms.
+- Distance and line-of-sight.
+- Vehicle speed/state.
+- No exit into traffic, wall, deep water, moving rotor/propeller, restricted area, or unloaded collision.
+- Multiple fallback exits.
+
+Human tests:
+
+- Curbs/stairs/slopes.
+- Jump height.
+- Sand/gravel/pavement acceleration differences.
+- Heat/stamina bounds.
+- Swimming/wading transitions.
+- Enter/exit all vehicles.
+- Floating origin and chunk boundaries.
+
+
+18. CAR/4X4 PHYSICS FOR HIGHWAY, CITY, AND DESERT
+--------------------------------------------------
+
+Create an original fictional 4X4/SUV appropriate for Doha highways and desert driving.
+
+Rigid chassis:
+
+- Mass, dimensions, wheelbase, track, center of mass, inertia tensor.
+- Compound convex collision.
+- Continuous collision/swept protection at speed.
+
+Suspension per wheel:
+
+      springForce = springRate * compression
+      damperForce = damperRate * relativeSuspensionVelocity
+      normalLoad  = clamp(springForce - damperForce, 0, maximumLoad)
+
+Include:
+
+- Suspension travel/bump stop/droop.
+- Wheel inertia/angular velocity.
+- Engine torque curve versus RPM.
+- Idle, redline, throttle response, engine braking.
+- Clutch approximation, automatic/manual logic, forward gears, neutral, reverse, final drive.
+- Differential and optional 2WD/4WD/low-range mode if fully tested.
+- Speed-sensitive steering and approximate Ackermann.
+- Longitudinal slip ratio.
+- Lateral slip angle.
+- Saturating tire-force curves.
+- Combined friction ellipse.
+- Brake balance, handbrake, bounded ABS/traction assists.
+- Rolling resistance/aerodynamic drag.
+- Stable anti-roll effect.
+- Damage affecting handling/engine without soft-body cost.
+
+Surface model:
+
+DRY ASPHALT
+- High grip, normal rolling resistance.
+
+DUSTY ASPHALT
+- Slightly reduced initial grip, dust visual.
+
+WET ASPHALT
+- Reduced friction and longer stop; optional bounded hydroplaning approximation at speed/water depth.
+
+GRAVEL/ROCK
+- Lower grip, vibration/stone/dust effects.
+
+COMPACT SAND
+- Moderate rolling resistance and reduced lateral grip.
+
+LOOSE SAND/DUNE
+- Increased rolling resistance/sinkage proxy, reduced traction, speed-dependent digging, dust plume.
+- Wheel load/tire pressure mode may adjust effective footprint if implemented.
+- Never let an instant “sand mode” ignore physics.
+
+WET SAND/MUD/SABKHA
+- High drag/low traction zones with bounded bogging/recovery.
+
+Simplified sand resistance can use named coefficients:
+
+      sinkageFactor      = looseSandDepth * loadPerTire / referenceLoad
+      sandResistance     = baseSandResistance * sinkageFactor * speedFunction
+      availableTireForce = normalLoad * sandFrictionCoefficient * footprintFactor
+
+Clamp all terms and test energy behavior. Do not attempt an unstable full terramechanics solver unless validated.
+
+Thermal vehicle model (optional but recommended):
+
+- Engine/coolant/brake/tire temperatures as slow bounded gameplay states.
+- Ambient heat and low speed reduce cooling.
+- Effects are mild and recoverable; not an exact engineering simulator.
+- No per-frame expensive CFD.
+
+Visual/audio:
+
+- Physical wheel steering/rotation/suspension.
+- Tire deformation only as shader/visual approximation.
+- Tire tracks in sand.
+- Dust/spray/debris pooled.
+- Engine/gear/tire/suspension audio from RPM/load/slip/surface.
+- Lights and brake/reverse signals.
+
+Car acceptance:
+
+- Suspension settles.
+- City/highway acceleration plausible.
+- Dry/wet stopping documented.
+- Progressive understeer/oversteer.
+- Dune climb depends on momentum/slope/grip.
+- Side slope can roll vehicle physically.
+- Sand bogging bounded with recovery option.
+- Stable at 20–30 FPS rendering due fixed 60 Hz physics.
+- Cannot tunnel through barriers/buildings.
+
+
+19. BOAT/DHOW-INSPIRED PHYSICS FOR SHALLOW GULF WATER
+-----------------------------------------------------
+
+Create an original unbranded small workboat, fishing boat, center-console craft, or dhow-inspired powered vessel.
+
+Hull:
+
+- Rigid body with 8–16 distributed buoyancy sample points appropriate to hull.
+- Visual hull and simple convex/compound collision.
+- Designed waterline/mass/center of mass.
+
+Per buoyancy point:
+
+- Sample analytic water height/normal/velocity.
+- Compute submersion/displaced volume proxy.
+- Apply upward force at point:
+
+      buoyancy = waterDensity * displacedVolume * gravity
+
+- Apply vertical damping based on relative hull/water velocity.
+- Clamp force to prevent numerical spikes.
+
+Hydrodynamics:
+
+- Forward drag.
+- Stronger lateral resistance.
+- Vertical damping.
+- Angular damping based on submersion.
+- Propeller thrust based on throttle/RPM/submersion/advance speed.
+- Rudder/vectored-thrust steering from water flow.
+- Bounded planing lift at speed.
+- Wind drag above waterline.
+- Tide/current advection.
+- Shallow-water resistance.
+- Grounding/beaching/mudflat behavior.
+- Propeller thrust reduction out of water/too shallow.
+
+Gulf-specific:
+
+- Calm protected marina water versus open-water chop.
+- Shallow turquoise bank behavior.
+- Mudflat/mangrove channels.
+- Khor Al Adaid water/desert shoreline.
+- Heat/haze visual, not a fake force.
+- Channels/port barriers from public map data.
+
+Visual/audio:
+
+- Wake from speed/hull load.
+- Bow spray/prop wash/foam pooled.
+- Engine pitch/load.
+- Hull slap/creak/water.
+- Generic navigation lights.
+- Optional sail is outside minimum unless physically implemented.
+
+Boat acceptance:
+
+- Floats at intended waterline.
+- Recovers from moderate roll/pitch.
+- Energy decays without throttle/waves.
+- Turns mainly with flow/speed unless vectored thrust.
+- Tide/current drift bounded.
+- Wave render and physics synchronized.
+- Beaches without falling through/climbing cliffs.
+- Shallow channels prevent unrealistic deep-draft travel.
+- Origin rebase preserves wave/boat state.
+
+
+20. HELICOPTER PHYSICS FOR HOT, DUSTY, WINDY CONDITIONS
+-------------------------------------------------------
+
+Create an original fictional light utility helicopter.
+
+Required properties:
+
+- Fuselage mass, center of mass, inertia, drag areas.
+- Main rotor radius/area/position/inertia/RPM.
+- Tail rotor/anti-torque position/authority.
+- Skids/contact compliance.
+- Engine/rotor spool state.
+
+Forces:
+
+      thrustMagnitude = Ct * airDensity * rotorArea * tipSpeed^2 * collective
+      thrustDirection = normalized(rotorUp + cyclicPitchTerm + cyclicRollTerm)
+      mainRotorForce  = thrustDirection * thrustMagnitude
+
+Include:
+
+- Collective thrust.
+- Cyclic tilt and pitch/roll moments.
+- Main-rotor reaction torque.
+- Tail rotor/yaw.
+- Translational lift.
+- Ground effect based on height and surface extent.
+- Parasite drag.
+- Simplified bounded vortex-ring/settling-with-power behavior.
+- Engine loss and simplified autorotation/rotor decay.
+- Wind/gust response.
+- High ambient temperature/air-density configuration affecting available lift modestly and physically consistently.
+- Optional stability assist through bounded torques, not position lock.
+
+Dust/brownout:
+
+- Trigger on rotor wash over loose sand/dust near ground.
+- Pooled particles with depth/visibility profile.
+- Dust amount from surface material, collective, rotor height, wind.
+- Never make a full-screen opaque effect in LOW/ECO.
+- Dust is visual plus optional sensor/visibility challenge, not arbitrary control reversal.
+
+Landing:
+
+- Skid contact/compliance/friction.
+- Gentle landing settles.
+- Side slope limits.
+- Hard landing damages/skids/vehicle state.
+- Rotor danger/collision zone.
+- Exit only landed/stable/rotor-safe.
+
+Security/scope:
+
+- Use a civilian/game-design helipad or public civilian airport area.
+- Do not use military facilities as player bases.
+- Generalized restricted areas remain no-entry.
+
+Acceptance:
+
+- Rotor spool required.
+- Force-based hover at documented collective.
+- Cyclic tilts thrust.
+- Pedal counters reaction torque.
+- Temperature/density effect bounded.
+- Translational lift/ground effect bounded.
+- Dust responds to material/height.
+- Engine loss causes descent/rotor behavior.
+- Cross-country flight cannot outrun terrain/building collision streaming.
+- Origin rebase seamless.
+
+
+21. AEROPLANE PHYSICS, RUNWAYS, AND DENSITY ALTITUDE
+----------------------------------------------------
+
+Create an original fictional light single-engine propeller aeroplane.
+
+Use a verified public civilian/gameplay airfield spawn. HIA/Doha airport public surfaces may be represented; military/restricted airfields must not be player bases. Use fictional aviation/livery/operations and never reproduce real airline operational systems.
+
+Aircraft data:
+
+- Mass/center of mass/inertia.
+- Wing area/span/chord/aspect ratio.
+- Aerodynamic center.
+- Horizontal/vertical stabilizer geometry.
+- Propeller/engine parameters.
+- Landing gear positions/suspension/wheels/brakes/steering.
+- Control-surface limits/rates.
+
+Air state:
+
+- Local air velocity = body point velocity minus wind.
+- Air density from a bounded standard-atmosphere approximation modified by configured temperature/pressure; document that it is a game model.
+- High heat increases density altitude and reduces lift/propeller/engine performance consistently.
+
+Dynamic pressure:
+
+      q = 0.5 * airDensity * airspeed^2
+
+Lift:
+
+      lift = q * wingArea * Cl(angleOfAttack, flapSetting)
+
+Drag:
+
+      drag = q * wingArea * (Cd0 + inducedDragFactor * Cl^2)
+
+Cl behavior:
+
+- Approximately linear in normal range.
+- Peaks near stall angle.
+- Declines post-stall.
+- Control authority declines at low speed/stall.
+- No unlimited lift at extreme alpha.
+
+Required systems:
+
+- Wing/tail/vertical stabilizer contributions.
+- Elevator/aileron/rudder.
+- Flaps and trim.
+- Propeller thrust versus RPM/throttle/airspeed/density.
+- Engine response/spool.
+- Ground effect.
+- Crosswind/gust.
+- Landing-gear spring/damper.
+- Rolling friction/brakes/nose or tail steering.
+- Hard-landing/overspeed/excess-G damage thresholds.
+- CCD/swept collision.
+
+Runways/airports:
+
+- Actual projected length/heading/width from legal open data.
+- Public exterior runway/taxiway/apron/terminal massing.
+- Correct terrain pad/markings/lights at game fidelity.
+- No hidden runway scaling.
+- No secret/security interiors.
+- Preload approach/departure terrain and skyline.
+
+Acceptance:
+
+- Physical ground roll.
+- Takeoff only with sufficient airspeed/lift.
+- Hot-day density effect measured but not exaggerated.
+- Stall/recovery.
+- Correct controls.
+- Flaps alter lift/drag.
+- Crosswind approach.
+- Gear compression/braking.
+- Engine-off glide.
+- Full peninsula circuit with streaming/origin stability.
+- No terrain holes at altitude or approach.
+
+
+22. VEHICLE INTERACTION, CONTROLS, AND CAMERAS
+-----------------------------------------------
+
+Interaction:
+
+- Data-driven seats, entry/exit points, control maps, camera anchors, danger zones.
+- Validate distance, line-of-sight, obstruction, vehicle velocity, water, terrain, traffic, restricted zones, rotor/propeller.
+- Attach human after transition starts.
+- Search multiple safe exits.
+- Save/recover each vehicle independently.
+
+Touch controls:
+
+ON FOOT
+- Left stick movement.
+- Right swipe camera.
+- Run, jump, interact/enter, optional crouch/swim.
+
+CAR
+- Steering.
+- Throttle.
+- Brake/reverse.
+- Handbrake.
+- Optional drive-mode selector only if physics supports it.
+- Exit.
+
+BOAT
+- Steering/tiller.
+- Throttle/reverse.
+- Camera.
+- Exit only safe speed/location.
+
+HELICOPTER
+- Left stick collective/yaw.
+- Right stick cyclic pitch/roll.
+- Engine/rotor toggle.
+- Camera.
+- Exit only landed/rotor-safe.
+- Optional bounded stability assist.
+
+AEROPLANE
+- Virtual yoke/stick pitch/roll.
+- Rudder.
+- Throttle.
+- Brakes.
+- Flaps/trim.
+- Engine toggle.
+- Exit only stopped/safe.
+- Optional coordinated-turn assist without removing stalls.
+
+Gamepads:
+
+- Shared action map.
+- Sensitivity/dead zone/inversion.
+- Remapping where feasible.
+- Touch UI hides/reduces when gamepad active.
+
+Cameras:
+
+- Collision-aware third-person human camera.
+- Car chase/close/hood.
+- Boat chase/helm-near.
+- Helicopter chase/cockpit-near.
+- Aeroplane chase/cockpit-near.
+- Timestep-independent smoothing.
+- Configurable FOV.
+- Bounded shake.
+- Optional horizon stabilization/motion-sickness settings.
+- Camera does not clip underground/buildings or lag kilometres during origin shift.
+
+
+23. WEATHER, SUN, WIND, DUST, AND RARE RAIN
+-------------------------------------------
+
+Use a data-driven WeatherProfile, not random unrelated effects.
+
+Variables:
+
+- Date/time/local timezone.
+- Sun azimuth/elevation.
+- Temperature.
+- Humidity.
+- Pressure/density proxy.
+- Wind direction/speed/gust.
+- Aerosol/dust.
+- Cloud amount/type proxy.
+- Visibility.
+- Rain intensity.
+- Ground wetness.
+- Tide phase/level.
+
+Sun:
+
+- Compute from latitude/longitude/date/time using a verified algorithm.
+- Use the IANA `Asia/Qatar` timezone (UTC+03:00 at the intended epoch) and verify the selected date rules; do not invent daylight-saving time.
+- Match lighting/shadow/sky/sun disk.
+
+Heat:
+
+- Visual heat shimmer.
+- Human stamina bounds.
+- Aircraft density effects.
+- Optional vehicle cooling state.
+- No claim of forecast accuracy.
+
+Shamal/dust:
+
+- Wind affects particles, vegetation, water, boat drift, aircraft.
+- Dust lowers visibility and changes sky/fog color.
+- Sand movement visual only within budget.
+- Severe dust profile reduces AI speed/visibility in a bounded game model.
+- ECO reduces particle count/resolution.
+
+Humidity/coast:
+
+- Coastal haze/sky scattering/water appearance.
+- No wet surface unless rain/tide/shore classification indicates it.
+
+Rain:
+
+- Rare/seasonal profile, not daily tropical rain.
+- Pooled rain particles.
+- Wet-road roughness/grip.
+- Puddles only in designated low/urban drainage approximations.
+- No permanent rivers from rain unless source data supports ephemeral channel visualization.
+- Optional flash-flood behavior is outside minimum unless robustly modeled and not presented as real safety guidance.
+
+Weather transitions:
+
+- Smooth parameter interpolation.
+- No abrupt wind reversal launching vehicles.
+- Network independence.
+- Save/load weather state.
+- Deterministic QA presets: clear midday, humid dusk, shamal dust, night, rare rain, hot crosswind.
+
+
+24. WILDLIFE AND ECOLOGY (AFTER CORE SYSTEMS)
+----------------------------------------------
+
+Optional but valuable for realism, using original/permissive assets and respectful behavior:
+
+- Arabian oryx/gazelle in suitable protected/desert regions if legal/ecologically appropriate.
+- Camels in mapped/private/ranch/event zones with neutral ambient behavior.
+- Flamingos/migratory shorebirds around suitable mudflat/mangrove zones.
+- Seabirds near coast.
+- Marine silhouettes/fish/dugong references only if ecologically appropriate and implemented respectfully; no hunting/harassment gameplay.
+
+Rules:
+
+- Habitat mask controls spawn.
+- Small capped nearby simulation.
+- Distant flock/herd impostors.
+- Flee/avoid vehicles, no graphic harm.
+- Protected zones cannot be damaged.
+- ECO removes/reduces wildlife first.
+- Do not claim population accuracy.
+
+
+25. ARABIC/ENGLISH LOCALIZATION AND CULTURAL PRESENTATION
+---------------------------------------------------------
+
+Text system:
+
+- Full UTF-8.
+- Correct Arabic shaping/joining.
+- RTL layout for Arabic UI.
+- BiDi handling for mixed Arabic/English/numbers.
+- Licensed Arabic-capable font and fallback.
+- Pre-shaped/generated signage atlas or runtime shaping library verified on Android.
+- Unit tests for representative Arabic names, punctuation, numerals, truncation, and line breaks.
+
+Place names:
+
+- Prefer verified name:ar and name:en from legal data.
+- Preserve official/factual spelling from selected source.
+- If transliteration needed, record rules and review a sample; do not generate gibberish.
+
+Signage:
+
+- Original visual layouts inspired by general public conventions.
+- No copied proprietary sign texture pack.
+- Arabic/English direction/order tested.
+- Road/municipality/landmark labels use factual names.
+
+People:
+
+- Diverse population represented neutrally and respectfully.
+- Configurable original clothing variants, including regional attire where appropriate, without caricature.
+- Appropriate proportions/animation.
+- No ethnicity/nationality stereotypes in AI behavior.
+
+Religious/cultural sites:
+
+- Respectful public exteriors.
+- No destructive/combat missions.
+- Interior access only if original, appropriate, and explicitly designed.
+- Optional call-to-prayer ambience only with authentic legal recording, cultural review, location/time logic, volume control, and user option. Omit rather than use an inaccurate/copyrighted clip.
+- Do not use copyrighted music or broadcasts in markets/cars.
+
+National symbols:
+
+- Factual Qatar flag may be represented respectfully where appropriate.
+- Correct geometry/colors from an authoritative reference.
+- No gameplay that desecrates national/religious symbols.
+
+Accessibility:
+
+- English UI minimum; Arabic UI strongly recommended.
+- Text scaling.
+- High-contrast HUD.
+- Subtitle/caption options.
+- Control sensitivity/inversion.
+- Motion-reduction/horizon stabilization.
+- Color-safe navigation markers.
+
+
+26. GAMEPLAY, HUD, MAP, AUDIO, AND RECOVERY
+-------------------------------------------
+
+Minimum gameplay loop:
+
+- Spawn at a safe public hub in/near Doha with the car nearby.
+- Walk/drive through streamed city/desert.
+- Discover hubs across all municipalities.
+- Reach marina/coast and operate boat.
+- Reach civilian aviation/helipad gameplay area and operate helicopter.
+- Operate light aeroplane, fly across peninsula, and land.
+- Explore desert/coastal/heritage/urban environments.
+- Use optional discovered-hub fast travel to manage 1:1 country distance; fast travel cannot hide missing chunks.
+- Recover player/vehicles to last safe hub.
+
+HUD:
+
+GENERAL
+- Arabic/English current place/municipality.
+- Compass.
+- Local time/date/weather profile.
+- Minimap/vector map.
+- Current graphics/thermal profile and FPS.
+- Objective/help only if gameplay mode uses it.
+
+HUMAN
+- Context interaction.
+- Optional stamina/heat indicator with accessibility toggle.
+
+CAR
+- km/h, RPM, gear, drive mode if implemented, damage/temperature warning if enabled.
+
+BOAT
+- speed/knots option, heading, engine/RPM, shallow/depth warning as game data only.
+
+HELICOPTER
+- rotor RPM, collective, altitude, vertical speed, heading, engine state.
+
+AEROPLANE
+- indicated/game airspeed, altitude, vertical speed, heading, RPM, flaps, trim, gear.
+
+Map:
+
+- Coarse full-country vector map from compiled legal data.
+- Municipality boundaries optional overlay with source attribution.
+- Roads/settlements/water/airports/ports/discovered hubs.
+- Do not copy a commercial map style.
+- Clearly mark generated game navigation as not real navigation guidance.
+
+Audio:
+
+- Original/permissive car/boat/heli/plane engines layered by RPM/load.
+- Wind, dust, tire, gravel, sand, suspension, rain, waves, harbor, city, metro/tram, footsteps, birds, market ambience.
+- No copyrighted radio/music/airport announcements.
+- Spatial audio and source caps.
+- LOD distant ambience.
+- Licenses documented.
+
+Recovery:
+
+- Last-safe global coordinate.
+- Vehicle-specific safe hubs.
+- Flip/recover car.
+- Tow/recover grounded boat.
+- Reset crashed aircraft after explicit confirmation.
+- Recovery is an explicit action, not hidden continuous teleportation.
+
+
+27. THERMAL, BATTERY, AND PERFORMANCE REQUIREMENTS
+--------------------------------------------------
+
+Phone heat is a release blocker.
+
+Frame pacing:
+
+- No unrestricted default 60/90/120 FPS loop.
+- Balanced default: approximately 30 FPS.
+- Battery saver/moderate thermal: approximately 20 FPS ECO.
+- Severe thermal: approximately 15 FPS.
+- Rendering, physics scheduling, audio, AI, and streaming pause correctly with Activity/screen lifecycle.
+- Respect screen timeout; do not force unattended GPU use.
+- Thermal service polled infrequently or listener-based.
+
+ECO reduces work:
+
+- Dynamic resolution down.
+- Dynamic shadow sampling disabled/simplified.
+- Shorter high-detail/vegetation/prop/light/particle ranges.
+- More aggressive building/vehicle LOD.
+- Reduced traffic/pedestrian/transit/wildlife counts/update rates.
+- Reduced water reflection/rain/dust/night-window updates.
+- Preserve occupied-vehicle physics/control and collision safety.
+
+Suggested balanced budgets (measure and adapt):
+
+- 33.3 ms at 30 FPS.
+- Main game/simulation ideally below 6–8 ms average.
+- Draw calls preferably below 150–250.
+- Visible triangles roughly 200k–500k depending on device/profile.
+- Nearby fully simulated dynamic bodies below approximately 100–150.
+- One main directional shadow system.
+- Texture residency approximately 256–384 MB balanced; lower in LOW/ECO.
+- Bounded Java/native/Bullet/audio/decode memory.
+- No major per-frame allocations/GC spikes.
+
+Optimization:
+
+- Hierarchical country/chunk culling.
+- Frustum/distance/altitude culling.
+- Static batching by chunk/material.
+- Mesh/collision/animation LOD.
+- Texture atlases/mipmaps/compression/shared pages.
+- Instancing/impostors.
+- Object pools.
+- Sleeping/proxy distant physics.
+- Predictive streaming.
+- Bounded decode/upload.
+- Far shader simplification/fog cutoff.
+- Development overlay: FPS, CPU/GPU frame, draw calls, triangles, chunks by state, queue, RAM/native/texture/mesh bytes, bodies, agents, origin, thermal.
+
+Profiles:
+
+LOW
+- Aggressive LOD/ranges, low particles/traffic, 512/no shadows based capability.
+
+BALANCED
+- Default 30 FPS, compact throttled shadow, normal materials/ranges.
+
+HIGH
+- Improved LOD/shadow/reflection/lights, still thermally protected.
+
+ECO
+- Automatic battery/thermal override displayed in HUD and not bypassable under severe pressure.
+
+APK size permission never overrides thermal/memory requirements.
+
+
+28. SAVE SYSTEM, ERROR HANDLING, AND DATA SAFETY
+------------------------------------------------
+
+Save version includes:
+
+- World epoch/compiler/manifest/CRS/origin versions.
+- Global double player position/orientation.
+- Current vehicle and all active vehicle global transforms/states.
+- Last safe hubs.
+- Time/weather.
+- Discovered locations/fast travel.
+- Graphics/control/assist/language/accessibility settings.
+- Optional damage/engine states.
+
+Rules:
+
+- Reject/migrate incompatible saves safely.
+- Never spawn outside country/under terrain due stale coordinates.
+- Save asynchronously, never on render thread.
+- Atomic temporary-write/rename pattern.
+- Validate numeric ranges/checksum.
+
+Loading/error:
+
+- Loading screen reports manifest, terrain, world, physics, shaders, gameplay stages.
+- Fatal manifest/core terrain corruption shows clear retry/reset/error.
+- Optional decoration/model/material failure uses visible fallback and log.
+- Required chunk missing inside country is a publication failure.
+- Shader failure identifies program/source lines.
+- NaN/infinite physics triggers safe diagnostic/recovery rather than propagating silently.
+- Out-of-bounds recovery to last safe point.
+
+
+29. AUTOMATED TESTING — GEOGRAPHY, ENVIRONMENT, PHYSICS, STREAMING
+-----------------------------------------------------------------
+
+A. Boundary/coverage tests
+
+- National AOI valid/non-self-intersecting.
+- Saudi land border present.
+- Complete west/north/east coastline present.
+- Every municipality intersects packaged chunks.
+- Every island manifest entry has terrain/coast chunk and checksum.
+- All mandatory checkpoint groups packaged.
+- No large uncovered strip across the country.
+- Water buffer surrounds appropriate coast.
+- Neighboring mainland is not accidentally included as high-detail Qatar land.
+
+B. Data/compiler tests
+
+- Magic/version/count limits.
+- CRS round trip.
+- Deterministic compile hash.
+- Chunk adjacency/seam.
+- Road/rail topology/layers.
+- Coast ring/island holes.
+- Height/material weights normalized.
+- Building heights/footprints finite/plausible bounds.
+- Mesh index/vertex limits.
+- Asset dependencies/checksums.
+- Arabic UTF-8 strings survive compile/load.
+
+C. Environment tests
+
+- Terrain class exists for required rocky desert, sand/dune, sabkha, urban, coast, mangrove, farm classes.
+- No fake high mountains from DEM void/error.
+- Road/runway pads align collision/render.
+- Tide does not expose coast holes.
+- Weather transitions bounded.
+- Sun direction known preset.
+- Wind shared consistently by water/boat/aircraft/particles.
+
+D. Streaming/origin tests
+
+- Municipal hub teleport/load.
+- Long drives/routes.
+- Boat coastline route.
+- Helicopter cross-country.
+- Aeroplane circuit.
+- Rapid direction changes.
+- Repeated origin shifts.
+- Pause/resume.
+- Memory plateau after repeated traversal.
+- No apply-after-evict/stale local coordinate.
+- Required collision ahead of high-speed focus.
+
+E. Human tests
+
+- Grounding/steps/slopes.
+- Jump height/landing.
+- sand/gravel/pavement movement.
+- Heat/stamina bounds.
+- wade/swim.
+- vehicle entry/exit.
+- origin/chunk transitions.
+
+F. Car tests
+
+- Suspension settle.
+- Torque/gears/RPM.
+- dry/wet stop.
+- tire slip/friction ellipse.
+- gravel/sand resistance.
+- dune/slope stability.
+- highway collision/CCD.
+- fixed-step frame-sequence consistency.
+
+G. Boat tests
+
+- Static waterline/equilibrium.
+- damping removes energy.
+- prop/rudder direction.
+- wave response.
+- tide/current drift.
+- shallow/beaching.
+- origin wave phase.
+
+H. Helicopter tests
+
+- spool.
+- hover force versus weight.
+- cyclic/yaw signs.
+- translational lift/ground effect bounds.
+- hot-density effect.
+- wind/gust.
+- landing/hard landing.
+- engine loss.
+- origin/streaming.
+
+I. Aeroplane tests
+
+- aerodynamic curves.
+- stall peak/decline.
+- flap/control signs.
+- ground roll/takeoff.
+- hot-density altitude effect.
+- crosswind.
+- glide.
+- landing gear/brakes.
+- CCD/origin/streaming.
+
+J. Traffic/transit/localization tests
+
+- Right-hand lanes.
+- one-way/turn restrictions.
+- intersection/roundabout behavior.
+- agent pool/caps.
+- rail route/station order.
+- Arabic shaping/RTL/mixed numerals.
+- factual name fallback.
+
+K. Packaged Android startup test
+
+Load resources from built variant and verify:
+
+- AOI/municipality/island/world manifests.
+- Coarse country terrain.
+- Every municipality/checkpoint group.
+- valid player/car spawn.
+- navigable boat spawn.
+- helicopter clearance spawn.
+- civilian aeroplane runway-aligned spawn.
+- all vehicle configs/models/colliders/control maps.
+- material/shader indexes.
+- no NaN/infinite/missing required asset.
+- resource counts protected from accidental major drop.
+
+L. Runtime/emulator QA
+
+- Clean install and launch where emulator works.
+- Wait through real loading.
+- Input/mode smoke tests.
+- logcat scan: FATAL EXCEPTION, ANR, tombstone, native crash, shader/EGL, OOM, missing resource.
+- Persist screenshot/log/status but do not accept screenshot alone.
+- Distinguish emulator runner failure from app failure.
+
+M. APK validation
+
+- ZIP integrity.
+- Manifest/package/launcher/version/min/target.
+- DEX/native ABIs.
+- Signature.
+- World/assets/licenses/attribution.
+- SHA-256 sidecar.
+- Publish only current PASSED APK.
+
+
+30. GITHUB ACTIONS AND LARGE-APK PUBLICATION
+--------------------------------------------
+
+Workflow:
+
+1. Checkout exact branch/commit.
+2. Set up maintained Java 17.
+3. Use verified Gradle wrapper/version.
+4. Reset/remove prior QA status so stale PASSED cannot approve build.
+5. Validate source/compiled world manifests, checksums, epoch, and licenses.
+6. Run deterministic compiler validation.
+7. Assemble APK.
+8. Run unit/data/environment/physics/streaming/startup tests.
+9. Optional emulator launch/capture.
+10. Finalize diagnostics even on failure.
+11. Require current packaged-country startup/coverage status exactly PASSED.
+12. Stage clear filename, for example:
+
+      Qatar-The-Peninsula-EXTREME-DETAIL-v1.0.0.apk
+
+13. Compute .sha256.
+14. Upload Actions artifact.
+15. If too large for normal Git, upload as GitHub Release asset or retain Actions artifact and provide accessible link. Do not strip country detail to fit Git’s file limit.
+16. Persist failed diagnostics without publishing failed APK.
+17. Persist successful build/test metadata.
+
+Security:
+
+- No credentials in source/log/chat.
+- Repository GitHub token minimum permissions.
+- No private keystore.
+- Do not download executable tools from unverified sources.
+- Pin/verify critical actions/dependencies according to repository policy.
+
+
+31. MANDATORY INCREMENTAL MILESTONES
+------------------------------------
+
+Each milestone produces a compiled installable APK and tests. Keep prior known-good APK.
+
+MILESTONE 0 — Toolchain proof
+- Android/libGDX/GLES3/Bullet, lit mesh, rigid body, input, packaged resource, lifecycle, CI.
+- Exit: APK compiles/starts/tests.
+
+MILESTONE 1 — National boundary and coarse whole-country shell
+- Authoritative AOI, municipalities, islands, CRS, floating origin, coarse terrain/coast/water/roads/settlement massing.
+- Exit: all municipalities/checkpoint groups in manifest and tests.
+
+MILESTONE 2 — Hierarchical streaming
+- Chunk compiler/runtime, predictive rings, upload budgets, eviction, coarse fallback, origin shifts.
+- Exit: municipal teleports and long synthetic traversal no holes/leak.
+
+MILESTONE 3 — Qatar environments
+- DEM, rocky desert, dunes, sabkha, coast, mangroves, farms, urban/reclaimed pads, Gulf water/tide/wind.
+- Exit: biome/class/material/collision/weather preset tests.
+
+MILESTONE 4 — Roads, settlements, procedural buildings
+- Right-hand network, highways/interchanges/tracks, bilingual sign pipeline, building archetypes/LOD/collision, every settlement populated.
+- Exit: route/connectivity/Arabic/chunk seam tests.
+
+MILESTONE 5 — Human and car/4X4
+- Human physics/animation blockout; car suspension/engine/tires/sand/wet/highway; controls/camera/entry/exit.
+- Exit: human/car tests and cross-region drive APK.
+
+MILESTONE 6 — Boat/marine world
+- Ports/marinas/public launches, buoyancy/hydrodynamics/waves/tide/current/shallow water.
+- Exit: boat integration and multi-coast route.
+
+MILESTONE 7 — Helicopter
+- Rotor/hot-density/wind/dust/ground effect/landing, civilian spawn, predictive air streaming.
+- Exit: hover/yaw/landing/cross-country/origin tests.
+
+MILESTONE 8 — Aeroplane/airports
+- Civilian light aircraft, aerodynamic model, public runway/taxiway exterior, density/crosswind/takeoff/stall/landing.
+- Exit: full physical flight scenarios and peninsula circuit.
+
+MILESTONE 9 — Doha and landmark hero detail
+- Original skyline/corniche/souq/cultural/airport/stadium/Lusail/West Bay representative detail; night lights.
+- Exit: recognizable legal original art, no coverage regression.
+
+MILESTONE 10 — Remote municipalities and heritage/coastal polish
+- Al Shamal, Al Khor/Thakhira, Shahaniya, Dukhan/Zekreet/Zubarah, Wakrah/Mesaieed/Khor Al Adaid, border, islands.
+- Exit: every checkpoint visually and functionally reviewed, no generic empty band.
+
+MILESTONE 11 — Traffic/transit/pedestrians/localization/audio
+- Scalable road agents, metro/tram ambience, crowds, Arabic/English UI/signs, original audio.
+- Exit: profile caps/RTL/routes/tests.
+
+MILESTONE 12 — Weather/wildlife/extra polish
+- Shamal/dust, rare rain/wet roads, optional wildlife, heat visuals, accessibility.
+- Exit: deterministic weather presets and ECO reductions.
+
+MILESTONE 13 — Thermal/performance release
+- Profile, batch/cull/LOD/compress/dynamic resolution/memory audit/fallbacks; final CI/APK validation.
+- Exit: 30/20/15 behavior, PASSED current startup/coverage, accessible APK/checksum.
+
+Do not begin crowds, wildlife, elaborate rain, or interiors before full-country coarse coverage, streaming, human, and four player vehicles are stable.
+
+
+32. RELEASE ACCEPTANCE CHECKLIST
+--------------------------------
+
+COUNTRY
+[ ] Authoritative AOI and world epoch documented.
+[ ] Saudi border and entire peninsula coastline represented.
+[ ] All municipalities packaged/tested.
+[ ] All authoritative island manifest entries packaged/tested.
+[ ] Doha plus north/south/east/west/interior/remote regions populated.
+[ ] 1:1 scale, double global coordinates, floating origin tested.
+[ ] Coarse whole-country layer continuous.
+[ ] OSM/data attribution visible.
+
+ENVIRONMENT
+[ ] Rocky/gravel desert.
+[ ] Dunes/sand sheets where appropriate.
+[ ] Sabkha/salt flats.
+[ ] Rawda/vegetated/farm pockets.
+[ ] Coastal/tidal/mudflat.
+[ ] Mangroves.
+[ ] Urban/industrial/reclaimed terrain.
+[ ] Gulf water classes/tide/current/waves.
+[ ] No fake mountains/rivers/tropical forest.
+
+SETTLEMENTS/INFRASTRUCTURE
+[ ] Every major city/town/settlement has correct road/building density.
+[ ] Doha hero zones original/legal.
+[ ] Highways/interchanges/right-hand traffic.
+[ ] Metro/tram rail geometry/ambience.
+[ ] Airports/ports public exterior only.
+[ ] Restricted sites generalized/no-entry.
+[ ] Arabic/English text correct.
+
+HUMAN
+[ ] Grounding/slopes/steps/jump/fall/swim.
+[ ] sand/gravel/pavement behavior.
+[ ] bounded heat/stamina.
+[ ] animation/IK/ragdoll tier.
+[ ] safe vehicle entry/exit.
+
+CAR
+[ ] Suspension/engine/gears/steering/brakes.
+[ ] tire slip/friction.
+[ ] highway/city/wet/gravel/sand/dune behavior.
+[ ] visuals/audio/collision/CCD.
+
+BOAT
+[ ] Distributed buoyancy/damping/drag.
+[ ] propulsion/rudder/planing.
+[ ] tide/current/waves/shallow/beaching.
+[ ] visible/physical water synchronized.
+
+HELICOPTER
+[ ] spool/collective/cyclic/reaction/tail torque.
+[ ] translational lift/ground effect/drag/wind.
+[ ] hot-density/dust/landing/engine loss.
+[ ] force-based hover.
+
+AEROPLANE
+[ ] lift/drag/stall/propeller/controls/flaps.
+[ ] gear/brakes/ground effect/crosswind/density.
+[ ] physical takeoff/landing/glide.
+[ ] actual runway scale/no hidden impulse.
+
+GRAPHICS
+[ ] Original human/vehicles/traffic/transit with LOD/collision.
+[ ] PBR-lite material system.
+[ ] Qatar sunlight/haze/dust/night/water.
+[ ] terrain/building/vegetation/city LOD/culling/batching.
+[ ] shader fallback/errors.
+
+STREAMING/PERFORMANCE
+[ ] No full-country detail load at startup.
+[ ] Focus cannot outrun collision terrain.
+[ ] memory plateaus after long/repeated routes.
+[ ] default approximately 30 FPS cap.
+[ ] ECO approximately 20 FPS moderate/saver.
+[ ] severe approximately 15 FPS.
+[ ] ECO reduces GPU/CPU work.
+[ ] pause/screen-off stops unnecessary work.
+[ ] no hot-path allocation spikes.
+
+BUILD/DELIVERY
+[ ] Clean GitHub Actions compile.
+[ ] Current packaged-country startup/coverage PASSED.
+[ ] Physics/environment/streaming tests pass.
+[ ] APK manifest/launcher/DEX/native/resources/ZIP/signature valid.
+[ ] SHA-256 matches.
+[ ] Large APK accessible via Actions/Release/direct link.
+[ ] Physical-device validation limits disclosed.
+
+
+33. WORKING RULES FOR THE CODING AGENT
+--------------------------------------
+
+- Inspect repository/environment before edits.
+- Stay on user-designated branch.
+- Produce code/assets/tests/APKs, not only plans.
+- Compile after each major subsystem.
+- Use deterministic fixed-seed generation.
+- Keep source provenance/licenses.
+- Never weaken/delete a failing coverage/startup/physics test merely for green CI.
+- Never reuse stale PASSED.
+- Never claim completion from placeholder classes/buttons.
+- Keep physics constants/config units documented.
+- Normal vehicle movement is force/torque based, never direct position/velocity setting.
+- Explicit recovery may reposition only after user action/fatal out-of-bounds.
+- Preserve exact error logs.
+- Never ask for passwords/tokens/private signing keys.
+- Never copy proprietary map/game/vehicle/music/art assets.
+- Never omit remote Qatar to polish Doha.
+- Never expose/invent restricted operational details.
+- Never publish failed APK.
+- Never call HTML/image/video an Android APK.
+
+
+34. REQUIRED FINAL RESPONSE
+---------------------------
+
+After release candidate passes, provide:
+
+1. Prominent clickable APK link.
+2. Exact filename and bytes.
+3. SHA-256.
+4. Package ID/version/min/target/ABIs.
+5. GitHub Actions run ID/conclusion.
+6. Confirmation that every municipality, national border/coast checkpoint group, and island manifest entry passed packaged coverage tests.
+7. Concise summary: streaming, environments, Doha/remote regions, human, car, boat, helicopter, aeroplane, traffic/transit, Arabic/English, graphics, thermal.
+8. Honest limitations and physical-device test status.
+9. Links/paths to checksum, DATA_SOURCES.md, ASSET_LICENSES.md, QATAR_BOUNDARY_REPORT.md, QATAR_WORLD_EPOCH.md, test status/logs.
+
+Do not replace APK with a plan.
+
+=============================== END MASTER PROMPT ===============================
+
+NOTES FOR THE PERSON USING THIS PROMPT
+--------------------------------------
+
+1. “Entire country” means all legally recognized Qatari land represented by the chosen consistent authoritative/open boundary dataset, every municipality, all peninsula regions, and all included islands. Surrounding water/airspace is added for gameplay and is not a political maritime-boundary claim.
+2. Qatar should remain 1:1 scale. Its real road distances, runways, coastline, and desert make car/boat/helicopter/aeroplane gameplay meaningful. Streaming and a floating origin solve scale; global compression would make the country feel unreal.
+3. Qatar is not uniformly covered in tall dunes. A convincing environment requires rocky limestone/gravel plains, sand regions, sabkha, rawda/farms, mangroves, tidal flats, urban/reclaimed land, industrial massing, beaches, and shallow Gulf water in correct data-driven locations.
+4. App size may be large, but runtime RAM/GPU/thermal limits remain strict. GitHub Actions artifacts or Releases should host an APK too large for a normal Git push.
+5. Qatar changes rapidly. Keep a world epoch and do not mix old/new roads, coastline, stadiums, construction, and transit without disclosure.
+6. Public map-level airport/port/industrial/military geometry may be generalized, but never add restricted interiors, credentials, security procedures, hidden infrastructure, or operational detail.
+7. Correct Arabic requires shaping, BiDi, RTL, and a licensed font. Reversing strings or rendering disconnected letters is not acceptable.
+8. A CI emulator is not a physical phone. Test long Doha driving, full-country flight, memory, battery, Android thermal status, Arabic rendering, and controls on intended devices before claiming final performance.
+9. Keep all data and asset licenses so the APK can be redistributed legally.
