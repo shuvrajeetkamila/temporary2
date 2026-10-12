@@ -59,10 +59,25 @@ jobs:
       - name: Surface exact failed compiler diagnostics
         if: steps.compile.outcome != 'success'
         run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          lines=Path('qa/qatar-current/gradle-build.txt').read_text(errors='replace').splitlines()
+          selected=[]
+          for i,line in enumerate(lines):
+              if (' error:' in line or line.startswith('FAILURE:') or line.startswith('* What went wrong:') or
+                  line.startswith('Execution failed') or '> Task ' in line and 'FAILED' in line or
+                  'There were failing tests' in line or 'Could not resolve' in line):
+                  selected.extend(lines[max(0,i-2):min(len(lines),i+8)])
+          if not selected: selected=lines[-180:]
+          message='\n'.join(selected[-300:])[-55000:]
+          escaped=message.replace('%','%25').replace('\r','%0D').replace('\n','%0A')
+          print(f'::error title=Qatar compiler diagnostics::{escaped}')
+          Path('qa/qatar-current/compiler-tail.txt').write_text('\n'.join(lines[-500:])+'\n')
+          PY
           {
             echo '## Qatar compiler failure'
             echo '```text'
-            tail -500 qa/qatar-current/gradle-build.txt
+            cat qa/qatar-current/compiler-tail.txt
             echo '```'
           } >> "$GITHUB_STEP_SUMMARY"
 
