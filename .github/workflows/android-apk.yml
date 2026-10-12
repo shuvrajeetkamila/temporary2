@@ -47,10 +47,26 @@ jobs:
           sha256sum -c data/qatar/SHA256SUMS | tee qa/qatar-current/source-checksums.txt
 
       - name: Test and compile fresh installable APK
+        id: compile
+        continue-on-error: true
         run: |
           set -o pipefail
-          gradle :app:testDebugUnitTest :app:assembleDebug --stacktrace | tee qa/qatar-current/gradle-build.txt
-          echo PASSED > qa/qatar-current/test-status.txt
+          gradle :app:testDebugUnitTest :app:assembleDebug --stacktrace 2>&1 | tee qa/qatar-current/gradle-build.txt
+          EXIT=${PIPESTATUS[0]}
+          if [ "$EXIT" -eq 0 ]; then echo PASSED > qa/qatar-current/test-status.txt; else echo "FAILED:$EXIT" > qa/qatar-current/test-status.txt; fi
+          exit "$EXIT"
+
+      - name: Persist exact failed compiler diagnostics
+        if: steps.compile.outcome != 'success' && github.ref == 'refs/heads/arena/8288058f-temporary2'
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -f qa/qatar-current/gradle-build.txt qa/qatar-current/test-status.txt qa/qatar-current/world-validation.txt qa/qatar-current/source-checksums.txt
+          git diff --cached --quiet || git commit -m "Persist failed Qatar compiler diagnostics [skip ci]"
+          git push origin "HEAD:${GITHUB_REF_NAME}"
+
+      - name: Require successful compilation
+        run: test "${{ steps.compile.outcome }}" = "success"
 
       - name: Validate final APK structure and uncompressed random-access pack
         run: |
