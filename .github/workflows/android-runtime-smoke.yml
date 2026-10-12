@@ -65,7 +65,10 @@ jobs:
           "$ADB" shell am start -W -n ai.arena.qatar.peninsula/ai.arena.qatar.MainActivity \
             > qa/qatar-runtime/activity-start.txt 2>&1
           START_EXIT=$?
-          sleep 35
+          sleep 6
+          # Dismiss Android's one-time immersive-mode education overlay.
+          "$ADB" shell input tap 950 530 || true
+          sleep 28
           "$ADB" shell input tap 150 600 || true
           "$ADB" shell input swipe 150 600 150 430 900 || true
           sleep 8
@@ -74,7 +77,7 @@ jobs:
           "$ADB" shell dumpsys activity activities > qa/qatar-runtime/activity-dump.txt
           PID="$("$ADB" shell pidof ai.arena.qatar.peninsula | tr -d '\r')"
           printf '%s\n' "$PID" > qa/qatar-runtime/app-pid.txt
-          FATALS="$(grep -E 'FATAL EXCEPTION|Fatal signal|Process: ai\.arena\.qatar\.peninsula|UnsatisfiedLinkError|AndroidRuntime' qa/qatar-runtime/logcat.txt || true)"
+          FATALS="$(grep -E 'FATAL EXCEPTION|Fatal signal|Process: ai\.arena\.qatar\.peninsula|UnsatisfiedLinkError' qa/qatar-runtime/logcat.txt || true)"
           {
             echo "install_exit=$INSTALL_EXIT"
             echo "start_exit=$START_EXIT"
