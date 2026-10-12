@@ -1,0 +1,3100 @@
+BAHRAIN: THE ISLAND KINGDOM
+DEFINITIVE REAL-COUNTRY DESIGN BIBLE AND FROM-SCRATCH ANDROID APK MASTER PROMPT — EDITION 2
+
+PURPOSE OF THIS FILE
+--------------------
+Copy everything between BEGIN MASTER PROMPT and END MASTER PROMPT into a capable coding-agent session. Give that agent a clean Git repository and permission to use GitHub Actions when the local environment has no Android SDK.
+
+This Edition 2 is not a country-name substitution template. It is a Bahrain-specific production book. It combines an implementation contract with a geographic, architectural, environmental, cultural, marine, transport, art-direction, physics, streaming, QA, and delivery bible. Its dedicated annexes prescribe how Manama differs from Muharraq, how the northern palm belt differs from the southern limestone desert, how Hawar differs from reclaimed urban islands, and how causeways, tidal shallows, pearling heritage, forts, burial mounds, industrial exteriors, humidity, salt weathering, right-hand traffic, Arabic signage, and island-to-island travel must work.
+
+The agent must still inspect current source data and verify licenses because a prompt cannot safely guess rapidly changing reclaimed coastlines or restricted infrastructure. When a fact is absent, the agent must follow the explicit confidence/fallback rules in this book instead of improvising a false “Bahrain.” Proprietary map imagery and copied commercial assets are forbidden.
+
+The target is the ENTIRE KINGDOM OF BAHRAIN at true 1:1 local metre scale: the main Bahrain Island, all four current governorates, all sovereign land islands represented by one consistent authoritative/open boundary dataset, reclaimed/artificial islands and coastlines according to a declared world epoch, the Hawar archipelago, the Bahrain side of the King Fahd Causeway, and enough surrounding Gulf water/airspace for boat and aircraft gameplay.
+
+The request’s reference standard is that players should recognize the environment as Bahrain—not Doha, Dubai, a generic Gulf city, or a uniform sand map. The build must enforce this identity through Bahrain-specific data, regional material/architecture rules, heritage treatment, environmental audio, geographic tests, and a country-identity lint.
+
+============================== BEGIN MASTER PROMPT ==============================
+
+You are the lead Android game engineer, rendering engineer, physics programmer, technical artist, GIS engineer, marine-world engineer, streaming engineer, environment artist, AI/traffic engineer, localization engineer, build engineer, and QA owner for a new project named:
+
+    BAHRAIN: THE ISLAND KINGDOM
+
+MISSION
+-------
+Start from a clean repository and build a genuinely installable Android APK containing a realistic, fully rendered, offline open-world interpretation of the entire Kingdom of Bahrain.
+
+The final game must include:
+
+1. The complete country at true 1:1 local metre scale.
+2. Bahrain Island and every sovereign land island/reclaimed land polygon present in the selected authoritative national boundary dataset.
+3. All current governorates and their cities, towns, villages, industrial regions, heritage areas, farms/palm gardens, southern desert, coasts, mudflats, mangroves, ports, airports, and causeways.
+4. Manama as a detailed capital, without leaving Muharraq, Riffa, Hamad Town, Isa Town, A’ali, Sitra, Budaiya, Saar, Jidhafs, Hidd, Arad, Zallaq, Awali, Askar, Jaww, Durrat Al Bahrain, Amwaj, Al Jasra, Al Malikiyah, northern villages, southern settlements, Hawar, or remote islands empty.
+5. Continuous water and airspace connecting the archipelago, including practical boat/aircraft routes.
+6. A physically interactive human character with realistic locomotion, stairs/curbs, falling, swimming/wading, heat/stamina response, animation, and safe vehicle entry/exit.
+7. An original drivable car/4x4 with realistic suspension, tires, engine, gearbox, braking, right-hand traffic behavior, expressway/city handling, gravel/sand traction, wet-road behavior, heat, and collisions.
+8. An original controllable boat/dhow-inspired workboat with realistic buoyancy, shallow Gulf water, tides, currents, waves, propulsion, steering, wake, causeway/harbor collision, and beaching behavior.
+9. An original pilotable helicopter with realistic rotor spool, collective, cyclic, yaw, translational lift, ground effect, hot-air-density effects, coastal wind, dust/brownout, and landing behavior.
+10. An original flyable light aeroplane with realistic lift, drag, stall, propeller, controls, landing gear, density altitude, crosswind, takeoff, and landing behavior.
+11. Scalable right-hand traffic, pedestrians, buses, port/airport ambience, and appropriate city activity after the core world and player vehicles are stable.
+12. A Bahrain-specific environment: humid Gulf coast, shallow turquoise water, tidal flats, seagrass/coral regions where legal data supports them, date palms and northern gardens, limestone/gravel desert, sabkha, southern dunes/sand sheets, Jabal ad Dukhan relief, dust haze, shamal winds, occasional rain, reclaimed skylines, traditional urban fabric, forts, burial mounds, pearling heritage, modern Manama, ports, industry, and night lighting.
+13. Correct Arabic/English place names and signs with proper shaping, RTL/BiDi, licensed fonts, and respectful cultural/heritage presentation.
+14. Thermal-aware 30/20/15 FPS Android operation.
+15. A final downloadable APK, SHA-256, build/test evidence, country-coverage report, world epoch, and complete data/asset license records.
+
+Do not provide only a plan, browser map, source skeleton, static satellite viewer, picture mode, video, or disconnected landmark scenes. Build incrementally until the current APK compiles and passes packaged-country startup, island/governorate coverage, streaming, and physics tests.
+
+If the local Android SDK/Gradle/adb is unavailable, use GitHub Actions. Do not stop with an explanation. Produce an installable APK after every major milestone.
+
+
+1. NON-NEGOTIABLE PRODUCT RULES
+--------------------------------
+
+A. Deliverable
+
+- Deliver a directly installable Android .apk.
+- Support Android 8.0/API 26 or newer unless a verified required dependency forces a documented higher minimum.
+- Use a fresh package ID, for example:
+
+      ai.example.bahrain.islandkingdom
+
+  Replace ai.example with the repository owner’s namespace where appropriate.
+- Include a launcher activity, staged loading screen, retryable error screen, gameplay, pause/settings, controls/help, data credits, asset licenses, and attribution.
+- Produce a universal debug-signed APK for direct testing. A release build is optional; never commit/request a private signing key.
+- Final response must give filename, exact bytes, SHA-256, package/version, min/target SDK, ABIs, CI run, download link, and honest validation limitations.
+
+B. Entire-country/archipelago requirement
+
+- Manama alone is not acceptable.
+- Bahrain Island alone is not acceptable.
+- A few tourist scenes connected by menus are not acceptable.
+- The complete national land boundary, all selected authoritative islands, all governorates, and connecting water must be represented in one continuous global coordinate system.
+- Every island/governorate/remote region must have real geography, terrain/water class, roads/settlements where present, and representative structures/vegetation—not an empty plane.
+- Automated tests must fail if any required island, governorate, coastline sector, causeway, airport/port category, or country checkpoint is missing.
+
+C. Real rendered graphics
+
+- Render terrain, coast, water, roads, bridges/causeways, buildings, vegetation, people, traffic, buses, ports, airports, boats, and aircraft as 3D geometry/materials.
+- Do not use Google Maps, Google Earth, Street View, proprietary aerial tiles, or static satellite images as the playable world.
+- A vector minimap and legal derived macro color layer are allowed; neither may replace 3D world rendering.
+
+D. Original/legal content
+
+- Do not copy GTA or any commercial game’s code, shaders, vehicles, city, audio, animations, or assets.
+- Use original fictional vehicles/liveries and original art, or documented permissive/CC0 assets that allow APK redistribution.
+- Maintain ASSET_LICENSES.md with author, source URL, exact license, version/date, modifications, and shipped path.
+- Maintain DATA_SOURCES.md with source URL, retrieval date, scope, checksum, license, attribution, conversion, and output.
+- Display “© OpenStreetMap contributors” visibly if OSM data is used.
+- Do not copy commercial logos, Formula racing branding, airline liveries, music, broadcasts, proprietary signage packs, or resort branding without permission.
+
+E. Sensitive/restricted infrastructure
+
+- Airports, military areas, ports, refinery/petrochemical zones, power/water plants, border/immigration areas, government compounds, and utilities may be represented only at public, legally acquired map-level exterior detail.
+- Do not invent restricted interiors, patrol patterns, access credentials, control rooms, operational systems, hidden infrastructure, exact contents, or security procedures.
+- Generalize restricted sites into public exterior massing and no-entry perimeters.
+- Do not make a restricted facility a target/objective.
+- Player aircraft use civilian/game-design operations; military facilities are not player bases.
+
+F. Offline-first
+
+- Package the required world and gameplay assets inside one APK unless the user later authorizes asset packs.
+- No login, cloud map service, always-online backend, ads, or telemetry requirement.
+- Launch and play in airplane mode.
+
+G. APK size policy
+
+- Do not delete Hawar, remote islands, the southern desert, villages, heritage, roads, or marine data merely to produce a tiny APK.
+- No arbitrary small-APK target. Complete coverage and quality take priority.
+- Still compress/LOD/stream because install size does not remove Android RAM, GPU bandwidth, thermal, and loading constraints.
+- Normal Git rejects very large individual files. If the APK exceeds practical Git push limits, publish it through GitHub Actions artifacts or GitHub Releases instead of cutting required content.
+- Keep huge raw extracts/intermediates outside normal Git, preserving reproducible fetch manifests/checksums and compiled runtime bundles according to repository policy.
+
+H. Honest evidence
+
+- Do not claim AAA equivalence.
+- Do not claim physical-phone frame rate/temperature/battery without measurement.
+- Never use old screenshots, checksums, logs, or PASSED files for a new commit.
+- Distinguish emulator infrastructure failure from application failure.
+
+
+2. AUTHORITATIVE BAHRAIN BOUNDARY, GOVERNORATES, AND ISLANDS
+-----------------------------------------------------------
+
+Create/version before rendering:
+
+    data/geodata/BAHRAIN_NATIONAL_AOI.geojson
+    data/geodata/BAHRAIN_GOVERNORATES.geojson
+    data/geodata/BAHRAIN_ISLANDS_MANIFEST.json
+    data/geodata/BAHRAIN_CAUSEWAYS_MANIFEST.json
+    data/geodata/BAHRAIN_BOUNDARY_REPORT.md
+    data/geodata/BAHRAIN_WORLD_EPOCH.md
+
+Boundary rules:
+
+- Use one legally redistributable authoritative/open national boundary source.
+- Do not draw coastline/maritime/border claims from memory.
+- Include all sovereign Bahrain land polygons in that consistent dataset.
+- Include the Bahrain-controlled side/structures of the King Fahd Causeway and boundary transition according to legal public data, but do not model operational border-security procedures/interiors.
+- Neighboring Saudi/Qatar/other foreign land appears only as low-detail context outside Bahrain’s high-detail AOI.
+- Add a gameplay water/airspace buffer around islands; state clearly that this buffer is not a political maritime-boundary claim.
+- If an open maritime boundary is included, record source/epoch/uncertainty; otherwise do not invent national sea borders.
+- Coastline/reclamation changes must match one declared epoch.
+
+Current governorates expected in the selected modern epoch:
+
+- Capital Governorate.
+- Muharraq Governorate.
+- Northern Governorate.
+- Southern Governorate.
+
+Do not use the former Central Governorate as a current administrative region unless the world epoch explicitly predates its abolition. Historical labels may appear only in heritage metadata.
+
+The islands manifest must be generated from the authoritative national multipolygon and reconciled with named open-data features. It is expected to account for categories including:
+
+- Main Bahrain Island.
+- Muharraq Island and connected/reclaimed land.
+- Sitra Island and connected infrastructure.
+- Nabih Saleh and other near-shore inhabited/small islands.
+- Umm an Nasan/Jidda and western islands where included by the authoritative source.
+- Hawar Islands/archipelago.
+- Current artificial/reclaimed island groups such as Amwaj, Durrat Al Bahrain, Bahrain Bay/Reef/Nurana-type developments where represented at the chosen epoch.
+- Causeway/interchange islands and other sovereign land polygons.
+
+This list is guidance, not a substitute for the authoritative manifest. Never include/exclude an island solely from memory. Record every polygon’s source ID, name(s), governorate if applicable, bounds, area, chunk IDs, epoch, and checksum.
+
+Mandatory checkpoint groups:
+
+CAPITAL/MANAMA
+- Manama historic/commercial core.
+- Bab Al Bahrain/Manama Souq public exterior.
+- Diplomatic Area/Financial Harbour/World Trade Center skyline region using original legal representations.
+- Bahrain Bay/public waterfront according to epoch.
+- Bahrain National Museum/public cultural waterfront.
+- Mina Salman/public port exterior where applicable.
+
+MUHARRAQ/NORTHEAST
+- Muharraq old city/Pearling Path public streets and exterior heritage structures.
+- Bahrain International Airport public exterior/runways/taxiways.
+- Arad/Busaiteen/Hidd.
+- Arad Fort public exterior.
+- Amwaj and reclaimed northeast coast according to epoch.
+- Khalifa Bin Salman Port/public exterior industrial massing.
+
+NORTHERN/WESTERN SETTLEMENTS
+- Budaiya/Saar/Jasra/Jidhafs and representative northern villages.
+- Date-palm/garden/farm remnants where mapped.
+- Qal’at al-Bahrain/Bahrain Fort public heritage landscape.
+- Dilmun burial-mound areas including A’ali region, respectfully represented/protected.
+- King Fahd Causeway Bahrain approach and public roadway structures.
+
+CENTRAL/RIFFA/URBAN INTERIOR
+- East/West Riffa and surrounding urban fabric.
+- Isa Town/Hamad Town/A’ali.
+- Riffa Fort public exterior.
+- Major highway/interchange network.
+
+SOUTHERN BAHRAIN
+- Sakhir/Bahrain International Circuit region without copied commercial racing branding.
+- Zallaq/Al Areen public exterior/natural areas where mapped.
+- Awali.
+- Jabal ad Dukhan central/southern relief.
+- Tree of Life public natural/cultural site.
+- Askar/Jaww and southeastern settlements/coast.
+- Southern desert/industrial/oil-field regions generalized at public map-level only.
+- Durrat Al Bahrain and southern reclaimed islands at selected epoch.
+
+SITRA/TUBLI/EASTERN COAST
+- Sitra settlements/causeways/public industrial exterior.
+- Tubli Bay/Ras Sanad mangrove/wetland regions where open data supports them.
+- Eastern shallow coast, mudflats, reclaimed/industrial shores.
+
+HAWAR/REMOTE ISLANDS
+- Every Hawar/remote island polygon in authoritative manifest.
+- Correct coastline/terrain class and protected ecological treatment.
+- Generalized public structures/roads where legal data exists.
+- No fabricated resort/industrial/military details.
+- Water/air travel corridor and chunk coverage.
+
+Country startup/coverage tests must prove every governorate and every required island-manifest entry has valid packaged chunks. Detailed Manama cannot compensate for missing Hawar/southern/northern content.
+
+
+3. WORLD EPOCH, DATA PROVENANCE, AND RAPID COASTAL CHANGE
+--------------------------------------------------------
+
+Bahrain’s reclaimed coastline, artificial islands, airport/port roads, construction, and urban development change quickly. Maintain BAHRAIN_WORLD_EPOCH.md with:
+
+- Target snapshot date/range.
+- National/governorate boundary date.
+- OSM/open-vector extract timestamp.
+- Coast/reclamation date.
+- Airport/port/causeway date.
+- Road/interchange date.
+- Public-bus/transit date.
+- Landmark/construction status date.
+- Elevation/bathymetry date/resolution.
+- Weather/tide/climate reference period.
+- Known conflicts/generalizations.
+
+Potential open/legal sources, all requiring verification:
+
+- OpenStreetMap for coastline, islands, roads, lanes, bridges/causeways, buildings, places, airports, ports, land use, barriers, heritage, and public landmarks.
+- Authoritative/open Bahrain national/governorate/island boundary datasets.
+- Copernicus DEM, NASA/NGA SRTM, or another redistributable elevation source.
+- GEBCO/other open bathymetry only if the exact license permits derivative redistribution.
+- Open tide/current/weather/climate normals with recorded license.
+- Open bus/transport data if current and redistributable.
+- Open protected-area/mangrove/seagrass/coral/land-cover datasets where licensed.
+
+“Visible online” is not a redistribution license. Reject unlicensed sources.
+
+Maintain:
+
+- SHA256SUMS for source/compiled data.
+- Fetch commands/URLs.
+- License files.
+- Compiler version/hash.
+- Data schema version.
+- World manifest hash.
+
+The compiler must fail when source hashes/schema/epoch change unexpectedly rather than silently shipping stale chunks.
+
+
+4. TRUE 1:1 SCALE, CRS, AND FLOATING ORIGIN
+-------------------------------------------
+
+Use true 1:1 local metre scale.
+
+- One projected metre equals one game metre.
+- Human/vehicle/building/road/runway/causeway/port dimensions remain physically meaningful.
+- Do not compress islands together.
+- Do not stretch runways or causeways.
+
+Master coordinates:
+
+- Store global positions in double precision.
+- Default to WGS84 / UTM zone 39N (EPSG:32639), which covers Bahrain, after verifying source metadata and checkpoints.
+- If an authoritative Bahrain source uses another national grid/CRS, perform a documented tested conversion into one runtime master CRS.
+- Verify axis order, units, datum, false easting/northing, and transform.
+- Latitude/longitude remain metadata/conversion inputs, never physics units.
+
+Runtime coordinates:
+
+- GLES/Bullet use local float coordinates near active focus.
+- Implement floating origin because the archipelago/water/airspace/causeway routes span large distances.
+- Every entity keeps authoritative global double transform plus local float transform.
+- Origin shift updates terrain, water phase anchor, collision, vehicles, human, camera, particles, decals, audio, AI, traffic, buses, boats, wildlife, constraints, and streamed props coherently.
+- Chunk requests use immutable global keys so stale pre-shift local data cannot apply.
+
+Origin tests:
+
+- Human walking.
+- Expressway-speed car.
+- Boat crossing island groups.
+- Helicopter to Hawar/remote areas.
+- Aeroplane country circuit.
+- Active suspension/gear/rotors/propeller/constraints.
+- AI routes and bus progress.
+- Save/load at country extremes.
+- No visible teleport beyond documented tolerance.
+- No velocity/force/phase discontinuity.
+
+
+5. RECOMMENDED TECHNICAL FOUNDATION
+-----------------------------------
+
+Default stack unless a compile spike proves incompatibility:
+
+- Java 17 core/shared code.
+- Gradle Android launcher/application.
+- libGDX lifecycle/input/audio/files/OpenGL integration.
+- Bullet through gdx-bullet for rigid-body/contact/constraint collision.
+- OpenGL ES 3.0 custom PBR-lite mobile renderer.
+- Verified Android-compatible glTF 2.0 loader.
+- Python 3 deterministic GIS/terrain/mesh/texture/sign/package compilers.
+- JUnit pure tests.
+- Robolectric/Android packaged-resource startup tests.
+- GitHub Actions clean build/test/publication.
+
+Toolchain-proof APK first:
+
+- Launcher/loading screen.
+- GLES3 lit textured mesh.
+- Shader compile/error reporting.
+- Bullet static plane + dynamic body.
+- Packaged versioned binary load/checksum.
+- Touch input.
+- Pause/resume/EGL recreation.
+- CI assemble/test.
+
+If dependency fails, record exact version/error and choose a maintained compatible alternative. Never silently replace physical simulation with scripted movement.
+
+Suggested repository:
+
+    android/                         launcher, manifest, Android services
+    core/src/.../game/               state, clocks, save/recovery
+    core/src/.../render/             GLES3, PBR-lite, atmosphere, shadows
+    core/src/.../physics/            shared force models/Bullet bridge
+    core/src/.../human/              controller, animation, IK, ragdoll
+    core/src/.../vehicles/car/
+    core/src/.../vehicles/boat/
+    core/src/.../vehicles/heli/
+    core/src/.../vehicles/plane/
+    core/src/.../world/              chunks, origin, time, environment
+    core/src/.../terrain/            limestone, sand, sabkha, roads
+    core/src/.../water/              Gulf, tides, currents, waves
+    core/src/.../weather/            sun, humidity, haze, dust, rain
+    core/src/.../traffic/            lanes/signals/agents
+    core/src/.../pedestrians/        paths/crossings/crowds
+    core/src/.../transit/            buses and future-proof routes
+    core/src/.../wildlife/           optional land/coastal ecology
+    core/src/.../localization/       Arabic/English/RTL
+    core/src/.../input/              touch/gamepad actions
+    core/src/.../ui/                 HUD/map/settings/credits
+    tools/                           compilers/validators
+    data/geodata/                    sources/AOI/manifests/checksums
+    assets/source/                   editable art sources
+    android/assets/world/            compiled streamable bundles
+    tests/                           geography/physics/streaming/startup
+    artifacts/                       final APK/checksum when feasible
+    .github/workflows/               build/test/publication
+
+Do not commit SDKs, caches, secrets, raw temporary exports, node_modules, or unnecessary huge intermediates.
+
+
+6. DETERMINISTIC GIS AND WORLD-COMPILATION PIPELINE
+---------------------------------------------------
+
+STAGE 1 — Acquire/verify
+- Download from recorded URLs.
+- Verify format, bytes, timestamp, checksum, license, geographic intersection.
+- Reject HTML/error responses.
+
+STAGE 2 — Normalize coordinates
+- Parse WGS84/source CRS.
+- Transform to EPSG:32639/master CRS.
+- Validate axis/units/ranges.
+- Preserve source IDs/tags/provenance.
+
+STAGE 3 — Geometry validation
+- Normalize winding.
+- Deduplicate points.
+- Repair only deterministic safe cases.
+- Reject unresolved corrupt geometry.
+- Validate island rings/holes.
+- Preserve bridge/tunnel/layer.
+- Snap network endpoints within documented tolerance.
+
+STAGE 4 — Clip/classify
+- Clip high-detail land to national AOI.
+- Keep configured water/air buffer.
+- Assign governorate/island/settlement/terrain/water/road/material/restricted/protected class.
+- Preserve source/inference confidence.
+
+STAGE 5 — Terrain/coast
+- DEM resampling/void rejection.
+- Preserve subtle Bahrain relief and Jabal ad Dukhan; do not invent mountains.
+- Add biome-specific microrelief separately.
+- Constrain roads/buildings/runways/ports/causeways.
+- Generate coastline/tide transitions.
+
+STAGE 6 — Networks
+- Right-hand routable road/lane graph.
+- Causeway/bridge connectivity.
+- Pedestrian sidewalks/crossings.
+- Bus routes if legal/current.
+- Marine navigability/depth zones.
+- Runway/taxiway graph.
+
+STAGE 7 — Structures
+- Building footprint/height/levels/roof/usage.
+- Deterministic procedural archetype/style.
+- Landmark IDs.
+- Collision/LOD.
+- Generalized restricted industrial/military compounds.
+
+STAGE 8 — Hierarchical chunks
+- Dense Manama/Muharraq: 128–256 m.
+- Other urban/villages: 256–512 m.
+- Desert/islands: 512 m–2 km with detail subcells.
+- Water: larger analytic tiles plus coast/obstacle/depth subchunks.
+- Coarse whole-country/island/city massing.
+
+STAGE 9 — Runtime binary
+- Magic/version.
+- CRS/origin/epoch.
+- Strict count/bounds limits.
+- Quantization within measured errors.
+- LOD/collision/nav/material dependencies.
+- Random-access compression.
+- Per-chunk/master checksums.
+
+STAGE 10 — Reports
+- Governorate/island feature counts.
+- Invalid/repaired geometry.
+- Coverage map.
+- Coast/island/reclamation report.
+- Seam report.
+- Road/causeway connectivity.
+- Height/style inference.
+- Bytes/LOD/assets.
+- Determinism hash.
+
+A changed source/compiler/world epoch must invalidate compiled outputs deterministically.
+
+
+7. HIERARCHICAL STREAMING FOR AN ARCHIPELAGO
+--------------------------------------------
+
+Chunk lifecycle:
+
+- UNLOADED.
+- REQUESTED.
+- QUEUED_IO.
+- DECODING_CPU.
+- READY_CPU.
+- QUEUED_GPU.
+- ACTIVE_HIGH/MEDIUM/LOW.
+- EVICT_PENDING.
+- EVICTED.
+- FAILED_OPTIONAL/FAILED_REQUIRED.
+
+Selection considers:
+
+- Global focus/camera.
+- Altitude.
+- Speed/heading.
+- Vehicle mode.
+- Stopping/turn radius.
+- Boat water route/shore obstacles.
+- Flight approach/departure.
+- Quality/thermal profile.
+
+Rules:
+
+- Coarse all-islands terrain/coast/city massing available globally under strict budget.
+- Preload faster/farther for aircraft and boats than walking.
+- Collision loads before decorative geometry.
+- Bounded worker threads and cancellation.
+- GPU uploads on GL thread with per-frame time/byte budget.
+- Shared asset reference counts.
+- Hysteresis prevents thrash.
+- Occupied-vehicle collision cannot evict.
+- Analytic sea global; detailed shore/port/island chunks streamed.
+- Required terrain/coast/collision failure shows safe error; no invisible hole.
+
+Suggested rings:
+
+ON FOOT
+- High: 250–500 m.
+- Medium: 0.5–1.5 km.
+- Low skyline/massing: several km.
+
+CAR
+- High road/collision: 500–1,000 m forward-biased.
+- Medium: 1–3 km.
+- Coarse route/context farther.
+
+BOAT
+- Shore/depth/obstacle safety: 500–1,500+ m based speed.
+- Medium islands/ports multiple km.
+- Global sea/horizon.
+
+HELICOPTER
+- Speed/altitude collision corridor.
+- Medium terrain/city multiple km.
+- Coarse islands/horizon.
+
+AEROPLANE
+- Coarse archipelago always available.
+- Airport high detail on approach.
+- Predictive terrain/city corridor many seconds ahead.
+- Suppress street props at altitude.
+
+Memory:
+
+- Never load all buildings/roads/islands in full detail.
+- Compact global topology.
+- Texture-page sharing/eviction.
+- Drop CPU geometry after GPU upload where safe.
+- Collision only safety rings.
+- Track Java/native/Bullet/texture/mesh/audio/decode separately.
+
+Tests:
+
+- Manama to northern/western villages.
+- Manama to Riffa/Sakhir/southern tip.
+- Main island to Muharraq/Sitra via bridges.
+- Bahrain-side King Fahd Causeway route.
+- Boat among main/near-shore islands and Hawar corridor.
+- Helicopter main island to remote islands.
+- Aeroplane archipelago circuit.
+- Municipal/island teleport suite.
+- Rapid reversals/pause/resume.
+- Repeated traversal memory plateau.
+
+
+8. BAHRAIN TERRAIN AND ENVIRONMENT CLASSES
+------------------------------------------
+
+Do not portray Bahrain as only dunes or only city. Use data-driven classes.
+
+A. Limestone/gravel plain
+- Pale compact stony terrain.
+- Multi-scale roughness/normals/stones.
+- Sparse shrubs where mapped/appropriate.
+- Dust/tire tracks.
+
+B. Central/southern rocky relief
+- Preserve Jabal ad Dukhan and real low relief.
+- Exposed rock/gravel/erosion detail.
+- No invented mountain range/canyons.
+
+C. Sand sheets/small dunes
+- Mapped/inferred appropriate southern/coastal zones.
+- Wind-aligned broad forms/ripples.
+- Loose-sand physics/dust/tracks.
+- Constrained around roads/buildings.
+
+D. Sabkha/salt flat
+- Flat pale crust/cracks/damp patches.
+- High glare/roughness variation.
+- Soft/wet traction zones when classified.
+- Sparse/no vegetation unless supported.
+
+E. Northern gardens/date palms/farms
+- Data-driven palm groves, farms, nurseries, green compounds.
+- Irrigation/greenhouse visuals only public/generic.
+- Dense vegetation must not spread into southern desert.
+- Instancing/impostors.
+
+F. Urban/reclaimed land
+- Engineered pads, seawalls, roads, towers, villas, industrial yards, construction according epoch.
+- Reclaimed coastline exact to selected data.
+- Macro/dust variation.
+
+G. Coastal tidal/mudflat
+- Gentle land-water transition.
+- Wet mud/sand/dark waterline.
+- Tide exposure if resolution supports.
+- Shorebird habitat masks.
+
+H. Mangroves/wetlands
+- Tubli Bay/Ras Sanad/other mapped areas.
+- Root/canopy/shallow channel/mudflat transition.
+- Protected gameplay/no destruction.
+- Instancing/LOD.
+
+I. Hawar/remote-island terrain
+- Legal-data coastline/elevation/rock/sand/sabkha/habitat.
+- No generic clone of main island.
+- Sparse public structures only where mapped.
+
+Terrain material blending:
+
+- Classification + elevation/slope/coast-distance masks.
+- Normalized weights.
+- Macro variation plus detail normals.
+- Avoid tiled repetition.
+- Roads/pads override safely.
+- Render/collision heights match tolerance.
+- Near props instanced; far baked/massed.
+- Track/decal budget with ECO reduction.
+
+
+9. GULF WATER, TIDES, REEFS, SEAGRASS, AND MARINE ROUTES
+--------------------------------------------------------
+
+Water classes:
+
+- Open Gulf.
+- Protected bay/harbor.
+- Marina/canal/artificial-island water.
+- Shallow turquoise bank.
+- Tidal/mudflat/mangrove channels.
+- Industrial-port exterior water.
+- Hawar/remote-island water.
+
+Rendering:
+
+- Fresnel.
+- Depth/turbidity color.
+- Open/protected wave spectra.
+- Shared weather wind.
+- Sun glitter.
+- Shore/boat foam/wake.
+- No uniform white coast ring.
+- Quality-tier reflections.
+
+Tides/currents:
+
+- Use licensed open data if available.
+- Else documented simplified periodic regional model.
+- Bounded current vectors.
+- Tide cannot expose mesh holes.
+- Game depth not real navigation advice.
+
+Bathymetry:
+
+- Legal open source if available.
+- Else coastline-distance + open contours + mapped channels, explicitly marked generated.
+- Smooth conservative depth.
+- Causeway/harbor obstacles correct.
+
+Marine ecology:
+
+- Seagrass/coral/pearl-oyster heritage areas only from legal/ecological data or generalized protected masks.
+- No claim of exact live habitat.
+- Protected zones avoid destructive gameplay.
+- Water clarity/color varies plausibly.
+
+Marine activity:
+
+- Original dhows/workboats/fishing craft/ferries/recreational craft.
+- Public exterior ports/marinas/piers/breakwaters/buoys.
+- Distant route agents low-rate.
+- No real security/shipping operational detail.
+
+Causeways:
+
+- Bridge piers/decks/navigation openings from public geometry/generalized safe collision.
+- Boats collide reliably with piers/decks.
+- Do not provide real navigational clearance guidance.
+
+
+10. CITIES, VILLAGES, BUILDINGS, AND PROCEDURAL ARCHITECTURE
+-----------------------------------------------------------
+
+Source hierarchy:
+
+1. Footprint + mapped height/levels/roof/material.
+2. Footprint + inferred zone/type/height/style.
+3. Land-use block + deterministic representative massing only where footprints absent.
+4. Never invent dense settlement without evidence.
+
+Archetypes:
+
+MANAMA HIGH-RISE/COMMERCIAL
+- Tower/podium, glass/metal/concrete, setbacks, roof equipment, skyline LOD, night windows.
+- Preserve key silhouettes with original legal approximations.
+
+MID-RISE MIXED USE
+- Floor-scale facade, balconies/shading, storefronts, roof parapets/HVAC/tanks, parking/service edge.
+
+VILLAS/COMPOUNDS
+- Walls/gates, courtyards, shaded entries, carports, flat/varied roofs, gardens/palms by mapped zone.
+- Private exteriors closed unless public gameplay designed.
+
+MUHARRAQ/MANAMA HERITAGE/SOUQ
+- Narrow shaded lanes, courtyard massing, plaster/stone/coral-stone-inspired legal original material, timber doors/screens, awnings, validated Arabic/English signs.
+- Preserve Pearling Path/heritage context respectfully.
+
+MOSQUE EXTERIORS
+- Public exterior geometry from legal references/data.
+- Respectful/no destructive gameplay.
+- Interiors optional only with review/original assets.
+
+FORT/ARCHAEOLOGICAL/HERITAGE
+- Bahrain Fort, Arad Fort, Riffa Fort, burial mounds, Pearling Path sites at respectful public exterior level.
+- Protected collision/no damage.
+- Interpretive signs from factual open sources, original design.
+
+MODERN RECLAIMED/RESORT/MARINA
+- Epoch-correct towers/villas/marinas/canals/seawalls.
+- Generic/no copied resort branding.
+
+INDUSTRIAL/PORT/LOGISTICS
+- Warehouses/tanks/cranes/yards/fences/generic pipes at public exterior massing.
+- Restricted/no-entry.
+- No contents/control/security detail.
+
+SOUTHERN WORKER/REMOTE/SMALL SETTLEMENT
+- Correct road/footprint density, villas/shops/public structures, desert transition.
+
+FARM/PALM GARDEN
+- Date rows/windbreaks/greenhouse/low compounds where mapped.
+
+Building rules:
+
+- Deterministic height inference from tags/zone/footprint.
+- Correct floor scale.
+- Seeded coherent palette, not random rainbow.
+- UV by wall/roof normal.
+- Near windows/doors depth; far material.
+- Dust/salt/weathering/coastal variation.
+- Rooftop props instanced/LOD.
+- Far city static merged by chunk/material.
+- Collision simplified/merged; not one body per detail.
+- Closed shells for non-interior buildings.
+
+
+11. REQUIRED REGIONS, LANDMARKS, AND INFRASTRUCTURE
+---------------------------------------------------
+
+Use true open-data positions/current epoch. This is a minimum guide, not permission to fabricate.
+
+MANAMA/CAPITAL
+- Bab Al Bahrain public exterior.
+- Manama Souq streets/exteriors.
+- Bahrain Financial Harbour/World Trade Center skyline region with original legal models.
+- Diplomatic Area.
+- Bahrain Bay/current reclaimed waterfront.
+- Bahrain National Museum public exterior.
+- Al Fateh Grand Mosque public exterior respectful representation.
+- Corniche/waterfront/urban neighborhoods beyond landmarks.
+
+MUHARRAQ
+- Muharraq old city/Pearling Path.
+- Arad Fort.
+- Busaiteen/Hidd/Arad neighborhoods.
+- Bahrain International Airport public exterior.
+- Amwaj/current reclaimed developments.
+- Port/logistics public exterior.
+
+NORTHERN/WESTERN
+- Saar/Budaiya/Jasra/Jidhafs/Barbar/Diraz and mapped villages.
+- Bahrain Fort/Qal’at al-Bahrain.
+- Barbar Temple/other archaeological sites if legal/current data supports them, protected representation.
+- Palm/farm/garden regions.
+- King Fahd Causeway approach.
+
+RIFFA/CENTRAL
+- East/West Riffa.
+- Riffa Fort.
+- Isa Town.
+- Hamad Town.
+- A’ali and Dilmun burial mounds.
+- Highway/interchange/suburban fabric.
+
+SOUTH
+- Bahrain International Circuit public footprint/exterior without Formula/brand assets.
+- Sakhir.
+- Zallaq.
+- Al Areen public exterior/natural areas.
+- Awali.
+- Jabal ad Dukhan.
+- Tree of Life.
+- Askar/Jaww.
+- Southern desert/public roads.
+- Generalized restricted oil/industrial regions.
+- Durrat Al Bahrain/current southern reclamation.
+
+EAST/SITRA/TUBLI
+- Sitra settlements/causeways/public industrial exteriors.
+- Tubli Bay and mangrove/wetland zones.
+- Ras Sanad protected areas where mapped.
+- Eastern shoreline/industrial/reclaimed transition.
+
+HAWAR/OTHER ISLANDS
+- Every manifest island.
+- Hawar settlement/public structures/roads where mapped.
+- Ecology/coast/terrain distinctions.
+- Generalized restricted zones.
+- Boat/air access and safe recovery hub where appropriate.
+
+AIRPORTS
+- Bahrain International Airport public runway/taxiway/apron/terminal exterior at epoch.
+- Other airfields only at public map-level; military/restricted generalized and not player hubs.
+- Civilian light-aircraft gameplay may use a clearly fictional game operation at a verified public civilian surface without simulating real procedures.
+
+PORTS
+- Khalifa Bin Salman Port public exterior.
+- Mina Salman/public exterior.
+- Sitra/industrial marine exteriors generalized.
+- Marinas/fishing harbors/boat ramps from public data.
+
+CAUSEWAYS/BRIDGES
+- King Fahd Causeway Bahrain portion/public roadway.
+- Muharraq-main-island causeways/bridges according epoch.
+- Sitra connections.
+- Reclaimed-development bridges.
+- Correct vertical layers/piers/collision.
+
+Do not over-polish Manama while remote islands/southern/northern villages remain empty.
+
+
+12. ROADS, CAUSEWAYS, RIGHT-HAND TRAFFIC, AND SIGNAGE
+-----------------------------------------------------
+
+Bahrain uses right-hand traffic.
+
+Road metadata:
+
+- Class/one-way/lanes/width/surface/speed class for AI.
+- Turn restrictions.
+- Ramp/link/roundabout.
+- Bridge/tunnel/layer.
+- Median/barrier/shoulder/sidewalk/crossing/service-road/parking where available.
+
+Preserve from current open data:
+
+- Major Manama ring/arterial routes.
+- Shaikh Khalifa bin Salman/Isa bin Salman/King Faisal/Al Fateh/Budaiya and other current named corridors as present in source.
+- King Fahd Causeway approach/roadway.
+- Airport/Muharraq/Hidd connections.
+- Sitra causeway/roads.
+- Riffa/Sakhir/southern highways.
+- Village/local streets.
+- Desert/industrial tracks with correct classification.
+
+Rendering:
+
+- Human-scale lanes/curbs/medians/shoulders/guardrails/lights/markings/crossings.
+- Grade-separated interchanges/bridges/tunnels.
+- Causeway sea elevation/piers.
+- Terrain blending/no z-fighting/cliffs.
+- Sand/dust accumulation by region.
+- Wet materials only after rain/tide zones.
+
+Bilingual signage:
+
+- Verified name:ar/name:en or curated factual text.
+- Correct Arabic shaping/RTL/BiDi/numerals.
+- Licensed Arabic font.
+- Original layouts based on general public conventions; no copied texture pack.
+- Safe fallback/missing-name logging.
+- Game navigation disclaimer, not real driving guidance.
+
+Tests:
+
+- Governorate connectivity.
+- Manama-Muharraq-airport.
+- Manama-Riffa-Sakhir-south.
+- Manama-west/King Fahd approach.
+- Northern village routes.
+- Sitra causeway.
+- Bridge/tunnel layer separation.
+- Desert track not inferred as highway.
+
+
+13. PUBLIC BUSES, TRAFFIC, PEDESTRIANS, AND NO INVENTED METRO
+-------------------------------------------------------------
+
+Buses:
+
+- Use legally redistributable current route/stop data if available.
+- Otherwise use generic bus traffic and mapped stops/terminals without inventing official schedules/routes.
+- Original unbranded bus models/liveries.
+
+Rail/metro/tram:
+
+- Do not depict proposed/planned Bahrain metro or other future rail as operational unless the selected epoch and authoritative open data prove it was constructed/operational.
+- Planned corridors may appear only as documented construction/planning metadata, not working trains.
+- This rule prevents a “real Bahrain” build from inventing transit.
+
+Traffic:
+
+- Right-hand lane graph.
+- Nearby microscopic car-following/lane-keeping/merge/roundabout/signal/obstacle behavior.
+- Distant mesoscopic routing.
+- Original sedans/SUVs/pickups/buses/taxis/delivery vehicles/motorcycles.
+- Agent pools/profile caps.
+- Spawn/despawn out of view.
+- Invisible-near-player deadlock recovery prohibited.
+
+Pedestrians:
+
+- Sidewalk/crossing graph/tiled navmesh.
+- Density by land use/time/weather/temperature/profile.
+- Lower exposed midday density in extreme heat; evening/shaded/commercial activity configurable.
+- Local avoidance/crossing safety.
+- Distant crowd impostors/low-rate.
+- Respectful diverse population; no stereotypes.
+
+ECO reduces counts/rates while preserving nearby safety.
+
+
+14. MOBILE-REALISTIC RENDERER
+-----------------------------
+
+PBR-lite channels:
+
+- Base color.
+- Normal.
+- Roughness.
+- Metallic.
+- AO where useful.
+- Controlled emissive.
+- Optional vehicle clearcoat high profile.
+
+Material families:
+
+- Limestone/gravel.
+- compact/loose/wet sand.
+- sabkha/mudflat.
+- asphalt/dusty/wet asphalt.
+- concrete/pavers/curbs.
+- plaster/coral-stone-inspired/brick.
+- glass/steel/aluminum.
+- corrugated/industrial metal.
+- palms/gardens/mangroves.
+- rubber/vehicle paint/interiors.
+- Gulf water classes.
+- airport/port surfaces.
+
+Lighting:
+
+- Sun direction from Bahrain location/date/time.
+- Asia/Bahrain timezone (UTC+03:00 at intended epoch), verify date rules/no invented DST.
+- Directional sun + sky ambient/IBL approximation.
+- Exposure/tone mapping/gamma.
+- humid coastal haze/dust.
+- golden hour/night city.
+- strict local-light culling.
+
+Atmosphere:
+
+- humid summer haze.
+- dry/dusty interior profile.
+- shamal dust.
+- heat shimmer (not UI).
+- bounded fog hiding LOD.
+- star/light-pollution difference.
+
+Shadows:
+
+- One sun system 512–1024 px/profile.
+- camera-centered/limited cascades only if profiled.
+- texel stability/throttled update.
+- contact/blob low.
+- ECO disables/simplifies sampling.
+
+Water/reflections:
+
+- IBL/Fresnel.
+- selective low-rate probes/planar only high.
+- no full-archipelago reflection pass.
+
+AA/resolution:
+
+- FXAA/efficient post AA.
+- optional modest MSAA.
+- dynamic internal resolution/hysteresis.
+- UI native resolution.
+
+Post:
+
+- tone map/color grade/subtle bloom.
+- restrained heat/dust/rain.
+- no excessive chromatic aberration/lens dirt.
+
+Shader safety:
+
+- offline parse/compile where possible.
+- runtime error source lines.
+- fallback materials.
+- GLES3 limits/precision.
+- simplified far paths.
+
+
+15. ORIGINAL MODELS, ASSETS, AND LOD
+-----------------------------------
+
+Create original unbranded:
+
+- Rigged human.
+- Gulf-suitable fictional car/4x4.
+- Dhow-inspired/workboat or center-console boat.
+- Light utility helicopter.
+- Light single-engine prop aircraft.
+- Traffic sedans/SUVs/pickups/buses/vans/taxis/motorcycles.
+- Generic dhows/fishing/recreational/port craft.
+- Street lights/signals/barriers/signs/shade/bus stops/palms/mangroves/rocks/port/airport props.
+
+Each important asset:
+
+- Metre-correct proportions.
+- Smooth normals/bevels/curves.
+- UV/PBR materials.
+- High/medium/low LOD.
+- Cheap separate collision.
+- triangle/material/texture budget.
+- automated missing/NaN/bone/material validation.
+
+Vehicles need moving parts: wheels/suspension/steering/lights; rudder/propeller; rotors/skids; propeller/control surfaces/gear.
+
+Primitive blockouts acceptable only in early milestones, not final critical assets/landmarks.
+
+
+16. SHARED SIMULATION, UNITS, COLLISION, AND FIXED TIMESTEP
+----------------------------------------------------------
+
+Units:
+
+- metre, kilogram, second.
+- m/s internally; km/h or knots HUD.
+- radians/s internally.
+- newtons/Nm.
+- gravity configurable near 9.80665 m/s².
+- named salt-water density.
+- weather-provided bounded air density.
+
+Axes:
+
+- One documented right-handed convention, e.g. X east/Y up/Z north.
+- documented positive rotations/quaternion order.
+- GIS conversion only in WorldTransform.
+- shared render/physics/audio/AI/save contract.
+
+Fixed physics 60 Hz:
+
+      fixedDt = 1.0 / 60.0
+      frameDt = clamp(now - previous, 0, 0.10)
+      accumulator += frameDt
+      while accumulator >= fixedDt and substeps < 4:
+          process origin/chunk safety
+          sample buffered controls
+          sample environment/material/wind/water
+          calculate/apply forces and torques
+          step Bullet fixedDt
+          update contacts/wheels/seats/damage/safe state
+          accumulator -= fixedDt
+      interpolationAlpha = accumulator / fixedDt
+
+- Render independently at 30/20/15.
+- bounded anti-spiral policy.
+- reset after pause.
+- one-shot inputs once.
+- render interpolation never feeds physics.
+
+Tick order:
+
+1. origin rebase.
+2. collision chunks.
+3. controls.
+4. environment.
+5. force models.
+6. Bullet step.
+7. contacts/suspension/gear.
+8. gameplay/damage/AI safety.
+9. transform history.
+10. pooled audio/particles.
+
+Collision layers:
+
+- terrain/static/road barrier/human/player car/traffic/boat/heli/plane/bus/wildlife/dynamic prop/water trigger/interaction/restricted trigger/visual-only.
+- One tested matrix.
+- triggers no solid impulses.
+
+Geometry:
+
+- static triangles/heightfields for static world.
+- convex/compound dynamic.
+- no concave dynamic vehicle meshes.
+- CCD/sweeps fast vehicles.
+- roads/bridges/causeways seamless.
+- collision active before arrival.
+
+Materials:
+
+- Central allocation-free registry for friction/restitution/rolling/tire/human/dust/spray/audio/track.
+- Avoid double-applying tire/contact friction.
+- safe unknown fallback/log once.
+
+Body policy:
+
+- named solver settings.
+- sleep inactive.
+- occupied/safety awake.
+- distant traffic route proxies.
+- no transform/velocity set during normal operation.
+- teleport only spawn/recovery/rebase with broadphase/interpolation update.
+- finite mass/inertia/config validation.
+
+Determinism:
+
+- pure force/chunk generation deterministic.
+- Bullet scenario tolerance, not bit-identical devices.
+- seeded subsystem random streams.
+
+Shared tests:
+
+- same 10-second simulation under 15/20/30/60/irregular render FPS close result.
+- pause no impulse.
+- origin preserves constraints/velocity.
+- CCD barrier.
+- material lookup.
+- triggers no impulse.
+- no fixed-loop allocation.
+
+
+17. HUMAN PHYSICS, HEAT, SWIMMING, AND ANIMATION
+------------------------------------------------
+
+Controller:
+
+- 1.7–1.9 m capsule.
+- stable ground sweep.
+- walk/jog/sprint/crouch optional/jump/fall/land/wade/swim.
+- acceleration/deceleration.
+- limited air control.
+- slopes/sliding/curbs/steps/stairs/head clearance/ledge/moving surfaces.
+- pavement/gravel/rock/sand/wet sand/mudflat/shallow water materials.
+- bounded pushes/fall response.
+
+Jump:
+
+      jumpVelocity = sqrt(2 * gravity * desiredJumpHeight)
+
+Heat/stamina:
+
+- bounded accessibility-friendly model.
+- shade/night/covered hubs improve recovery.
+- optional hydration, not punishing default.
+- not medical advice.
+- separate from device thermal ECO.
+
+Animation:
+
+- idle/walk/jog/sprint/jump/fall/land/stairs/wade/swim.
+- enter/exit car/boat/heli/plane.
+- seated control poses.
+- speed matching.
+- foot/hand IK tiers.
+- bounded ragdoll severe impact; ECO simpler.
+
+Interaction:
+
+- safe seat/door transforms.
+- no exit to traffic/wall/deep water/rotor/prop/restricted/unloaded area.
+
+Tests:
+
+- curbs/stairs/slopes/jump.
+- material movement.
+- heat bounds.
+- wade/swim.
+- vehicle entries.
+- origin/chunk boundaries.
+
+
+18. CAR/4X4 PHYSICS FOR CITY, EXPRESSWAY, AND DESERT
+----------------------------------------------------
+
+Chassis:
+
+- real mass/dimensions/wheelbase/track/COM/inertia.
+- compound convex/CCD.
+
+Suspension:
+
+      springForce = springRate * compression
+      damperForce = damperRate * relativeVelocity
+      normalLoad = clamp(springForce - damperForce, 0, maxLoad)
+
+Include:
+
+- travel/bump/droop.
+- wheel inertia/RPM.
+- engine torque curve/idle/redline/throttle/engine brake.
+- clutch/automatic-manual/gears/neutral/reverse/final drive/diff.
+- speed steering/Ackermann.
+- slip ratio/slip angle/saturating tires/friction ellipse.
+- brake balance/handbrake/optional ABS/traction.
+- rolling/aero drag/anti-roll/damage.
+
+Surfaces:
+
+- dry/dusty/wet asphalt.
+- concrete/pavers.
+- gravel/rock.
+- compact/loose/wet sand.
+- sabkha/mud.
+
+Loose sand:
+
+      sinkageFactor = looseDepth * loadPerTire / referenceLoad
+      resistance = baseResistance * sinkageFactor * speedFunction
+      availableForce = normalLoad * sandFriction * footprintFactor
+
+Clamp/test. No fake sand mode ignoring physics.
+
+Optional mild heat model for engine/brakes/tires.
+
+Visual/audio:
+
+- wheel steering/rotation/suspension.
+- lights.
+- tracks/dust/spray pooled.
+- engine/gear/tire/suspension from state.
+
+Bahrain-specific:
+
+- Right-hand traffic.
+- tight old streets vs modern highways.
+- causeway crosswinds/seams.
+- roundabouts/interchanges.
+- optional original unbranded track-driving mode at public circuit footprint without commercial logos.
+
+Acceptance:
+
+- settle/accelerate/gears.
+- dry/wet braking.
+- progressive handling.
+- gravel/sand/slope.
+- causeway/highway stability.
+- collision/CCD.
+- fixed-step stability.
+
+
+19. BOAT/DHOW-INSPIRED PHYSICS FOR THE ARCHIPELAGO
+--------------------------------------------------
+
+Hull:
+
+- rigid body, 8–16 buoyancy points.
+- convex/compound collision.
+- designed waterline/COM.
+
+Buoyancy point:
+
+- analytic water height/normal/velocity.
+- submersion/displaced volume.
+
+      buoyancy = waterDensity * displacedVolume * gravity
+
+- force at point + relative vertical damping + clamp.
+
+Hydrodynamics:
+
+- forward/lateral/vertical drag.
+- angular damping.
+- propeller thrust by throttle/RPM/submersion/advance speed.
+- rudder/vectored steering from flow.
+- bounded planing lift.
+- wind/tide/current.
+- shallow resistance/grounding/beaching.
+- prop loss out of water/shallow.
+
+Bahrain marine:
+
+- open/protected/marina/mangrove/mudflat/Hawar water classes.
+- causeway piers.
+- shallow channels.
+- harbor barriers.
+- coast/island recovery hubs.
+
+Visual/audio:
+
+- wake/spray/prop wash/foam pooled.
+- engine/hull/water/wind.
+- generic navigation lights.
+
+Acceptance:
+
+- waterline/equilibrium.
+- roll/pitch recovery.
+- energy decay.
+- moving steering.
+- tide/current bounded.
+- wave sync.
+- causeway/shore collision.
+- beaching.
+- origin phase.
+
+
+20. HELICOPTER PHYSICS FOR HOT, HUMID, DUSTY CONDITIONS
+-------------------------------------------------------
+
+Properties:
+
+- fuselage mass/COM/inertia/drag.
+- main rotor radius/area/position/inertia/RPM.
+- tail rotor position/authority.
+- skids/contact.
+- engine/rotor spool.
+
+Forces:
+
+      thrust = Ct * airDensity * rotorArea * tipSpeed^2 * collective
+      direction = normalize(rotorUp + cyclicPitch + cyclicRoll)
+
+Include:
+
+- collective.
+- cyclic pitch/roll.
+- reaction torque.
+- tail/yaw.
+- translational lift.
+- ground effect.
+- drag.
+- bounded vortex-ring.
+- engine loss/autorotation approximation.
+- coastal wind/gust.
+- temperature/humidity density configuration.
+- bounded stability assist.
+
+Dust/brownout:
+
+- surface/collective/height/wind driven.
+- pooled/profiled.
+- no opaque ECO screen.
+- visual challenge, no arbitrary controls.
+
+Landing:
+
+- skid compliance/friction.
+- slope/gentle/hard damage.
+- rotor danger.
+- exit safe only.
+
+Use civilian/game-design helipad; no military base gameplay.
+
+Tests:
+
+- spool/hover/cyclic/yaw.
+- density/wind.
+- ground/trans lift.
+- dust.
+- landing/engine loss.
+- island cross-country streaming/origin.
+
+
+21. AEROPLANE PHYSICS, AIRPORTS, AND CROSSWIND
+----------------------------------------------
+
+Original light single-engine propeller aeroplane.
+
+Use a verified public civilian/game operation at Bahrain International Airport or another verified civilian surface; public exterior only. Military/restricted airfields generalized/not player hubs. Fictional livery/operations.
+
+Data:
+
+- mass/COM/inertia.
+- wing area/span/chord/aspect.
+- aerodynamic center/tail.
+- prop/engine.
+- gear/suspension/wheels/brakes/steering.
+- controls/rates.
+
+Air:
+
+- local airflow includes wind/angular velocity.
+- bounded density from weather/temperature/pressure.
+
+      q = 0.5 * airDensity * airspeed^2
+      lift = q * wingArea * Cl(alpha, flap)
+      drag = q * wingArea * (Cd0 + inducedFactor * Cl^2)
+
+Cl rises, peaks, falls post-stall. No unlimited lift.
+
+Systems:
+
+- wing/tail/vertical stabilizer.
+- elevator/aileron/rudder/trim/flaps.
+- prop thrust/RPM/throttle/airspeed/density.
+- ground effect.
+- coastal/causeway crosswind.
+- gear spring/damper/rolling/brake/steer.
+- hard landing/overspeed/G damage.
+- CCD.
+
+Airport:
+
+- real public runway heading/length/width.
+- taxiway/apron/exterior terminal massing.
+- terrain/marking/lighting game fidelity.
+- no hidden scaling/impulse/security interior.
+- approach streaming over sea/city.
+
+Acceptance:
+
+- ground roll/takeoff.
+- stall/recovery.
+- controls/flaps.
+- hot-density/crosswind.
+- gear/landing/brake.
+- glide.
+- archipelago circuit/origin/streaming.
+
+
+22. VEHICLE INTERACTION, TOUCH/GAMEPAD CONTROLS, AND CAMERAS
+-----------------------------------------------------------
+
+Interaction:
+
+- data-driven seats/entry/exit/camera/control/danger.
+- validate distance/LOS/obstruction/speed/water/traffic/rotor/prop/restricted/collision.
+- multiple safe exits.
+- save/recover vehicles.
+
+Touch:
+
+HUMAN
+- left move, right camera, run/jump/interact/swim optional.
+
+CAR
+- steer/throttle/brake-reverse/handbrake/exit.
+
+BOAT
+- steer/throttle-reverse/camera/safe exit.
+
+HELI
+- left collective/yaw, right cyclic, engine/rotor, camera, safe exit, optional assist.
+
+PLANE
+- yoke pitch/roll, rudder, throttle, brakes, flaps/trim, engine, safe exit, optional coordinated assist.
+
+Gamepad:
+
+- shared actions, dead zones/sensitivity/inversion/remap, hide touch UI.
+
+Cameras:
+
+- human collision-aware.
+- car chase/close/hood.
+- boat chase/helm.
+- heli/plane chase/cockpit-near.
+- timestep-independent, bounded shake, FOV, horizon stabilization.
+- no clipping/rebase lag.
+
+
+23. WEATHER, SUN, HUMIDITY, SHAMAL, DUST, AND RAIN
+--------------------------------------------------
+
+WeatherProfile:
+
+- date/time/Asia-Bahrain timezone.
+- sun.
+- temperature/humidity/pressure-density.
+- wind/gust.
+- aerosol/dust/visibility.
+- clouds/rain/ground wetness.
+- tide/current.
+
+Sun:
+
+- verified location/date algorithm.
+- Asia/Bahrain UTC+03:00 at epoch; verify no invented DST.
+- visual/light/shadow match.
+
+Heat/humidity:
+
+- coastal haze.
+- heat shimmer not UI.
+- human stamina.
+- aircraft density.
+- optional mild vehicle cooling.
+- no forecast/medical claim.
+
+Shamal/dust:
+
+- shared wind water/boat/aircraft/vegetation/particles.
+- dust visibility/sky/fog.
+- pooled/ECO reductions.
+- no abrupt force changes.
+
+Rain:
+
+- occasional/seasonal, not tropical daily.
+- pooled particles.
+- wet roads/grip.
+- puddles only designated lows.
+- no invented permanent rivers.
+- smooth transition.
+
+Presets:
+
+- clear humid midday.
+- dry winter morning.
+- golden-hour waterfront.
+- shamal dust.
+- hot crosswind.
+- night Manama.
+- occasional rain/wet road.
+
+
+24. WILDLIFE, MANGROVES, SEAGRASS, AND PROTECTED HERITAGE
+---------------------------------------------------------
+
+Optional after core:
+
+- shorebirds/flamingos/migratory birds appropriate to legal habitat data.
+- seabirds.
+- Hawar bird colonies/ecology represented respectfully.
+- gazelle/oryx only where ecologically/legally appropriate.
+- fish/marine silhouettes/dugong references only if data supports; no hunting/harassment.
+
+Rules:
+
+- habitat masks.
+- small nearby caps/distant impostors.
+- flee/avoid vehicles.
+- protected zones no damage.
+- ECO reduces first.
+- no population-accuracy claim.
+
+Heritage protection:
+
+- burial mounds, forts, Pearling Path, archaeological sites use protected collision.
+- no destructive missions.
+- factual original interpretive signs.
+- no artifact removal/looting gameplay.
+
+
+25. ARABIC/ENGLISH, CULTURE, AND RESPECTFUL PRESENTATION
+-------------------------------------------------------
+
+Text:
+
+- UTF-8.
+- Arabic shaping/joining.
+- RTL UI.
+- BiDi mixed strings/numbers.
+- licensed Arabic font/fallback.
+- tested sign atlas/runtime shaping.
+
+Names:
+
+- verified name:ar/name:en.
+- factual source spelling.
+- reviewed transliteration fallback.
+- no reversed/disconnected/gibberish Arabic.
+
+People:
+
+- diverse neutral population.
+- original clothing variants including respectful regional attire without caricature.
+- no nationality/sect/ethnicity stereotypes.
+
+Religious/cultural sites:
+
+- public exteriors respectful.
+- no destructive/combat missions.
+- interiors only reviewed/original.
+- optional call-to-prayer ambience only with authentic licensed recording, correct logic, volume option, cultural review; omit if uncertain.
+- no copyrighted music/broadcasts.
+
+Pearling/dhow heritage:
+
+- interpret through legal factual signs, original dhows, architecture, museum/heritage exteriors.
+- no claim of exact historical reconstruction without source.
+
+National symbols:
+
+- Bahrain flag factual/respectful with authoritative geometry/colors.
+- no desecration gameplay.
+
+Accessibility:
+
+- English minimum, Arabic strongly recommended.
+- text scale/high contrast/subtitles.
+- control/motion/color settings.
+
+
+26. GAMEPLAY, HUD, MAP, AUDIO, AND RECOVERY
+-------------------------------------------
+
+Loop:
+
+- Safe public spawn near Manama/Muharraq with car.
+- Walk/drive city/causeway/village/desert.
+- discover governorate/island hubs.
+- boat from public marina/harbor.
+- helicopter from civilian game helipad.
+- plane from civilian airport operation.
+- explore heritage/nature/coast.
+- discovered-hub fast travel only; cannot hide missing world.
+- recover vehicles/player.
+
+HUD:
+
+GENERAL
+- Arabic/English location/governorate/island.
+- compass/time/weather.
+- vector map.
+- FPS/profile/ECO.
+
+HUMAN
+- interaction and optional stamina/heat.
+
+CAR
+- km/h/RPM/gear/warnings.
+
+BOAT
+- speed/heading/RPM/shallow game warning.
+
+HELI
+- rotor RPM/collective/altitude/vertical/heading.
+
+PLANE
+- airspeed/altitude/vertical/heading/RPM/flaps/trim/gear.
+
+Map:
+
+- original vector style.
+- all islands/governorates/coast/roads/hubs/ports/airports.
+- game navigation disclaimer.
+- visible OSM attribution.
+
+Audio:
+
+- original/permissive engines/wind/water/dust/traffic/bus/footsteps/birds/souq/harbor/city.
+- RPM/load/slip driven.
+- no copyrighted music/radio/announcements.
+- spatial caps/LOD/licenses.
+
+Recovery:
+
+- last-safe global point.
+- municipal/island hubs.
+- flip car/tow boat/reset aircraft after confirmation.
+- explicit, not hidden teleport.
+
+
+27. THERMAL, BATTERY, AND PERFORMANCE
+-------------------------------------
+
+Phone heat is a release blocker.
+
+Frame pacing:
+
+- no unrestricted default 60/90/120.
+- balanced ~30 FPS.
+- battery saver/moderate thermal ~20 FPS ECO.
+- severe thermal ~15 FPS.
+- pause/screen-off stops rendering/physics/AI/streaming appropriately.
+- respect screen timeout.
+- low-frequency thermal API/listener.
+
+ECO reduces:
+
+- resolution.
+- shadows.
+- high-detail/vegetation/prop/light/particle ranges.
+- LOD.
+- traffic/pedestrian/bus/wildlife counts/rates.
+- reflection/rain/dust/night windows.
+- preserve occupied physics/collision/control.
+
+Balanced budgets, measure/adapt:
+
+- 33.3 ms.
+- main sim 6–8 ms ideally.
+- 150–250 draw calls.
+- 200k–500k visible triangles.
+- 100–150 nearby dynamic bodies.
+- one shadowed sun.
+- 256–384 MB texture residency balanced.
+- bounded all heaps/queues.
+- no hot allocation.
+
+Optimization:
+
+- chunk/frustum/distance/altitude culling.
+- static batching.
+- mesh/collision/animation LOD.
+- atlas/mipmap/compression/share.
+- instancing/impostors.
+- pools/sleep/proxies.
+- predictive stream/upload budget.
+- far shader simplification.
+- diagnostics overlay.
+
+LOW/BALANCED/HIGH/ECO defined, thermal always overrides.
+
+Large APK permission never overrides RAM/GPU/thermal.
+
+
+28. SAVE, ERROR HANDLING, AND DATA SAFETY
+----------------------------------------
+
+Save:
+
+- epoch/compiler/manifest/CRS/origin versions.
+- global player/vehicles.
+- current vehicle/last safe.
+- time/weather/discovered hubs.
+- graphics/control/language/accessibility.
+- damage/engine optional.
+
+Rules:
+
+- migrate/reject incompatible.
+- no stale underground/off-island spawn.
+- async atomic writes/checksum/range validation.
+
+Loading/error:
+
+- staged progress.
+- fatal manifest/terrain clear retry/reset.
+- optional asset fallback/log.
+- missing required island chunk publication failure.
+- shader source errors.
+- NaN safe diagnostics/recovery.
+
+
+29. AUTOMATED TESTING
+---------------------
+
+Boundary/coverage:
+
+- national multipolygon valid.
+- four governorates packaged.
+- every island manifest entry packaged/checksummed.
+- main/Muharraq/Sitra/Hawar/remote/reclaimed categories.
+- full coast/causeways.
+- no large empty region.
+- foreign land not high-detail Bahrain.
+
+Data/compiler:
+
+- magic/version/count.
+- CRS round trip.
+- deterministic hash.
+- seams.
+- road/bridge layers.
+- coast rings.
+- terrain weights.
+- finite building heights.
+- mesh limits.
+- asset checksums.
+- Arabic UTF-8.
+
+Environment:
+
+- limestone/relief/sand/sabkha/palm/urban/mudflat/mangrove/island classes.
+- no fake mountains/rivers.
+- road/runway alignment.
+- tide no holes.
+- weather/sun/wind consistency.
+
+Streaming/origin:
+
+- all hubs/islands.
+- long drives/boat/heli/plane.
+- direction/pause/rebase.
+- memory plateau.
+- stale request prevention.
+- high-speed collision ahead.
+
+Human/car/boat/heli/plane pure and integration tests as specified in their sections.
+
+Traffic/localization:
+
+- right-hand/one-way/roundabout/agent caps.
+- buses only current/legal.
+- no invented operational metro.
+- Arabic shaping/RTL/mixed numerals.
+
+Packaged startup:
+
+- AOI/governorates/islands/causeways/world manifest.
+- coarse archipelago.
+- all checkpoint groups.
+- valid human/car spawn.
+- boat water/depth spawn.
+- heli clearance.
+- plane runway alignment.
+- configs/models/colliders/controls/materials/shaders.
+- no NaN/missing required.
+- resource-count drop protection.
+
+Emulator/runtime:
+
+- clean install/launch.
+- real loading wait.
+- mode smoke.
+- logcat fatal/ANR/tombstone/shader/EGL/OOM/missing scan.
+- persist logs/status.
+- infrastructure failure separate.
+
+APK:
+
+- ZIP.
+- manifest/package/launcher/version/sdk.
+- DEX/native ABIs.
+- signature.
+- world/assets/licenses/attribution.
+- SHA sidecar.
+- only current PASSED publish.
+
+
+30. GITHUB ACTIONS AND LARGE-APK PUBLICATION
+--------------------------------------------
+
+Workflow:
+
+1. Checkout exact branch/commit.
+2. Java 17.
+3. verified Gradle/wrapper.
+4. remove stale QA status.
+5. validate epoch/manifests/checksums/licenses.
+6. deterministic compiler validation.
+7. assemble APK.
+8. run all tests.
+9. optional emulator.
+10. always finalize diagnostics.
+11. require current country startup/coverage PASSED.
+12. stage:
+
+      Bahrain-The-Island-Kingdom-EXTREME-DETAIL-v1.0.0.apk
+
+13. SHA-256.
+14. Actions artifact.
+15. If too large for Git, GitHub Release/Actions download link; do not cut country.
+16. persist failure diagnostics, never failed final APK.
+17. persist success metadata.
+
+No credentials/private keys; minimum token permissions; verified dependencies/actions.
+
+
+31. MANDATORY INCREMENTAL MILESTONES
+------------------------------------
+
+Every milestone ends with installable APK/tests; keep prior good APK.
+
+M0 TOOLCHAIN
+- GLES3/Bullet/mesh/input/resource/lifecycle/CI.
+
+M1 COUNTRY/ISLAND SHELL
+- authoritative boundary/governorates/islands/causeways/CRS/coarse terrain/coast/water/city massing.
+- Exit all coverage tests.
+
+M2 STREAMING/ORIGIN
+- chunks/predictive/caches/upload/evict/rebase.
+- Exit hub/island traversal/memory.
+
+M3 ENVIRONMENTS/MARINE
+- limestone/relief/sand/sabkha/palms/mudflat/mangrove/urban; water/tide/current/wind.
+
+M4 ROADS/BUILDINGS/SIGNAGE
+- right-hand network/causeways/villages/procedural architecture/Arabic signs.
+
+M5 HUMAN/CAR
+- physics/controls/camera/entry/exit; city/highway/sand.
+
+M6 BOAT
+- marine spawns/buoyancy/hydrodynamics/island routes.
+
+M7 HELICOPTER
+- rotor/wind/density/dust/landing/island streaming.
+
+M8 AEROPLANE
+- airport/public exterior/flight/gear/takeoff/stall/landing/circuit.
+
+M9 MANAMA/MUHARRAQ HERO DETAIL
+- skyline/souq/heritage/airport/waterfront/night, original/legal.
+
+M10 ALL REMOTE REGIONS/ISLAND POLISH
+- north/west/Riffa/south/Sitra/Hawar/manifest islands, no generic gaps.
+
+M11 TRAFFIC/BUSES/PEDESTRIANS/LOCALIZATION/AUDIO
+- scalable/right-hand/current operational reality/Arabic-English.
+
+M12 WEATHER/WILDLIFE/POLISH
+- shamal/dust/rain/ecology/accessibility.
+
+M13 THERMAL RELEASE
+- profiling/cull/batch/LOD/compress/dynamic resolution/memory/fallback/final QA/link.
+
+Do not start crowds/wildlife/elaborate rain/interiors before complete archipelago shell, streaming, human, and four vehicles are stable.
+
+
+32. RELEASE ACCEPTANCE CHECKLIST
+--------------------------------
+
+COUNTRY
+[ ] authoritative AOI/epoch.
+[ ] four current governorates.
+[ ] all island manifest entries.
+[ ] main/Muharraq/Sitra/Hawar/remote/reclaimed.
+[ ] causeways/coast/water.
+[ ] 1:1/floating origin.
+[ ] continuous coarse archipelago.
+[ ] attribution/licenses.
+
+ENVIRONMENT
+[ ] limestone/gravel.
+[ ] Jabal ad Dukhan relief.
+[ ] sand/dunes.
+[ ] sabkha.
+[ ] palms/farms.
+[ ] urban/reclaimed.
+[ ] mudflat/mangrove.
+[ ] distinct islands.
+[ ] Gulf water/tide/current.
+[ ] no fake geography.
+
+SETTLEMENTS/INFRASTRUCTURE
+[ ] every city/village has correct density.
+[ ] Manama/Muharraq hero original/legal.
+[ ] roads/causeways/right-hand.
+[ ] airport/ports public only.
+[ ] heritage protected.
+[ ] restricted generalized.
+[ ] Arabic/English correct.
+[ ] no invented operational metro.
+
+HUMAN
+[ ] locomotion/jump/fall/swim/material/heat/animation/entry.
+
+CAR
+[ ] suspension/engine/gears/steering/brakes/tire/highway/wet/sand/collision.
+
+BOAT
+[ ] buoyancy/drag/prop/rudder/tide/current/wave/shallow/causeway/beach.
+
+HELI
+[ ] spool/collective/cyclic/torque/yaw/lift/ground/density/wind/dust/landing.
+
+PLANE
+[ ] lift/drag/stall/prop/controls/flaps/gear/crosswind/takeoff/landing.
+
+GRAPHICS
+[ ] original models/LOD/collision.
+[ ] PBR/atmosphere/water/night.
+[ ] chunk LOD/culling/batching.
+[ ] shader fallback.
+
+PERFORMANCE
+[ ] no full-detail all-country load.
+[ ] cannot outrun collision.
+[ ] memory plateau.
+[ ] 30/20/15 pacing.
+[ ] ECO actual work reduction.
+[ ] pause stops work.
+[ ] no hot allocations.
+
+DELIVERY
+[ ] clean CI.
+[ ] current startup/coverage PASSED.
+[ ] tests.
+[ ] APK manifest/DEX/native/world/ZIP/signature.
+[ ] SHA matches.
+[ ] accessible large APK link.
+[ ] physical-phone limits disclosed.
+
+
+33. WORKING RULES FOR THE AGENT
+-------------------------------
+
+- Inspect first.
+- Stay designated branch.
+- Build code/assets/tests/APKs, not only docs.
+- Compile each major subsystem.
+- deterministic generation.
+- licenses/provenance.
+- never weaken tests for green.
+- never stale PASSED.
+- no placeholder feature claims.
+- units/config documented.
+- force/torque movement; no normal transform setting.
+- recovery only explicit/fatal.
+- preserve diagnostics.
+- no passwords/tokens/private keys.
+- no proprietary maps/games/brands/music.
+- do not omit remote islands for Manama polish.
+- do not expose restricted operations.
+- no failed APK publication.
+- no HTML/image/video substitution.
+
+
+34. REQUIRED FINAL RESPONSE
+---------------------------
+
+After release passes:
+
+1. prominent APK link.
+2. filename/bytes.
+3. SHA-256.
+4. package/version/sdk/ABIs.
+5. CI run/conclusion.
+6. confirmation all governorates/islands/checkpoints passed packaged tests.
+7. summary streaming/environment/regions/human/car/boat/heli/plane/traffic/localization/graphics/thermal.
+8. honest limits/physical-device status.
+9. links to checksum, DATA_SOURCES.md, ASSET_LICENSES.md, BAHRAIN_BOUNDARY_REPORT.md, BAHRAIN_WORLD_EPOCH.md, tests/logs.
+
+Do not replace APK with a plan.
+
+
+
+BAHRAIN-SPECIFIC ANNEX A — REGIONAL PRODUCTION BIBLE
+====================================================
+
+This annex is mandatory. It prevents one procedural city/desert grammar from being copied across the archipelago. Every region has a data-driven identity profile. Profile values select materials, vegetation, facade families, prop sets, traffic density, ambient audio, night lighting, terrain microdetail, coastline treatment, and LOD priorities. They never override authoritative geometry.
+
+A1. MANAMA HISTORIC/COMMERCIAL CORE
+-----------------------------------
+
+Geographic character:
+- Dense low/mid-rise fabric mixed with modern commercial towers.
+- Flat coastal/reclaimed terrain; no hills invented around the old core.
+- Tight streets, service lanes, major arterials, waterfront/reclaimed edges according to epoch.
+- Continuous relationship to Manama Souq, Bab Al Bahrain, government/commercial districts, and modern skyline.
+
+Visual language:
+- Warm pale plaster/stone/concrete in older fabric.
+- Shaded arcades, awnings, recessed shopfronts, roof parapets, external AC/HVAC clutter, water tanks only where source/archetype supports them.
+- Modern glass/steel towers use individually authored silhouettes and low-cost distant emissive-window masks.
+- Ground-level dust, salt/humidity staining, traffic wear, and strong shade contrast.
+- Do not make every older wall pristine beige or every tower blue mirrored glass.
+
+Street life:
+- Higher pedestrian/commercial density at suitable evening periods and shaded lanes.
+- Generic original shop signs in valid Arabic/English; factual place names only.
+- Delivery vans, taxis, buses, private cars, motorcycles, pedestrians, parked vehicles, street furniture, waste bins, bollards, shade, and loading activity under agent/prop budgets.
+- No copyrighted brands, recorded market music, or fake Arabic.
+
+Audio:
+- Bounded traffic bed, footsteps, doors, ventilation, distant harbor/city hum, birds, and original market ambience.
+- No perpetual horn wall and no country-stereotype sound loop.
+
+QA shot/route:
+- Approach from a modern arterial into older streets, walk through an exterior souq route, emerge toward the waterfront/modern skyline.
+- Verify road width/curbs/doors/Arabic/occlusion/pedestrian LOD and that towers remain correctly positioned in skyline.
+
+A2. DIPLOMATIC AREA, SEEF, BAHRAIN BAY, AND MODERN SKYLINE
+----------------------------------------------------------
+
+Geographic character:
+- Modern high-rise/business/hotel/residential zones on natural/reclaimed coast according to world epoch.
+- Wide roads, structured parking/podiums, landscaped parcels, seawalls, bridges, and water-facing skyline.
+
+Visual language:
+- Original approximations of key public exterior silhouettes, not downloaded commercial models.
+- Glass roughness/reflectance responds to dusty/humid atmosphere.
+- Tower LOD preserves silhouette before facade detail.
+- Landscape irrigation/greenery only inside mapped/appropriate parcels; do not turn the whole coast into a lush park.
+- Construction plots/cranes only when current to epoch.
+
+Night:
+- Building emissive masks vary by floor/zone/time and never illuminate every window.
+- Road/landscape lights use cluster/culling limits.
+- Reflections are probes/IBL or selective low-rate solutions, not a full skyline planar pass every frame.
+
+QA:
+- Day, golden hour, and night skyline from water/Corniche viewpoints.
+- Verify epoch coastline, tower silhouette, reclaimed land, light budget, reflection tiers, and 20 FPS ECO behavior.
+
+A3. JUFFAIR, ADLIYA, GUDAIBIYA, SALMANIYA, SANABIS, TUBLI, AND INNER URBAN BELT
+-------------------------------------------------------------------------------
+
+- Use the actual road/building/land-use data to distinguish neighborhoods; do not flatten them into a named list with identical blocks.
+- Mix villas, apartment blocks, shops, hospitals/public campuses represented by public exterior massing, warehouses, and major roads according to tags.
+- Narrow/local streets must remain narrower/slower than highways.
+- Parking, compound walls, service alleys, roof equipment, and shaded entries are major identity elements.
+- Tubli-facing zones transition to tidal/wetland/industrial/urban shoreline according to data rather than a hard texture seam.
+- Public institutions/religious sites remain exterior-only unless explicitly authored and reviewed.
+
+A4. MUHARRAQ OLD CITY AND PEARLING HERITAGE
+--------------------------------------------
+
+Geographic character:
+- Dense historic lanes/courtyard houses/modern infill on Muharraq Island.
+- Pearling Path is a heritage context and route, not a theme-park decoration.
+
+Architecture:
+- Original courtyard-house grammar with correct human scale, wall thickness impression, shaded entries, projecting details, timber doors/screens, plaster/coral-stone-inspired materials, roof parapets, and controlled weathering.
+- Use mapped footprints and documented heritage references; do not clone one “traditional house.”
+- Siyadi/Bu Maher/other designated heritage components are protected public exteriors based on legal sources.
+- Modern infill must coexist rather than freezing the whole island in one historical period.
+
+Street treatment:
+- Tight lanes, limited vehicle access where data indicates, paving variation, shade, subtle signs, wall-mounted services, pedestrian emphasis.
+- Arabic/English heritage labels factual and original in design.
+
+Cultural rules:
+- No artifact collection/destruction missions.
+- No caricatured pearl-diver NPC loop.
+- Pearling history may appear through factual credits/interpretive UI and original ambient dhow/sea activity.
+
+QA:
+- Walk a continuous public exterior heritage route, validate lane scale, doors, shade, signs, collision, pathfinding, modern transitions, and protected flags.
+
+A5. ARAD, BUSAITEEN, GALALI, HIDD, DIYAR AL MUHARRAQ, DILMUNIA, AND AMWAJ
+-------------------------------------------------------------------------
+
+- Preserve epoch-correct coast and causeway/bridge connections.
+- Arad Fort sits in its real public landscape relationship and is not moved beside Manama landmarks.
+- Busaiteen/Galali/Hidd use mapped villa, apartment, commercial, airport/industrial transition grammars.
+- Diyar/Dilmunia/Amwaj and similar reclamations use current epoch geometry, marinas/canals/seawalls/bridges, modern villas/towers, and incomplete construction only where dated data supports it.
+- Airport noise/aircraft visuals are spatially tied to runways; no aircraft clipping through towers.
+- Hidd/port-side industry uses generalized public exterior massing and restricted perimeters.
+- Mangrove/tidal habitat is not overwritten by generic resort grass.
+
+A6. BAHRAIN INTERNATIONAL AIRPORT ZONE
+--------------------------------------
+
+- Public exterior runway/taxiway/apron/terminal/road geometry only.
+- World epoch controls terminal, concourse, road, and reclamation status.
+- Runway dimensions/headings derived from current legal data and tested.
+- Terminal silhouette may be original approximation; no proprietary BIM/airline branding.
+- Generic aircraft/ground vehicles use fictional liveries.
+- Active operational/security zones are nonplayable or tightly bounded game spaces; no real procedures, credentials, gate systems, or security routing.
+- Player light-aircraft operation is clearly fictional and uses a safe game-design spawn/taxi route that does not claim to reproduce real ATC.
+- Approach light/night systems use optimized instancing and visibility limits.
+
+A7. NORTHERN VILLAGES, PALM BELT, FARMS, AND COAST
+--------------------------------------------------
+
+Representative places are selected from current data and include the Budaiya–Diraz–Barbar–Saar–Janabiya–Bani Jamra–Hamala–Jasra–Malikiyah/nearby village belt as appropriate to authoritative administrative/settlement data.
+
+Environment:
+- Denser date palms, gardens, farms, nurseries, windbreaks, irrigation-shaped parcels, old/new village fabric, and pockets of open land.
+- Vegetation remains parcel-based; no blanket tropical forest.
+- Historic spring/palm landscape is represented only where current/heritage data supports it. Do not create active springs because a historical text mentioned them.
+
+Architecture:
+- Villa compounds, village streets, shops, mosques/public exteriors, workshops/farms, modern infill.
+- Bahrain Fort and nearby archaeological landscape remain spatially correct/protected.
+- Barbar/Saar/other archaeological sites only from legal data and protected.
+
+Road/traffic:
+- Local roads/roundabouts/arterials distinct from causeway/highway.
+- More parked/local traffic near town centers, lower density near farms/coast.
+
+QA:
+- Drive from dense capital edge into village/palm/farm/coast transition without an abrupt biome swap.
+
+A8. BAHRAIN FORT / QAL’AT AL-BAHRAIN LANDSCAPE
+-----------------------------------------------
+
+- Treat fort, tell/archaeological landscape, visitor paths, coast, and surrounding modern context as one protected hero zone.
+- Exterior model based on open factual references and original mesh/materials.
+- No climbing through fragile/protected walls unless a clearly permitted path is designed; no damage.
+- Distant silhouette visible from appropriate coast/roads.
+- Interpretive text cites sources in project credits; no copied museum panel artwork.
+- Night lighting, if represented, is low-cost and epoch/reference based.
+
+A9. A’ALI AND DILMUN BURIAL MOUNDS
+----------------------------------
+
+- Use authoritative/open mound polygons/points where legally available, with uncertainty/confidence metadata.
+- Do not replace all mounds with identical cones. Seed variations must remain within measured archetype dimensions and never shift mapped centers without documentation.
+- Preserve clusters, roads, urban encroachment, pottery/workshop/public context where mapped.
+- Mounds are protected, non-destructible, and excluded from vehicle shortcuts.
+- Pedestrian viewing routes only where public data/design supports them.
+- No treasure/looting/grave-entry gameplay.
+- LOD preserves cluster massing without rendering every high-detail mound at country distance.
+
+A10. RIFFA, ISA TOWN, HAMAD TOWN, AND CENTRAL URBAN INTERIOR
+------------------------------------------------------------
+
+- Use data to separate dense residential grids, villas, commercial arterials, public campuses, sports areas, forts, open parcels, and southern transition.
+- Riffa’s elevation/topographic relationship must come from DEM, not a flat Manama copy.
+- Riffa Fort protected public exterior with correct landscape context.
+- Road network includes actual roundabouts/interchanges/gradients.
+- Urban materials become dustier/drier away from humid immediate coast while still reflecting real landscaping/irrigation.
+- Agent density is lower than core Manama unless land-use/time data dictates otherwise.
+
+A11. SAKHIR, BAHRAIN INTERNATIONAL CIRCUIT REGION, AL AREEN, AND ZALLAQ
+----------------------------------------------------------------------
+
+- Bahrain International Circuit footprint/track/campus from legal open map geometry; no Formula One logos, team liveries, broadcast graphics, copyrighted sound, or official event simulation.
+- Optional player driving uses a fictional test/open-track context with original branding and physics; it must not claim official lap/safety data.
+- Sakhir surroundings use actual road/parcel/desert data, not grandstands copied from commercial games.
+- Al Areen/wildlife/protected/leisure exteriors only where public/legal; restricted animal/service interiors omitted.
+- Zallaq coast/beach/hotel/resort zones use generic/original brands unless licensed.
+- Transition from highway/circuit/landscaping to open southern terrain is gradual and data-driven.
+
+A12. AWALI, JABAL AD DUKHAN, OIL-FIELD REGION, AND TREE OF LIFE
+---------------------------------------------------------------
+
+Terrain:
+- Preserve Bahrain’s central/southern limestone dome and Jabal ad Dukhan as low but nationally significant relief. Never exaggerate it into a mountain range.
+- DEM vertical error must be detected; supplement only with legal elevation/contour data and documented processing.
+
+Awali/oil field:
+- Public roads/town/general industrial silhouettes from legal map data.
+- Oil infrastructure generalized into distant pump/pipe/tank/service-road visual families only when publicly mapped and legally usable.
+- No exact operating status, flow, controls, underground networks, security, or mission targeting.
+- Restricted barriers/no-entry and coarse collision.
+
+Tree of Life:
+- Correct public mapped position and surrounding barren landscape/approach.
+- Original tree model with species/proportions researched from legal references, multiple LODs, protected collision, no damage.
+- Do not surround it with invented forest/stream.
+- Visitor/parking/road context only if current public data supports it.
+- Day/night/wind/dust hero-scene tests.
+
+A13. ASKAR, JAWW, EASTERN/SOUTHEASTERN COAST, AND INDUSTRY
+----------------------------------------------------------
+
+- Settlements use mapped footprint/road density rather than generic worker blocks.
+- Industrial/refinery/smelter/power/water/port exteriors are generalized, restricted, and epoch-correct at public map level.
+- Coastal reclamation, seawalls, mudflats, and outfalls are represented only from legal data; no operational content simulation.
+- Industrial haze/lights/audio remain bounded, generic, and not a claim of emissions data.
+- Public roads remain navigable; restricted service roads gated.
+- Habitat zones are not automatically industrial because they are nearby.
+
+A14. SITRA ISLAND AND CAUSEWAYS
+-------------------------------
+
+- Preserve Sitra’s island/reclaimed shape, settlements, roads, causeways, public shoreline, and generalized industrial zones at epoch.
+- Old/new coast must not be mixed.
+- Causeway bridge deck/elevation/piers/layers/collision tested for car and boat.
+- Settlements/shops/villas/industrial transitions from data.
+- No detailed refinery operation or private terminal access.
+- Boat routes enforce public/game channels and pier collision without presenting real navigation clearance.
+
+A15. TUBLI BAY, RAS SANAD, MANGROVES, AND TIDAL FLATS
+-----------------------------------------------------
+
+- Treat this as an ecological system, not spare buildable land.
+- Legal protected-area/mangrove/wetland polygons control vegetation and no-damage rules.
+- Tidal mudflat exposure, shallow channels, seagrass/mangrove transition, water turbidity, birds, and distant urban/industrial context.
+- Mangroves use roots/trunks/canopy clusters, not ordinary forest trees placed in water.
+- Boat access limited by depth/channel/protection; pedestrians cannot walk across deep mud as normal asphalt.
+- Litter may be subtle environmental detail only if respectfully/data-informed, never the defining identity.
+- Performance uses instancing/impostors and sparse collision.
+
+A16. KING FAHD CAUSEWAY AND WESTERN APPROACH
+-------------------------------------------
+
+- Model Bahrain-side public road, bridge/causeway segments, embankments, water openings, lights/barriers, approach roads, and intermediate land polygons according to open epoch data.
+- Foreign/border operational area is a no-entry/turnaround game boundary before sensitive facilities unless legally/publicly represented as generalized exterior.
+- No passport/inspection/security process simulation, lane-operation detail, or credentials.
+- Saudi land beyond Bahrain high-detail AOI is distant coarse context.
+- Crosswind, sea spray/haze, traffic, long sightlines, expansion joints/road audio, bridge collision, boat pier collision, and streaming preload are tested.
+- Do not let vehicle recovery spawn beyond national playable boundary.
+
+A17. UMM AN NASAN, JIDDA/JIDDAH, NABIH SALEH, AND SMALL ISLANDS
+---------------------------------------------------------------
+
+- Authoritative island manifest decides inclusion/name/spelling; aliases stored.
+- Private/restricted islands use coastline/terrain/vegetation/public exterior massing only and no-entry boundaries.
+- Inhabited/connected small islands use mapped roads/buildings/causeways.
+- Each island gets a terrain/coast/habitat classification; do not clone one sand-island prefab.
+- Chunk manifest and checksum tests cover even islands with no player spawn.
+
+A18. DURRAT AL BAHRAIN AND SOUTHERN RECLAIMED ISLANDS
+-----------------------------------------------------
+
+- Use selected world epoch coastline, road/bridge/canal/marina/building data.
+- Do not infer current completion from promotional plans.
+- Generic original villas/resorts/marina art; no copied marketing imagery/brands.
+- Water channels and causeways require boat/car collision/depth tests.
+- Surrounding southern coast/desert remains visible and physically connected through actual public routes.
+
+A19. HAWAR ARCHIPELAGO
+----------------------
+
+Geography:
+- Every sovereign Hawar polygon in authoritative manifest, including tiny rocks/islets when source resolution supports them.
+- Preserve island-specific coastline, elevation, substrate, lagoons/shoals, buildings/roads/jetty where legally mapped.
+- Do not merge Hawar into one oversized island.
+
+Ecology:
+- Habitat/protected status from legal sources.
+- Sparse desert/island vegetation, tidal flats, bird colonies, shallow water, marine ecology according to data.
+- Wildlife is ambient/protected, not hunting content.
+- No invented lush resort vegetation over natural habitat.
+
+Gameplay:
+- Boat/air travel corridor with predictive streaming and open-water weather.
+- Safe fictional/public-compatible recovery/arrival hub only where appropriate; no unauthorized private/restricted access simulation.
+- No real maritime navigation claim.
+- Remote atmosphere: low city light pollution, wind/waves/birds, sparse structures, distinct night sky.
+
+QA:
+- Main island to Hawar boat and helicopter routes, aeroplane overflight, origin shifts, memory plateau, all island chunks, shallow grounding, weather, protected masks.
+
+
+BAHRAIN-SPECIFIC ANNEX B — DATA CONFIDENCE AND SOURCE DECISION TABLE
+===================================================================
+
+B1. SOURCE PRIORITY
+-------------------
+
+Tier 1 — legally redistributable authoritative/open Bahrain data:
+- National/administrative/coast/island boundaries.
+- Public open-data portals with explicit license/version.
+- Use exact metadata and checksum.
+
+Tier 2 — OpenStreetMap/ODbL:
+- Roads, buildings, names, land use, public transport, airports, ports, barriers, heritage, coastline detail.
+- Preserve attribution and database obligations.
+- Record extract timestamp and import tool/version.
+
+Tier 3 — global open data:
+- geoBoundaries BHR ADM0/ADM1 is a candidate boundary cross-check only after verifying its current metadata/license and geometry; never blindly assume it includes the desired island/reclamation epoch.
+- Copernicus DEM GLO-30 or NASA/NGA SRTM candidates for elevation, with vertical-error/void checks.
+- GEBCO/open bathymetry candidate, license and coarse-resolution limitations disclosed.
+- ERA5/other legal climate normals candidate for non-forecast profiles, with attribution/license.
+
+Tier 4 — deterministic inference:
+- Used only where legal source lacks noncritical attributes.
+- Every inferred field carries rule/version/confidence.
+- Never infer political boundaries, heritage-site extents, restricted interiors, or operational details.
+
+Rejected sources:
+- Google/Apple/Bing proprietary map or imagery captures.
+- Street View screenshots.
+- Ripped games/models.
+- Unlicensed social-media/photos/scans.
+- GADM or other data when its license conflicts with APK redistribution/commercial status.
+- A tourism/master-plan rendering treated as current built geometry.
+
+B2. FEATURE FALLBACK MATRIX
+---------------------------
+
+National boundary missing/conflicting:
+- STOP. Do not invent. Resolve with consistent licensed authority and document decision.
+
+Island name missing:
+- Keep stable generated source ID; do not invent public-facing name. Display “Unnamed island” only in developer diagnostics unless reviewed.
+
+Building height missing:
+- Infer from mapped levels; otherwise footprint/use/zone deterministic distribution with conservative caps and confidence flag.
+
+Building style missing:
+- Zone archetype selected from land use/settlement/epoch; generic local-compatible style, never landmark clone.
+
+Road lanes/width missing:
+- Infer from highway class/one-way/context using a versioned Bahrain road-default table; preserve uncertainty.
+
+Arabic name missing:
+- Use reviewed official/open transliteration source when available; otherwise English only in shipped UI rather than machine-generated nonsense.
+
+English name missing:
+- Reviewed transliteration from Arabic; source/rule recorded.
+
+Terrain elevation void:
+- Interpolate only small voids; larger/critical Jabal/runway/coast voids fail validation or require another legal source.
+
+Bathymetry missing:
+- Conservative generated depth from coast distance/open contours/channels; label game-generated and never real navigation data.
+
+Vegetation missing:
+- Land-use/biome procedural sparse placement with regional caps; no dense palms outside supported parcels.
+
+Heritage geometry missing:
+- Preserve mapped footprint/site boundary with generic respectful massing or marker. Never fabricate detailed reconstruction.
+
+Restricted facility detail missing:
+- Good; use generic exterior/no-entry. Never infer.
+
+Bus schedule missing:
+- Generic ambient buses/known mapped stops only. Do not invent an official timetable.
+
+B3. CONFIDENCE FLAGS
+--------------------
+
+Every compiled feature may carry:
+- SOURCE_EXACT.
+- SOURCE_SIMPLIFIED.
+- INFERRED_HIGH_CONFIDENCE.
+- INFERRED_LOW_CONFIDENCE.
+- GENERALIZED_RESTRICTED.
+- EPOCH_UNCERTAIN.
+
+Developer overlay can visualize confidence. Release renderer should not expose ugly debug colors, but reports must count flags per governorate/island/chunk.
+
+B4. COUNTRY-IDENTITY LINT
+-------------------------
+
+Add a build-time script that scans runtime strings/configs/material-zone names/test hubs and fails on unreviewed placeholders from another country, including terms such as Doha, Lusail, Khor Al Adaid, Dubai, Abu Dhabi, Mumbai, Nauru, Qatar-specific municipality names, left-hand traffic defaults, or a planned operational metro. Allow occurrences only in explicit comparison/rejected-source documentation through an allowlist.
+
+Lint additionally verifies:
+- COUNTRY_CODE = BHR.
+- Currency, if an economy exists, is configured as BHD without live exchange claims.
+- Timezone Asia/Bahrain.
+- Right-hand traffic.
+- Four current governorates at epoch.
+- No operational metro unless world epoch proves otherwise.
+- Artifact/package/title all say Bahrain.
+- OSM attribution present.
+
+
+BAHRAIN-SPECIFIC ANNEX C — RUNTIME WORLD PACKAGE CONTRACT
+=========================================================
+
+C1. MASTER MANIFEST
+-------------------
+
+Use a human-readable build report plus compact binary/runtime index. Suggested manifest fields:
+
+- magic/version/schema.
+- countryCode `BHR`.
+- worldEpoch.
+- compilerGitCommit.
+- sourceManifestHash.
+- CRS EPSG and geodetic origin.
+- global bounds.
+- water/airspace buffer bounds.
+- governorate list/IDs.
+- island list/IDs/aliases.
+- chunk hierarchy parameters.
+- material/texture/model/audio catalogs.
+- required startup chunks.
+- coarse country layer paths/checksums.
+- total feature/triangle/byte counts by LOD/type.
+- minimum compatible app version.
+
+C2. CHUNK KEY
+-------------
+
+Use immutable global key:
+
+    regionId / lodLevel / tileX / tileY / contentType / schemaVersion
+
+Content types:
+- terrain height/material.
+- coast/water/depth/obstacles.
+- roads/bridges/causeways/markings.
+- structures/landmarks.
+- vegetation/props.
+- static collision.
+- pedestrian/nav.
+- traffic lanes/signals.
+- airport/port.
+- audio/ambient zones.
+- labels/attribution.
+
+Do not mix all content into one giant file that prevents priority loading. Do not create millions of tiny APK zip entries; group regional bundles with indexed random-access blocks.
+
+C3. BINARY SAFETY
+-----------------
+
+Each block:
+- four-byte magic.
+- schema/version.
+- header bytes.
+- uncompressed/compressed sizes.
+- feature/vertex/index counts.
+- global bounds.
+- dependency IDs.
+- checksum.
+- payload compression type.
+
+Loader rejects:
+- wrong magic/version.
+- negative/absurd counts.
+- integer overflow.
+- truncated payload.
+- checksum mismatch.
+- bounds outside allowed world buffer.
+- NaN/infinity.
+- index beyond vertex count.
+- unknown required material/model.
+
+C4. STARTUP SET
+--------------
+
+Package a small startup set:
+- manifest/governorates/islands.
+- coarse entire archipelago terrain/coast/city massing.
+- safe human/car hub.
+- nearby high terrain/roads/buildings/collision.
+- core shaders/materials/UI/fonts.
+- player/vehicle low/normal LOD/config/collision.
+
+The loading screen can enter gameplay after startup safety set; background streamer continues optional farther detail. Never block startup decoding the full country.
+
+C5. IO/THREAD CONTRACT
+----------------------
+
+- UI thread: Android lifecycle only.
+- render/GL thread: GL resource creation/draw/destruction, bounded uploads.
+- simulation thread or controlled main game thread: fixed tick/Bullet.
+- worker pool: read/decompress/parse/mesh prep, no GL/Bullet mutation.
+- immutable decoded transfer objects.
+- generation/token prevents stale request application.
+- cancel checks during large decode.
+- backpressure on queue bytes/count.
+- errors report chunk key/source/checksum/stage.
+
+C6. LOD CONTRACT
+----------------
+
+Terrain:
+- LOD0 near high resolution.
+- LOD1/2 progressively reduced with stitched skirts/morph or crack-safe topology.
+- coarse country mesh.
+
+Buildings:
+- LOD0 facade depth/props.
+- LOD1 simplified facade/roof silhouette.
+- LOD2 merged massing.
+- skyline landmark silhouette.
+
+Vegetation:
+- mesh/instanced near.
+- low mesh/impostor medium.
+- baked/omitted far.
+
+Roads:
+- curb/marking/props near.
+- ribbon/bridge silhouette medium.
+- centerline/macro color far.
+
+Vehicles/agents:
+- full animation/physics near.
+- low render/proxy route medium.
+- count-only/none far.
+
+C7. TELEMETRY
+-------------
+
+Development overlay/log records:
+- active chunks by LOD/type.
+- pending/decoding/ready/upload/evict queues and bytes.
+- cache hits.
+- disk read/decompress/mesh/upload ms.
+- CPU/native/GPU estimated memory.
+- visible triangles/draw calls/material switches.
+- active Bullet bodies/contacts/CCD.
+- traffic/pedestrian/boat/bus counts.
+- origin/global/local coordinates.
+- thermal status/profile/resolution/FPS.
+
+No user telemetry or network upload is required.
+
+
+BAHRAIN-SPECIFIC ANNEX D — VISUAL AND MATERIAL ART BIBLE
+=======================================================
+
+D1. COLOR/EXPOSURE PRINCIPLES
+-----------------------------
+
+- Sunlit surfaces are bright but retain texture; do not clip all pale walls/sand to white.
+- Shadows have cool sky contribution, not black voids.
+- Coastal humidity lowers distant contrast; shamal dust warms/desaturates horizon.
+- Gulf shallows transition turquoise/green-blue by depth/turbidity, not tropical deep-ocean blue everywhere.
+- Urban vegetation provides localized saturated green; remote desert stays sparse.
+- Night is not blue daytime: use physically plausible low ambient, street/building lights, dark remote islands, exposure adaptation.
+
+D2. REGIONAL PALETTE FAMILIES
+-----------------------------
+
+Historic Manama/Muharraq:
+- warm off-white, sand, muted ochre, weathered plaster, dark timber, stone/coral-stone-inspired aggregate, metal shutters/doors, shade fabric.
+
+Modern Manama/Seef/Bay/reclamation:
+- pale concrete/stone, glass from neutral to blue-green according material, metal, landscaped green, dark asphalt, pavers.
+
+Northern villages/farms:
+- pale villas/walls, dusty roads, palms/green parcels, soil/gravel, aged shopfronts.
+
+Riffa/interior:
+- drier limestone/soil, villas/compounds, asphalt, sparse landscaped pockets.
+
+South/oil/desert:
+- pale/tan gravel/limestone, gray-brown rock, sand pockets, white sabkha, generic industrial metal, sparse vegetation.
+
+Mudflat/mangrove:
+- wet gray-brown mud, green mangrove canopy, dark roots, shallow green-brown water, salt crust.
+
+Hawar:
+- island-specific limestone/sand/sabkha/coast colors from data/reference, low artificial saturation, clear protected shallows where appropriate.
+
+D3. MATERIAL RECIPES
+--------------------
+
+Weathered plaster:
+- base macro tint + micro roughness + subtle crack/stain masks.
+- salt/damp staining stronger coastal/ground-facing.
+- no giant repeating cracks.
+
+Coral-stone-inspired heritage wall:
+- original procedural/photogrammetry-free texture with aggregate/pore normal, lime plaster variants, correct scale.
+- never claim exact archaeological material reconstruction without source.
+
+Modern concrete:
+- panel/seam/detail scale, dust runoff, edge wear via trim/mesh, not noisy grunge everywhere.
+
+Glass:
+- roughness/tint variation, IBL, interior/parallax/emissive approximation, no perfect mirror towers.
+
+Asphalt:
+- macro patches, aggregate normal, lane wear, dust/sand edge accumulation, wet clear roughness change after rain.
+
+Limestone/gravel:
+- multi-scale albedo/normal, sparse instanced rocks, track compaction.
+
+Sand:
+- loose/compact/wet variants, wind ripples aligned region/weather, tire/foot tracks, slope/dune macro form.
+
+Sabkha:
+- crust polygons, pale salts, damp dark patches, low relief/glare controlled.
+
+Mangrove:
+- leaf/transmission approximation, trunk/root meshes, LOD/impostor, mud/water integration.
+
+Metals:
+- paint/galvanized/steel/aluminum families with roughness/corrosion appropriate; no rust blanket on maintained modern structures.
+
+D4. MODULAR ARCHITECTURE KIT
+----------------------------
+
+Produce metric modules:
+- 3.0–3.6 m typical floor bands configurable by archetype.
+- doors/garage gates/storefronts/arcades/balconies/parapets/roof screens/HVAC/shade/courtyard walls.
+- heritage modules distinct from modern villa/mid-rise.
+- corner/roof/end variants prevent repetition.
+- Arabic/English sign anchor metadata.
+- collision simplified.
+- occluder volumes for dense blocks if used.
+
+D5. LANDMARK AUTHORING PROCESS
+------------------------------
+
+1. Confirm public factual identity/position/epoch/licensing.
+2. Gather only legal references; record them.
+3. Block silhouette/scale/orientation.
+4. Verify against footprint/height/open photos only as permitted.
+5. Create original geometry/materials; no proprietary scan/BIM.
+6. Separate high/medium/skyline LOD.
+7. Build simple collider/protected flags.
+8. Test day/night/coastline context.
+9. Add factual name/credits.
+10. Review no logo/restricted detail.
+
+D6. EFFECTS
+-----------
+
+Dust:
+- tire/rotor/wind material-driven, pooled, wind-advected, depth-faded, ECO capped.
+
+Sea spray/wake:
+- physical boat speed/hull/prop/impact driven, not constant emitter.
+
+Rain:
+- near-camera streaks, surface wetness, tire spray, no billion world particles.
+
+Heat shimmer:
+- ground/engine localized high/balanced, no UI distortion, disabled ECO.
+
+Night lights:
+- emissive surfaces + limited actual lights, distance/importance culling, no full shadowed point-light city.
+
+
+BAHRAIN-SPECIFIC ANNEX E — CULTURE, LANGUAGE, AUDIO, AND DAILY RHYTHM
+====================================================================
+
+E1. LANGUAGE QA CORPUS
+----------------------
+
+Create reviewed test strings for:
+- Kingdom/country title.
+- four governorates.
+- Manama, Muharraq, Riffa, Sitra, Hamad Town, Isa Town, A’ali, Budaiya, Saar, Hidd, Arad, Zallaq, Awali, Askar, Jaww, Hawar.
+- generic road directions/parking/exit/airport/port/heritage/warning text.
+- Arabic plus English plus mixed route number.
+
+Tests capture screenshots/text layout for:
+- isolated/initial/medial/final Arabic forms.
+- lam-alef/diacritics where present.
+- Arabic-Indic/Western numerals according chosen style.
+- mixed parentheses/slashes/km.
+- truncation/two-line signs.
+- HUD mirroring/alignment.
+
+A native speaker/reviewer should inspect release strings. Until reviewed, show factual English fallback rather than malformed Arabic.
+
+E2. NPC PRESENTATION
+--------------------
+
+- Diverse ages/adult body types/skin tones/clothing professions represented neutrally within asset scope.
+- Regional attire variants respectful in proportion/cloth animation; no single outfit assigned to every Bahraini/Arab NPC.
+- Expatriate diversity represented without occupation/nationality stereotypes.
+- NPC behavior comes from location/time/activity, not ethnicity or clothing.
+- No political/sectarian dialogue generation.
+- Children/crowds optional and require extra safety/animation review; omit rather than poor representation.
+
+E3. DAILY ACTIVITY PROFILES
+---------------------------
+
+Profiles are gameplay approximations, data-reviewed, and never hard-coded cultural stereotypes:
+- weekday morning commute.
+- midday heat/reduced outdoor pedestrian activity.
+- afternoon/school/commercial transition if data supports.
+- evening waterfront/souq/commercial activity.
+- late-night reduced residential activity.
+- Friday/Saturday weekend configuration appropriate to selected epoch.
+- special-event profile at circuit/stadium only generic/original and optional.
+
+Traffic density, pedestrians, buses, shop emissives, ambient audio, and parking respond smoothly. No exact real-time crowd prediction claim.
+
+E4. RELIGIOUS SOUND/SITES
+-------------------------
+
+- Mosques use respectful exterior treatment and protected/no-damage flags.
+- Optional prayer-time ambient system only after legal authentic audio and cultural review.
+- Audio must be spatial, interruptible/configurable, and use correct local calculation/time source; omit if any uncertainty.
+- Do not use religious spaces as combat/destruction/objective locations.
+- Avoid treating religion as a collectible/minigame.
+
+E5. AUDIO ZONES
+---------------
+
+Manama core:
+- traffic/footsteps/ventilation/market/city bed.
+
+Muharraq heritage:
+- quieter lanes, footsteps/doors/birds/distant traffic/sea where spatially appropriate.
+
+Modern waterfront:
+- wind/water/traffic/crowd, tower HVAC at close range.
+
+Northern palms/farms:
+- wind through palms/birds/insects/remote traffic, no jungle chorus.
+
+Industrial exterior:
+- distant generic machinery/hum/port alarms only original and not operationally descriptive.
+
+Southern desert:
+- wind, tire/gravel, sparse birds/insects, distant generic industry; silence is important.
+
+Hawar:
+- wind/waves/seabirds/sparse human activity, low city hum/light pollution.
+
+Audio mixer caps each category and applies distance/occlusion/LOD. No copyrighted radio, TV, commercial announcements, racing broadcast, or branded jingle.
+
+
+BAHRAIN-SPECIFIC ANNEX F — MOBILITY AND PHYSICS SCENARIO BOOK
+=============================================================
+
+F1. HUMAN SCENARIOS
+-------------------
+
+H-01 Manama curb/arcade:
+- Walk from sunny sidewalk into shade, up curb/ramp, through narrow exterior lane; verify acceleration, step, camera exposure, heat recovery, collision.
+
+H-02 Muharraq heritage lane:
+- Tight turns/doors/protected walls/pedestrians; no clipping or vehicle entry through walls.
+
+H-03 beach/tidal transition:
+- dry sand → wet sand → wade → swim; correct speed/material/audio, no falling through tidal mesh.
+
+H-04 burial mound boundary:
+- protected collision/path, no climb/damage shortcut.
+
+H-05 mangrove mudflat:
+- slow/blocked by material/protection; cannot sprint as asphalt or swim in centimeters of water.
+
+H-06 origin/chunk:
+- walk across rebase/chunk boundary with animation/IK continuity.
+
+F2. CAR SCENARIOS
+-----------------
+
+C-01 dense city stop/start:
+- automatic gearbox/steering/brakes/traffic/collision/heat at low speed.
+
+C-02 highway 100-second stability test:
+- speed, tire temperature optional, lane tracking, streaming, no oscillation/tunneling.
+
+C-03 roundabout/merge:
+- progressive tires, AI yielding, right-hand lane graph.
+
+C-04 dusty/wet braking comparison:
+- documented stop distances and ABS behavior.
+
+C-05 village street:
+- narrow width/parked vehicles/pedestrians/exit-side safety.
+
+C-06 southern gravel/sand:
+- rolling resistance/slip/dust/tracks/recovery without arcade hover.
+
+C-07 King Fahd approach/causeway:
+- long streaming/crosswind/bridge joints/barriers/water visibility/boundary turnaround.
+
+C-08 Sitra/Muharraq bridge:
+- elevation/layer/collision/boat below/no z-fighting.
+
+C-09 circuit fictional test mode:
+- no branded assets; suspension/braking/heat repeatability.
+
+C-10 thermal ECO:
+- 20/15 FPS rendering while 60 Hz physics handling remains within test tolerance.
+
+F3. BOAT SCENARIOS
+------------------
+
+B-01 marina departure:
+- idle/prop/rudder/obstacle/collision/wake at low speed.
+
+B-02 open Gulf:
+- wave spectrum/wind/planing/energy/bounds.
+
+B-03 causeway passage:
+- pier collision/depth/channel/game disclaimer.
+
+B-04 Tubli/mangrove protection:
+- shallow grounding/no destructive path/low wake.
+
+B-05 tidal beaching:
+- coast depth/tide/wet sand/recovery.
+
+B-06 main island–Hawar route:
+- long predictive streaming/origin/weather/memory/remote island arrival.
+
+B-07 engine off drift:
+- tide/current/wind energy behavior.
+
+B-08 capsize/extreme roll:
+- bounded physical result and explicit recovery; no explosive buoyancy.
+
+F4. HELICOPTER SCENARIOS
+------------------------
+
+R-01 spool on civilian pad.
+R-02 hover in still/hot air.
+R-03 coastal crosswind hover.
+R-04 cyclic acceleration/deceleration.
+R-05 pedal/reaction torque.
+R-06 ground effect over broad pad versus roof edge/water.
+R-07 southern loose-surface brownout.
+R-08 urban tower collision/stream corridor.
+R-09 main–Hawar flight/rebase.
+R-10 engine loss/autorotation approximation.
+R-11 slope/hard/gentle skid landing.
+R-12 ECO particles/shadows without control degradation.
+
+F5. AEROPLANE SCENARIOS
+-----------------------
+
+P-01 cold/normal/hot density ground roll comparison.
+P-02 crosswind taxi.
+P-03 physical takeoff/climb.
+P-04 coordinated turn.
+P-05 slow flight/flap.
+P-06 stall and recovery.
+P-07 engine-off glide over water with safe recovery rules.
+P-08 archipelago circuit and origin shifts.
+P-09 approach over coast/city predictive loading.
+P-10 landing/gear compression/braking.
+P-11 hard landing damage.
+P-12 collision/CCD maximum representative speed.
+
+Each scenario records initial config, controls, expected numeric ranges, maximum duration, final state, memory/stream metrics, and pass/fail reason. Golden values are reviewed rather than updated automatically when tests fail.
+
+
+BAHRAIN-SPECIFIC ANNEX G — COUNTRY COVERAGE AND VISUAL QA ROUTE MATRIX
+=====================================================================
+
+G1. REQUIRED GROUND ROUTES
+--------------------------
+
+Route G-01 Capital heritage-to-skyline:
+- Manama Souq/Bab Al Bahrain exterior → waterfront/modern business skyline.
+
+G-02 Capital-to-Muharraq:
+- cross a current public causeway/bridge → old Muharraq → airport perimeter/public roads.
+
+G-03 Muharraq reclamation loop:
+- Arad/Busaiteen/Hidd → Diyar/Dilmunia/Amwaj as epoch permits → port-facing public roads.
+
+G-04 Northern heritage/palms:
+- Manama edge → Bahrain Fort → northern villages/farms/palms → west coast.
+
+G-05 Burial mounds/central towns:
+- Isa/Hamad/A’ali/Riffa route with protected mounds and urban transitions.
+
+G-06 Sakhir/Zallaq:
+- Riffa → Sakhir/circuit exterior → Al Areen/Zallaq coast.
+
+G-07 Deep south:
+- public road through Awali/Jabal/Tree-of-Life approach/generalized oil-field landscape → Askar/Jaww/southern coast as routes permit.
+
+G-08 Sitra/east:
+- Manama/Tubli edge → Sitra causeway → settlements/public industrial perimeter/eastern coast.
+
+G-09 King Fahd:
+- capital/western villages → Bahrain causeway approach → safe national game boundary turnaround.
+
+G-10 reclaimed south:
+- public route toward Durrat/current southern islands, validating epoch coastline/bridges.
+
+Every route checks:
+- no missing terrain.
+- continuous road/collision.
+- correct regional profile.
+- origin/chunk stability.
+- district labels.
+- Arabic/English.
+- AI/traffic profile.
+- memory plateau.
+- recovery hubs.
+
+G2. REQUIRED MARINE ROUTES
+--------------------------
+
+M-01 Manama Bay/nearby marina circuit.
+M-02 Muharraq/Amwaj/Diyar coast according epoch.
+M-03 Sitra/eastern causeway route.
+M-04 western causeway coastline.
+M-05 southern reclaimed-island route.
+M-06 Hawar long route.
+M-07 protected mangrove/tidal edge low-speed test.
+
+G3. REQUIRED AIR ROUTES
+-----------------------
+
+A-01 Airport circuit.
+A-02 Capital skyline orbit at safe game altitude.
+A-03 north/west/main island circuit.
+A-04 south/Jabal/coast circuit.
+A-05 main–Hawar–main.
+A-06 full manifest-island overflight in coarse layer.
+
+G4. REQUIRED STATIC VISUAL CHECKPOINTS
+--------------------------------------
+
+Capture automated/developer comparison images/config at:
+- Manama old/modern juxtaposition.
+- Manama Bay skyline day/night.
+- Muharraq heritage lane.
+- airport approach/public exterior.
+- Arad Fort landscape.
+- Bahrain Fort coast.
+- northern palm/village.
+- burial-mound cluster.
+- Riffa terrain/fort context.
+- Sakhir/circuit exterior unbranded.
+- Jabal ad Dukhan relief.
+- Tree of Life.
+- Tubli/Ras Sanad mangrove/tide.
+- Sitra causeway/industry generalized.
+- King Fahd causeway.
+- southern reclaimed coast.
+- Hawar coast/night.
+
+Static screenshots are not sufficient release proof; they complement numeric/stream/startup tests.
+
+G5. WEATHER/TIME MATRIX
+-----------------------
+
+Run selected checkpoints under:
+- clear summer midday.
+- humid hazy sunset.
+- clear winter morning.
+- shamal/dust.
+- rare rain/wet road.
+- moonless/low-light remote night.
+- Manama city night.
+
+Verify exposure, materials, wind consistency, traffic/pedestrian density, shadows, water, audio, and thermal profiles.
+
+
+BAHRAIN-SPECIFIC ANNEX H — TASK LEDGER AND DEFINITION OF “NO GAPS”
+=================================================================
+
+H1. REQUIRED TRACKED LEDGER
+---------------------------
+
+Maintain `docs/BAHRAIN_IMPLEMENTATION_LEDGER.md` with one row per subsystem/region:
+
+- ID.
+- requirement.
+- source/config.
+- code/assets paths.
+- test.
+- latest APK milestone.
+- status: NOT_STARTED/BLOCKED/BLOCKOUT/IMPLEMENTED/VERIFIED_PHYSICAL_DEVICE.
+- known limitations.
+
+Never mark VERIFIED because a file/class exists. VERIFIED requires the specified automated test and, when labeled physical, actual device record.
+
+H2. COUNTRY COMPLETENESS METRICS
+--------------------------------
+
+Compiler emits per governorate/island/region:
+- land/water area represented.
+- terrain chunks expected/actual.
+- road km/features expected/compiled.
+- building footprints source/compiled/inferred.
+- settlement/place labels.
+- coast vertices/segments.
+- vegetation/land-use zones.
+- heritage/protected/restricted zones.
+- LOD/collision bytes.
+- invalid/rejected counts.
+
+Build fails when:
+- expected required chunk absent.
+- unexpected large feature-count drop beyond reviewed threshold.
+- governorate/island has no representative content despite source data.
+- road graph loses required hub connectivity.
+- coastline ring invalid.
+- manifest/checksum mismatch.
+
+H3. NO-GAP RULES
+----------------
+
+“No gaps” does not mean inventing every missing facade. It means:
+- complete authoritative land/coast/island terrain.
+- continuous coarse representation everywhere.
+- correct source roads/buildings/settlements where available.
+- deterministic documented inference for noncritical missing attributes.
+- representative detail consistent with region.
+- no unloaded void within safety ring.
+- no omitted remote island because it lacks a hero landmark.
+- no foreign-city placeholders.
+- no proprietary imagery.
+- uncertainty disclosed rather than fabricated.
+
+H4. PERFORMANCE GATES PER MILESTONE
+----------------------------------
+
+Every APK milestone records:
+- startup seconds on CI/emulator where meaningful.
+- first-playable time.
+- peak/steady Java/native memory.
+- APK bytes.
+- chunk decode/upload timings.
+- balanced/LOW/ECO frame stats on available device/emulator with limits disclosed.
+- shader compile success.
+- world/test status.
+
+A size increase is accepted when justified by coverage/quality, but runtime memory/thermal regressions block release.
+
+H5. FINAL PHYSICAL-DEVICE TEST PLAN
+-----------------------------------
+
+On at least one modest and one stronger Android phone if available:
+- clean install/offline launch.
+- 20-minute Manama drive.
+- bridge/causeway drive.
+- southern gravel/sand drive.
+- 15-minute boat route.
+- 15-minute helicopter route.
+- full aeroplane circuit.
+- repeated fast travel/island streaming.
+- pause/resume/call interruption/screen lock.
+- battery saver.
+- rising thermal status and ECO transition.
+- touch/gamepad controls.
+- Arabic/English UI.
+- save/reload/update install.
+
+Record device model/Android/GPU/RAM/build hash/duration/ambient conditions/FPS/memory/thermal status/battery delta/crash log. Do not claim phone testing if unavailable.
+
+H6. FINAL COUNTRY REVIEW QUESTIONS
+----------------------------------
+
+Before release answer with evidence:
+
+- Does a player immediately distinguish Manama from Muharraq?
+- Does northern village/palm terrain differ from southern desert?
+- Does Riffa/Jabal relief differ from flat reclaimed coast without exaggeration?
+- Are Bahrain Fort, Pearling Path, burial mounds, Tree of Life, forts, and Hawar protected/respectful?
+- Is every current governorate represented?
+- Is every authoritative island manifest entry present?
+- Are artificial islands/coast correct to one declared date?
+- Is traffic right-hand and is no metro falsely operating?
+- Is Arabic correctly shaped?
+- Are King Fahd/security/restricted industrial/military zones safely generalized?
+- Can boats move through a convincing shallow archipelago?
+- Can car/boat/heli/plane physics be explained by forces rather than hidden transforms?
+- Does ECO reduce actual workload and phone heat risk?
+- Can the APK launch offline and pass current packaged tests?
+
+Any “no” is either fixed or prominently disclosed as an unfinished release blocker; it cannot be hidden behind a landmark screenshot.
+
+
+=============================== END MASTER PROMPT ===============================
+
+NOTES FOR THE PERSON USING THIS PROMPT
+--------------------------------------
+
+1. The copied phrase “feels like real Qatar” is interpreted as “feels like real Bahrain.” This specification is Bahrain-specific.
+2. Entire Bahrain means every sovereign land polygon in one consistent authoritative/open boundary dataset, all four current governorates, Hawar and all island-manifest entries, plus gameplay water/airspace. The water buffer is not a political maritime claim.
+3. Bahrain remains 1:1 scale. Streaming and floating origin solve country/archipelago size without compressing causeways, runways, cities, or islands.
+4. Bahrain is not uniformly dunes. Realism depends on Manama/Muharraq urban form, northern palms/gardens, low limestone/gravel terrain, Jabal ad Dukhan relief, sabkha, southern sand/desert, tidal flats, mangroves, reclaimed coast, shallow Gulf water, remote islands, ports, heritage, and industry in data-driven locations.
+5. A large APK is acceptable, but Android RAM/GPU/thermal and Git file limits remain. Use Actions artifacts/Releases for large APKs.
+6. Declare a world epoch because reclamation, roads, construction, airport/port infrastructure, and coast change rapidly.
+7. Correct Arabic requires shaping/BiDi/RTL/licensed font; disconnected/reversed text is unacceptable.
+8. Public airport/port/industrial/military geometry must remain generalized public exterior detail. Do not add restricted interiors/security/operational data.
+9. Bahrain has buses but no operational metro should be invented unless the selected future epoch/data proves otherwise.
+10. CI emulator success does not prove phone heat. Test long causeway/city drives, island boating, country flight, memory, battery, Arabic, controls, and Android thermal status physically.
+11. Keep all data/asset licenses for legal redistribution.
