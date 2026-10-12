@@ -2,6 +2,11 @@ name: Smoke-test Qatar APK on Android
 
 on:
   workflow_dispatch:
+  push:
+    branches:
+      - arena/8288058f-temporary2
+    paths:
+      - '.github/runtime-smoke-request.txt'
 
 permissions:
   contents: write

@@ -8,6 +8,8 @@ on:
       - 'artifacts/**'
       - 'qa/**'
       - '*.txt'
+      - '.github/runtime-smoke-request.txt'
+      - '.github/workflows/android-runtime-smoke.yml'
   workflow_dispatch:
 
 permissions:
