@@ -182,7 +182,19 @@ public final class QatarWorldRenderer implements WorldStreamer.Listener, Disposa
         Material maroon=diffuse(.45f,.035f,.12f,1),dark=diffuse(.10f,.12f,.13f,1),white=diffuse(.88f,.86f,.78f,1);
         builder.begin();
         switch(renderedMode){
-            case WALK->{builder.part("body",GL20.GL_TRIANGLES,ATTRS,maroon).box(0,1.15f,0,.65f,1.45f,.42f);builder.part("head",GL20.GL_TRIANGLES,ATTRS,white).sphere(.48f,.48f,.48f,10,8);}
+            case WALK->{
+                MeshPartBuilder torso=builder.part("body",GL20.GL_TRIANGLES,ATTRS,maroon);
+                torso.box(0,1.30f,0,.66f,1.05f,.40f);
+                MeshPartBuilder skin=builder.part("skin",GL20.GL_TRIANGLES,ATTRS,white);
+                skin.setVertexTransform(new Matrix4().setToTranslation(0,2.08f,0));
+                skin.sphere(.50f,.54f,.50f,14,10);
+                skin.setVertexTransform(null);
+                MeshPartBuilder limbs=builder.part("limbs",GL20.GL_TRIANGLES,ATTRS,dark);
+                limbs.box(-.19f,.48f,0,.24f,.98f,.28f);
+                limbs.box(.19f,.48f,0,.24f,.98f,.28f);
+                limbs.box(-.47f,1.31f,0,.20f,.92f,.24f);
+                limbs.box(.47f,1.31f,0,.20f,.92f,.24f);
+            }
             case CAR->{builder.part("4x4",GL20.GL_TRIANGLES,ATTRS,maroon).box(0,.7f,0,2f,1.25f,4.3f);builder.part("cabin",GL20.GL_TRIANGLES,ATTRS,dark).box(0,1.45f,-.25f,1.75f,.8f,2.2f);}
             case BOAT->{builder.part("hull",GL20.GL_TRIANGLES,ATTRS,white).box(0,.4f,0,3.1f,1.1f,7.8f);builder.part("cabin",GL20.GL_TRIANGLES,ATTRS,maroon).box(0,1.35f,-.5f,2.1f,1.4f,2.7f);}
             case HELICOPTER->{builder.part("fuselage",GL20.GL_TRIANGLES,ATTRS,maroon).box(0,.5f,0,2.5f,1.5f,5.6f);builder.part("rotor",GL20.GL_TRIANGLES,ATTRS,dark).box(0,1.55f,0,9f,.05f,.18f);}

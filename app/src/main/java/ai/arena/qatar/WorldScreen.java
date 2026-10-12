@@ -25,7 +25,9 @@ final class WorldScreen extends ScreenAdapter {
 
     WorldScreen(QatarPack pack){
         this.pack=pack;
-        QatarPack.Hub spawn=pack.hub("Doha Corniche");
+        // Souq Waqif is safely inland; the Corniche anchor itself resolves to
+        // bay water at the current 125 m coast-mask resolution.
+        QatarPack.Hub spawn=pack.hub("Souq Waqif");
         physics=new PhysicsWorld(spawn.x(),spawn.z());
         renderer=new QatarWorldRenderer(pack,physics);
         streamer=new WorldStreamer(pack,renderer);

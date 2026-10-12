@@ -132,7 +132,7 @@ public final class PhysicsWorld implements Disposable {
         } else if (requested == Mode.BOAT) {
             QatarPack.Hub hub = pack.hub("Doha Corniche"); targetX=hub.x()+2600; targetZ=hub.z()+700; altitude=.4f;
         } else {
-            QatarPack.Hub hub = pack.hub("Doha Corniche"); targetX=hub.x(); targetZ=hub.z(); altitude=requested==Mode.HELICOPTER?4:3;
+            QatarPack.Hub hub = pack.hub("Souq Waqif"); targetX=hub.x(); targetZ=hub.z(); altitude=requested==Mode.HELICOPTER?4:3;
         }
         mode=requested;
         originX=targetX; originZ=targetZ;

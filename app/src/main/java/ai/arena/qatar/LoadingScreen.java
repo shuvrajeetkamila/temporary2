@@ -39,7 +39,7 @@ final class LoadingScreen extends ScreenAdapter {
                 source=sourceFactory.open();progress=.15f;status="Reading compact country index…";
                 QatarPack pack=new QatarPack(source);source=null;progress=.42f;status="Validating municipalities, islands and chunks…";
                 validateCoverage(pack);progress=.70f;status="Checksum-testing Doha startup chunk…";
-                QatarPack.Hub start=pack.hub("Doha Corniche");
+                QatarPack.Hub start=pack.hub("Souq Waqif");
                 QatarPack.ChunkEntry entry=pack.entry(pack.chunkX(start.x()),pack.chunkY(start.z()));
                 QatarPack.WorldChunk startup=pack.load(entry);
                 if(!startup.entry().hasLand())throw new IllegalStateException("Doha startup chunk has no land");
