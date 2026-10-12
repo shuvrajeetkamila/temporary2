@@ -1,0 +1,21 @@
+{
+  "sourceCommit": "799aa640a4f947b8c3a70eb1e4f962267bd038af",
+  "apk": "Qatar-The-Peninsula-FULL-MAP-STREAMING-v0.1.0.apk",
+  "apkBytes": 10076635,
+  "apkSha256": "9047009c557577568ccca4bed040fb76a99cb97defa14d24cd56547530fd0017",
+  "packageId": "ai.arena.qatar.peninsula",
+  "versionCode": 1,
+  "versionName": "0.1.0-national-streaming-foundation",
+  "minSdk": 26,
+  "targetSdk": 35,
+  "abis": [
+    "arm64-v8a",
+    "armeabi-v7a",
+    "x86_64"
+  ],
+  "countryChunks": 5665,
+  "municipalities": 8,
+  "adm0Polygons": 7,
+  "qpakSha256": "6aa220910d0214b3d38fb5c7764534c5242b1ddab24ae6ffddb377d95a22a6b7",
+  "status": "PASSED"
+}
