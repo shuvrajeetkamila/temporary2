@@ -1,1 +1,1 @@
-Run 2: explicit Android AVD home.
+Run 3: explicit Android platform-tools adb.
