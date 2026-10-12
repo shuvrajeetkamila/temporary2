@@ -20,6 +20,8 @@ final class WorldScreen extends ScreenAdapter {
     private final TouchController controls;
     private final HudRenderer hud;
     private boolean disposed;
+    private float frameAccumulator;
+    private static final float TARGET_FRAME_SECONDS=1f/30f;
 
     WorldScreen(QatarPack pack){
         this.pack=pack;
@@ -33,13 +35,19 @@ final class WorldScreen extends ScreenAdapter {
     }
 
     @Override public void render(float delta){
+        // Explicit 30 Hz foreground budget: high-refresh phones do not render the
+        // same mobile scene at 60/90/120 Hz and become needlessly hot.
+        frameAccumulator+=Math.min(delta,.1f);
+        if(frameAccumulator<TARGET_FRAME_SECONDS)return;
+        float simulationDelta=Math.min(.1f,frameAccumulator);
+        frameAccumulator%=TARGET_FRAME_SECONDS;
         if(controls.consumeModeRequested())physics.switchMode(physics.mode().next(),pack);
         if(controls.consumeRecoveryRequested())physics.recover();
         physics.setControls(controls.throttle(),controls.steering(),controls.lift(),controls.action());
         Vector3 velocity=physics.velocity();
         streamer.update(physics.globalX(),physics.globalZ(),velocity.x,velocity.z,physics.mode().streamMode);
-        physics.step(delta);
-        renderer.render(delta);
+        physics.step(simulationDelta);
+        renderer.render(simulationDelta);
         hud.render();
     }
 

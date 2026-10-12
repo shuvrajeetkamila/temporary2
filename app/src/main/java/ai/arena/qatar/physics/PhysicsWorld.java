@@ -137,7 +137,7 @@ public final class PhysicsWorld implements Disposable {
         mode=requested;
         originX=targetX; originZ=targetZ;
         headingRadians=0;
-        clearChunkBodies();
+        relocateChunkBodies();
         createFocusBody(requested,0,altitude,0);
         if (temporaryFloor == null) createTemporaryFloor();
         temporaryFloorTime=0;
@@ -279,7 +279,14 @@ public final class PhysicsWorld implements Disposable {
         float localZ=(float)(chunk.entry().y()*chunkMetres-originZ);
         btRigidBody body=body(0,compound,new Matrix4().setToTranslation(localX,0,localZ));
         world.addRigidBody(body);
-        chunkBodies.put(key,new ChunkCollision(body,compound,children));
+        chunkBodies.put(key,new ChunkCollision(body,compound,children,chunk.entry().x()*chunkMetres,chunk.entry().y()*chunkMetres));
+    }
+
+    private void relocateChunkBodies() {
+        for (ChunkCollision chunk : chunkBodies.values()) {
+            chunk.body.setWorldTransform(new Matrix4().setToTranslation((float)(chunk.globalX-originX),0,(float)(chunk.globalZ-originZ)));
+            chunk.body.activate();
+        }
     }
 
     public void deactivateChunk(QatarPack.WorldChunk chunk) {
@@ -321,7 +328,8 @@ public final class PhysicsWorld implements Disposable {
 
     private static final class ChunkCollision {
         final btRigidBody body; final btCompoundShape compound; final List<btCollisionShape> children;
-        ChunkCollision(btRigidBody body,btCompoundShape compound,List<btCollisionShape> children){this.body=body;this.compound=compound;this.children=children;}
+        final double globalX,globalZ;
+        ChunkCollision(btRigidBody body,btCompoundShape compound,List<btCollisionShape> children,double globalX,double globalZ){this.body=body;this.compound=compound;this.children=children;this.globalX=globalX;this.globalZ=globalZ;}
         void dispose(btDiscreteDynamicsWorld world){world.removeRigidBody(body);body.dispose();compound.dispose();for(btCollisionShape shape:children)shape.dispose();}
     }
     private static float clamp(float value,float min,float max){return Math.max(min,Math.min(max,value));}

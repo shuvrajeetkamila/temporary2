@@ -52,7 +52,7 @@ public final class HudRenderer implements Disposable {
         Vector3 velocity=physics.velocity();
         String biome=localBiome();
         font.draw(sprites,"QATAR: THE PENINSULA  •  TRUE 1:1 METRES",28,height-37);
-        font.draw(sprites,String.format("%s  |  %.1f m/s  |  %s  |  FPS %d",physics.mode().label,velocity.len(),biome,Gdx.graphics.getFramesPerSecond()),28,height-66);
+        font.draw(sprites,String.format("%s  |  %.1f m/s  |  %s  |  30 FPS THERMAL CAP",physics.mode().label,velocity.len(),biome),28,height-66);
         font.draw(sprites,String.format("LOCAL CHUNKS %d  PENDING %d  •  INSTALLED NATIONAL INDEX %,d / %,d",streamer.residentCount(),streamer.pendingCount(),pack.chunkCount,pack.chunkCount),28,height-95);
         font.draw(sprites,"SWITCH MODE",width-228,height-46);
         font.draw(sprites,"RECOVER",width-445,height-46);
