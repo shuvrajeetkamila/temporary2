@@ -1,0 +1,913 @@
+NAURU: THE COUNTRYSIDE
+MASTER BUILD PROMPT FOR A FROM-SCRATCH REALISTIC ANDROID APK
+
+Copy everything between BEGIN MASTER PROMPT and END MASTER PROMPT into a capable coding-agent session. Give that agent an empty Git repository and permission to use GitHub Actions when the local machine has no Android SDK.
+
+============================== BEGIN MASTER PROMPT ==============================
+
+You are the lead Android game engineer, rendering engineer, physics programmer, technical artist, GIS engineer, build engineer, and QA owner for a new project named:
+
+    NAURU: THE COUNTRYSIDE
+
+MISSION
+-------
+Start from a clean repository and build a genuinely installable Android APK for a realistic, fully rendered, offline 3D open-world interpretation of Nauru. Do not merely write a plan, mock-up, website, slideshow, satellite viewer, or source-only demo. Work incrementally until the final APK has compiled and passed automated startup/world tests.
+
+The game must include:
+
+1. A walkable human character with believable locomotion and physical interaction.
+2. An original drivable car with believable suspension, tires, engine, braking, and collision response.
+3. An original pilotable helicopter with believable rotor, collective, cyclic, yaw, drag, ground-effect, and landing behavior.
+4. An original flyable light aeroplane with believable lift, drag, stall, thrust, control surfaces, landing gear, takeoff, and landing behavior.
+5. An original controllable boat with believable buoyancy, hydrodynamic drag, propulsion, steering, waves, and beaching behavior.
+6. A realistic-looking rendered Nauru world based on open geospatial data, with no proprietary map imagery or copied commercial-game assets.
+7. Thermal-aware performance suitable for modest Android phones.
+8. A final downloadable APK and SHA-256 checksum.
+
+Do not stop after scaffolding. Do not say that an APK cannot be built locally and then end the task. If the local Android SDK is unavailable, create and use GitHub Actions to compile and test the APK. Compile after every major milestone.
+
+
+1. NON-NEGOTIABLE PRODUCT RULES
+--------------------------------
+
+A. Deliverable
+- The primary deliverable is an installable .apk file for Android 8.0/API 26 or newer.
+- Provide the exact APK filename, size, SHA-256, package ID, version name, and download path/link.
+- The application must expose a launcher activity and open directly into a loading screen and then gameplay.
+- Use a new package identity, for example:
+
+      ai.example.nauru.countryside
+
+  Replace ai.example with the repository owner's namespace if appropriate.
+- Produce a universal debug-signed APK for direct testing. A release build may also be produced, but never commit a private signing key or ask for credentials.
+
+B. Real graphics, not picture mode
+- Render terrain, water, roads, structures, vegetation, people, and vehicles as actual 3D geometry.
+- Do not use a satellite image, Google Earth capture, Street View image, or static aerial picture as the world.
+- A minimap may be vector-based, but it must not substitute for the rendered world.
+
+C. Original and legal content
+- Do not copy GTA, another game, Google Maps, Google Earth, Street View, copyrighted vehicle models, branded liveries, or ripped assets.
+- All code and custom assets must be original, or use clearly documented permissive/CC0/open-source assets whose licenses allow redistribution in the APK.
+- Maintain ASSET_LICENSES.md with the source URL, author, license, and modifications for every third-party asset.
+- Maintain DATA_SOURCES.md with source URLs, retrieval dates, checksums, and required attribution.
+- Show “© OpenStreetMap contributors” visibly in the app because OSM-derived geometry requires attribution.
+- Prefer original fictional vehicle names and unbranded designs.
+
+D. Honest scope
+- Aim for high-quality mobile open-world presentation, not a claim of reproducing any commercial AAA game.
+- Do not claim physical-device performance, temperature, or visual results unless actually measured on that device.
+- Never present an old screenshot or old test log as evidence for the current build.
+
+E. Offline-first
+- Package the playable world in the APK or in deterministic local assets.
+- The game must start and remain playable without network access.
+- Do not require login, cloud services, telemetry, ads, or a backend.
+
+
+2. RECOMMENDED CLEAN TECHNICAL FOUNDATION
+------------------------------------------
+
+Use the following default stack unless a compile spike proves that a component is incompatible:
+
+- Java 17 for shared/core game code.
+- A standard Gradle Android application/launcher module.
+- libGDX for Android lifecycle, input, audio, file access, and OpenGL ES integration.
+- Bullet through gdx-bullet for rigid-body collision, broadphase, constraints, and stable contact resolution.
+- OpenGL ES 3.0 as the required rendering API, with a PBR-lite mobile renderer written for this game.
+- glTF 2.0 for original models and animations when the chosen loader is verified to work on Android and its license is recorded.
+- Python 3 tools for deterministic geodata and asset compilation.
+- JUnit tests for pure simulation and geodata code.
+- Android/Robolectric or equivalent host startup tests for packaged resources.
+- GitHub Actions for clean builds, tests, APK checksums, and artifact publication.
+
+Create a minimal toolchain spike first. It must build an APK, launch a clear-color scene, initialize Bullet, draw one lit mesh, and pass a startup test before full production begins. If libGDX/Bullet cannot be made to compile, document the exact failure and select another maintained Android-capable open-source engine. Do not silently replace realistic physics with fake animation.
+
+Suggested repository organization:
+
+    android/                    Android launcher and manifest
+    core/src/.../game/          state machine, simulation clock, saves
+    core/src/.../render/        GLES3 renderer, shaders, materials, LOD
+    core/src/.../physics/       common force models and Bullet integration
+    core/src/.../human/         locomotion, animation, ragdoll, IK
+    core/src/.../vehicles/car/
+    core/src/.../vehicles/boat/
+    core/src/.../vehicles/heli/
+    core/src/.../vehicles/plane/
+    core/src/.../world/         streaming, GIS world, landmarks, weather
+    core/src/.../input/         touch/gamepad control mapping
+    core/src/.../ui/            HUD, minimap, settings, attribution
+    assets/source/              source assets not directly shipped
+    android/assets/compiled/    optimized runtime assets
+    tools/                      deterministic Python asset/GIS compilers
+    data/geodata/               source provenance/checksums or fetch manifests
+    tests/                      physics scenarios and startup regression tests
+    artifacts/                  final named APK and checksum
+    .github/workflows/          build/test/publication workflows
+
+Never put generated Gradle caches, SDKs, node_modules, secret keys, or multi-gigabyte raw datasets in Git.
+
+
+3. WORLD SCALE: SOLVE THE AIRCRAFT CONFLICT EXPLICITLY
+------------------------------------------------------
+
+Use a hybrid 1:25 game-world interpretation:
+
+- Global island locations and travel distances use 1:25 compression.
+- One real-world metre of geographic separation becomes 0.04 game metres.
+- Local gameplay units still represent metres, kilograms, and seconds.
+- The human, vehicle dimensions, road widths, doors, selected building footprints, vegetation, street furniture, and collision clearances remain believable human scale.
+- Cull minor structures that overlap after compression. Never stack thousands of full-size buildings at compressed positions.
+
+A literal 1:25 runway is too short for believable aeroplane physics. Therefore implement an “airport hero zone” rather than cheating the flight model:
+
+- Preserve the real runway center, compass alignment, and relationship to the coast.
+- Locally expand the distance along the runway axis so the playable runway is approximately 600–900 game metres long, suitable for a light STOL propeller aircraft.
+- Use a smooth spatial falloff around the airport so the local warp does not create a visible discontinuity.
+- Apply the same world transform to terrain, runway, nearby roads, collision, minimap data, and object placement.
+- Cull or reposition minor overlapping airport-side structures after the warp.
+- Keep road widths, runway width, markings, lights, and buildings human scale.
+- Document this deliberate game-world distortion in README.md.
+
+One possible transform is:
+
+    compressed = realLocalPosition * 0.04
+    along      = dot(realLocalPosition - runwayCenter, runwayAxis)
+    lateral    = abs(dot(realLocalPosition - runwayCenter, runwayRight))
+    influence  = smoothstep(airportOuterRadius, airportInnerRadius, lateral)
+    extra      = runwayAxis * along * (airportAlongScale - 0.04) * influence
+    gamePos    = compressed + extra
+
+Choose airportAlongScale from the measured real runway length so the transformed runway falls in the 600–900 m target range. Verify continuity and ensure that all systems call a single WorldTransform implementation.
+
+Provide at least 2–4 km of playable ocean/airspace around the compact island so boats, helicopters, and aeroplanes have room to operate. Use a floating origin if the playable flight radius grows enough to affect float precision.
+
+
+4. REAL NAURU DATA PIPELINE
+---------------------------
+
+Use open data, with deterministic conversion:
+
+- OpenStreetMap data for coastline, roads, runway/taxiways, buildings, piers, groynes, districts, land use, lagoon, solar panels, tanks, utility features, and named places.
+- NASA/NGA SRTM or another legally redistributable open elevation source for terrain.
+- Open bathymetry only if its license permits redistribution; otherwise generate a deterministic reef shelf from coastline distance and documented procedural rules.
+
+Required pipeline behavior:
+
+1. Preserve the original downloaded source or a reproducible fetch script and checksums.
+2. Project WGS84 longitude/latitude to a local East-North-Up metre coordinate system centered on Nauru.
+3. Repair invalid polygons, remove duplicate points, normalize winding, and reject corrupt feature counts.
+4. Apply WorldTransform for global 1:25 compression and airport hero-zone expansion.
+5. Keep full-resolution source metadata, but compile only runtime-relevant attributes.
+6. Divide the world into spatial chunks/sectors.
+7. Build terrain height tiles, simplified collision meshes, road ribbons, coastline, water masks, and navigation metadata.
+8. Select representative buildings using importance tags, landmarks, spacing cells, neighborhood coverage, and deterministic hashes.
+9. Preserve important landmarks first, then sample ordinary structures while rejecting overlaps.
+10. Generate low/medium/high LOD geometry and collision proxies.
+11. Write a compact versioned binary format with magic bytes, bounds checking, counts, and checksums.
+12. Include a host-side test that loads the exact packaged binary and constructs the CPU world.
+
+Do not invent a generic oval island. Automated tests must verify:
+
+- Coastline point count and geographic bounds.
+- Real runway alignment.
+- District/place labels.
+- Source road/building/area counts.
+- Representative rendered counts.
+- 1:25 transform behavior.
+- Airport hero-zone runway length.
+- Spawn locations on valid terrain.
+- No mesh exceeds the index/vertex format limits.
+- No selected representative buildings overlap beyond a small documented tolerance.
+
+Recommended representative content targets:
+
+- 250–500 selected structures from the full source map.
+- 150–300 important/representative roads, paths, runway, taxiways, piers, and marine structures.
+- Dense landmark detail only in a small number of hero zones.
+- Vegetation clusters and props generated deterministically from land-use masks, with collision only where gameplay requires it.
+
+
+5. GRAPHICS TARGET
+------------------
+
+Create a coherent realistic mobile rendering style rather than blocky cubes.
+
+A. Geometry and assets
+- Use smooth normals, sensible bevels, curved silhouettes, and physically plausible proportions.
+- Build original unbranded models for:
+  - A compact island 4x4/car.
+  - A light utility helicopter.
+  - A light single-engine STOL aeroplane.
+  - A center-console boat or island workboat.
+  - A rigged human character.
+- Each vehicle needs separate moving parts: wheels, suspension, steering, propeller/rotor, control surfaces, rudder, doors where practical, and landing gear.
+- Author at least three LODs for each vehicle and important landmark.
+- Use low-cost collision meshes separate from render meshes.
+- Ordinary buildings may be procedurally generated from real selected footprints, but they need roof variation, windows, doors, eaves, facade depth, material variation, and believable scale.
+
+B. Materials
+- Use an original PBR-lite metallic/roughness workflow: base color, normal, roughness, metallic, and ambient-occlusion where useful.
+- Use texture atlases and trim sheets for ordinary buildings and props.
+- Use original or properly licensed materials for coral limestone, tropical soil, asphalt, painted concrete, corrugated metal, vegetation, glass, rubber, and ocean surfaces.
+- Downsample and compress textures for Android; do not ship huge uncompressed source textures.
+- Use anisotropic filtering sparingly and cap it on lower quality levels.
+
+C. Lighting and atmosphere
+- Directional sun with mobile shadow mapping.
+- Sky/atmosphere with time of day, sun glow, clouds, horizon haze, and exposure control.
+- Image-based ambient lighting or a compact prefiltered environment approximation.
+- Height/distance fog that hides LOD transitions.
+- Color grading that remains readable at midday, dusk, and night.
+- Local lights only near the player, with strict count limits.
+- Optional baked ambient occlusion/light probes for hero zones.
+
+D. Water
+- Animated normal/wave layers, Fresnel reflection, depth color, reef shallows, foam near shore, and sun glint.
+- Water appearance must use the compact world’s actual coastline scale.
+- Do not render expensive full-screen reflection every frame on low or balanced settings.
+- Boat buoyancy waves and rendered waves must be driven by compatible wave parameters so the hull does not visibly float through the surface.
+
+E. Shadows and LOD
+- Use one mobile directional shadow map, approximately 512–1024 px depending on quality.
+- Throttle shadow updates when the light/camera has not changed significantly.
+- ECO mode disables or greatly simplifies sampled shadows.
+- Use frustum culling, distance culling, sector culling, mesh LOD, impostors for distant vegetation, and occlusion approximations in dense hero zones.
+- Never draw every mapped building every frame.
+
+F. Shader robustness
+- Verify every shader with an offline GLSL parser/compiler where possible.
+- Log shader compile/link failures with source line numbers.
+- Provide a simple fallback material so a noncritical material failure does not make the app close.
+- Test on OpenGL ES 3.0 constraints; do not accidentally rely on desktop GLSL behavior.
+
+
+6. SIMULATION FOUNDATION
+------------------------
+
+All local physics uses SI units:
+
+- Distance: metres.
+- Mass: kilograms.
+- Time: seconds.
+- Speed: metres/second internally, km/h or knots in the HUD.
+- Force: newtons.
+- Torque: newton-metres.
+
+Use a fixed physics timestep independent from rendering:
+
+    fixedDt = 1 / 60 second
+
+Recommended accumulator behavior:
+
+    accumulator += min(realFrameDt, 0.1)
+    substeps = 0
+    while accumulator >= fixedDt and substeps < 4:
+        apply controls and forces
+        step Bullet by fixedDt
+        run post-physics synchronization
+        accumulator -= fixedDt
+        substeps += 1
+    render interpolation alpha = accumulator / fixedDt
+
+Do not multiply forces by variable frame time and then feed them to a fixed-step engine. Keep control sampling, force application, physics stepping, and render interpolation separate.
+
+Physics architecture:
+
+- Collision layers for terrain, static architecture, human, car, boat, helicopter, aeroplane, water trigger volumes, interaction triggers, and debris.
+- Static triangle meshes only for terrain/architecture.
+- Convex/compound colliders for dynamic vehicles.
+- Continuous collision detection for fast aircraft when needed.
+- Sleeping for inactive rigid bodies.
+- High-fidelity simulation only for the occupied vehicle and nearby active objects.
+- Lower-rate proxy simulation or sleep for distant unoccupied vehicles.
+- Deterministic pure force-model classes separated from Bullet adapters so they can be unit tested without native physics.
+
+
+7. HUMAN PHYSICS AND ANIMATION
+------------------------------
+
+Implement a hybrid character system, not a sliding camera capsule.
+
+Core controller:
+
+- Human-scale capsule collider, approximately 1.7–1.9 m tall.
+- Ground sweep/raycast and stable grounding state.
+- Acceleration and deceleration rather than instant velocity changes.
+- Walk, jog, sprint, crouch if animation supports it, jump, fall, land, swim, and wade.
+- Slope limits, controlled sliding, step offset, head clearance, ledge rejection, and moving-platform support.
+- Different traction for asphalt, dirt, wet ground, shallow water, and steep rock.
+- Air control must be limited.
+- Jump impulse must derive from desired jump height:
+
+      jumpVelocity = sqrt(2 * gravity * desiredJumpHeight)
+
+- Fall damage/hard-landing response based on impact velocity, with safe thresholds.
+- The body must push lightweight dynamic objects through bounded impulses without launching vehicles.
+- Enter/exit each vehicle through seat and exit transforms, with collision disabled only during the transition.
+
+Animation:
+
+- Rigged original humanoid with idle, walk, run, sprint, jump, fall, land, swim, enter/exit, driving, boating, helicopter, and aeroplane poses.
+- Blend animation speed to physical speed.
+- Foot IK to terrain on high/balanced settings.
+- Head/torso aim limits and camera-relative turning.
+- Hands align to steering wheel, boat wheel/tiller, helicopter controls, and aeroplane controls where practical.
+
+Ragdoll:
+
+- Use a reduced rigid-body ragdoll only for severe impacts or explicit testing.
+- Blend from animation to ragdoll without teleporting limbs.
+- Put ragdolls to sleep and despawn/reset safely.
+- ECO mode may use a simpler hit reaction instead of a full active ragdoll.
+
+Human acceptance scenarios:
+
+- Walk up normal road slopes without jitter.
+- Reject slopes beyond the configured maximum.
+- Step over a curb but not through a wall.
+- Jump reaches the configured height within tolerance.
+- Landing velocity and animation correspond to the physical fall.
+- Character cannot enter a vehicle from an invalid distance or through a blocked exit.
+- Swimming prevents walking on the seabed in deep water.
+
+
+8. CAR PHYSICS
+--------------
+
+Create an original compact 4x4 appropriate for island roads. Use a rigid chassis with four raycast wheels or a carefully validated Bullet vehicle implementation.
+
+Required model:
+
+- Realistic mass, center of mass, dimensions, inertia, and wheelbase.
+- Per-wheel suspension spring and damper:
+
+      springForce = springRate * compression
+      damperForce = damperRate * relativeSuspensionVelocity
+      normalLoad  = clamp(springForce - damperForce, 0, maxLoad)
+
+- Wheel angular velocity and inertia.
+- Engine torque curve versus RPM.
+- Idle, redline, throttle response, engine braking, clutch approximation, forward gears, neutral, and reverse.
+- Final drive and differential torque distribution.
+- Speed-sensitive steering and approximately Ackermann inner/outer wheel angles.
+- Longitudinal slip ratio and lateral slip angle.
+- Tire force curves that saturate rather than increasing without limit.
+- Friction circle/ellipse combining braking/acceleration and cornering force.
+- Surface-dependent grip for asphalt, dirt, grass, wet road, sand, and shallow water.
+- Brake balance, handbrake on rear wheels, traction control/ABS assists as optional settings.
+- Aerodynamic drag and rolling resistance.
+- Anti-roll effect or physically stable suspension geometry.
+- Collision damage state that affects appearance and handling without requiring soft-body deformation.
+
+Visual synchronization:
+
+- Wheel rotation from angular velocity.
+- Front-wheel steering.
+- Suspension travel visible on each wheel.
+- Chassis pitch/roll comes from physics, not a canned animation.
+- Brake lights, headlights, dust/spray particles, and tire audio tied to physical state.
+
+Car acceptance scenarios:
+
+- Settles under gravity without bouncing forever.
+- Accelerates plausibly through gears.
+- Stops from 50 km/h within a documented plausible range on dry asphalt.
+- Understeers/oversteers progressively rather than snapping randomly.
+- Loses grip on grass/wet sand.
+- Cannot tunnel through buildings at maximum speed.
+- Remains stable at 30 FPS rendering because physics stays fixed at 60 Hz.
+
+
+9. BOAT PHYSICS
+---------------
+
+Create an original small island workboat or center-console boat.
+
+Required model:
+
+- One rigid hull with 6–12 distributed buoyancy sample points.
+- At each point, compare hull point height with the analytic rendered wave height.
+- Apply buoyancy proportional to displaced volume and submersion:
+
+      buoyancy = waterDensity * displacedVolume * gravity
+
+- Apply force at each sample point so waves create pitch and roll naturally.
+- Add vertical damping to prevent perpetual bobbing.
+- Hydrodynamic drag separated into forward, lateral, and vertical components.
+- Strong lateral resistance below the waterline, but allow controlled slip.
+- Propeller thrust based on throttle, engine RPM, propeller submersion, and forward speed.
+- Rudder/steering force increases with water flow and becomes weak at zero speed unless the design has vectored thrust.
+- Planing lift approximation at higher speed, tuned to avoid numerical explosions.
+- Wind drag above the waterline.
+- Shallow-water and beaching detection.
+- Hull collision with piers, reefs, coast, and other vehicles.
+- Engine cuts or thrust reduces when the propeller is out of water.
+- Wake, spray, foam, pitch/roll audio, and engine audio driven by physical state.
+
+Boat acceptance scenarios:
+
+- Floats at the designed waterline with a stable but not frozen response.
+- Recovers from moderate roll and pitch.
+- Turns more effectively while moving than while stationary.
+- Slows naturally after throttle release.
+- Rides the same wave function that is rendered.
+- Beaches without falling through terrain or climbing cliffs.
+- Does not gain energy indefinitely from damping or buoyancy errors.
+
+
+10. HELICOPTER PHYSICS
+----------------------
+
+Create an original light utility helicopter. Use a rigid fuselage and an aerodynamic rotor force model; do not fake flight by directly setting position.
+
+Required state/model:
+
+- Fuselage mass, inertia tensor, center of mass, main rotor position, tail rotor position, skids, and drag areas.
+- Rotor RPM spool-up/spool-down and a minimum flight RPM.
+- Collective controls total main-rotor thrust.
+- Cyclic tilts the rotor thrust vector and creates pitch/roll moments.
+- Main rotor reaction torque acts on the fuselage.
+- Tail rotor or anti-torque system counters torque and provides yaw control.
+- Translational lift increases efficiency as horizontal airflow develops.
+- Ground effect increases rotor efficiency near a broad surface and fades smoothly with height.
+- Parasite drag increases with airspeed.
+- Vertical descent through low-forward-speed rotor wash should reduce lift in a bounded vortex-ring approximation.
+- Autorotation may be simplified but rotor RPM must not instantly remain powered after throttle/engine loss.
+- Skid contacts and suspension/compliance prevent explosive landing jitter.
+- Optional stability augmentation should apply bounded torques, not teleport orientation.
+- Wind affects the fuselage and rotor inflow.
+
+A useful starting approximation is:
+
+      thrustMagnitude = Ct * airDensity * rotorArea * tipSpeed^2 * collective
+      thrustDirection = normalized(rotorUp + cyclicPitchAxis + cyclicRollAxis)
+      mainRotorForce  = thrustDirection * thrustMagnitude
+
+Tune Ct and control authority from documented target mass and hover collective. Keep coefficients in a named HelicopterConfig asset, not scattered magic numbers.
+
+Helicopter acceptance scenarios:
+
+- Requires rotor spool before takeoff.
+- Can hover near a documented collective value without automatic position locking.
+- Cyclic produces acceleration by tilting thrust, not by setting velocity.
+- Pedal/yaw control counters main-rotor torque.
+- Ground effect is noticeable but not a launch impulse.
+- Hard landings bounce/damage appropriately; gentle skid landings settle.
+- Engine power loss causes descent and rotor behavior rather than suspended flight.
+- Cannot pass through terrain or the airport buildings at normal speed.
+
+
+11. AEROPLANE PHYSICS
+---------------------
+
+Create an original light single-engine propeller STOL aeroplane suitable for the expanded airport hero zone. Do not use a jet or an aircraft requiring a runway longer than the game provides.
+
+Required model:
+
+- Rigid fuselage with mass, center of mass, inertia, wing area/span/chord, tail geometry, propeller, and landing gear points.
+- Compute local airflow at aerodynamic surfaces from linear velocity, angular velocity, wind, and prop wash where relevant.
+- Dynamic pressure:
+
+      q = 0.5 * airDensity * airspeed^2
+
+- Lift:
+
+      lift = q * wingArea * Cl(angleOfAttack, flapSetting)
+
+- Drag:
+
+      drag = q * wingArea * (Cd0 + inducedDragFactor * Cl^2)
+
+- Cl must rise through the normal range, peak near the stall angle, and decline after stall. Never allow unlimited lift at extreme angle of attack.
+- Separate wing, horizontal stabilizer, and vertical stabilizer contributions when practical.
+- Elevator, aileron, rudder, trim, and flap effects.
+- Propeller thrust versus engine RPM, throttle, and airspeed.
+- Engine spool/response and optional mixture simplified for mobile controls.
+- Ground effect near the runway.
+- Three landing-gear contact/suspension points with rolling friction, braking, and nose/tail steering as appropriate.
+- Wheel spin and gear compression visuals.
+- Crosswind and weather influence.
+- Structural/damage thresholds for overspeed, excessive G, and hard landing, kept simple enough for mobile.
+
+Aeroplane acceptance scenarios:
+
+- Accelerates down the transformed runway under wheel physics.
+- Takes off within the documented target distance without a hidden upward impulse.
+- Requires sufficient airspeed and angle of attack for lift.
+- Stalls when slow/high-alpha, drops a wing or loses control authority in a bounded recoverable way, and recovers when airflow is restored.
+- Aileron controls roll, elevator controls pitch, rudder controls yaw.
+- Flaps reduce takeoff/landing speed while increasing drag.
+- Can land, compress its gear, brake, and remain on the runway.
+- Does not fly when engine thrust is present but airspeed/lift conditions are absent.
+- Uses continuous collision detection or swept checks at high speed.
+
+
+12. VEHICLE INTERACTION, CONTROLS, AND CAMERAS
+-----------------------------------------------
+
+Interaction system:
+
+- Data-driven seats, entry points, exit points, camera anchors, and control profiles.
+- The human must approach a valid entry point and press an action button.
+- Check line of sight, distance, vehicle state, and blocked exits.
+- Attach the character to the seat only after the transition begins.
+- On exit, search multiple safe exit transforms and reject exits over deep water, inside geometry, or in moving rotor/propeller danger volumes.
+- Persist each vehicle’s transform, velocity if safe, damage, fuel/engine state if those systems are enabled, and the occupied vehicle.
+
+Touch controls:
+
+On foot:
+- Left virtual stick: movement.
+- Right-side swipe: camera orbit.
+- Run, jump, interact/enter, and optional crouch/swim buttons.
+
+Car:
+- Steering stick or left/right region.
+- Throttle, brake/reverse, handbrake, exit.
+
+Boat:
+- Steering/tiller, throttle/reverse, exit.
+
+Helicopter:
+- Left stick: collective and yaw.
+- Right stick: cyclic pitch and roll.
+- Engine/rotor toggle, camera, exit only when safely landed.
+- Offer an optional bounded stability-assist mode, clearly labeled.
+
+Aeroplane:
+- Left stick or virtual yoke: pitch/roll.
+- Rudder control, throttle slider, brakes, flap control, engine toggle, exit only when safely stopped.
+- Offer optional coordinated-turn assistance without removing stall physics.
+
+Support Android gamepads using the same action map. Allow sensitivity, inversion, dead-zone, and assist settings.
+
+Cameras:
+
+- Collision-aware spring camera on foot.
+- Chase and close/hood cameras for car and boat.
+- Chase and cockpit/near-cockpit cameras for helicopter and aeroplane.
+- Camera smoothing must be timestep independent.
+- Avoid motion sickness: cap shake, provide field-of-view settings, and do not tie camera roll one-to-one with vehicle roll unless the user selects it.
+
+
+13. WORLD GAMEPLAY AND PRESENTATION
+-----------------------------------
+
+Minimum playable loop:
+
+- Spawn near Nauru International Airport with the character and car nearby.
+- Explore on foot and enter/exit the car.
+- Reach a harbor/shore location and operate the boat.
+- Reach a helipad/open airport area and operate the helicopter.
+- Operate the aeroplane from the runway, take off, circle the island, and land.
+- Use district/place names from real data.
+- Include recovery/reset actions for each vehicle so a flipped, sunk, or crashed vehicle cannot permanently block testing.
+
+World details:
+
+- Airport runway, taxiway, markings, terminal-like hero structures, fence/lighting where data and performance allow.
+- Harbor/pier area with boat spawn.
+- Helipad or safe helicopter spawn zone.
+- Buada Lagoon, reef shallows, phosphate/mining landscape, coastal road, representative neighborhoods, solar panels, tanks, utilities, and vegetation.
+- Day/night cycle and wind. Rain is optional only after core performance is stable.
+- Wind must feed the boat, helicopter, and aeroplane models consistently.
+- Simple traffic/pedestrians are optional late-stage features. Never sacrifice the five controllable physics systems or APK stability to add crowds.
+
+Audio:
+
+- Original or permissively licensed layered engine/rotor/propeller/boat sounds.
+- Pitch and volume driven by RPM/load rather than only vehicle speed.
+- Tire, suspension impact, wind, water, wave, landing gear, footsteps, and collision sounds.
+- Spatial audio with strict concurrent-source limits.
+- Record all audio licenses.
+
+HUD:
+
+- Location, compass, time, current graphics profile, measured FPS, and thermal ECO status.
+- Vector minimap from the transformed coastline and selected roads.
+- Context-sensitive speed display: km/h for car, knots optionally for boat/aircraft, altitude and vertical speed for flight.
+- Vehicle-specific RPM/power/collective/flaps indicators.
+- Controls/help overlay that changes by mode.
+- Persistent visible attribution in an About/Credits panel and compact visible OSM attribution on the minimap.
+
+
+14. THERMAL, BATTERY, AND PERFORMANCE REQUIREMENTS
+--------------------------------------------------
+
+Excessive phone heat is a release blocker.
+
+Frame pacing:
+
+- Do not use an unrestricted continuous 60/90/120 FPS loop by default.
+- Target approximately 30 FPS in the normal balanced mobile profile.
+- Drop to 20 FPS when Android battery saver is active or thermal status reaches moderate.
+- Drop to approximately 15 FPS at severe thermal status.
+- Pause rendering and physics correctly when the Activity is paused or the screen turns off.
+- Respect Android screen timeout; do not force an unattended game to keep the display/GPU awake.
+- Poll thermal state at a low frequency or use a listener; do not call a system service every frame.
+
+ECO response:
+
+- Reduce dynamic resolution.
+- Disable or simplify sampled dynamic shadows.
+- Select the tightest sector and LOD ranges.
+- Reduce particles, local lights, reflection updates, vegetation distance, and animation update rate.
+- Keep controls and occupied-vehicle physics responsive; do not lower fixed physics accuracy so far that vehicles become unstable.
+
+Suggested balanced-profile budgets on a modest 1080p-class phone:
+
+- Rendering: 30 FPS / 33.3 ms frame budget.
+- Main simulation and game logic: ideally below 6 ms average.
+- Visible triangles: roughly 150k–350k after LOD, depending on GPU.
+- Draw calls: preferably below 150–200.
+- Dynamic rigid bodies awake near player: below approximately 100.
+- Shadow-casting local lights: zero; one main directional shadow system.
+- Runtime texture residency: target below approximately 256 MB on balanced.
+- Java/native memory must be measured; avoid per-frame allocations and garbage-collection spikes.
+
+Optimization requirements:
+
+- Sector/quadtree streaming and frustum culling.
+- Mesh LOD and collision LOD.
+- Texture atlases, mipmaps, compressed texture formats when supported, and a safe fallback.
+- Instancing for repeated vegetation/props if verified on target GLES3 hardware.
+- Object pools for particles and transient objects.
+- No per-frame creation of arrays, matrices, strings, vectors, or physics shapes in hot paths.
+- Sleep distant bodies and update distant animation at reduced frequency.
+- Profile CPU and GPU before guessing.
+- Add an in-game diagnostics overlay showing FPS, frame time, draw calls, visible sectors, visible triangles, active bodies, and current thermal profile in development builds.
+
+Graphics profiles:
+
+LOW:
+- 20–30 FPS cap, low dynamic resolution, 512 px/no shadow depending on capability, short vegetation/building range, low particles.
+
+BALANCED:
+- Default 30 FPS, compact shadow map with throttled updates, moderate LOD ranges, normal materials.
+
+HIGH:
+- Still capped unless the user deliberately unlocks it; improved shadows/LOD/reflections but thermal protection always overrides.
+
+ECO:
+- Automatic battery/thermal override shown in the HUD; user cannot bypass severe thermal protection.
+
+
+15. SAVE, RECOVERY, AND FAILURE HANDLING
+----------------------------------------
+
+- Version the save format and world transform.
+- Save character position, current vehicle, all vehicle spawn/recovery state, time, selected graphics/assist settings, and last safe checkpoint.
+- Reject old/incompatible coordinates instead of spawning outside the transformed island.
+- Keep periodic saves off the render thread.
+- If world construction fails, show an error screen with retry rather than closing.
+- If a noncritical texture/model fails, substitute a visible fallback and log the asset path.
+- If the occupied vehicle falls out of bounds, provide a deterministic recover-to-last-safe-location action.
+- Never catch and silently ignore fatal world corruption.
+
+
+16. TESTING REQUIREMENTS
+------------------------
+
+A. Pure unit tests
+
+Geodata:
+- Binary magic/version/count bounds.
+- Projection and 1:25 transform.
+- Smooth airport hero-zone transform.
+- Coastline bounds and point-in-polygon.
+- Representative-building spacing and determinism.
+- Mesh/index limits.
+
+Physics force models:
+- Human jump velocity and slope classification.
+- Suspension spring/damper signs and force limits.
+- Tire slip-force saturation and friction ellipse.
+- Boat buoyancy equilibrium and damping energy loss.
+- Helicopter hover force near weight, reaction torque, and control sign.
+- Aeroplane lift/drag curves, stall peak/decline, flap effect, and control-surface sign.
+- Fixed-step result remains close across different render frame sequences.
+
+B. Packaged-resource startup test
+
+This test must load the resources from the built Android variant, construct the complete CPU world, and verify:
+
+- Real map and elevation files exist.
+- World transform version and scale.
+- Airport hero-zone runway length and alignment.
+- Character and all four vehicles have valid, non-overlapping spawn locations.
+- Character/car spawn is walkable.
+- Boat spawn is in navigable water.
+- Helicopter spawn has rotor clearance.
+- Aeroplane spawn sits on the runway and aligns with it.
+- Required representative landmarks and districts exist.
+- Selected mesh builders remain within supported index limits.
+- No NaN/infinite positions, normals, masses, inertia, or configuration values.
+
+C. Physics integration scenarios
+
+Run deterministic headless or instrumentation scenarios where supported:
+
+- Human walk/jump/land.
+- Car suspension settle, acceleration, turning, braking, collision.
+- Boat static float, throttle, turn, wave response.
+- Helicopter spool, hover, cyclic movement, yaw, landing.
+- Aeroplane runway acceleration, takeoff, controlled stall, recovery, landing roll.
+
+Log numeric outcomes and fail outside documented tolerances. Do not rely only on screenshots.
+
+D. Android build/runtime QA
+
+- Clean Gradle build on GitHub Actions.
+- Run all unit and packaged-resource tests before staging the APK.
+- Install and launch on an emulator when the CI environment supports it.
+- Capture logcat and detect FATAL EXCEPTION, ANR, native tombstones, shader compile failures, EGL errors, and missing resources.
+- Treat emulator infrastructure failure separately from app failure.
+- A CI emulator is not a substitute for testing heat and controls on a physical phone.
+- If Android tooling is unavailable locally, do not fabricate results; use CI and persist diagnostics in the repository.
+
+E. APK validation
+
+Before delivery:
+
+- Verify ZIP integrity.
+- Verify AndroidManifest package, launcher activity, version, min SDK, and target SDK.
+- Verify all DEX files and native libraries for intended ABIs.
+- Verify map, elevation, models, textures, shaders, and license/attribution resources are packaged.
+- Verify APK signing (debug v2/v3 is acceptable for direct testing).
+- Compute SHA-256 and save a sidecar .sha256 file.
+- Only publish the named APK after required compile and startup tests pass.
+
+
+17. GITHUB ACTIONS BUILD WORKFLOW
+---------------------------------
+
+Create a workflow that runs on the working branch and manual dispatch:
+
+1. Checkout source.
+2. Set up a maintained Java 17 action.
+3. Set up the verified Gradle version or use a committed Gradle wrapper.
+4. Reset old QA status files so a stale PASSED result can never approve a new build.
+5. Run a clean compile/assemble task.
+6. Run unit tests and the packaged-world startup test, capturing logs.
+7. Optionally run emulator launch QA with diagnostics.
+8. Require the current startup status to equal PASSED before staging the APK.
+9. Copy the APK to a clear versioned filename, for example:
+
+      Nauru-The-Countryside-REALISTIC-PHYSICS-v1.0.0.apk
+
+10. Generate the SHA-256 sidecar.
+11. Upload the APK as a GitHub Actions artifact.
+12. If repository policy allows binary artifacts, publish the tested APK and diagnostics to the working branch with a skip-CI commit.
+13. If tests fail, persist diagnostics but never publish the failed APK as the final deliverable.
+
+Do not embed credentials. Use the repository-provided GitHub token and minimum required permissions.
+
+
+18. MANDATORY INCREMENTAL MILESTONES
+------------------------------------
+
+Do not attempt every system in one giant untested change. Each milestone ends with a compiled installable APK and tests.
+
+MILESTONE 0 — Toolchain proof
+- Clean project, launcher, GLES3 clear screen, one lit mesh, Bullet initialization, touch input, CI APK.
+- Exit criterion: APK compiles and launcher/startup test passes.
+
+MILESTONE 1 — Real transformed Nauru + human
+- Geodata compiler, terrain, coast, water, roads, selected structures, minimap, attribution, human controller, camera, saves.
+- Exit criterion: player walks a recognizable transformed Nauru; packaged-world startup test passes.
+
+MILESTONE 2 — Car
+- Full car force model, model/LOD/collider, controls, camera, enter/exit, audio basics, tests.
+- Exit criterion: acceleration/turn/brake/suspension scenarios pass and APK remains stable.
+
+MILESTONE 3 — Boat
+- Harbor/boat spawn, analytic waves, buoyancy/hydrodynamics, controls, beaching, enter/exit, tests.
+- Exit criterion: float/turn/wave scenarios pass.
+
+MILESTONE 4 — Helicopter
+- Airport/helipad spawn, rotor physics, controls/assist, landing, camera, tests.
+- Exit criterion: spool/hover/yaw/landing scenarios pass.
+
+MILESTONE 5 — Aeroplane + airport hero zone
+- Smooth airport transform, expanded runway, light STOL aircraft, flight model, gear, takeoff/stall/landing tests.
+- Exit criterion: physically generated takeoff and landing are repeatable within the runway.
+
+MILESTONE 6 — Visual realism and interaction polish
+- Final original vehicle art, human animations, PBR-lite materials, landmarks, audio, particles, weather/wind integration, UI.
+- Exit criterion: no placeholder critical vehicle meshes in the release candidate.
+
+MILESTONE 7 — Thermal/performance release pass
+- Profiling, culling/LOD, dynamic resolution, ECO behavior, memory audit, shader fallback, final QA.
+- Exit criterion: 30/20/15 FPS pacing works as designed, no unrestricted loop, no startup regression, final APK validated.
+
+At every milestone, keep the previous known-good APK until the new one passes.
+
+
+19. QUANTITATIVE RELEASE ACCEPTANCE CHECKLIST
+---------------------------------------------
+
+The final build is not complete until all applicable items are checked:
+
+World
+[ ] Real Nauru coastline and districts from open data.
+[ ] 1:25 global transform is centralized and tested.
+[ ] Airport hero-zone transform is smooth and documented.
+[ ] Runway is long enough for the selected light aircraft’s tested takeoff/landing.
+[ ] Representative structures are spaced and culled.
+[ ] OSM attribution is visible.
+
+Human
+[ ] Grounding, acceleration, slopes, steps, jump, fall, swim, and collision work.
+[ ] Animation follows physical state.
+[ ] Vehicle enter/exit validates safe positions.
+
+Car
+[ ] Suspension, tire slip, engine/gears, steering, braking, surface grip, and collision work.
+[ ] Wheels steer/rotate/suspend visually.
+
+Boat
+[ ] Distributed buoyancy, damping, hydrodynamic drag, propulsion, steering, waves, and beaching work.
+[ ] Rendered water and buoyancy use compatible wave data.
+
+Helicopter
+[ ] Rotor spool, collective, cyclic, reaction torque, tail rotor/yaw, drag, ground effect, and landing work.
+[ ] Hover is force-based, not position locking.
+
+Aeroplane
+[ ] Lift, drag, stall, propeller thrust, controls, flaps, gear, brakes, takeoff, and landing work.
+[ ] No hidden upward takeoff impulse.
+
+Graphics
+[ ] Vehicles and human are original, smooth, proportioned, and have LOD/collision models.
+[ ] Terrain/water/buildings use coherent mobile-realistic materials.
+[ ] Shadows, fog, atmosphere, day/night, and water are functional.
+[ ] Missing noncritical assets fall back visibly rather than crashing.
+
+Performance
+[ ] Default frame cap approximately 30 FPS.
+[ ] ECO cap approximately 20 FPS for saver/moderate heat.
+[ ] Severe thermal cap approximately 15 FPS.
+[ ] ECO reduces GPU work, not only FPS.
+[ ] Rendering/physics stop correctly on pause.
+[ ] No major per-frame allocations.
+[ ] Sector/frustum/distance culling and LOD are active.
+
+Build and QA
+[ ] Clean GitHub Actions compile passes.
+[ ] Current packaged-world startup regression says PASSED.
+[ ] Physics unit/integration scenarios pass.
+[ ] APK manifest, package, launcher, resources, DEX/native libraries, ZIP, and signature validate.
+[ ] SHA-256 sidecar matches.
+[ ] Final APK link is accessible.
+[ ] Any lack of physical-device thermal testing is disclosed honestly.
+
+
+20. WORKING RULES FOR THE CODING AGENT
+--------------------------------------
+
+- Inspect the repository before changing it.
+- Keep work on the user-designated branch.
+- Make concrete code/assets/tests, not only design documents.
+- Prefer deterministic generation with fixed seeds.
+- Compile after each major change and fix errors before expanding scope.
+- Never weaken or delete a failing regression merely to get a green build.
+- Never reuse PASSED status from an older commit.
+- Never claim a system is complete because a class or button exists; validate its behavior.
+- Keep physics constants in named, documented configuration assets.
+- Avoid magic forces that directly set position, orientation, or velocity during normal vehicle operation.
+- Recovery/reset is allowed only as an explicit gameplay/debug action.
+- Preserve exact error logs and test outputs when a build fails.
+- Use source-control commits that describe each stable milestone.
+- Do not ask the user for passwords, private signing keys, or access tokens.
+- Do not publish an APK that failed the required startup regression.
+- Do not call a static image, browser page, or video an Android game.
+
+
+21. REQUIRED FINAL RESPONSE
+---------------------------
+
+When the release candidate passes, respond with:
+
+1. A prominent clickable APK link.
+2. Exact filename.
+3. File size in bytes.
+4. SHA-256 checksum.
+5. Package ID, version name/code, minimum Android version, and supported ABIs.
+6. Build/test workflow run identifier and result.
+7. A concise list of implemented world, human, car, boat, helicopter, aeroplane, graphics, and thermal systems.
+8. Honest validation limits, especially whether a physical Android phone was tested.
+9. The checksum sidecar and source/asset license documentation paths.
+
+The final response must not substitute a plan for the APK.
+
+=============================== END MASTER PROMPT ===============================
+
+NOTES FOR THE PERSON USING THIS PROMPT
+--------------------------------------
+
+1. This prompt deliberately specifies a light STOL aeroplane. A realistic airliner cannot use a globally compressed 1:25 island/runway without either unrealistic flight physics or a much larger airport zone.
+2. Realistic multi-vehicle physics and polished original art are a large project. The milestone gates prevent an agent from producing thousands of untested lines and only discovering at the end that the APK does not open.
+3. A successful emulator build does not prove that a phone will remain cool. Always test the final APK on the intended physical phone while monitoring frame rate, battery drain, Android thermal status, and control stability.
+4. If maximum visual quality is more important than APK size, allow larger original glTF models and textures, but preserve LODs, compression, thermal ECO behavior, and memory budgets.
+5. Keep all map and asset licenses with the project so the APK can be redistributed legally.
