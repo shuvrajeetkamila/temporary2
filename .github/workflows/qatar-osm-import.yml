@@ -1,0 +1,109 @@
+name: Import current Qatar OpenStreetMap detail
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - arena/8288058f-temporary2
+    paths:
+      - '.github/qatar-osm-import-request.txt'
+
+permissions:
+  contents: write
+
+concurrency:
+  group: qatar-osm-import-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  import-osm:
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    steps:
+      - name: Check out deterministic importer
+        uses: actions/checkout@v4
+
+      - name: Install osmium and pyosmium
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y --no-install-recommends osmium-tool
+          python3 -m pip install --disable-pip-version-check 'osmium==4.1.1'
+          osmium --version
+
+      - name: Download current Geofabrik GCC extract
+        run: |
+          mkdir -p /tmp/qatar-osm data/qatar/compiled app/src/main/assets/world
+          URL='https://download.geofabrik.de/asia/gcc-states-latest.osm.pbf'
+          curl --fail --location --retry 5 --retry-all-errors \
+            --user-agent 'QatarThePeninsula/0.2 deterministic-open-data-import' \
+            --dump-header /tmp/qatar-osm/geofabrik-headers.txt \
+            "$URL" --output /tmp/qatar-osm/gcc-states.osm.pbf
+          test "$(wc -c < /tmp/qatar-osm/gcc-states.osm.pbf)" -gt 1000000
+          sha256sum /tmp/qatar-osm/gcc-states.osm.pbf | tee /tmp/qatar-osm/gcc.sha256
+
+      - name: Extract complete Qatar-area ways and relations
+        run: |
+          osmium extract \
+            --bbox 50.68,24.45,51.70,26.25 \
+            --strategy complete_ways \
+            --overwrite \
+            /tmp/qatar-osm/gcc-states.osm.pbf \
+            --output /tmp/qatar-osm/qatar-current.osm.pbf
+          osmium fileinfo -e /tmp/qatar-osm/qatar-current.osm.pbf | tee /tmp/qatar-osm/qatar-fileinfo.txt
+          sha256sum /tmp/qatar-osm/qatar-current.osm.pbf | tee /tmp/qatar-osm/qatar.sha256
+
+      - name: Compile random-access Qatar detail pack
+        run: |
+          EPOCH="$(date -u +'%Y-%m-%dT%H:%M:%SZ')"
+          python3 tools/import_qatar_osm.py \
+            --input /tmp/qatar-osm/qatar-current.osm.pbf \
+            --output app/src/main/assets/world/qatar-osm-current.qod \
+            --report data/qatar/compiled/qatar-osm-report.json \
+            --epoch "$EPOCH" \
+            --coast-buffer 3500 \
+            | tee /tmp/qatar-osm/import-log.txt
+          python3 tools/import_qatar_osm.py --validate app/src/main/assets/world/qatar-osm-current.qod
+          SIZE="$(wc -c < app/src/main/assets/world/qatar-osm-current.qod)"
+          test "$SIZE" -lt 95000000
+
+      - name: Record immutable source/import metadata
+        run: |
+          python3 - <<'PY'
+          import hashlib,json,pathlib,subprocess
+          def digest(p): return hashlib.sha256(pathlib.Path(p).read_bytes()).hexdigest()
+          headers=pathlib.Path('/tmp/qatar-osm/geofabrik-headers.txt').read_text(errors='replace')
+          fileinfo=pathlib.Path('/tmp/qatar-osm/qatar-fileinfo.txt').read_text(errors='replace')
+          report=json.loads(pathlib.Path('data/qatar/compiled/qatar-osm-report.json').read_text())
+          metadata={
+            'provider':'Geofabrik GmbH OpenStreetMap extracts',
+            'sourceUrl':'https://download.geofabrik.de/asia/gcc-states-latest.osm.pbf',
+            'license':'Open Database License 1.0 (ODbL); © OpenStreetMap contributors',
+            'retrievedUtc':report['epoch'],
+            'gccExtractBytes':pathlib.Path('/tmp/qatar-osm/gcc-states.osm.pbf').stat().st_size,
+            'gccExtractSha256':digest('/tmp/qatar-osm/gcc-states.osm.pbf'),
+            'qatarBbox':[50.68,24.45,51.70,26.25],
+            'qatarExtractBytes':pathlib.Path('/tmp/qatar-osm/qatar-current.osm.pbf').stat().st_size,
+            'qatarExtractSha256':digest('/tmp/qatar-osm/qatar-current.osm.pbf'),
+            'qodBytes':pathlib.Path('app/src/main/assets/world/qatar-osm-current.qod').stat().st_size,
+            'qodSha256':digest('app/src/main/assets/world/qatar-osm-current.qod'),
+            'importerCommit':subprocess.check_output(['git','rev-parse','HEAD'],text=True).strip(),
+            'httpResponseHeaders':headers.splitlines(),
+            'osmiumFileInfo':fileinfo.splitlines(),
+          }
+          pathlib.Path('data/qatar/QATAR_OSM_IMPORT.json').write_text(json.dumps(metadata,indent=2)+'\n')
+          PY
+          sha256sum app/src/main/assets/world/qatar-osm-current.qod \
+            data/qatar/compiled/qatar-osm-report.json data/qatar/QATAR_OSM_IMPORT.json \
+            > data/qatar/OSM_SHA256SUMS
+          ls -lh app/src/main/assets/world/qatar-osm-current.qod data/qatar/compiled/qatar-osm-report.json
+
+      - name: Publish compiled open-data derivative
+        if: github.ref == 'refs/heads/arena/8288058f-temporary2'
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add app/src/main/assets/world/qatar-osm-current.qod \
+            data/qatar/compiled/qatar-osm-report.json data/qatar/QATAR_OSM_IMPORT.json \
+            data/qatar/OSM_SHA256SUMS
+          git diff --cached --quiet || git commit -m "Import current Qatar OpenStreetMap detail [skip ci]"
+          git push origin "HEAD:${GITHUB_REF_NAME}"

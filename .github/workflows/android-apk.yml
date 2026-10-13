@@ -10,6 +10,8 @@ on:
       - '*.txt'
       - '.github/runtime-smoke-request.txt'
       - '.github/workflows/android-runtime-smoke.yml'
+      - '.github/qatar-osm-import-request.txt'
+      - '.github/workflows/qatar-osm-import.yml'
   workflow_dispatch:
 
 permissions:
