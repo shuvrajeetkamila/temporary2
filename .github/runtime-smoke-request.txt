@@ -1,1 +1,1 @@
-Run 5: verify inland spawn, stable terrain collision, and corrected human model.
+Run 6: verify v0.2.0 launch, real OSM microcell rendering, bounded streaming, and stable collision.
