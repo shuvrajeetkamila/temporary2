@@ -1,1 +1,1 @@
-Run 7: verify v0.2.0 clear OSM footway spawn, rendered-detail log marker, bounded residency, memory evidence, and crash-free interaction.
+Run 8: final v0.2.0 emulator verification for polished source facades, ordinary-road spawn, bounded OSM residency, memory evidence, and crash-free interaction.
