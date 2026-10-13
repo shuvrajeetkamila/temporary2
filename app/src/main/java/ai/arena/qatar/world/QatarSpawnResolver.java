@@ -46,7 +46,8 @@ public final class QatarSpawnResolver {
     }
 
     private static double classPenalty(int roadClass){
-        return switch(roadClass){case 8->0;case 5->5;case 6->8;case 7->12;case 4->15;case 3->25;case 2->40;case 1->60;case 0->80;default->100;};
+        // Prefer an ordinary visible street; pedestrian paths remain a safe fallback in dense souqs.
+        return switch(roadClass){case 5->0;case 6->3;case 4->10;case 3->20;case 7->25;case 2->35;case 1->60;case 0->80;case 8->100;default->120;};
     }
 
     private record LocatedChunk(double originX,double originZ,QatarDetailPack.DetailChunk chunk){}

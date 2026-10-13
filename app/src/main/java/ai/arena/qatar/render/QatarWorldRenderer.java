@@ -44,8 +44,10 @@ public final class QatarWorldRenderer implements WorldStreamer.Listener, QatarDe
     private final Map<Long, RenderChunk> detailCells = new HashMap<>();
     private final EarClippingTriangulator footprintTriangulator = new EarClippingTriangulator();
     private final Map<Integer, Material> terrainMaterials = new HashMap<>();
-    private final Material roadMaterial = diffuse(.20f,.22f,.23f,1);
+    private final Material roadMaterial = diffuse(.16f,.18f,.19f,1);
+    private final Material pathMaterial = diffuse(.48f,.46f,.42f,1);
     private final Material markingMaterial = diffuse(.88f,.82f,.62f,1);
+    private final Material windowMaterial = new Material(ColorAttribute.createDiffuse(new Color(.08f,.20f,.24f,1)),ColorAttribute.createSpecular(new Color(.45f,.60f,.62f,1)));
     private final Material villaMaterial = diffuse(.72f,.66f,.56f,1);
     private final Material towerMaterial = new Material(ColorAttribute.createDiffuse(new Color(.28f,.42f,.48f,1)), ColorAttribute.createSpecular(new Color(.55f,.63f,.65f,1)));
     private final Material industrialMaterial = diffuse(.46f,.49f,.48f,1);
@@ -63,7 +65,7 @@ public final class QatarWorldRenderer implements WorldStreamer.Listener, QatarDe
         this.pack=pack;this.detailCellMetres=detailPack.cellMetres;this.physics=physics;
         camera=new PerspectiveCamera(64,Gdx.graphics.getWidth(),Gdx.graphics.getHeight());
         camera.near=.15f; camera.far=14_000f;
-        environment.set(new ColorAttribute(ColorAttribute.AmbientLight,.40f,.38f,.34f,1));
+        environment.set(new ColorAttribute(ColorAttribute.AmbientLight,.56f,.53f,.48f,1));
         environment.add(new DirectionalLight().set(1.0f,.91f,.74f,-.42f,-.82f,-.32f));
         initialiseMaterials();
         rebuildFocusModel();
@@ -185,24 +187,26 @@ public final class QatarWorldRenderer implements WorldStreamer.Listener, QatarDe
     private Model buildDetailCell(QatarDetailPack.DetailChunk chunk){
         builder.begin();
         if(chunk.roads().length>0){
-            MeshPartBuilder roads=builder.part("osm-roads",GL20.GL_TRIANGLES,ATTRS,roadMaterial);
-            for(QatarPack.Road road:chunk.roads())roadQuad(roads,road,.13f,road.width());
+            MeshPartBuilder roads=builder.part("osm-paved-roads",GL20.GL_TRIANGLES,ATTRS,roadMaterial);
+            MeshPartBuilder paths=builder.part("osm-paths-tracks",GL20.GL_TRIANGLES,ATTRS,pathMaterial);
+            for(QatarPack.Road road:chunk.roads())roadQuad(road.roadClass()==7||road.roadClass()==8?paths:roads,road,.13f,road.width());
             MeshPartBuilder marks=builder.part("osm-centre-lines",GL20.GL_TRIANGLES,ATTRS,markingMaterial);
-            for(QatarPack.Road road:chunk.roads())if(road.roadClass()<=6)roadQuad(marks,road,.145f,.16f);
+            for(QatarPack.Road road:chunk.roads())if(road.roadClass()<=4)roadQuad(marks,road,.145f,.16f);
         }
         MeshPartBuilder towers=builder.part("osm-towers",GL20.GL_TRIANGLES,ATTRS,towerMaterial);
         MeshPartBuilder villas=builder.part("osm-villas",GL20.GL_TRIANGLES,ATTRS,villaMaterial);
         MeshPartBuilder industry=builder.part("osm-industry",GL20.GL_TRIANGLES,ATTRS,industrialMaterial);
         MeshPartBuilder farms=builder.part("osm-farms",GL20.GL_TRIANGLES,ATTRS,farmMaterial);
+        MeshPartBuilder windows=builder.part("osm-facade-windows",GL20.GL_TRIANGLES,ATTRS,windowMaterial);
         for(QatarPack.Building building:chunk.buildings()){
             MeshPartBuilder target=switch(building.archetype()){case 1->towers;case 4->industry;case 5->farms;default->villas;};
-            if(building.hasSourceFootprint())extrudeFootprint(target,building);
+            if(building.hasSourceFootprint())extrudeFootprint(target,windows,building);
             else target.box(building.x(),building.height()/2,building.z(),building.width(),building.height(),building.depth());
         }
         return builder.end();
     }
 
-    private void extrudeFootprint(MeshPartBuilder part,QatarPack.Building building){
+    private void extrudeFootprint(MeshPartBuilder part,MeshPartBuilder windows,QatarPack.Building building){
         float[] polygon=building.footprint();
         ShortArray triangles=footprintTriangulator.computeTriangles(polygon);
         float height=building.height();
@@ -214,13 +218,29 @@ public final class QatarWorldRenderer implements WorldStreamer.Listener, QatarDe
             c.setPos(polygon[ic],height,polygon[ic+1]).setNor(0,1,0);
             part.triangle(a,b,c);
         }
-        int points=polygon.length/2;
+        int points=polygon.length/2;float signedArea=0;
+        for(int i=0;i<points;i++){int j=(i+1)%points;signedArea+=polygon[i*2]*polygon[j*2+1]-polygon[j*2]*polygon[i*2+1];}
+        boolean counterClockwise=signedArea>0;
         for(int i=0;i<points;i++){
             int j=(i+1)%points;float ax=polygon[i*2],az=polygon[i*2+1],bx=polygon[j*2],bz=polygon[j*2+1];
             float dx=bx-ax,dz=bz-az,length=(float)Math.hypot(dx,dz);if(length<.02f)continue;
-            float nx=dz/length,nz=-dx/length;
-            part.rect(ax,0,az,bx,0,bz,bx,height,bz,ax,height,az,nx,0,nz);
+            float direction=counterClockwise?1:-1,nx=direction*dz/length,nz=-direction*dx/length;
+            facadeRect(part,ax,0,az,bx,height,bz,nx,nz,counterClockwise);
+            if(points<=24&&length>=4&&height>=5&&building.archetype()!=5){
+                float margin=Math.min(1.2f,length*.18f),start=margin/length,end=1-start;
+                float wx1=ax+dx*start,wz1=az+dz*start,wx2=ax+dx*end,wz2=az+dz*end;
+                int floors=Math.min(4,Math.max(1,(int)((height-1.5f)/3.2f)));
+                for(int floor=0;floor<floors;floor++){
+                    float bottom=1.35f+floor*3.2f,top=Math.min(height-.35f,bottom+1.1f);if(top<=bottom)continue;
+                    float offset=.035f;facadeRect(windows,wx1+nx*offset,bottom,wz1+nz*offset,wx2+nx*offset,top,wz2+nz*offset,nx,nz,counterClockwise);
+                }
+            }
         }
+    }
+
+    private static void facadeRect(MeshPartBuilder part,float ax,float bottom,float az,float bx,float top,float bz,float nx,float nz,boolean counterClockwise){
+        if(counterClockwise)part.rect(bx,bottom,bz,ax,bottom,az,ax,top,az,bx,top,bz,nx,0,nz);
+        else part.rect(ax,bottom,az,bx,bottom,bz,bx,top,bz,ax,top,az,nx,0,nz);
     }
 
     private static void roadQuad(MeshPartBuilder part,QatarPack.Road r,float y,float width){
@@ -238,16 +258,17 @@ public final class QatarWorldRenderer implements WorldStreamer.Listener, QatarDe
         switch(renderedMode){
             case WALK->{
                 MeshPartBuilder torso=builder.part("body",GL20.GL_TRIANGLES,ATTRS,maroon);
-                torso.box(0,1.30f,0,.66f,1.05f,.40f);
+                torso.setVertexTransform(new Matrix4().setToTranslation(0,1.34f,0));
+                torso.sphere(.72f,1.12f,.46f,14,10);torso.setVertexTransform(null);
                 MeshPartBuilder skin=builder.part("skin",GL20.GL_TRIANGLES,ATTRS,white);
                 skin.setVertexTransform(new Matrix4().setToTranslation(0,2.08f,0));
-                skin.sphere(.50f,.54f,.50f,14,10);
-                skin.setVertexTransform(null);
+                skin.sphere(.50f,.54f,.50f,16,12);skin.setVertexTransform(null);
                 MeshPartBuilder limbs=builder.part("limbs",GL20.GL_TRIANGLES,ATTRS,dark);
-                limbs.box(-.19f,.48f,0,.24f,.98f,.28f);
-                limbs.box(.19f,.48f,0,.24f,.98f,.28f);
-                limbs.box(-.47f,1.31f,0,.20f,.92f,.24f);
-                limbs.box(.47f,1.31f,0,.20f,.92f,.24f);
+                limbs.setVertexTransform(new Matrix4().setToTranslation(-.19f,.52f,0));limbs.capsule(.13f,1.04f,10);
+                limbs.setVertexTransform(new Matrix4().setToTranslation(.19f,.52f,0));limbs.capsule(.13f,1.04f,10);
+                limbs.setVertexTransform(new Matrix4().setToTranslation(-.47f,1.32f,0));limbs.capsule(.11f,.94f,10);
+                limbs.setVertexTransform(new Matrix4().setToTranslation(.47f,1.32f,0));limbs.capsule(.11f,.94f,10);
+                limbs.setVertexTransform(null);
             }
             case CAR->{builder.part("4x4",GL20.GL_TRIANGLES,ATTRS,maroon).box(0,.7f,0,2f,1.25f,4.3f);builder.part("cabin",GL20.GL_TRIANGLES,ATTRS,dark).box(0,1.45f,-.25f,1.75f,.8f,2.2f);}
             case BOAT->{builder.part("hull",GL20.GL_TRIANGLES,ATTRS,white).box(0,.4f,0,3.1f,1.1f,7.8f);builder.part("cabin",GL20.GL_TRIANGLES,ATTRS,maroon).box(0,1.35f,-.5f,2.1f,1.4f,2.7f);}
