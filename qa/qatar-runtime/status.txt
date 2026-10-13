@@ -1,5 +1,5 @@
 install_exit=0
 start_exit=0
-pid=3589
-screenshot_bytes=50560
+pid=3556
+screenshot_bytes=56225
 fatal_log=no
