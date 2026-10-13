@@ -57,6 +57,7 @@ public final class QatarWorldRenderer implements WorldStreamer.Listener, QatarDe
     private String fatalStreamingError="";
     private final Vector3 smoothCamera = new Vector3();
     private boolean cameraInitialized;
+    private boolean loggedRealDetail;
 
     public QatarWorldRenderer(QatarPack pack,QatarDetailPack detailPack,PhysicsWorld physics) {
         this.pack=pack;this.detailCellMetres=detailPack.cellMetres;this.physics=physics;
@@ -168,6 +169,7 @@ public final class QatarWorldRenderer implements WorldStreamer.Listener, QatarDe
         long key=key(chunk.entry().x(),chunk.entry().y());
         detailCells.put(key,new RenderChunk(chunk.entry().x()*(double)detailCellMetres,chunk.entry().y()*(double)detailCellMetres,model,new ModelInstance(model)));
         physics.registerDetailChunk(chunk,detailCellMetres);
+        if(!loggedRealDetail){loggedRealDetail=true;Gdx.app.log("QatarStreaming","OSM_READY cell="+chunk.entry().x()+","+chunk.entry().y()+" roads="+chunk.roads().length+" buildings="+chunk.buildings().length);}
     }
 
     @Override public void deactivateDetail(QatarDetailPack.DetailChunk chunk){

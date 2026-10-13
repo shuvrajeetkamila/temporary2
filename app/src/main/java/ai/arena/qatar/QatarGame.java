@@ -3,6 +3,7 @@ package ai.arena.qatar;
 import ai.arena.qatar.world.PackSourceFactory;
 import ai.arena.qatar.world.QatarDetailPack;
 import ai.arena.qatar.world.QatarPack;
+import ai.arena.qatar.world.QatarSpawnResolver;
 
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
@@ -23,9 +24,10 @@ public final class QatarGame extends Game {
         setScreen(new LoadingScreen(this,nationalSourceFactory,detailSourceFactory));
     }
 
-    void start(QatarPack validatedPack,QatarDetailPack validatedDetailPack) {
+    void start(QatarPack validatedPack,QatarDetailPack validatedDetailPack,QatarSpawnResolver.Spawn spawn) {
         pack=validatedPack;detailPack=validatedDetailPack;
-        setScreen(new WorldScreen(pack,detailPack));
+        Gdx.app.log("QatarStreaming","SPAWN_READY x="+spawn.x()+" z="+spawn.z()+" roadClass="+spawn.roadClass()+" basis="+spawn.basis());
+        setScreen(new WorldScreen(pack,detailPack,spawn));
     }
 
     @Override public void dispose() {

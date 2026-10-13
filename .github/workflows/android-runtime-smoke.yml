@@ -77,18 +77,24 @@ jobs:
           "$ADB" shell dumpsys activity activities > qa/qatar-runtime/activity-dump.txt
           PID="$("$ADB" shell pidof ai.arena.qatar.peninsula | tr -d '\r')"
           printf '%s\n' "$PID" > qa/qatar-runtime/app-pid.txt
+          "$ADB" shell dumpsys meminfo ai.arena.qatar.peninsula > qa/qatar-runtime/meminfo.txt
+          "$ADB" shell dumpsys gfxinfo ai.arena.qatar.peninsula > qa/qatar-runtime/gfxinfo.txt
+          if [ -n "$PID" ]; then "$ADB" shell cat "/proc/$PID/status" > qa/qatar-runtime/process-status.txt; fi
           FATALS="$(grep -E 'FATAL EXCEPTION|Fatal signal|Process: ai\.arena\.qatar\.peninsula|UnsatisfiedLinkError' qa/qatar-runtime/logcat.txt || true)"
+          OSM_READY="$(grep 'QatarStreaming.*OSM_READY' qa/qatar-runtime/logcat.txt || true)"
           {
             echo "install_exit=$INSTALL_EXIT"
             echo "start_exit=$START_EXIT"
             echo "pid=$PID"
             echo "screenshot_bytes=$(wc -c < qa/qatar-runtime/gameplay.png)"
+            if [ -n "$OSM_READY" ]; then echo 'osm_detail_rendered=yes'; else echo 'osm_detail_rendered=no'; fi
             if [ -n "$FATALS" ]; then echo 'fatal_log=yes'; else echo 'fatal_log=no'; fi
           } | tee qa/qatar-runtime/status.txt
           test "$INSTALL_EXIT" -eq 0
           test "$START_EXIT" -eq 0
           test -n "$PID"
           test "$(wc -c < qa/qatar-runtime/gameplay.png)" -gt 10000
+          test -n "$OSM_READY"
           test -z "$FATALS"
 
       - name: Persist runtime evidence

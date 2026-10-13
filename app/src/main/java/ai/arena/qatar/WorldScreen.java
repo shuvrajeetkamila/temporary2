@@ -7,6 +7,7 @@ import ai.arena.qatar.ui.HudRenderer;
 import ai.arena.qatar.world.QatarDetailPack;
 import ai.arena.qatar.world.QatarDetailStreamer;
 import ai.arena.qatar.world.QatarPack;
+import ai.arena.qatar.world.QatarSpawnResolver;
 import ai.arena.qatar.world.WorldStreamer;
 
 import com.badlogic.gdx.Gdx;
@@ -27,11 +28,9 @@ final class WorldScreen extends ScreenAdapter {
     private float frameAccumulator;
     private static final float TARGET_FRAME_SECONDS=1f/30f;
 
-    WorldScreen(QatarPack pack,QatarDetailPack detailPack){
+    WorldScreen(QatarPack pack,QatarDetailPack detailPack,QatarSpawnResolver.Spawn spawn){
         this.pack=pack;this.detailPack=detailPack;
-        // Souq Waqif is safely inland; the Corniche anchor itself resolves to
-        // bay water at the current 125 m coast-mask resolution.
-        QatarPack.Hub spawn=pack.hub("Souq Waqif");
+        // Resolve the public Souq anchor onto source road geometry so the focus never starts inside a footprint.
         physics=new PhysicsWorld(spawn.x(),spawn.z());
         renderer=new QatarWorldRenderer(pack,detailPack,physics);
         streamer=new WorldStreamer(pack,renderer);

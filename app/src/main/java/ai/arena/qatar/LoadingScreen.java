@@ -3,6 +3,7 @@ package ai.arena.qatar;
 import ai.arena.qatar.world.PackSourceFactory;
 import ai.arena.qatar.world.QatarDetailPack;
 import ai.arena.qatar.world.QatarPack;
+import ai.arena.qatar.world.QatarSpawnResolver;
 import ai.arena.qatar.world.SeekableDataSource;
 
 import com.badlogic.gdx.Gdx;
@@ -54,9 +55,11 @@ final class LoadingScreen extends ScreenAdapter {
                 if(detailEntry==null)throw new IllegalStateException("Souq Waqif OSM detail cell is absent");
                 QatarDetailPack.DetailChunk startupDetail=detailPack.load(detailEntry);
                 if(startupDetail.roads().length==0||startupDetail.buildings().length==0)throw new IllegalStateException("Souq Waqif OSM detail is empty");
+                progress=.86f;status="Finding a clear OSM footway spawn near Souq Waqif…";
+                QatarSpawnResolver.Spawn spawn=QatarSpawnResolver.resolve(detailPack,start.x(),start.z());
                 progress=1;status="Full Qatar terrain and OSM packs indexed. Starting local streamers…";
-                final QatarPack readyPack=pack;final QatarDetailPack readyDetail=detailPack;
-                Gdx.app.postRunnable(()->{if(!launched){launched=true;game.start(readyPack,readyDetail);dispose();}});
+                final QatarPack readyPack=pack;final QatarDetailPack readyDetail=detailPack;final QatarSpawnResolver.Spawn readySpawn=spawn;
+                Gdx.app.postRunnable(()->{if(!launched){launched=true;game.start(readyPack,readyDetail,readySpawn);dispose();}});
             }catch(Throwable error){
                 failure=error.getClass().getSimpleName()+": "+error.getMessage();status="Pack validation failed";
                 if(detailPack!=null){try{detailPack.close();}catch(Exception ignored){}}

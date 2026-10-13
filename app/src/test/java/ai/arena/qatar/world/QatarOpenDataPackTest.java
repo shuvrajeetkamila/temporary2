@@ -44,6 +44,10 @@ public class QatarOpenDataPackTest {
             detail.verifyCompatible(national);QatarPack.Hub souq=national.hub("Souq Waqif");
             QatarDetailPack.DetailEntry entry=detail.entry(detail.cellX(souq.x()),detail.cellY(souq.z()));assertNotNull(entry);
             QatarDetailPack.DetailChunk chunk=detail.load(entry);assertTrue(chunk.roads().length>0);assertTrue(chunk.buildings().length>0);
+            QatarSpawnResolver.Spawn spawn=QatarSpawnResolver.resolve(detail,souq.x(),souq.z());
+            assertTrue(spawn.roadClass()>=0&&spawn.roadClass()<9);
+            assertTrue(Math.hypot(spawn.x()-souq.x(),spawn.z()-souq.z())<100);
+            assertTrue("Souq hub is inside a mapped footprint; resolver must move it",Math.hypot(spawn.x()-souq.x(),spawn.z()-souq.z())>3);
         }
     }
 
