@@ -1,5 +1,6 @@
 install_exit=0
 start_exit=0
-pid=3556
-screenshot_bytes=56225
+pid=3513
+screenshot_bytes=50317
+osm_detail_rendered=yes
 fatal_log=no

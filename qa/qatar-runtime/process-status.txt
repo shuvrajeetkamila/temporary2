@@ -1,0 +1,54 @@
+Name:	qatar.peninsula
+Umask:	0077
+State:	S (sleeping)
+Tgid:	3513
+Ngid:	0
+Pid:	3513
+PPid:	1662
+TracerPid:	0
+Uid:	10146	10146	10146	10146
+Gid:	10146	10146	10146	10146
+FDSize:	128
+Groups:	9997 20146 50146 
+NStgid:	3513
+NSpid:	3513
+NSpgid:	1662
+NSsid:	0
+VmPeak:	 4985756 kB
+VmSize:	 4972888 kB
+VmLck:	       0 kB
+VmPin:	       0 kB
+VmHWM:	  172764 kB
+VmRSS:	  146580 kB
+RssAnon:	   73484 kB
+RssFile:	   72236 kB
+RssShmem:	     860 kB
+VmData:	 1262512 kB
+VmStk:	    8192 kB
+VmExe:	      28 kB
+VmLib:	   99740 kB
+VmPTE:	     844 kB
+VmPMD:	      36 kB
+VmSwap:	   12496 kB
+HugetlbPages:	       0 kB
+Threads:	20
+SigQ:	0/7952
+SigPnd:	0000000000000000
+ShdPnd:	0000000000000000
+SigBlk:	0000000080001204
+SigIgn:	0000000000000001
+SigCgt:	0000000e400084f8
+CapInh:	0000000000000000
+CapPrm:	0000000000000000
+CapEff:	0000000000000000
+CapBnd:	0000000000000000
+CapAmb:	0000000000000000
+NoNewPrivs:	0
+Seccomp:	2
+Speculation_Store_Bypass:	vulnerable
+Cpus_allowed:	3
+Cpus_allowed_list:	0-1
+Mems_allowed:	1
+Mems_allowed_list:	0
+voluntary_ctxt_switches:	3661
+nonvoluntary_ctxt_switches:	1777
