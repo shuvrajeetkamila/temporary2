@@ -1,8 +1,8 @@
 {
-  "sourceCommit": "22bcaa0288680ff706fe17322af0b52bd9b8c094",
+  "sourceCommit": "dee4dbf66a8bcdf7f330f24be404eba46474fecb",
   "apk": "Qatar-The-Peninsula-REAL-OSM-STREAMING-v0.2.0.apk",
-  "apkBytes": 37644575,
-  "apkSha256": "47570dabacdb470858a16bc1889fadbea39e984f3f9aceac1bd699b784d0f18e",
+  "apkBytes": 37648031,
+  "apkSha256": "d39b8ac3dc728fcc6d9248c9b83aea0aad70c8fb1828e6d649925917d1054a79",
   "packageId": "ai.arena.qatar.peninsula",
   "versionCode": 2,
   "versionName": "0.2.0-real-osm-microstreaming",
