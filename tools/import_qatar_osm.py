@@ -31,7 +31,8 @@ from compile_qatar_world import normalize_polygons,point_in_polygons,distance_to
 
 MAGIC=b'QTOD';BLOCK_MAGIC=b'QDET';VERSION=1;EPSG=32639
 HEADER_FORMAT='<4sIIIIIddddII';INDEX_FORMAT='<iiqiiIHH'
-CHUNK_METRES=2000
+NATIONAL_CHUNK_METRES=2000
+DETAIL_CHUNK_METRES=250
 SOURCE_URL='https://download.geofabrik.de/asia/gcc-states-latest.osm.pbf'
 
 HIGHWAY_CLASS={
@@ -135,7 +136,7 @@ class QatarHandler(osmium.SimpleHandler):
   # Include recent coastal reclamations close to the coarse legal land envelope.
   return distance_to_coast(x,z,self.polygons)<=self.buffer
  def cell(self,x,z):
-  ix=math.floor((x-self.oe)/CHUNK_METRES);iy=math.floor((z-self.on)/CHUNK_METRES)
+  ix=math.floor((x-self.oe)/DETAIL_CHUNK_METRES);iy=math.floor((z-self.on)/DETAIL_CHUNK_METRES)
   return (ix,iy) if 0<=ix<self.nx and 0<=iy<self.ny else None
  def way(self,w):
   tags={k:v for k,v in w.tags}
@@ -153,7 +154,7 @@ class QatarHandler(osmium.SimpleHandler):
     if not (self.accepted(mx,mz) or self.accepted(*a) or self.accepted(*b)):continue
     cell=self.cell(mx,mz)
     if cell is None:continue
-    ix,iy=cell;ox=self.oe+ix*CHUNK_METRES;oz=self.on+iy*CHUNK_METRES
+    ix,iy=cell;ox=self.oe+ix*DETAIL_CHUNK_METRES;oz=self.on+iy*DETAIL_CHUNK_METRES
     rc,lanes,surface,flags,width=road
     self.roads[cell].append((int(w.id),round((a[0]-ox)*10),round((a[1]-oz)*10),round((b[0]-ox)*10),round((b[1]-oz)*10),rc,lanes,surface,flags,round(width*10)))
     self.road_segments+=1;accepted_segments+=1
@@ -186,7 +187,7 @@ class QatarHandler(osmium.SimpleHandler):
   if not self.accepted(cx,cz):self.outside+=1;return False
   cell=self.cell(cx,cz)
   if cell is None:self.outside+=1;return False
-  ix,iy=cell;ox=self.oe+ix*CHUNK_METRES;oz=self.on+iy*CHUNK_METRES
+  ix,iy=cell;ox=self.oe+ix*DETAIL_CHUNK_METRES;oz=self.on+iy*DETAIL_CHUNK_METRES
   arch=classify_building(tags);height=building_height(tags,arch)
   local=[(round((x-ox)*10),round((z-oz)*10)) for x,z in points]
   flags=2 # source-derived OSM footprint
@@ -197,8 +198,8 @@ class QatarHandler(osmium.SimpleHandler):
 def compile_detail(pbf:Path,output:Path,report_path:Path,national_pack:Path,epoch:str,coast_buffer:float):
  base=national_pack.read_bytes()[:64]
  magic,version,epsg,chunk_metres,mask_dim,base_count,oe,on,ww,wh,metadata_bytes,index_bytes=struct.unpack(HEADER_FORMAT,base)
- if magic!=b'QTPK' or epsg!=EPSG or chunk_metres!=CHUNK_METRES:raise ValueError('National QTPK geometry contract mismatch')
- nx=round(ww/CHUNK_METRES);ny=round(wh/CHUNK_METRES)
+ if magic!=b'QTPK' or epsg!=EPSG or chunk_metres!=NATIONAL_CHUNK_METRES:raise ValueError('National QTPK geometry contract mismatch')
+ nx=round(ww/DETAIL_CHUNK_METRES);ny=round(wh/DETAIL_CHUNK_METRES)
  adm0=json.loads((ROOT/'data/qatar/source/geoboundaries-6-QAT-ADM0.geojson').read_text())
  polygons=normalize_polygons(adm0['features'][0]['geometry'])
  handler=QatarHandler(oe,on,nx,ny,polygons,coast_buffer)
@@ -225,14 +226,14 @@ def compile_detail(pbf:Path,output:Path,report_path:Path,national_pack:Path,epoc
  for ix,iy,raw,packed,crc,roads,buildings in blocks:
   if roads>65535 or buildings>65535:raise ValueError(f'Chunk {ix},{iy} exceeds index counters')
   index.extend(struct.pack(INDEX_FORMAT,ix,iy,offset,len(packed),len(raw),crc,roads,buildings));offset+=len(packed)
- header=struct.pack(HEADER_FORMAT,MAGIC,VERSION,EPSG,CHUNK_METRES,16,len(blocks),oe,on,ww,wh,len(metadata),len(index))
+ header=struct.pack(HEADER_FORMAT,MAGIC,VERSION,EPSG,DETAIL_CHUNK_METRES,16,len(blocks),oe,on,ww,wh,len(metadata),len(index))
  output.parent.mkdir(parents=True,exist_ok=True)
  with output.open('wb') as f:
   f.write(header);f.write(metadata);f.write(index)
   for _,_,_,packed,_,_,_ in blocks:f.write(packed)
  report={
   'format':'QTOD','version':VERSION,'epoch':epoch,'sourceUrl':SOURCE_URL,'sourcePbfSha256':source_hash,'sourcePbfBytes':pbf.stat().st_size,
-  'epsg':EPSG,'chunkMetres':CHUNK_METRES,'detailChunks':len(blocks),'roadWays':handler.road_ways,'roadSegments':handler.road_segments,
+  'epsg':EPSG,'chunkMetres':DETAIL_CHUNK_METRES,'detailChunks':len(blocks),'roadWays':handler.road_ways,'roadSegments':handler.road_segments,
   'simpleBuildingFootprints':handler.building_ways,'relationBuildingOuters':handler.relation_buildings,'totalBuildingFootprints':handler.building_ways+handler.relation_buildings,
   'skippedInvalidFeatures':handler.skipped_invalid,'outsideFeatures':handler.outside,'coastReclamationBufferMetres':coast_buffer,
   'rawDetailBytes':total_raw,'qodBytes':output.stat().st_size,'qodSha256':sha256(output),
