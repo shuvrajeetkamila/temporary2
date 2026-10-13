@@ -1,5 +1,6 @@
 package ai.arena.qatar.physics;
 
+import ai.arena.qatar.world.QatarDetailPack;
 import ai.arena.qatar.world.QatarPack;
 import ai.arena.qatar.world.WorldStreamer;
 
@@ -20,9 +21,12 @@ import com.badlogic.gdx.physics.bullet.dynamics.btSequentialImpulseConstraintSol
 import com.badlogic.gdx.utils.Disposable;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /** Fixed-step, force-driven Bullet foundation shared by all five focus modes. */
 public final class PhysicsWorld implements Disposable {
@@ -40,12 +44,20 @@ public final class PhysicsWorld implements Disposable {
 
     private static final float FIXED_STEP = 1f / 60f;
     private static final float REBASE_THRESHOLD = 2200f;
+    private static final int MAX_DETAIL_COLLISION_CELLS = 6;
+    private static final int MAX_BUILDING_COLLIDERS_PER_CELL = 160;
     private final btDefaultCollisionConfiguration configuration;
     private final btCollisionDispatcher dispatcher;
     private final btBroadphaseInterface broadphase;
     private final btSequentialImpulseConstraintSolver solver;
     private final btDiscreteDynamicsWorld world;
     private final Map<Long, ChunkCollision> chunkBodies = new HashMap<>();
+    private final Map<Long, ChunkCollision> detailBodies = new HashMap<>();
+    private final Map<Long, QatarDetailPack.DetailChunk> availableDetail = new HashMap<>();
+    private int detailCellMetres;
+    private long detailRevision;
+    private long collisionRevision=-1;
+    private int collisionCellX=Integer.MIN_VALUE,collisionCellY=Integer.MIN_VALUE;
     private final Vector3 tmp = new Vector3();
     private final Vector3 tmp2 = new Vector3();
     private final Matrix4 transform = new Matrix4();
@@ -227,6 +239,7 @@ public final class PhysicsWorld implements Disposable {
         shiftBody(focusBody,dx,dz);
         if (temporaryFloor != null) shiftBody(temporaryFloor,dx,dz);
         for (ChunkCollision chunk : chunkBodies.values()) shiftBody(chunk.body,dx,dz);
+        for (ChunkCollision detail : detailBodies.values()) shiftBody(detail.body,dx,dz);
         originX += dx; originZ += dz;
     }
 
@@ -267,14 +280,6 @@ public final class PhysicsWorld implements Disposable {
                 }
             }
         }
-        int collisionBuildings=Math.min(48,chunk.buildings().length);
-        for (int i=0;i<collisionBuildings;i++) {
-            QatarPack.Building b=chunk.buildings()[i];
-            btBoxShape shape=new btBoxShape(new Vector3(b.width()/2,b.height()/2,b.depth()/2));
-            children.add(shape);
-            Matrix4 child=new Matrix4().setToTranslation(b.x(),b.height()/2,b.z()).rotate(Vector3.Y,(float)Math.toDegrees(b.yaw()));
-            compound.addChildShape(child,shape);
-        }
         float localX=(float)(chunk.entry().x()*chunkMetres-originX);
         float localZ=(float)(chunk.entry().y()*chunkMetres-originZ);
         btRigidBody body=body(0,compound,new Matrix4().setToTranslation(localX,0,localZ));
@@ -283,10 +288,13 @@ public final class PhysicsWorld implements Disposable {
     }
 
     private void relocateChunkBodies() {
-        for (ChunkCollision chunk : chunkBodies.values()) {
-            chunk.body.setWorldTransform(new Matrix4().setToTranslation((float)(chunk.globalX-originX),0,(float)(chunk.globalZ-originZ)));
-            chunk.body.activate();
-        }
+        for (ChunkCollision chunk : chunkBodies.values()) relocate(chunk);
+        for (ChunkCollision detail : detailBodies.values()) relocate(detail);
+    }
+
+    private void relocate(ChunkCollision chunk){
+        chunk.body.setWorldTransform(new Matrix4().setToTranslation((float)(chunk.globalX-originX),0,(float)(chunk.globalZ-originZ)));
+        chunk.body.activate();
     }
 
     public void deactivateChunk(QatarPack.WorldChunk chunk) {
@@ -294,9 +302,66 @@ public final class PhysicsWorld implements Disposable {
         if (value!=null) value.dispose(world);
     }
 
+    /** Registers decoded visual detail without immediately creating thousands of Bullet shapes. */
+    public void registerDetailChunk(QatarDetailPack.DetailChunk chunk,int cellMetres){
+        if(detailCellMetres!=0&&detailCellMetres!=cellMetres)throw new IllegalArgumentException("Detail cell-size mismatch");
+        detailCellMetres=cellMetres;availableDetail.put(key(chunk.entry().x(),chunk.entry().y()),chunk);detailRevision++;
+    }
+
+    public void unregisterDetailChunk(QatarDetailPack.DetailChunk chunk){
+        long key=key(chunk.entry().x(),chunk.entry().y());availableDetail.remove(key);detailRevision++;
+        ChunkCollision value=detailBodies.remove(key);if(value!=null)value.dispose(world);
+    }
+
+    /** Keeps collision around the focus only, with hard cell and footprint caps for mobile thermals. */
+    public void syncDetailCollisions(double focusGlobalX,double focusGlobalZ){
+        if(detailCellMetres<=0)return;
+        int focusCellX=(int)Math.floor(focusGlobalX/detailCellMetres),focusCellY=(int)Math.floor(focusGlobalZ/detailCellMetres);
+        if(collisionRevision==detailRevision&&focusCellX==collisionCellX&&focusCellY==collisionCellY)return;
+        collisionRevision=detailRevision;collisionCellX=focusCellX;collisionCellY=focusCellY;
+        double radius=detailCellMetres*1.45,radiusSquared=radius*radius;
+        List<DetailCandidate> candidates=new ArrayList<>();
+        for(Map.Entry<Long,QatarDetailPack.DetailChunk> item:availableDetail.entrySet()){
+            QatarDetailPack.DetailEntry entry=item.getValue().entry();
+            double minX=entry.x()*(double)detailCellMetres,minZ=entry.y()*(double)detailCellMetres;
+            double dx=axisDistance(focusGlobalX,minX,minX+detailCellMetres),dz=axisDistance(focusGlobalZ,minZ,minZ+detailCellMetres);
+            double distanceSquared=dx*dx+dz*dz;
+            if(distanceSquared<=radiusSquared)candidates.add(new DetailCandidate(item.getKey(),item.getValue(),distanceSquared));
+        }
+        candidates.sort(Comparator.comparingDouble(DetailCandidate::distanceSquared));
+        Set<Long> wanted=new HashSet<>();
+        for(int i=0;i<Math.min(MAX_DETAIL_COLLISION_CELLS,candidates.size());i++){
+            DetailCandidate candidate=candidates.get(i);wanted.add(candidate.key());
+            if(!detailBodies.containsKey(candidate.key()))activateDetailCollision(candidate.chunk(),focusGlobalX,focusGlobalZ);
+        }
+        List<Long> departing=new ArrayList<>();for(long key:detailBodies.keySet())if(!wanted.contains(key))departing.add(key);
+        for(long key:departing){ChunkCollision value=detailBodies.remove(key);if(value!=null)value.dispose(world);}
+    }
+
+    private void activateDetailCollision(QatarDetailPack.DetailChunk chunk,double focusGlobalX,double focusGlobalZ){
+        QatarPack.Building[] source=chunk.buildings();if(source.length==0)return;
+        List<QatarPack.Building> buildings=new ArrayList<>(source.length);
+        for(QatarPack.Building building:source)if(building.width()>=.5f&&building.depth()>=.5f&&building.height()>=.5f)buildings.add(building);
+        final double cellX=chunk.entry().x()*(double)detailCellMetres,cellZ=chunk.entry().y()*(double)detailCellMetres;
+        if(buildings.size()>MAX_BUILDING_COLLIDERS_PER_CELL){
+            buildings.sort(Comparator.comparingDouble(building->square(cellX+building.x()-focusGlobalX,cellZ+building.z()-focusGlobalZ)));
+            buildings=buildings.subList(0,MAX_BUILDING_COLLIDERS_PER_CELL);
+        }
+        btCompoundShape compound=new btCompoundShape();List<btCollisionShape> children=new ArrayList<>(buildings.size());
+        for(QatarPack.Building building:buildings){
+            btBoxShape shape=new btBoxShape(new Vector3(building.width()/2,building.height()/2,building.depth()/2));children.add(shape);
+            Matrix4 child=new Matrix4().setToTranslation(building.x(),building.height()/2,building.z()).rotate(Vector3.Y,(float)Math.toDegrees(building.yaw()));
+            compound.addChildShape(child,shape);
+        }
+        if(children.isEmpty()){compound.dispose();return;}
+        btRigidBody body=body(0,compound,new Matrix4().setToTranslation((float)(cellX-originX),0,(float)(cellZ-originZ)));
+        world.addRigidBody(body);detailBodies.put(key(chunk.entry().x(),chunk.entry().y()),new ChunkCollision(body,compound,children,cellX,cellZ));
+    }
+
     private void clearChunkBodies() {
         for (ChunkCollision value:chunkBodies.values()) value.dispose(world);
-        chunkBodies.clear();
+        for (ChunkCollision value:detailBodies.values()) value.dispose(world);
+        chunkBodies.clear();detailBodies.clear();availableDetail.clear();
     }
 
     /** Explicit user recovery is the only normal gameplay teleport. */
@@ -326,6 +391,8 @@ public final class PhysicsWorld implements Disposable {
         world.dispose(); solver.dispose(); broadphase.dispose(); dispatcher.dispose(); configuration.dispose();
     }
 
+    private record DetailCandidate(long key,QatarDetailPack.DetailChunk chunk,double distanceSquared){}
+
     private static final class ChunkCollision {
         final btRigidBody body; final btCompoundShape compound; final List<btCollisionShape> children;
         final double globalX,globalZ;
@@ -333,5 +400,7 @@ public final class PhysicsWorld implements Disposable {
         void dispose(btDiscreteDynamicsWorld world){world.removeRigidBody(body);body.dispose();compound.dispose();for(btCollisionShape shape:children)shape.dispose();}
     }
     private static float clamp(float value,float min,float max){return Math.max(min,Math.min(max,value));}
+    private static double axisDistance(double value,double min,double max){return value<min?min-value:value>max?value-max:0;}
+    private static double square(double x,double y){return x*x+y*y;}
     private static long key(int x,int y){return ((long)x<<32)^(y&0xffffffffL);}
 }

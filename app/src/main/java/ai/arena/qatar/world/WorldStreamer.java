@@ -19,6 +19,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 /** Bounded one-worker national chunk streamer; GL/Bullet activation stays on render thread. */
 public final class WorldStreamer implements Disposable {
+    private static final int MAX_RESIDENT_CHUNKS=64;
     public enum FocusMode { WALK, CAR, BOAT, HELICOPTER, AEROPLANE }
 
     public interface Listener {
@@ -110,6 +111,15 @@ public final class WorldStreamer implements Disposable {
                 iterator.remove();
             }
         }
+        if(residents.size()>MAX_RESIDENT_CHUNKS){
+            List<Map.Entry<Long,Resident>> stale=new ArrayList<>();
+            for(Map.Entry<Long,Resident> item:residents.entrySet())if(!required.contains(item.getKey()))stale.add(item);
+            stale.sort(Comparator.comparingLong(item->item.getValue().lastRequiredNanos));
+            for(Map.Entry<Long,Resident> item:stale){
+                if(residents.size()<=MAX_RESIDENT_CHUNKS)break;
+                Resident removed=residents.remove(item.getKey());if(removed!=null)listener.deactivate(removed.chunk);
+            }
+        }
     }
 
     private void addDisc(Set<Long> required, List<QatarPack.ChunkEntry> missing, int cx, int cy, int radius) {
@@ -134,10 +144,14 @@ public final class WorldStreamer implements Disposable {
                 lastError = item.entry.x() + "," + item.entry.y() + ": " + item.error.getMessage();
                 listener.requiredChunkFailed(item.entry, item.error);
             } else if (!residents.containsKey(key)) {
-                Resident resident = new Resident(item.chunk, now);
-                residents.put(key, resident);
-                listener.activate(item.chunk);
-                decodedCount.incrementAndGet();
+                try {
+                    listener.activate(item.chunk);
+                    residents.put(key,new Resident(item.chunk,now));
+                    decodedCount.incrementAndGet();
+                } catch (Throwable error) {
+                    lastError=item.entry.x()+","+item.entry.y()+": "+error.getMessage();
+                    listener.requiredChunkFailed(item.entry,error);
+                }
             }
         }
     }

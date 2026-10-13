@@ -1,6 +1,6 @@
-# Qatar boundary and packaged-coverage report — v0.1.0
+# Qatar boundary and packaged-coverage report — v0.2.0
 
-Generated from `data/qatar/compiled/qatar-world-report.json` by `tools/compile_qatar_world.py`.
+National figures come from `data/qatar/compiled/qatar-world-report.json`; source-detail figures come from `data/qatar/compiled/qatar-osm-report.json`.
 
 ## Coordinate and scale contract
 
@@ -9,18 +9,22 @@ Generated from `data/qatar/compiled/qatar-world-report.json` by `tools/compile_q
 - No global distance compression
 - National grid origin: 466,000 m E, 2,698,000 m N
 - Pack extent: 110 km east–west × 206 km south–north, including an 8 km gameplay-water buffer
-- Streaming cell: 2,000 m
+- Safety/terrain cell: 2,000 m
 - Coast mask resolution: 125 m
+- OSM detail microcell: 250 m
 
 ## Installed national coverage
 
-- Total indexed chunks: **5,665**
+- Total indexed national chunks: **5,665**
 - Full-land chunks: **2,671**
 - Mixed coast chunks: **450**
 - Water-buffer chunks: **2,544**
 - ADM0 polygon components represented: **7**
 - Municipality records represented: **8 of 8**
 - Public regional hubs: **25**
+- Indexed OSM microcells containing source geometry: **88,965**
+- OSM road ways / represented segments: **182,110 / 1,441,102**
+- OSM building footprints: **189,446**
 
 Municipality land-chunk counts:
 
@@ -35,15 +39,16 @@ Municipality land-chunk counts:
 
 ## Runtime residency contract
 
-The complete index and every compressed chunk block are installed in `qatar-national.qpak`. Startup reads only the 64-byte header, compact metadata, and 32-byte-per-chunk index. A bounded worker performs positional reads and checksum-validated decompression only for the nearby/predictive set.
+Every compressed country and OSM block is physically installed in `qatar-national.qpak` and `qatar-osm-current.qod`. Startup reads each compact index, not every block payload. Single low-priority workers perform positional reads and checksum-validated decompression only for nearby and predictive sets. OpenGL/Bullet activation remains on the render thread.
 
-Default high-detail residency:
+Bounded residency:
 
-- Walking: current chunk and immediate disc (roughly a 3×3 neighborhood)
-- Car/boat/helicopter: bounded two-chunk radius plus a forward lead set
-- Aeroplane: bounded three-chunk radius plus a forward lead set
-- Eviction: 4–6 second hysteresis after leaving the required set
-- GPU activation budget: at most three decoded chunks per rendered frame
+- National terrain: mode-dependent one-to-three 2 km-cell radius plus a forward lead set
+- OSM detail: two 250 m cells while walking/aeroplane mode and three while car/boat/helicopter mode, plus a smaller lead disc
+- Eviction: four-to-six second hysteresis, with an emergency hard cap of 64 resident national chunks and 64 resident OSM cells
+- GPU activation budget: at most three terrain chunks and two OSM microcells per rendered frame
+- Physics: OSM visuals are further reduced to at most six nearby collision cells and 160 building colliders per cell
+- Frame budget: 30 Hz foreground rendering/simulation submission to prevent high-refresh phones from doing duplicate 60/90/120 Hz work
 
 No network permission is present in the Android manifest.
 
@@ -51,9 +56,11 @@ No network permission is present in the Android manifest.
 
 - QTPK size: 1,170,493 bytes
 - QTPK SHA-256: `6aa220910d0214b3d38fb5c7764534c5242b1ddab24ae6ffddb377d95a22a6b7`
-- Every chunk has declared compressed/raw lengths and CRC-32.
-- Startup tests require eight municipalities, 25 hubs, seven ADM0 components, minimum land/coast coverage, exact deterministic SHA-256, and successful representative chunk decompression.
+- QTOD size: 27,551,391 bytes
+- QTOD SHA-256: `c48a62e1e8f1498bb64bde2864e4ae7894380f5185bc0a3a39ebf47012d9ba00`
+- Every chunk/microcell has declared compressed/raw lengths and CRC-32.
+- Runtime and tests require matching EPSG/origin/extents, all eight municipalities, 25 hubs, seven ADM0 components, minimum source-feature coverage, index total agreement, and successful representative block decompression.
 
 ## Honest limitations
 
-This is the first newly built national foundation APK—not the finished AAA-scale release. The seven-component gbOpen geometry is a coarse redistributable country representation and needs a later authoritative/current reclamation and island audit. OSM roads/building footprints, measured DEM, detailed airports/ports, landmarks, Arabic shaping, final vehicle physics, traffic, and environmental polish remain mandatory later milestones. These limitations are tests-and-roadmap facts, not permission to reduce final country scope.
+This is an incremental Android prototype, not the finished AAA-scale release. The seven-component gbOpen boundary is a coarse redistributable country representation and still needs a reclamation/island audit. The OSM layer is real source geometry but is not navigation data; relation inner holes are not yet rendered. Measured DEM, bathymetry, detailed landmark architecture, Arabic shaping, mature vehicle dynamics, traffic/activity, and wider physical-device profiling remain mandatory later milestones. These are validation/roadmap facts, not permission to reduce final country scope.

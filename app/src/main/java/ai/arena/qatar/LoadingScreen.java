@@ -1,6 +1,7 @@
 package ai.arena.qatar;
 
 import ai.arena.qatar.world.PackSourceFactory;
+import ai.arena.qatar.world.QatarDetailPack;
 import ai.arena.qatar.world.QatarPack;
 import ai.arena.qatar.world.SeekableDataSource;
 
@@ -20,7 +21,8 @@ import java.util.concurrent.Executors;
 /** Honest startup validation; the player never enters an unverified stale world. */
 final class LoadingScreen extends ScreenAdapter {
     private final QatarGame game;
-    private final PackSourceFactory sourceFactory;
+    private final PackSourceFactory nationalSourceFactory;
+    private final PackSourceFactory detailSourceFactory;
     private final SpriteBatch batch=new SpriteBatch();
     private final ShapeRenderer shapes=new ShapeRenderer();
     private final BitmapFont font=new BitmapFont();
@@ -30,23 +32,47 @@ final class LoadingScreen extends ScreenAdapter {
     private volatile String failure="";
     private volatile boolean launched;
 
-    LoadingScreen(QatarGame game,PackSourceFactory sourceFactory){this.game=game;this.sourceFactory=sourceFactory;font.getData().setScale(1.25f);}
+    LoadingScreen(QatarGame game,PackSourceFactory nationalSourceFactory,PackSourceFactory detailSourceFactory){
+        this.game=game;this.nationalSourceFactory=nationalSourceFactory;this.detailSourceFactory=detailSourceFactory;font.getData().setScale(1.25f);
+    }
 
     @Override public void show(){
         worker.submit(()->{
-            SeekableDataSource source=null;
+            SeekableDataSource nationalSource=null,detailSource=null;QatarPack pack=null;QatarDetailPack detailPack=null;
             try{
-                source=sourceFactory.open();progress=.15f;status="Reading compact country index…";
-                QatarPack pack=new QatarPack(source);source=null;progress=.42f;status="Validating municipalities, islands and chunks…";
-                validateCoverage(pack);progress=.70f;status="Checksum-testing Doha startup chunk…";
+                nationalSource=nationalSourceFactory.open();progress=.12f;status="Reading compact country index…";
+                pack=new QatarPack(nationalSource);nationalSource=null;progress=.30f;status="Validating municipalities, islands and chunks…";
+                validateCoverage(pack);
+                detailSource=detailSourceFactory.open();progress=.48f;status="Indexing complete offline OpenStreetMap detail…";
+                detailPack=new QatarDetailPack(detailSource);detailSource=null;detailPack.verifyCompatible(pack);validateDetail(detailPack);
+                progress=.72f;status="Checksum-testing Souq Waqif terrain and OSM cells…";
                 QatarPack.Hub start=pack.hub("Souq Waqif");
                 QatarPack.ChunkEntry entry=pack.entry(pack.chunkX(start.x()),pack.chunkY(start.z()));
                 QatarPack.WorldChunk startup=pack.load(entry);
                 if(!startup.entry().hasLand())throw new IllegalStateException("Doha startup chunk has no land");
-                progress=1;status="Full Qatar pack indexed. Starting local streamer…";
-                Gdx.app.postRunnable(()->{if(!launched){launched=true;game.start(pack);dispose();}});
-            }catch(Throwable error){failure=error.getClass().getSimpleName()+": "+error.getMessage();status="Pack validation failed";if(source!=null)try{source.close();}catch(Exception ignored){}}
+                QatarDetailPack.DetailEntry detailEntry=detailPack.entry(detailPack.cellX(start.x()),detailPack.cellY(start.z()));
+                if(detailEntry==null)throw new IllegalStateException("Souq Waqif OSM detail cell is absent");
+                QatarDetailPack.DetailChunk startupDetail=detailPack.load(detailEntry);
+                if(startupDetail.roads().length==0||startupDetail.buildings().length==0)throw new IllegalStateException("Souq Waqif OSM detail is empty");
+                progress=1;status="Full Qatar terrain and OSM packs indexed. Starting local streamers…";
+                final QatarPack readyPack=pack;final QatarDetailPack readyDetail=detailPack;
+                Gdx.app.postRunnable(()->{if(!launched){launched=true;game.start(readyPack,readyDetail);dispose();}});
+            }catch(Throwable error){
+                failure=error.getClass().getSimpleName()+": "+error.getMessage();status="Pack validation failed";
+                if(detailPack!=null){try{detailPack.close();}catch(Exception ignored){}}
+                else if(detailSource!=null){try{detailSource.close();}catch(Exception ignored){}}
+                if(pack!=null){try{pack.close();}catch(Exception ignored){}}
+                else if(nationalSource!=null){try{nationalSource.close();}catch(Exception ignored){}}
+            }
         });
+    }
+
+    private static void validateDetail(QatarDetailPack detail){
+        if(detail.cellMetres!=250)throw new IllegalStateException("OSM detail is not partitioned into 250 m cells");
+        if(detail.cellCount<10_000)throw new IllegalStateException("OSM detail-cell coverage is unexpectedly sparse");
+        if(detail.roadSegmentCount<1_000_000L)throw new IllegalStateException("OSM road coverage is incomplete");
+        if(detail.simpleBuildingCount+detail.relationBuildingCount<150_000L)throw new IllegalStateException("OSM building coverage is incomplete");
+        if(detail.sourcePbfSha256.length()!=64)throw new IllegalStateException("OSM source checksum is absent");
     }
 
     private static void validateCoverage(QatarPack pack){
@@ -71,7 +97,7 @@ final class LoadingScreen extends ScreenAdapter {
         font.setColor(Color.WHITE);font.getData().setScale(2.1f);font.draw(batch,"QATAR: THE PENINSULA",width*.16f,height*.78f);
         font.getData().setScale(1.15f);font.draw(batch,"Full country installed • only nearby chunks become resident",width*.16f,height*.70f);
         font.draw(batch,status,width*.16f,height*.40f);
-        font.getData().setScale(.90f);font.setColor(.86f,.83f,.74f,1);font.draw(batch,"EPSG:32639 • 1:1 metres • offline APK • deterministic QTPK",width*.16f,height*.23f);
+        font.getData().setScale(.90f);font.setColor(.86f,.83f,.74f,1);font.draw(batch,"EPSG:32639 • 1:1 metres • offline APK • deterministic QTPK + QTOD",width*.16f,height*.23f);
         if(!failure.isEmpty()){font.setColor(Color.SCARLET);font.draw(batch,failure,width*.16f,height*.15f);}
         batch.end();
     }

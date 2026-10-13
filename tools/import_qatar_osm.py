@@ -2,7 +2,7 @@
 """Compile a current OpenStreetMap PBF extract into the random-access QTOD pack.
 
 The output preserves every accepted road segment and complete simple building
-footprint in compact per-2km compressed blocks. It is deterministic for a
+footprint in compact per-250 m compressed microcells. It is deterministic for a
 fixed PBF byte stream and compiler version. Runtime loads only focus-near
 blocks; the entire QTOD file remains installed inside the APK.
 """

@@ -20,7 +20,7 @@ This file covers the fresh **Qatar: The Peninsula** project. No Nauru world data
 - Attribution: Runfola et al., geoBoundaries; William & Mary geoLab.
 - Processing: WGS84/CRS84 coordinates are deterministically projected into WGS84 / UTM zone 39N (EPSG:32639), rasterized to 125 m coast masks within 2 km streaming chunks, and embedded with all eight ADM1 records and seven ADM0 polygons.
 - ADM0 SHA-256: `9afaa263f5f2385de40208af9ea0de55a5bc8d9384df241efd7be86b1793eaca`
-- ADM1 SHA-256: `8021dc98ea5a92564b87a69633bca4d17374226fabe40e4de64721403e`
+- ADM1 SHA-256: `8021dc98ea5a92564b87a69633bca4d17374226d42926fabe40e4de64721403e`
 
 This is a redistribution-friendly coarse boundary source, not a claim that it is Qatar's definitive legal maritime boundary. The application presents surrounding water only as gameplay space.
 
@@ -48,6 +48,25 @@ This is a redistribution-friendly coarse boundary source, not a claim that it is
 - Settlement massing: deterministic regional visual massing marked generated/coarse.
 - Terrain: biome-specific deterministic microheight only. It is not yet a DEM.
 
-## Data not yet claimed in v0.1.0
+## OpenStreetMap Qatar roads and building footprints — v0.2.0
 
-Version 0.1.0 does **not** claim complete OpenStreetMap roads/building footprints, measured DEM terrain, bathymetry, or final reclaimed-coast epoch accuracy. Those are subsequent compiler milestones and must be added with source timestamps, checksums, and licenses before corresponding release claims are made.
+- Provider: Geofabrik GmbH OpenStreetMap extracts
+- Source: `https://download.geofabrik.de/asia/gcc-states-latest.osm.pbf`
+- Qatar extraction envelope: 50.68°E–51.70°E, 24.45°N–26.25°N, using `osmium extract --strategy complete_ways`
+- Retrieved UTC: `2026-10-13T16:30:08Z`
+- Extracted Qatar PBF SHA-256: `f8446d4296f9a6785122de9c0e0d14415b3be2ba3c762f44777939442205a8c9`
+- Compiler: `tools/import_qatar_osm.py`, pinned to pyosmium 4.1.1 by the import workflow
+- Runtime derivative: `app/src/main/assets/world/qatar-osm-current.qod`
+- Derivative SHA-256: `c48a62e1e8f1498bb64bde2864e4ae7894380f5185bc0a3a39ebf47012d9ba00`
+- Derivative size: 27,551,391 bytes
+- CRS/runtime partition: EPSG:32639; 88,965 individually compressed/indexed 250 m microcells
+- Included source-derived geometry: 182,110 road ways / 1,441,102 road segments and 189,446 building footprints
+- License: Open Database License 1.0 (ODbL)
+- Attribution: **© OpenStreetMap contributors**
+- Use: game geometry, not navigation data
+
+The QTOD derivative is distributed in the APK and this public repository under the ODbL database terms. It retains source IDs and complete accepted simple-building outer footprints. Relation outer rings are retained; relation inner holes are a declared QTOD v1 limitation. Exact HTTP response metadata, upstream/extract sizes and checksums, tool output, and import identity are recorded in `data/qatar/QATAR_OSM_IMPORT.json`, `data/qatar/OSM_SHA256SUMS`, and `data/qatar/compiled/qatar-osm-report.json`.
+
+## Data not yet claimed in v0.2.0
+
+Version 0.2.0 does **not** claim measured DEM terrain, bathymetry, survey-grade/final reclaimed-coast epoch accuracy, navigation suitability, or final hand-authored landmark geometry. Those remain subsequent compiler/content milestones and must be added with source timestamps, checksums, and licenses before corresponding release claims are made.

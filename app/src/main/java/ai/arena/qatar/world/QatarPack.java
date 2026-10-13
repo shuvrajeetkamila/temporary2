@@ -165,7 +165,7 @@ public final class QatarPack implements AutoCloseable {
             buildings[i] = new Building(unsignedShort(data.getShort())/10f, unsignedShort(data.getShort())/10f,
                     unsignedShort(data.getShort())/10f, unsignedShort(data.getShort())/10f,
                     unsignedShort(data.getShort())/10f, unsignedShort(data.getShort()) * (float)Math.PI / 65535f,
-                    Byte.toUnsignedInt(data.get()), Byte.toUnsignedInt(data.get()));
+                    Byte.toUnsignedInt(data.get()), Byte.toUnsignedInt(data.get()), 0L, null);
         }
         if (data.hasRemaining()) throw new IOException("Unexpected chunk payload tail " + data.remaining());
         return new WorldChunk(entry, seed, landRows, terrainCm, roads, buildings);
@@ -203,6 +203,9 @@ public final class QatarPack implements AutoCloseable {
         public boolean isCoast() { return (flags & 2) != 0; }
     }
     public record Road(float x1, float z1, float x2, float z2, int roadClass, int lanes, float width) { }
-    public record Building(float x, float z, float width, float depth, float height, float yaw, int archetype, int flags) { }
+    public record Building(float x, float z, float width, float depth, float height, float yaw,
+                           int archetype, int flags, long sourceId, float[] footprint) {
+        public boolean hasSourceFootprint() { return footprint != null && footprint.length >= 6; }
+    }
     public record WorldChunk(ChunkEntry entry, long seed, int[] landRows, short[] terrainCm, Road[] roads, Building[] buildings) { }
 }

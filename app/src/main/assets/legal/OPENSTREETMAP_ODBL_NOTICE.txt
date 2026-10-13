@@ -1,0 +1,12 @@
+OPENSTREETMAP DATA NOTICE
+
+The road and building database in world/qatar-osm-current.qod is derived from OpenStreetMap data.
+
+Attribution: © OpenStreetMap contributors
+Database license: Open Database License 1.0 (ODbL)
+Copyright and license information: https://www.openstreetmap.org/copyright
+ODbL text: https://opendatacommons.org/licenses/odbl/1-0/
+
+The QTOD derivative database is included in this APK and in the public source repository. Its exact upstream URL, retrieval time, source checksum, processing identity, feature counts, and derivative checksum are documented in data/qatar/QATAR_OSM_IMPORT.json and DATA_SOURCES.md in that repository.
+
+The geometry is rendered for fictional gameplay. It is not suitable for navigation, surveying, aviation, maritime operations, border interpretation, emergency response, or security decisions.

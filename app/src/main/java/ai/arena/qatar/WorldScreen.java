@@ -4,6 +4,8 @@ import ai.arena.qatar.input.TouchController;
 import ai.arena.qatar.physics.PhysicsWorld;
 import ai.arena.qatar.render.QatarWorldRenderer;
 import ai.arena.qatar.ui.HudRenderer;
+import ai.arena.qatar.world.QatarDetailPack;
+import ai.arena.qatar.world.QatarDetailStreamer;
 import ai.arena.qatar.world.QatarPack;
 import ai.arena.qatar.world.WorldStreamer;
 
@@ -14,25 +16,28 @@ import com.badlogic.gdx.math.Vector3;
 /** Main simulation screen. Full national data stays installed; local chunks stream around this focus. */
 final class WorldScreen extends ScreenAdapter {
     private final QatarPack pack;
+    private final QatarDetailPack detailPack;
     private final PhysicsWorld physics;
     private final QatarWorldRenderer renderer;
     private final WorldStreamer streamer;
+    private final QatarDetailStreamer detailStreamer;
     private final TouchController controls;
     private final HudRenderer hud;
     private boolean disposed;
     private float frameAccumulator;
     private static final float TARGET_FRAME_SECONDS=1f/30f;
 
-    WorldScreen(QatarPack pack){
-        this.pack=pack;
+    WorldScreen(QatarPack pack,QatarDetailPack detailPack){
+        this.pack=pack;this.detailPack=detailPack;
         // Souq Waqif is safely inland; the Corniche anchor itself resolves to
         // bay water at the current 125 m coast-mask resolution.
         QatarPack.Hub spawn=pack.hub("Souq Waqif");
         physics=new PhysicsWorld(spawn.x(),spawn.z());
-        renderer=new QatarWorldRenderer(pack,physics);
+        renderer=new QatarWorldRenderer(pack,detailPack,physics);
         streamer=new WorldStreamer(pack,renderer);
+        detailStreamer=new QatarDetailStreamer(detailPack,renderer);
         controls=new TouchController();
-        hud=new HudRenderer(pack,physics,streamer,renderer,controls);
+        hud=new HudRenderer(pack,detailPack,physics,streamer,detailStreamer,renderer,controls);
         Gdx.input.setInputProcessor(controls);
     }
 
@@ -48,6 +53,8 @@ final class WorldScreen extends ScreenAdapter {
         physics.setControls(controls.throttle(),controls.steering(),controls.lift(),controls.action());
         Vector3 velocity=physics.velocity();
         streamer.update(physics.globalX(),physics.globalZ(),velocity.x,velocity.z,physics.mode().streamMode);
+        detailStreamer.update(physics.globalX(),physics.globalZ(),velocity.x,velocity.z,physics.mode().streamMode);
+        physics.syncDetailCollisions(physics.globalX(),physics.globalZ());
         physics.step(simulationDelta);
         renderer.render(simulationDelta);
         hud.render();
@@ -60,6 +67,6 @@ final class WorldScreen extends ScreenAdapter {
     @Override public void dispose(){
         if(disposed)return;disposed=true;
         Gdx.input.setInputProcessor(null);
-        streamer.dispose();hud.dispose();renderer.dispose();physics.dispose();
+        detailStreamer.dispose();streamer.dispose();hud.dispose();renderer.dispose();physics.dispose();
     }
 }

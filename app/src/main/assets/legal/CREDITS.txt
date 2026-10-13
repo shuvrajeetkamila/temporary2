@@ -4,6 +4,12 @@ Country and municipality geometry:
 geoBoundaries gbOpen / William & Mary geoLab, CC BY 4.0.
 Retrieved through a pinned MapCraft mirror. See DATA_SOURCES.md in the source repository.
 
+Roads and building footprints:
+© OpenStreetMap contributors, Open Database License 1.0 (ODbL).
+Current Geofabrik extract compiled into the installed QTOD database.
+https://www.openstreetmap.org/copyright
+This game geometry is not navigation data.
+
 Independent country cross-check:
 Natural Earth public-domain data through geojson-regions (Unlicense).
 

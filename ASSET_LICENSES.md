@@ -28,4 +28,4 @@ The early diagnostic HUD uses libGDX's built-in bitmap font distributed with lib
 
 ## Geographic data
 
-Geographic datasets and their derivative terms are documented separately in `DATA_SOURCES.md`. Required attribution remains visible in the application HUD and will be expanded into the final Credits screen.
+Geographic datasets and their derivative terms are documented separately in `DATA_SOURCES.md`. The QTOD road/building database is derived from OpenStreetMap and distributed under ODbL 1.0 with **© OpenStreetMap contributors** attribution. Attribution is visible in the gameplay HUD and packaged in `assets/legal/CREDITS.txt` and `assets/legal/OPENSTREETMAP_ODBL_NOTICE.txt`. The geoBoundaries and Natural Earth terms remain documented there as well.

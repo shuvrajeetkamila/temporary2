@@ -58,7 +58,7 @@ jobs:
         run: |
           set +e
           ADB="$ANDROID_HOME/platform-tools/adb"
-          APK='artifacts/Qatar-The-Peninsula-FULL-MAP-STREAMING-v0.1.0.apk'
+          APK='artifacts/Qatar-The-Peninsula-REAL-OSM-STREAMING-v0.2.0.apk'
           "$ADB" install -r "$APK" > qa/qatar-runtime/install.txt 2>&1
           INSTALL_EXIT=$?
           "$ADB" logcat -c

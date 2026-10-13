@@ -3,6 +3,8 @@ package ai.arena.qatar.ui;
 import ai.arena.qatar.input.TouchController;
 import ai.arena.qatar.physics.PhysicsWorld;
 import ai.arena.qatar.render.QatarWorldRenderer;
+import ai.arena.qatar.world.QatarDetailPack;
+import ai.arena.qatar.world.QatarDetailStreamer;
 import ai.arena.qatar.world.QatarPack;
 import ai.arena.qatar.world.WorldStreamer;
 
@@ -19,8 +21,10 @@ import com.badlogic.gdx.utils.Disposable;
 /** In-game evidence HUD: streaming counts, exact scale coordinates, mode, and national minimap. */
 public final class HudRenderer implements Disposable {
     private final QatarPack pack;
+    private final QatarDetailPack detailPack;
     private final PhysicsWorld physics;
     private final WorldStreamer streamer;
+    private final QatarDetailStreamer detailStreamer;
     private final QatarWorldRenderer renderer;
     private final TouchController controls;
     private final ShapeRenderer shapes=new ShapeRenderer();
@@ -28,8 +32,8 @@ public final class HudRenderer implements Disposable {
     private final BitmapFont font=new BitmapFont();
     private final Color maroon=new Color(.54f,.08f,.22f,.90f);
 
-    public HudRenderer(QatarPack pack,PhysicsWorld physics,WorldStreamer streamer,QatarWorldRenderer renderer,TouchController controls){
-        this.pack=pack;this.physics=physics;this.streamer=streamer;this.renderer=renderer;this.controls=controls;
+    public HudRenderer(QatarPack pack,QatarDetailPack detailPack,PhysicsWorld physics,WorldStreamer streamer,QatarDetailStreamer detailStreamer,QatarWorldRenderer renderer,TouchController controls){
+        this.pack=pack;this.detailPack=detailPack;this.physics=physics;this.streamer=streamer;this.detailStreamer=detailStreamer;this.renderer=renderer;this.controls=controls;
         font.getData().setScale(1.02f);
     }
 
@@ -40,7 +44,7 @@ public final class HudRenderer implements Disposable {
         Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA,GL20.GL_ONE_MINUS_SRC_ALPHA);
         shapes.getProjectionMatrix().setToOrtho2D(0,0,width,height);
         shapes.begin(ShapeRenderer.ShapeType.Filled);
-        shapes.setColor(0.02f,.055f,.07f,.72f);shapes.rect(14,height-118,530,104);
+        shapes.setColor(0.02f,.055f,.07f,.72f);shapes.rect(14,height-118,720,104);
         shapes.setColor(maroon);shapes.rect(width-250,height-82,236,62);shapes.rect(width-500,height-82,236,62);
         drawStick(controls.moveOrigin(),controls.moveCurrent(),controls.moving(),height,new Color(.94f,.86f,.66f,.28f));
         drawStick(controls.liftOrigin(),controls.liftCurrent(),controls.lifting(),height,new Color(.54f,.08f,.22f,.32f));
@@ -53,11 +57,11 @@ public final class HudRenderer implements Disposable {
         String biome=localBiome();
         font.draw(sprites,"QATAR: THE PENINSULA  •  TRUE 1:1 METRES",28,height-37);
         font.draw(sprites,String.format("%s  |  %.1f m/s  |  %s  |  30 FPS THERMAL CAP",physics.mode().label,velocity.len(),biome),28,height-66);
-        font.draw(sprites,String.format("LOCAL CHUNKS %d  PENDING %d  •  INSTALLED NATIONAL INDEX %,d / %,d",streamer.residentCount(),streamer.pendingCount(),pack.chunkCount,pack.chunkCount),28,height-95);
+        font.draw(sprites,String.format("TERRAIN %d  OSM CELLS %d+%d  •  INSTALLED %,d ROAD SEGMENTS / %,d BUILDINGS",streamer.residentCount(),detailStreamer.residentCount(),detailStreamer.pendingCount(),detailPack.roadSegmentCount,detailPack.simpleBuildingCount+detailPack.relationBuildingCount),28,height-95);
         font.draw(sprites,"SWITCH MODE",width-228,height-46);
         font.draw(sprites,"RECOVER",width-445,height-46);
         font.setColor(.92f,.88f,.74f,1);font.draw(sprites,"Left control: move / steer     Right control: lift / action",24,30);
-        font.draw(sprites,"Offline world  •  © geoBoundaries / Natural Earth sources — see Credits",width-690,30);
+        font.draw(sprites,"Offline world  •  © OpenStreetMap contributors / geoBoundaries / Natural Earth",width-760,30);
         String fatal=renderer.fatalStreamingError();
         if(!fatal.isEmpty()){font.setColor(Color.SCARLET);font.draw(sprites,fatal,25,height-140);}
         sprites.end();
