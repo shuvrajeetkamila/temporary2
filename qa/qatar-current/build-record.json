@@ -1,11 +1,11 @@
 {
-  "sourceCommit": "bc7980d250f4b962be5f9a38e9d5b42a668cb841",
-  "apk": "Qatar-The-Peninsula-FULL-MAP-STREAMING-v0.1.0.apk",
-  "apkBytes": 10077155,
-  "apkSha256": "1a79ec61c91e795ebae0c5d4caa9898fb154081f1bf97c7e33b02ba2850c5c32",
+  "sourceCommit": "22bcaa0288680ff706fe17322af0b52bd9b8c094",
+  "apk": "Qatar-The-Peninsula-REAL-OSM-STREAMING-v0.2.0.apk",
+  "apkBytes": 37644575,
+  "apkSha256": "47570dabacdb470858a16bc1889fadbea39e984f3f9aceac1bd699b784d0f18e",
   "packageId": "ai.arena.qatar.peninsula",
-  "versionCode": 1,
-  "versionName": "0.1.0-national-streaming-foundation",
+  "versionCode": 2,
+  "versionName": "0.2.0-real-osm-microstreaming",
   "minSdk": 26,
   "targetSdk": 35,
   "abis": [
@@ -17,5 +17,9 @@
   "municipalities": 8,
   "adm0Polygons": 7,
   "qpakSha256": "6aa220910d0214b3d38fb5c7764534c5242b1ddab24ae6ffddb377d95a22a6b7",
+  "qodSha256": "c48a62e1e8f1498bb64bde2864e4ae7894380f5185bc0a3a39ebf47012d9ba00",
+  "osmDetailCells": 88965,
+  "osmRoadSegments": 1441102,
+  "osmBuildingFootprints": 189446,
   "status": "PASSED"
 }

@@ -1,0 +1,3 @@
+app/src/main/assets/world/qatar-osm-current.qod: OK
+data/qatar/compiled/qatar-osm-report.json: OK
+data/qatar/QATAR_OSM_IMPORT.json: OK

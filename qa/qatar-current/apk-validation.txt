@@ -1,11 +1,12 @@
 {
-  "apkBytes": 10077155,
-  "sha256": "1a79ec61c91e795ebae0c5d4caa9898fb154081f1bf97c7e33b02ba2850c5c32",
+  "apkBytes": 37644575,
+  "sha256": "47570dabacdb470858a16bc1889fadbea39e984f3f9aceac1bd699b784d0f18e",
   "qpakStoredBytes": 1170493,
+  "qodStoredBytes": 27551391,
   "abis": [
     "arm64-v8a",
     "armeabi-v7a",
     "x86_64"
   ],
-  "zipEntries": 141
+  "zipEntries": 143
 }

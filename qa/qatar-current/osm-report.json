@@ -1,0 +1,27 @@
+{
+  "format": "QTOD",
+  "version": 1,
+  "epoch": "2026-10-13T16:30:08Z",
+  "sourceUrl": "https://download.geofabrik.de/asia/gcc-states-latest.osm.pbf",
+  "sourcePbfSha256": "f8446d4296f9a6785122de9c0e0d14415b3be2ba3c762f44777939442205a8c9",
+  "sourcePbfBytes": 21735764,
+  "epsg": 32639,
+  "chunkMetres": 250,
+  "detailChunks": 88965,
+  "roadWays": 182110,
+  "roadSegments": 1441102,
+  "simpleBuildingFootprints": 189090,
+  "relationBuildingOuters": 356,
+  "totalBuildingFootprints": 189446,
+  "skippedInvalidFeatures": 0,
+  "outsideFeatures": 624,
+  "coastReclamationBufferMetres": 3500.0,
+  "rawDetailBytes": 60009220,
+  "qodBytes": 27551391,
+  "qodSha256": "c48a62e1e8f1498bb64bde2864e4ae7894380f5185bc0a3a39ebf47012d9ba00",
+  "notes": [
+    "All accepted road segments and complete simple OSM building outer footprints are retained.",
+    "Relation inner rings are not rendered in QTOD v1 and remain a declared limitation.",
+    "Game geometry is not navigation data. \u00a9 OpenStreetMap contributors, ODbL 1.0."
+  ]
+}
