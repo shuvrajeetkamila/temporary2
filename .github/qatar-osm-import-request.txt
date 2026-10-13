@@ -1,1 +1,1 @@
-Import current Qatar OSM roads and building footprints for v0.2.0.
+Reimport Qatar OSM into 250 metre micro-streaming cells for v0.2.0.
