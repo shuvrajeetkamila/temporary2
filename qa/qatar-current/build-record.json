@@ -1,11 +1,11 @@
 {
-  "sourceCommit": "34d4bb8e9d00ffeef5da11778338a3bcad4e2aa7",
-  "apk": "Qatar-The-Peninsula-REAL-TERRAIN-v0.3.0.apk",
-  "apkBytes": 37894821,
-  "apkSha256": "19785b9f36c2f39d0e707c77b2ae892228af86d55bc17a0813bceb24a83096e1",
+  "sourceCommit": "8830a82d8da2167c942235ee44e3c4412c6417ec",
+  "apk": "Qatar-The-Peninsula-QATAR-ENVIRONMENTS-v0.4.0.apk",
+  "apkBytes": 37905511,
+  "apkSha256": "e28e0a56ea789f4e90abcad3eecf1e3ba86af96ee95af2e40685a74aea67b7c7",
   "packageId": "ai.arena.qatar.peninsula",
-  "versionCode": 3,
-  "versionName": "0.3.0-real-terrain-preproduction",
+  "versionCode": 4,
+  "versionName": "0.4.0-qatar-environments-preproduction",
   "minSdk": 26,
   "targetSdk": 35,
   "abis": [
@@ -26,5 +26,18 @@
   "osmDetailCells": 88965,
   "osmRoadSegments": 1441102,
   "osmBuildingFootprints": 189446,
+  "environmentPresets": [
+    "CLEAR",
+    "SHAMAL",
+    "DUST",
+    "RAIN"
+  ],
+  "dynamicGulfTide": true,
+  "thermalProfiles": {
+    "NORMAL": 30,
+    "WARM": 20,
+    "HOT": 15
+  },
+  "androidThermalListener": true,
   "status": "PASSED"
 }
