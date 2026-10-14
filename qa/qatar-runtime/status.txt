@@ -1,6 +1,7 @@
 install_exit=0
 start_exit=0
-pid=3251
-screenshot_bytes=53019
+pid=3305
+screenshot_bytes=58153
 osm_detail_rendered=yes
+terrain_pack_loaded=yes
 fatal_log=no
