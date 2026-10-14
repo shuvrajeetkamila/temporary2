@@ -27,10 +27,15 @@ public final class QatarSpawnResolver {
             double x2=located.originX+road.x2(),z2=located.originZ+road.z2();
             double dx=x2-x1,dz=z2-z1,lengthSquared=dx*dx+dz*dz;if(lengthSquared<1.0)continue;
             double t=((fallbackX-x1)*dx+(fallbackZ-z1)*dz)/lengthSquared;t=Math.max(.15,Math.min(.85,t));
-            double candidateX=x1+t*dx,candidateZ=z1+t*dz;
-            if(blocked(candidateX,candidateZ,buildings))continue;
-            double score=Math.hypot(candidateX-fallbackX,candidateZ-fallbackZ)+classPenalty(road.roadClass());
-            if(score<bestScore){bestScore=score;best=new Spawn(candidateX,candidateZ,road.roadClass(),"nearest clear OSM road/footway");}
+            double centreX=x1+t*dx,centreZ=z1+t*dz,length=Math.sqrt(lengthSquared),perpendicularX=-dz/length,perpendicularZ=dx/length;
+            double roadside=road.roadClass()==8?0:road.width()/2+1.4;
+            for(int side:roadside==0?new int[]{0}:new int[]{-1,1,0}){
+                double candidateX=centreX+perpendicularX*roadside*side,candidateZ=centreZ+perpendicularZ*roadside*side;
+                if(blocked(candidateX,candidateZ,buildings))continue;
+                double centrePenalty=side==0&&roadside>0?14:0;
+                double score=Math.hypot(candidateX-fallbackX,candidateZ-fallbackZ)+classPenalty(road.roadClass())+centrePenalty;
+                if(score<bestScore){bestScore=score;best=new Spawn(candidateX,candidateZ,road.roadClass(),side==0?"nearest clear OSM footway/road":"nearest clear OSM roadside");}
+            }
         }
         return best!=null?best:new Spawn(fallbackX,fallbackZ,-1,"public hub fallback; no clear OSM road candidate");
     }

@@ -18,8 +18,8 @@ import com.badlogic.gdx.graphics.g3d.Material;
 import com.badlogic.gdx.graphics.g3d.Model;
 import com.badlogic.gdx.graphics.g3d.ModelBatch;
 import com.badlogic.gdx.graphics.g3d.ModelInstance;
-import com.badlogic.gdx.graphics.g3d.attributes.BlendingAttribute;
 import com.badlogic.gdx.graphics.g3d.attributes.ColorAttribute;
+import com.badlogic.gdx.graphics.g3d.attributes.FloatAttribute;
 import com.badlogic.gdx.graphics.g3d.environment.DirectionalLight;
 import com.badlogic.gdx.graphics.g3d.utils.MeshPartBuilder;
 import com.badlogic.gdx.graphics.g3d.utils.ModelBuilder;
@@ -43,21 +43,29 @@ public final class QatarWorldRenderer implements WorldStreamer.Listener, QatarDe
     private final ModelBatch batch = new ModelBatch();
     private final ModelBuilder builder = new ModelBuilder();
     private final Environment environment = new Environment();
+    private final ColorAttribute ambientLight=new ColorAttribute(ColorAttribute.AmbientLight,.64f,.61f,.55f,1);
+    private final ColorAttribute fogColor=new ColorAttribute(ColorAttribute.Fog,.52f,.72f,.80f,1);
+    private final DirectionalLight sun=new DirectionalLight().set(1.0f,.91f,.74f,-.42f,-.82f,-.32f);
     private final Map<Long, RenderChunk> chunks = new HashMap<>();
     private final Map<Long, QatarPack.WorldChunk> nationalData = new HashMap<>();
     private final Map<Long, RenderChunk> detailCells = new HashMap<>();
     private final Map<Long, QatarDetailPack.DetailChunk> detailData = new HashMap<>();
     private final EarClippingTriangulator footprintTriangulator = new EarClippingTriangulator();
     private final Map<Integer, Material> terrainMaterials = new HashMap<>();
-    private final Material roadMaterial = diffuse(.16f,.18f,.19f,1);
-    private final Material pathMaterial = diffuse(.48f,.46f,.42f,1);
-    private final Material markingMaterial = diffuse(.88f,.82f,.62f,1);
-    private final Material windowMaterial = new Material(ColorAttribute.createDiffuse(new Color(.08f,.20f,.24f,1)),ColorAttribute.createSpecular(new Color(.45f,.60f,.62f,1)));
-    private final Material villaMaterial = diffuse(.72f,.66f,.56f,1);
-    private final Material towerMaterial = new Material(ColorAttribute.createDiffuse(new Color(.28f,.42f,.48f,1)), ColorAttribute.createSpecular(new Color(.55f,.63f,.65f,1)));
-    private final Material industrialMaterial = diffuse(.46f,.49f,.48f,1);
-    private final Material farmMaterial = diffuse(.52f,.55f,.40f,1);
-    private final Material waterMaterial = new Material(ColorAttribute.createDiffuse(new Color(.035f,.40f,.53f,.78f)), new BlendingAttribute(GL20.GL_SRC_ALPHA,GL20.GL_ONE_MINUS_SRC_ALPHA,.78f));
+    private final Material shoulderMaterial=diffuse(.52f,.49f,.43f,1);
+    private final Material roadMaterial=diffuse(.13f,.145f,.15f,1);
+    private final Material pathMaterial=diffuse(.47f,.42f,.34f,1);
+    private final Material railMaterial=new Material(ColorAttribute.createDiffuse(new Color(.25f,.25f,.24f,1)),ColorAttribute.createSpecular(new Color(.70f,.68f,.62f,1)),FloatAttribute.createShininess(48));
+    private final Material runwayMaterial=diffuse(.105f,.115f,.12f,1);
+    private final Material taxiwayMaterial=diffuse(.19f,.20f,.20f,1);
+    private final Material markingMaterial=diffuse(.94f,.90f,.72f,1);
+    private final Material roofMaterial=diffuse(.61f,.57f,.49f,1);
+    private final Material windowMaterial=new Material(ColorAttribute.createDiffuse(new Color(.12f,.30f,.34f,1)),ColorAttribute.createSpecular(new Color(.58f,.69f,.70f,1)),FloatAttribute.createShininess(72));
+    private final Material villaMaterial=diffuse(.78f,.72f,.63f,1);
+    private final Material towerMaterial=new Material(ColorAttribute.createDiffuse(new Color(.40f,.51f,.54f,1)),ColorAttribute.createSpecular(new Color(.62f,.69f,.70f,1)),FloatAttribute.createShininess(56));
+    private final Material industrialMaterial=diffuse(.51f,.53f,.51f,1);
+    private final Material farmMaterial=diffuse(.50f,.55f,.38f,1);
+    private final Material waterMaterial=new Material(ColorAttribute.createDiffuse(new Color(.035f,.34f,.44f,1)),ColorAttribute.createSpecular(new Color(.72f,.88f,.91f,1)),FloatAttribute.createShininess(96));
     private Model focusModel;
     private ModelInstance focusInstance;
     private PhysicsWorld.Mode renderedMode;
@@ -71,8 +79,7 @@ public final class QatarWorldRenderer implements WorldStreamer.Listener, QatarDe
         this.pack=pack;this.detailCellMetres=detailPack.cellMetres;this.physics=physics;this.climate=climate;
         camera=new PerspectiveCamera(64,Gdx.graphics.getWidth(),Gdx.graphics.getHeight());
         camera.near=.15f; camera.far=14_000f;
-        environment.set(new ColorAttribute(ColorAttribute.AmbientLight,.64f,.61f,.55f,1));
-        environment.add(new DirectionalLight().set(1.0f,.91f,.74f,-.42f,-.82f,-.32f));
+        environment.set(ambientLight);environment.set(fogColor);environment.add(sun);
         initialiseMaterials();
         rebuildFocusModel();
     }
@@ -93,17 +100,24 @@ public final class QatarWorldRenderer implements WorldStreamer.Listener, QatarDe
     public void render(float delta) {
         if (renderedMode != physics.mode()) rebuildFocusModel();
         updateTransforms();
-        updateCamera(delta);
+        updateCamera(delta);updateAtmosphere();
         Gdx.gl.glViewport(0,0,Gdx.graphics.getWidth(),Gdx.graphics.getHeight());
         Gdx.gl.glEnable(GL20.GL_DEPTH_TEST);
         Gdx.gl.glClearColor(climate.skyRed(),climate.skyGreen(),climate.skyBlue(),1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT|GL20.GL_DEPTH_BUFFER_BIT);
         batch.begin(camera);
-        for (RenderChunk chunk:chunks.values()) batch.render(chunk.instance,environment);
+        for(RenderChunk chunk:chunks.values()){batch.render(chunk.instance,environment);if(chunk.waterInstance!=null)batch.render(chunk.waterInstance,environment);}
         for (RenderChunk detail:detailCells.values()) batch.render(detail.instance,environment);
         focusInstance.transform.set(physics.transform());
         batch.render(focusInstance,environment);
         batch.end();
+    }
+
+    private void updateAtmosphere(){
+        float ambient=climate.ambient();ambientLight.color.set(ambient,ambient*.96f,ambient*.88f,1);
+        fogColor.color.set(climate.skyRed(),climate.skyGreen(),climate.skyBlue(),1);
+        sun.color.set(climate.sunRed(),climate.sunGreen(),climate.sunBlue(),1);
+        float azimuth=(climate.solarHour()-6f)/12f*(float)Math.PI;sun.direction.set(-(float)Math.cos(azimuth)*.48f,-Math.max(.28f,climate.daylight()),-.34f).nor();
     }
 
     private void updateTransforms() {
@@ -115,6 +129,7 @@ public final class QatarWorldRenderer implements WorldStreamer.Listener, QatarDe
         float x=(float)(value.x-physics.originX());
         float z=(float)(value.z-physics.originZ());
         value.instance.transform.setToTranslation(x,0,z);
+        if(value.waterInstance!=null)value.waterInstance.transform.setToTranslation(x,climate.seaLevelMetres(),z);
     }
 
     private void updateCamera(float delta) {
@@ -138,42 +153,51 @@ public final class QatarWorldRenderer implements WorldStreamer.Listener, QatarDe
     }
 
     @Override public void activate(QatarPack.WorldChunk chunk) {
-        Model model=buildChunk(chunk);long chunkKey=key(chunk.entry().x(),chunk.entry().y());
+        ChunkModels models=buildChunk(chunk);long chunkKey=key(chunk.entry().x(),chunk.entry().y());
         nationalData.put(chunkKey,chunk);
-        try{physics.activateChunk(chunk,pack.chunkMetres);}catch(RuntimeException|Error error){nationalData.remove(chunkKey);model.dispose();throw error;}
-        chunks.put(chunkKey,new RenderChunk(chunk.entry().x()*pack.chunkMetres,chunk.entry().y()*pack.chunkMetres,model,new ModelInstance(model)));
+        try{physics.activateChunk(chunk,pack.chunkMetres);}catch(RuntimeException|Error error){nationalData.remove(chunkKey);models.terrain.dispose();if(models.water!=null)models.water.dispose();throw error;}
+        chunks.put(chunkKey,new RenderChunk(chunk.entry().x()*pack.chunkMetres,chunk.entry().y()*pack.chunkMetres,models.terrain,new ModelInstance(models.terrain),models.water,models.water==null?null:new ModelInstance(models.water)));
         for(QatarDetailPack.DetailChunk detail:detailData.values())if(parentNationalKey(detail)==chunkKey)rebuildDetail(detail);
     }
 
     @Override public void deactivate(QatarPack.WorldChunk chunk) {
         physics.deactivateChunk(chunk);long chunkKey=key(chunk.entry().x(),chunk.entry().y());nationalData.remove(chunkKey);
         RenderChunk removed=chunks.remove(chunkKey);
-        if(removed!=null) removed.model.dispose();
+        if(removed!=null){removed.model.dispose();if(removed.waterModel!=null)removed.waterModel.dispose();}
     }
 
     @Override public void requiredChunkFailed(QatarPack.ChunkEntry entry,Throwable error) {
         fatalStreamingError="Required chunk "+entry.x()+","+entry.y()+" failed: "+error.getMessage();
     }
 
-    private Model buildChunk(QatarPack.WorldChunk chunk) {
-        builder.begin();
-        float size=pack.chunkMetres;
-        MeshPartBuilder water=builder.part("water",GL20.GL_TRIANGLES,ATTRS,waterMaterial);
-        water.box(size/2,-1.35f,size/2,size,.35f,size);
-        MeshPartBuilder land=builder.part("terrain-"+chunk.entry().biome(),GL20.GL_TRIANGLES,ATTRS,terrainMaterials.get(chunk.entry().biome()));
-        float sub=size/16f;
+    private ChunkModels buildChunk(QatarPack.WorldChunk chunk) {
+        float size=pack.chunkMetres;builder.begin();
+        MeshPartBuilder land=builder.part("terrain-"+chunk.entry().biome(),GL20.GL_TRIANGLES,ATTRS,terrainMaterials.get(chunk.entry().biome()));float sub=size/16f;
+        if(!chunk.entry().hasLand())land.box(size/2,-80,size/2,size,.1f,size);
         for(int row=0;row<16;row++){
             int bits=chunk.landRows()[row];
             for(int col=0;col<16;col++){
-                if((bits&(1<<col))==0)continue;
-                float x0=col*sub,x1=(col+1)*sub,z0=row*sub,z1=(row+1)*sub;
+                if((bits&(1<<col))==0)continue;float x0=col*sub,x1=(col+1)*sub,z0=row*sub,z1=(row+1)*sub;
                 float h00=pack.terrainHeight(chunk,x0,z0),h10=pack.terrainHeight(chunk,x1,z0),h11=pack.terrainHeight(chunk,x1,z1),h01=pack.terrainHeight(chunk,x0,z1);
-                terrainTriangle(land,x0,h00,z0,x0,h01,z1,x1,h11,z1);
-                terrainTriangle(land,x1,h11,z1,x1,h10,z0,x0,h00,z0);
+                terrainTriangle(land,x0,h00,z0,x0,h01,z1,x1,h11,z1);terrainTriangle(land,x1,h11,z1,x1,h10,z0,x0,h00,z0);
             }
         }
-        return builder.end();
+        Model terrain=builder.end(),water=null;
+        if(!chunk.entry().hasLand()||chunk.entry().isCoast()){
+            builder.begin();MeshPartBuilder surface=builder.part("gulf-water",GL20.GL_TRIANGLES,ATTRS,waterMaterial);float waterSub=size/8f;
+            double originX=chunk.entry().x()*(double)pack.chunkMetres,originZ=chunk.entry().y()*(double)pack.chunkMetres;
+            for(int row=0;row<8;row++)for(int col=0;col<8;col++){
+                float x0=col*waterSub,x1=(col+1)*waterSub,z0=row*waterSub,z1=(row+1)*waterSub;
+                float h00=staticWave(originX+x0,originZ+z0),h10=staticWave(originX+x1,originZ+z0),h11=staticWave(originX+x1,originZ+z1),h01=staticWave(originX+x0,originZ+z1);
+                terrainTriangle(surface,x0,h00,z0,x0,h01,z1,x1,h11,z1);terrainTriangle(surface,x1,h11,z1,x1,h10,z0,x0,h00,z0);
+            }
+            water=builder.end();
+        }
+        return new ChunkModels(terrain,water);
     }
+
+    private static float staticWave(double x,double z){return .055f*(float)Math.sin(x*.012+z*.005)+.025f*(float)Math.sin(z*.021-x*.004);}
+
 
     @Override public void activateDetail(QatarDetailPack.DetailChunk chunk){
         detailData.put(key(chunk.entry().x(),chunk.entry().y()),chunk);rebuildDetail(chunk);
@@ -182,7 +206,7 @@ public final class QatarWorldRenderer implements WorldStreamer.Listener, QatarDe
 
     private void rebuildDetail(QatarDetailPack.DetailChunk chunk){
         Model model=buildDetailCell(chunk);long detailKey=key(chunk.entry().x(),chunk.entry().y());
-        RenderChunk old=detailCells.put(detailKey,new RenderChunk(chunk.entry().x()*(double)detailCellMetres,chunk.entry().y()*(double)detailCellMetres,model,new ModelInstance(model)));
+        RenderChunk old=detailCells.put(detailKey,new RenderChunk(chunk.entry().x()*(double)detailCellMetres,chunk.entry().y()*(double)detailCellMetres,model,new ModelInstance(model),null,null));
         if(old!=null)old.model.dispose();
         physics.registerDetailChunk(chunk,detailCellMetres,nationalData.get(parentNationalKey(chunk)),pack);
     }
@@ -206,27 +230,36 @@ public final class QatarWorldRenderer implements WorldStreamer.Listener, QatarDe
         builder.begin();
         double cellOriginX=chunk.entry().x()*(double)detailCellMetres,cellOriginZ=chunk.entry().y()*(double)detailCellMetres;
         if(chunk.roads().length>0){
+            MeshPartBuilder shoulders=builder.part("osm-road-shoulders",GL20.GL_TRIANGLES,ATTRS,shoulderMaterial);
             MeshPartBuilder roads=builder.part("osm-paved-roads",GL20.GL_TRIANGLES,ATTRS,roadMaterial);
             MeshPartBuilder paths=builder.part("osm-paths-tracks",GL20.GL_TRIANGLES,ATTRS,pathMaterial);
-            for(QatarPack.Road road:chunk.roads())roadQuad(road.roadClass()==7||road.roadClass()==8?paths:roads,road,cellOriginX,cellOriginZ,.13f,road.width());
+            MeshPartBuilder rails=builder.part("osm-rail",GL20.GL_TRIANGLES,ATTRS,railMaterial);
+            MeshPartBuilder runways=builder.part("osm-runways",GL20.GL_TRIANGLES,ATTRS,runwayMaterial);
+            MeshPartBuilder taxiways=builder.part("osm-taxiways",GL20.GL_TRIANGLES,ATTRS,taxiwayMaterial);
+            for(QatarPack.Road road:chunk.roads()){
+                if(road.roadClass()<=4)roadQuad(shoulders,road,cellOriginX,cellOriginZ,.105f,road.width()+2.2f);
+                MeshPartBuilder target=switch(road.roadClass()){case 7,8->paths;case 9->rails;case 10->runways;case 11->taxiways;default->roads;};
+                roadQuad(target,road,cellOriginX,cellOriginZ,.13f,road.width());
+            }
             MeshPartBuilder marks=builder.part("osm-centre-lines",GL20.GL_TRIANGLES,ATTRS,markingMaterial);
-            for(QatarPack.Road road:chunk.roads())if(road.roadClass()<=4)roadQuad(marks,road,cellOriginX,cellOriginZ,.145f,.16f);
+            for(QatarPack.Road road:chunk.roads())if(road.roadClass()<=4||road.roadClass()==10)roadQuad(marks,road,cellOriginX,cellOriginZ,.15f,road.roadClass()==10?.55f:.16f);
         }
         MeshPartBuilder towers=builder.part("osm-towers",GL20.GL_TRIANGLES,ATTRS,towerMaterial);
         MeshPartBuilder villas=builder.part("osm-villas",GL20.GL_TRIANGLES,ATTRS,villaMaterial);
         MeshPartBuilder industry=builder.part("osm-industry",GL20.GL_TRIANGLES,ATTRS,industrialMaterial);
         MeshPartBuilder farms=builder.part("osm-farms",GL20.GL_TRIANGLES,ATTRS,farmMaterial);
+        MeshPartBuilder roofs=builder.part("osm-roofs",GL20.GL_TRIANGLES,ATTRS,roofMaterial);
         MeshPartBuilder windows=builder.part("osm-facade-windows",GL20.GL_TRIANGLES,ATTRS,windowMaterial);
         for(QatarPack.Building building:chunk.buildings()){
             MeshPartBuilder target=switch(building.archetype()){case 1->towers;case 4->industry;case 5->farms;default->villas;};
             float baseHeight=terrainHeight(cellOriginX+building.x(),cellOriginZ+building.z());
-            if(building.hasSourceFootprint())extrudeFootprint(target,windows,building,baseHeight);
+            if(building.hasSourceFootprint())extrudeFootprint(target,roofs,windows,building,baseHeight);
             else target.box(building.x(),baseHeight+building.height()/2,building.z(),building.width(),building.height(),building.depth());
         }
         return builder.end();
     }
 
-    private void extrudeFootprint(MeshPartBuilder part,MeshPartBuilder windows,QatarPack.Building building,float baseHeight){
+    private void extrudeFootprint(MeshPartBuilder part,MeshPartBuilder roofs,MeshPartBuilder windows,QatarPack.Building building,float baseHeight){
         float[] polygon=building.footprint();
         ShortArray triangles=footprintTriangulator.computeTriangles(polygon);
         float height=baseHeight+building.height();
@@ -236,7 +269,7 @@ public final class QatarWorldRenderer implements WorldStreamer.Listener, QatarDe
             a.setPos(polygon[ia],height,polygon[ia+1]).setNor(0,1,0);
             b.setPos(polygon[ib],height,polygon[ib+1]).setNor(0,1,0);
             c.setPos(polygon[ic],height,polygon[ic+1]).setNor(0,1,0);
-            part.triangle(a,b,c);
+            roofs.triangle(a,b,c);
         }
         int points=polygon.length/2;float signedArea=0;
         for(int i=0;i<points;i++){int j=(i+1)%points;signedArea+=polygon[i*2]*polygon[j*2+1]-polygon[j*2]*polygon[i*2+1];}
@@ -249,9 +282,9 @@ public final class QatarWorldRenderer implements WorldStreamer.Listener, QatarDe
             if(points<=24&&length>=4&&building.height()>=5&&building.archetype()!=5){
                 float margin=Math.min(1.2f,length*.18f),start=margin/length,end=1-start;
                 float wx1=ax+dx*start,wz1=az+dz*start,wx2=ax+dx*end,wz2=az+dz*end;
-                int floors=Math.min(4,Math.max(1,(int)((building.height()-1.5f)/3.2f)));
-                for(int floor=0;floor<floors;floor++){
-                    float bottom=baseHeight+1.35f+floor*3.2f,top=Math.min(height-.35f,bottom+1.1f);if(top<=bottom)continue;
+                int totalFloors=Math.max(1,(int)((building.height()-1.5f)/3.2f)),displayed=Math.min(8,totalFloors);
+                for(int slot=0;slot<displayed;slot++){
+                    int floor=displayed==1?0:slot*(totalFloors-1)/(displayed-1);float bottom=baseHeight+1.35f+floor*3.2f,top=Math.min(height-.35f,bottom+1.1f);if(top<=bottom)continue;
                     float offset=.035f;facadeRect(windows,wx1+nx*offset,bottom,wz1+nz*offset,wx2+nx*offset,top,wz2+nz*offset,nx,nz,counterClockwise);
                 }
             }
@@ -305,7 +338,7 @@ public final class QatarWorldRenderer implements WorldStreamer.Listener, QatarDe
     private void rebuildFocusModel(){
         if(focusModel!=null)focusModel.dispose();
         renderedMode=physics.mode();
-        Material maroon=diffuse(.45f,.035f,.12f,1),dark=diffuse(.10f,.12f,.13f,1),white=diffuse(.88f,.86f,.78f,1);
+        Material maroon=diffuse(.45f,.035f,.12f,1),dark=diffuse(.10f,.12f,.13f,1),white=diffuse(.88f,.86f,.78f,1),glass=new Material(ColorAttribute.createDiffuse(new Color(.08f,.18f,.21f,1)),ColorAttribute.createSpecular(new Color(.7f,.8f,.82f,1)),FloatAttribute.createShininess(80));
         builder.begin();
         switch(renderedMode){
             case WALK->{
@@ -322,10 +355,24 @@ public final class QatarWorldRenderer implements WorldStreamer.Listener, QatarDe
                 limbs.setVertexTransform(new Matrix4().setToTranslation(.47f,1.32f,0));limbs.capsule(.11f,.94f,10);
                 limbs.setVertexTransform(null);
             }
-            case CAR->{builder.part("4x4",GL20.GL_TRIANGLES,ATTRS,maroon).box(0,.7f,0,2f,1.25f,4.3f);builder.part("cabin",GL20.GL_TRIANGLES,ATTRS,dark).box(0,1.45f,-.25f,1.75f,.8f,2.2f);}
-            case BOAT->{builder.part("hull",GL20.GL_TRIANGLES,ATTRS,white).box(0,.4f,0,3.1f,1.1f,7.8f);builder.part("cabin",GL20.GL_TRIANGLES,ATTRS,maroon).box(0,1.35f,-.5f,2.1f,1.4f,2.7f);}
-            case HELICOPTER->{builder.part("fuselage",GL20.GL_TRIANGLES,ATTRS,maroon).box(0,.5f,0,2.5f,1.5f,5.6f);builder.part("rotor",GL20.GL_TRIANGLES,ATTRS,dark).box(0,1.55f,0,9f,.05f,.18f);}
-            case AEROPLANE->{builder.part("body",GL20.GL_TRIANGLES,ATTRS,white).box(0,.4f,0,1.35f,1.3f,7.4f);builder.part("wing",GL20.GL_TRIANGLES,ATTRS,maroon).box(0,.45f,.25f,8.8f,.12f,1.25f);}
+            case CAR->{
+                builder.part("4x4-body",GL20.GL_TRIANGLES,ATTRS,maroon).box(0,.72f,0,2.05f,.82f,4.35f);
+                MeshPartBuilder cabin=builder.part("4x4-glass-cabin",GL20.GL_TRIANGLES,ATTRS,glass);cabin.box(0,1.35f,-.30f,1.72f,.82f,2.18f);
+                MeshPartBuilder wheels=builder.part("4x4-wheels",GL20.GL_TRIANGLES,ATTRS,dark);
+                for(float x:new float[]{-1.04f,1.04f})for(float z:new float[]{-1.38f,1.38f}){wheels.setVertexTransform(new Matrix4().setToTranslation(x,.48f,z).rotate(Vector3.Z,90));wheels.cylinder(.68f,.30f,.68f,16);}wheels.setVertexTransform(null);
+            }
+            case BOAT->{
+                MeshPartBuilder hull=builder.part("hull",GL20.GL_TRIANGLES,ATTRS,white);hull.setVertexTransform(new Matrix4().setToTranslation(0,.38f,0));hull.sphere(3.15f,1.20f,7.9f,20,10);hull.setVertexTransform(null);
+                builder.part("deck",GL20.GL_TRIANGLES,ATTRS,maroon).box(0,.92f,-.25f,2.65f,.18f,5.0f);builder.part("cabin",GL20.GL_TRIANGLES,ATTRS,glass).box(0,1.55f,-.65f,2.0f,1.15f,2.45f);
+            }
+            case HELICOPTER->{
+                MeshPartBuilder fuselage=builder.part("fuselage",GL20.GL_TRIANGLES,ATTRS,maroon);fuselage.setVertexTransform(new Matrix4().setToTranslation(0,.62f,-.55f));fuselage.sphere(2.55f,1.55f,3.7f,20,12);fuselage.setVertexTransform(null);
+                builder.part("cockpit",GL20.GL_TRIANGLES,ATTRS,glass).box(0,.82f,1.05f,2.10f,1.02f,1.55f);builder.part("tail",GL20.GL_TRIANGLES,ATTRS,maroon).box(0,.66f,-3.05f,.38f,.38f,3.45f);builder.part("rotor",GL20.GL_TRIANGLES,ATTRS,dark).box(0,1.58f,-.3f,9f,.055f,.18f);
+            }
+            case AEROPLANE->{
+                MeshPartBuilder body=builder.part("airframe",GL20.GL_TRIANGLES,ATTRS,white);body.setVertexTransform(new Matrix4().setToTranslation(0,.52f,0).rotate(Vector3.X,90));body.capsule(.67f,7.7f,18);body.setVertexTransform(null);
+                builder.part("wing",GL20.GL_TRIANGLES,ATTRS,maroon).box(0,.48f,.15f,9.0f,.14f,1.32f);builder.part("tailplane",GL20.GL_TRIANGLES,ATTRS,maroon).box(0,.78f,-3.05f,3.5f,.12f,.70f);builder.part("cockpit",GL20.GL_TRIANGLES,ATTRS,glass).box(0,.78f,2.55f,.92f,.48f,1.18f);
+            }
         }
         focusModel=builder.end();focusInstance=new ModelInstance(focusModel);
     }
@@ -334,8 +381,9 @@ public final class QatarWorldRenderer implements WorldStreamer.Listener, QatarDe
     public String fatalStreamingError(){return fatalStreamingError;}
     public int renderChunkCount(){return chunks.size();}
 
-    @Override public void dispose(){for(RenderChunk value:chunks.values())value.model.dispose();for(RenderChunk value:detailCells.values())value.model.dispose();chunks.clear();nationalData.clear();detailCells.clear();detailData.clear();if(focusModel!=null)focusModel.dispose();batch.dispose();}
+    @Override public void dispose(){for(RenderChunk value:chunks.values()){value.model.dispose();if(value.waterModel!=null)value.waterModel.dispose();}for(RenderChunk value:detailCells.values())value.model.dispose();chunks.clear();nationalData.clear();detailCells.clear();detailData.clear();if(focusModel!=null)focusModel.dispose();batch.dispose();}
     private static Material diffuse(float r,float g,float b,float a){return new Material(ColorAttribute.createDiffuse(new Color(r,g,b,a)));}
     private static long key(int x,int y){return ((long)x<<32)^(y&0xffffffffL);}
-    private record RenderChunk(double x,double z,Model model,ModelInstance instance){}
+    private record ChunkModels(Model terrain,Model water){}
+    private record RenderChunk(double x,double z,Model model,ModelInstance instance,Model waterModel,ModelInstance waterInstance){}
 }
