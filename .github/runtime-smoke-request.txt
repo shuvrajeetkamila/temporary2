@@ -1,5 +1,5 @@
-Qatar Android v0.4.0 release-candidate runtime smoke request
-APK SHA-256: 572dd6c4e09e3b7f800c222832c572037d886cc0d9438f900b2890ef8ae8001c
-Build run: 38586375722
-Requested UTC: 2026-10-14T15:16:00Z
-Checks: install, cold launch, measured QTPK/OSM/environment/thermal markers, camera-clear roadside spawn, unobstructed textured gameplay screenshot, process survival, memory and frame diagnostics.
+Qatar Android v0.4.0 collision-safe release-candidate runtime request
+APK SHA-256: cfda5b65862acbb70dc5c208d5eb9e6cd270bae8db413bce832094e3750e0a36
+Build run: 38587634183
+Requested UTC: 2026-10-14T15:26:00Z
+Checks: install, cold launch, QTPK/OSM/environment/thermal readiness, retained-land spawn collision, periodic stable runtime state, unobstructed textured gameplay screenshot, process survival, memory and frame diagnostics.
