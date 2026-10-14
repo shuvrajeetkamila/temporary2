@@ -12,6 +12,8 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.PerspectiveCamera;
+import com.badlogic.gdx.graphics.Pixmap;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.VertexAttributes;
 import com.badlogic.gdx.graphics.g3d.Environment;
 import com.badlogic.gdx.graphics.g3d.Material;
@@ -20,6 +22,7 @@ import com.badlogic.gdx.graphics.g3d.ModelBatch;
 import com.badlogic.gdx.graphics.g3d.ModelInstance;
 import com.badlogic.gdx.graphics.g3d.attributes.ColorAttribute;
 import com.badlogic.gdx.graphics.g3d.attributes.FloatAttribute;
+import com.badlogic.gdx.graphics.g3d.attributes.TextureAttribute;
 import com.badlogic.gdx.graphics.g3d.environment.DirectionalLight;
 import com.badlogic.gdx.graphics.g3d.utils.MeshPartBuilder;
 import com.badlogic.gdx.graphics.g3d.utils.ModelBuilder;
@@ -34,7 +37,7 @@ import java.util.Map;
 
 /** Qatar-specific mobile 3D renderer. All geometry is generated, never imagery. */
 public final class QatarWorldRenderer implements WorldStreamer.Listener, QatarDetailStreamer.Listener, Disposable {
-    private static final long ATTRS = VertexAttributes.Usage.Position | VertexAttributes.Usage.Normal;
+    private static final long ATTRS = VertexAttributes.Usage.Position | VertexAttributes.Usage.Normal | VertexAttributes.Usage.TextureCoordinates;
     private final QatarPack pack;
     private final int detailCellMetres;
     private final PhysicsWorld physics;
@@ -51,6 +54,7 @@ public final class QatarWorldRenderer implements WorldStreamer.Listener, QatarDe
     private final Map<Long, RenderChunk> detailCells = new HashMap<>();
     private final Map<Long, QatarDetailPack.DetailChunk> detailData = new HashMap<>();
     private final EarClippingTriangulator footprintTriangulator = new EarClippingTriangulator();
+    private final Texture terrainTexture=createTerrainTexture();
     private final Map<Integer, Material> terrainMaterials = new HashMap<>();
     private final Material shoulderMaterial=diffuse(.52f,.49f,.43f,1);
     private final Material roadMaterial=diffuse(.13f,.145f,.15f,1);
@@ -85,16 +89,16 @@ public final class QatarWorldRenderer implements WorldStreamer.Listener, QatarDe
     }
 
     private void initialiseMaterials() {
-        terrainMaterials.put(0,diffuse(.08f,.39f,.48f,1));
-        terrainMaterials.put(1,diffuse(.62f,.55f,.44f,1));
-        terrainMaterials.put(2,diffuse(.71f,.65f,.51f,1));
-        terrainMaterials.put(3,diffuse(.80f,.65f,.39f,1));
-        terrainMaterials.put(4,diffuse(.77f,.75f,.64f,1));
-        terrainMaterials.put(5,diffuse(.35f,.46f,.30f,1));
-        terrainMaterials.put(6,diffuse(.50f,.51f,.31f,1));
-        terrainMaterials.put(7,diffuse(.54f,.50f,.43f,1));
-        terrainMaterials.put(8,diffuse(.64f,.59f,.49f,1));
-        terrainMaterials.put(9,diffuse(.86f,.77f,.58f,1));
+        terrainMaterials.put(0,textured(.08f,.39f,.48f));
+        terrainMaterials.put(1,textured(.66f,.58f,.46f));
+        terrainMaterials.put(2,textured(.74f,.68f,.54f));
+        terrainMaterials.put(3,textured(.82f,.67f,.42f));
+        terrainMaterials.put(4,textured(.79f,.77f,.66f));
+        terrainMaterials.put(5,textured(.37f,.48f,.31f));
+        terrainMaterials.put(6,textured(.52f,.53f,.32f));
+        terrainMaterials.put(7,textured(.56f,.52f,.45f));
+        terrainMaterials.put(8,textured(.66f,.61f,.51f));
+        terrainMaterials.put(9,textured(.88f,.79f,.60f));
     }
 
     public void render(float delta) {
@@ -292,12 +296,12 @@ public final class QatarWorldRenderer implements WorldStreamer.Listener, QatarDe
         MeshPartBuilder.VertexInfo a=new MeshPartBuilder.VertexInfo(),b=new MeshPartBuilder.VertexInfo(),c=new MeshPartBuilder.VertexInfo();
         for(int i=0;i<triangles.size;i+=3){
             int ia=triangles.get(i)*2,ib=triangles.get(i+1)*2,ic=triangles.get(i+2)*2;
-            a.setPos(polygon[ia],height,polygon[ia+1]).setNor(0,1,0);
-            b.setPos(polygon[ib],height,polygon[ib+1]).setNor(0,1,0);
-            c.setPos(polygon[ic],height,polygon[ic+1]).setNor(0,1,0);
+            a.setPos(polygon[ia],height,polygon[ia+1]).setNor(0,1,0).setUV(polygon[ia]/10f,polygon[ia+1]/10f);
+            b.setPos(polygon[ib],height,polygon[ib+1]).setNor(0,1,0).setUV(polygon[ib]/10f,polygon[ib+1]/10f);
+            c.setPos(polygon[ic],height,polygon[ic+1]).setNor(0,1,0).setUV(polygon[ic]/10f,polygon[ic+1]/10f);
             roofs.triangle(a,b,c);
         }
-        int points=polygon.length/2;float signedArea=0;
+        int points=polygon.length/2,windowStride=Math.max(1,(points+23)/24);float signedArea=0;
         for(int i=0;i<points;i++){int j=(i+1)%points;signedArea+=polygon[i*2]*polygon[j*2+1]-polygon[j*2]*polygon[i*2+1];}
         boolean counterClockwise=signedArea>0;
         for(int i=0;i<points;i++){
@@ -305,7 +309,7 @@ public final class QatarWorldRenderer implements WorldStreamer.Listener, QatarDe
             float dx=bx-ax,dz=bz-az,length=(float)Math.hypot(dx,dz);if(length<.02f)continue;
             float direction=counterClockwise?1:-1,nx=direction*dz/length,nz=-direction*dx/length;
             facadeRect(part,ax,baseHeight,az,bx,height,bz,nx,nz,counterClockwise);
-            if(points<=24&&length>=4&&building.height()>=5&&building.archetype()!=5){
+            if(i%windowStride==0&&length>=4&&building.height()>=5&&building.archetype()!=5){
                 float margin=Math.min(1.2f,length*.18f),start=margin/length,end=1-start;
                 float wx1=ax+dx*start,wz1=az+dz*start,wx2=ax+dx*end,wz2=az+dz*end;
                 int totalFloors=Math.max(1,(int)((building.height()-1.5f)/3.2f)),displayed=Math.min(8,totalFloors);
@@ -326,9 +330,9 @@ public final class QatarWorldRenderer implements WorldStreamer.Listener, QatarDe
         float ux=bx-ax,uy=by-ay,uz=bz-az,vx=cx-ax,vy=cy-ay,vz=cz-az;
         float nx=uy*vz-uz*vy,ny=uz*vx-ux*vz,nz=ux*vy-uy*vx,length=(float)Math.sqrt(nx*nx+ny*ny+nz*nz);
         if(length<.0001f){nx=0;ny=1;nz=0;}else{nx/=length;ny/=length;nz/=length;}
-        MeshPartBuilder.VertexInfo a=new MeshPartBuilder.VertexInfo().setPos(ax,ay,az).setNor(nx,ny,nz);
-        MeshPartBuilder.VertexInfo b=new MeshPartBuilder.VertexInfo().setPos(bx,by,bz).setNor(nx,ny,nz);
-        MeshPartBuilder.VertexInfo c=new MeshPartBuilder.VertexInfo().setPos(cx,cy,cz).setNor(nx,ny,nz);
+        MeshPartBuilder.VertexInfo a=new MeshPartBuilder.VertexInfo().setPos(ax,ay,az).setNor(nx,ny,nz).setUV(ax/25f,az/25f);
+        MeshPartBuilder.VertexInfo b=new MeshPartBuilder.VertexInfo().setPos(bx,by,bz).setNor(nx,ny,nz).setUV(bx/25f,bz/25f);
+        MeshPartBuilder.VertexInfo c=new MeshPartBuilder.VertexInfo().setPos(cx,cy,cz).setNor(nx,ny,nz).setUV(cx/25f,cz/25f);
         part.triangle(a,b,c);
     }
 
@@ -407,7 +411,13 @@ public final class QatarWorldRenderer implements WorldStreamer.Listener, QatarDe
     public String fatalStreamingError(){return fatalStreamingError;}
     public int renderChunkCount(){return chunks.size();}
 
-    @Override public void dispose(){for(RenderChunk value:chunks.values()){value.model.dispose();if(value.waterModel!=null)value.waterModel.dispose();}for(RenderChunk value:detailCells.values())value.model.dispose();chunks.clear();nationalData.clear();detailCells.clear();detailData.clear();if(focusModel!=null)focusModel.dispose();batch.dispose();}
+    @Override public void dispose(){for(RenderChunk value:chunks.values()){value.model.dispose();if(value.waterModel!=null)value.waterModel.dispose();}for(RenderChunk value:detailCells.values())value.model.dispose();chunks.clear();nationalData.clear();detailCells.clear();detailData.clear();if(focusModel!=null)focusModel.dispose();terrainTexture.dispose();batch.dispose();}
+    private Material textured(float r,float g,float b){return new Material(ColorAttribute.createDiffuse(new Color(r,g,b,1)),TextureAttribute.createDiffuse(terrainTexture));}
+    private static Texture createTerrainTexture(){
+        Pixmap pixmap=new Pixmap(64,64,Pixmap.Format.RGBA8888);
+        for(int y=0;y<64;y++)for(int x=0;x<64;x++){int hash=x*374761393+y*668265263;hash=(hash^(hash>>>13))*1274126177;float grain=.80f+((hash>>>24)&255)/255f*.18f;float ripple=.025f*(float)Math.sin(x*.72+y*.31);float value=Math.max(.72f,Math.min(1f,grain+ripple));pixmap.drawPixel(x,y,Color.rgba8888(value,value*.98f,value*.92f,1));}
+        Texture texture=new Texture(pixmap);pixmap.dispose();texture.setWrap(Texture.TextureWrap.Repeat,Texture.TextureWrap.Repeat);texture.setFilter(Texture.TextureFilter.Linear,Texture.TextureFilter.Linear);return texture;
+    }
     private static Material diffuse(float r,float g,float b,float a){return new Material(ColorAttribute.createDiffuse(new Color(r,g,b,a)));}
     private static long key(int x,int y){return ((long)x<<32)^(y&0xffffffffL);}
     private record ChunkModels(Model terrain,Model water){}

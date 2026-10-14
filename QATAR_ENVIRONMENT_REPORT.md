@@ -36,6 +36,6 @@ The governor reduces rendering, decoding/upload, detail residency, collision, an
 - Opaque specular water to avoid expensive full-country alpha overdraw.
 - Paved shoulders and distinct road, track, rail, runway, and taxiway materials.
 - Separate roof, wall, and bounded facade-window geometry.
-- Brighter Qatar daylight palette and distance haze.
+- Brighter Qatar daylight palette, distance haze, and an original deterministic seamless sand/gravel microtexture (not imagery).
 - Original rounded 4×4, boat, helicopter, and light-aircraft blockout meshes.
 - OSM roadside spawn preference instead of placing the player on a road centreline when a clear verge exists.
