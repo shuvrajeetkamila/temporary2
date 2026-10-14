@@ -1,6 +1,8 @@
 data/qatar/source/geoboundaries-6-QAT-ADM0.geojson: OK
 data/qatar/source/geoboundaries-6-QAT-ADM1.geojson: OK
 data/qatar/source/natural-earth-10m-QAT.geojson: OK
+data/qatar/source/qatar-srtm-250m.qdem: OK
+data/qatar/compiled/qatar-dem-report.json: OK
 app/src/main/assets/world/qatar-national.qpak: OK
 app/src/main/assets/world/qatar-manifest.json: OK
 data/qatar/compiled/qatar-world-report.json: OK

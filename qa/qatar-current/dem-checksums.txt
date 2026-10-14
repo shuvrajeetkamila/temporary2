@@ -1,0 +1,3 @@
+data/qatar/source/qatar-srtm-250m.qdem: OK
+data/qatar/compiled/qatar-dem-report.json: OK
+data/qatar/QATAR_DEM_IMPORT.json: OK

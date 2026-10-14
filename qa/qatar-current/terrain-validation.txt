@@ -1,0 +1,187 @@
+{
+  "format": "QatarTerrainValidation",
+  "version": 1,
+  "worldEpoch": "2026-10-14-srtm-osm-v0.3",
+  "epsg": 32639,
+  "qdem": {
+    "path": "data/qatar/source/qatar-srtm-250m.qdem",
+    "sha256": "23f96979dfcb77cc81c11c0f65c3047a463c7cef0be8d22fc1b1be22191d54eb",
+    "columns": 441,
+    "rows": 825,
+    "spacingMetres": 250,
+    "minimumMetres": -68.92,
+    "maximumMetres": 139.07,
+    "crc32": "bcba0b80"
+  },
+  "qpak": {
+    "path": "app/src/main/assets/world/qatar-national.qpak",
+    "sha256": "014c8235725b9d2c29fc675e4db5529e01b782b12aa3312e6ccab0a185d1af1a",
+    "chunks": 5665,
+    "landNodeMinimumMetres": -2.0,
+    "landNodeMaximumMetres": 101.52,
+    "landMaskCentreMinimumMetres": -2.0,
+    "landMaskCentreMaximumMetres": 99.431875,
+    "landMaskCentresChecked": 739068,
+    "continuousLandSeamsChecked": 6056
+  },
+  "spawns": {
+    "default": "Souq Waqif",
+    "count": 25,
+    "landMaskSafeCount": 22,
+    "minimumMetres": -0.819,
+    "maximumMetres": 45.123,
+    "locations": [
+      {
+        "name": "Doha Corniche",
+        "kind": "capital",
+        "elevationMetres": 0.476,
+        "landMaskCell": false
+      },
+      {
+        "name": "Souq Waqif",
+        "kind": "heritage",
+        "elevationMetres": 12.001,
+        "landMaskCell": true
+      },
+      {
+        "name": "West Bay",
+        "kind": "skyline",
+        "elevationMetres": 19.199,
+        "landMaskCell": true
+      },
+      {
+        "name": "Hamad International Airport",
+        "kind": "airport",
+        "elevationMetres": -0.763,
+        "landMaskCell": true
+      },
+      {
+        "name": "Al Rayyan",
+        "kind": "city",
+        "elevationMetres": 24.66,
+        "landMaskCell": true
+      },
+      {
+        "name": "Education City",
+        "kind": "campus",
+        "elevationMetres": 9.914,
+        "landMaskCell": true
+      },
+      {
+        "name": "Umm Salal",
+        "kind": "town",
+        "elevationMetres": 21.54,
+        "landMaskCell": true
+      },
+      {
+        "name": "Lusail",
+        "kind": "city",
+        "elevationMetres": 7.52,
+        "landMaskCell": true
+      },
+      {
+        "name": "Al Wakrah",
+        "kind": "city",
+        "elevationMetres": 6.39,
+        "landMaskCell": true
+      },
+      {
+        "name": "Mesaieed",
+        "kind": "industrial",
+        "elevationMetres": 9.46,
+        "landMaskCell": true
+      },
+      {
+        "name": "Hamad Port",
+        "kind": "port",
+        "elevationMetres": 2.398,
+        "landMaskCell": true
+      },
+      {
+        "name": "Khor Al Adaid",
+        "kind": "dunes",
+        "elevationMetres": -0.819,
+        "landMaskCell": false
+      },
+      {
+        "name": "Abu Samra",
+        "kind": "border",
+        "elevationMetres": 3.853,
+        "landMaskCell": true
+      },
+      {
+        "name": "Al Khor",
+        "kind": "city",
+        "elevationMetres": 9.975,
+        "landMaskCell": true
+      },
+      {
+        "name": "Al Thakhira",
+        "kind": "mangrove",
+        "elevationMetres": 9.307,
+        "landMaskCell": true
+      },
+      {
+        "name": "Ras Laffan",
+        "kind": "industrial",
+        "elevationMetres": 4.971,
+        "landMaskCell": true
+      },
+      {
+        "name": "Madinat ash Shamal",
+        "kind": "town",
+        "elevationMetres": 8.788,
+        "landMaskCell": true
+      },
+      {
+        "name": "Al Ruwais",
+        "kind": "port",
+        "elevationMetres": 3.242,
+        "landMaskCell": true
+      },
+      {
+        "name": "Fuwairit",
+        "kind": "beach",
+        "elevationMetres": 1.875,
+        "landMaskCell": false
+      },
+      {
+        "name": "Al Zubarah",
+        "kind": "heritage",
+        "elevationMetres": 10.932,
+        "landMaskCell": true
+      },
+      {
+        "name": "Al Shahaniya",
+        "kind": "town",
+        "elevationMetres": 41.551,
+        "landMaskCell": true
+      },
+      {
+        "name": "Dukhan",
+        "kind": "coast",
+        "elevationMetres": 37.704,
+        "landMaskCell": true
+      },
+      {
+        "name": "Zekreet",
+        "kind": "rock",
+        "elevationMetres": 4.07,
+        "landMaskCell": true
+      },
+      {
+        "name": "Al Kiranah",
+        "kind": "interior",
+        "elevationMetres": 45.123,
+        "landMaskCell": true
+      },
+      {
+        "name": "Al Daayen",
+        "kind": "town",
+        "elevationMetres": 13.486,
+        "landMaskCell": true
+      }
+    ]
+  },
+  "result": "PASS"
+}

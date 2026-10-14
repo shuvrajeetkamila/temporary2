@@ -1,0 +1,3 @@
+data/qatar/source/qatar-srtm-250m.qdem: OK
+app/src/main/assets/world/qatar-national.qpak: OK
+data/qatar/compiled/qatar-terrain-validation.json: OK

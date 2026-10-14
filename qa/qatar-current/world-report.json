@@ -1,7 +1,7 @@
 {
   "format": "QTPK",
   "version": 1,
-  "worldEpoch": "2026-10-12-coarse-foundation",
+  "worldEpoch": "2026-10-14-srtm-osm-v0.3",
   "epsg": 32639,
   "chunkMetres": 2000,
   "maskDimension": 16,
@@ -129,8 +129,18 @@
   "hubs": 25,
   "coarseRoadSegments": 1249,
   "generatedMassingBuildings": 28313,
-  "qpakBytes": 1170493,
-  "qpakSha256": "6aa220910d0214b3d38fb5c7764534c5242b1ddab24ae6ffddb377d95a22a6b7",
+  "qpakBytes": 1410075,
+  "qpakSha256": "014c8235725b9d2c29fc675e4db5529e01b782b12aa3312e6ccab0a185d1af1a",
+  "terrain": {
+    "source": "Mapzen SRTM/ETOPO1-derived 250 m QDEM",
+    "measuredDem": true,
+    "sampleSpacingMetres": 250,
+    "qdemPath": "data/qatar/source/qatar-srtm-250m.qdem",
+    "qdemSha256": "23f96979dfcb77cc81c11c0f65c3047a463c7cef0be8d22fc1b1be22191d54eb",
+    "landMinimumMetres": -2.0,
+    "clampedLandChunkSamples": 5174,
+    "continuousLandSeamsVerified": 6056
+  },
   "sources": {
     "adm0": {
       "path": "data/qatar/source/geoboundaries-6-QAT-ADM0.geojson",
@@ -146,7 +156,8 @@
     }
   },
   "limitations": [
-    "Milestone 1 uses geoBoundaries geometry and deterministic coarse road/settlement derivatives.",
-    "Complete OpenStreetMap roads and footprints plus DEM are scheduled for subsequent compiler milestones."
+    "National coast classification uses geoBoundaries and still requires a reclamation-by-reclamation audit.",
+    "Mapzen-composited SRTM/ETOPO1 elevation is terrain-scale data, not survey, aviation, marine, or navigation data.",
+    "Land-chunk samples below -2 m are clamped to prevent offshore ETOPO1 bathymetry crossing the coarse coastline mask."
   ]
 }
