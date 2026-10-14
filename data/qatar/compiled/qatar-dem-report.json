@@ -1,0 +1,70 @@
+{
+  "format": "QDEM",
+  "version": 1,
+  "epoch": "2026-10-14T12:25:57Z",
+  "dataset": "NASA SRTM 1 arc-second global elevation via Mapzen/AWS Terrain Tiles Skadi mirror",
+  "license": "NASA SRTM data are public domain in the United States; attribution requested",
+  "attribution": "NASA Shuttle Radar Topography Mission (SRTM), USGS; Mapzen/AWS Terrain Tiles distribution",
+  "epsg": 32639,
+  "sampleSpacingMetres": 250,
+  "columns": 441,
+  "rows": 825,
+  "samples": 363825,
+  "originEasting": 466000.0,
+  "originNorthing": 2698000.0,
+  "worldWidth": 110000.0,
+  "worldHeight": 206000.0,
+  "minimumMetres": -68.92,
+  "maximumMetres": 139.07,
+  "voidSamplesAfterInterpolation": 0,
+  "tiles": [
+    {
+      "name": "N24E050.hgt",
+      "sourceUrl": "https://s3.amazonaws.com/elevation-tiles-prod/skadi/N24/N24E050.hgt.gz",
+      "bytes": 25934402,
+      "sha256": "2ddbd4472223efa4f3d6c3f314a627e367b00decf5c29fe076d48930b77cd462",
+      "samplesPerSide": 3601
+    },
+    {
+      "name": "N24E051.hgt",
+      "sourceUrl": "https://s3.amazonaws.com/elevation-tiles-prod/skadi/N24/N24E051.hgt.gz",
+      "bytes": 25934402,
+      "sha256": "50bd81717bbca6b4972f93237899a799b46ee1c36a40908378e45f47d442672f",
+      "samplesPerSide": 3601
+    },
+    {
+      "name": "N25E050.hgt",
+      "sourceUrl": "https://s3.amazonaws.com/elevation-tiles-prod/skadi/N25/N25E050.hgt.gz",
+      "bytes": 25934402,
+      "sha256": "b47cbc71446cc85b79c67b2a89a2bbfb26eeb58942aaa96b686c4301107650d5",
+      "samplesPerSide": 3601
+    },
+    {
+      "name": "N25E051.hgt",
+      "sourceUrl": "https://s3.amazonaws.com/elevation-tiles-prod/skadi/N25/N25E051.hgt.gz",
+      "bytes": 25934402,
+      "sha256": "54e29b1df8713894e93e8b0f35048930ba7599f6c9df6871bc99745cd2e8f201",
+      "samplesPerSide": 3601
+    },
+    {
+      "name": "N26E050.hgt",
+      "sourceUrl": "https://s3.amazonaws.com/elevation-tiles-prod/skadi/N26/N26E050.hgt.gz",
+      "bytes": 25934402,
+      "sha256": "9f085eeeeeac8d404f6d568516a2d246dccf0a1129f651a9b2249a7c92d68bfc",
+      "samplesPerSide": 3601
+    },
+    {
+      "name": "N26E051.hgt",
+      "sourceUrl": "https://s3.amazonaws.com/elevation-tiles-prod/skadi/N26/N26E051.hgt.gz",
+      "bytes": 25934402,
+      "sha256": "d3d675a270257fb0f0b8a5ca166bcef3cbd2ef67b6465c1cfa2b747944810c7d",
+      "samplesPerSide": 3601
+    }
+  ],
+  "qdemBytes": 727710,
+  "qdemSha256": "23f96979dfcb77cc81c11c0f65c3047a463c7cef0be8d22fc1b1be22191d54eb",
+  "notes": [
+    "Bilinear source sampling onto the deterministic QTPK 250 m grid.",
+    "Elevation is terrain-scale game data, not survey, navigation, aviation, or engineering data."
+  ]
+}

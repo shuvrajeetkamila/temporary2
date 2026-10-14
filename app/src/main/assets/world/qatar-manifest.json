@@ -1,7 +1,7 @@
 {
   "format": "QTPK",
   "version": 1,
-  "worldEpoch": "2026-10-14-dem-bootstrap",
+  "worldEpoch": "2026-10-14-srtm-osm-v0.3",
   "epsg": 32639,
   "chunkMetres": 2000,
   "maskDimension": 16,
@@ -130,14 +130,14 @@
   "coarseRoadSegments": 1249,
   "generatedMassingBuildings": 28313,
   "terrain": {
-    "source": "bootstrap deterministic microheight",
-    "measuredDem": false,
+    "source": "NASA SRTM-derived 250 m QDEM",
+    "measuredDem": true,
     "sampleSpacingMetres": 250,
-    "qdemPath": null,
-    "qdemSha256": null
+    "qdemPath": "data/qatar/source/qatar-srtm-250m.qdem",
+    "qdemSha256": "23f96979dfcb77cc81c11c0f65c3047a463c7cef0be8d22fc1b1be22191d54eb"
   },
-  "qpakBytes": 1170489,
-  "qpakSha256": "322e7edf624d229b8c762a0242cf6bcf1af6ee7acdfc3ad94283f5facdbad3a8",
+  "qpakBytes": 1414385,
+  "qpakSha256": "a649d8686c1218bdd124450dcdf33c5eeac277fac0e9316b0437359972f17871",
   "limitations": [
     "National coast classification uses geoBoundaries and still requires a reclamation-by-reclamation audit.",
     "SRTM elevation is terrain-scale data, not survey, aviation, or navigation data."
