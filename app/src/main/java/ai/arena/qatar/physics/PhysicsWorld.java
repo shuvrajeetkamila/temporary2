@@ -172,6 +172,7 @@ public final class PhysicsWorld implements Disposable {
             world.removeRigidBody(temporaryFloor); temporaryFloor.dispose(); temporaryFloor=null;
             temporaryFloorShape.dispose(); temporaryFloorShape=null;
         }
+        stabilizeWalkingContact();
         maybeRebase();
         recoverIfInvalid();
         action=false;
@@ -235,6 +236,14 @@ public final class PhysicsWorld implements Disposable {
         Vector3 position=matrix.getTranslation(new Vector3());
         matrix.idt().setToTranslation(position).rotate(Vector3.Y,(float)Math.toDegrees(headingRadians));
         focusBody.setWorldTransform(matrix);
+    }
+
+    /** Bullet remains authoritative horizontally; a grounded capsule snap prevents coastal triangle seams from swallowing the walker. */
+    private void stabilizeWalkingContact(){
+        if(mode!=Mode.WALK||waterAvailable)return;Vector3 position=position();float standingY=groundReference+.96f;
+        if(position.y>=standingY||position.y<groundReference-12f)return;
+        Matrix4 at=focusBody.getWorldTransform();at.setTranslation(position.x,standingY,position.z);focusBody.setWorldTransform(at);
+        Vector3 velocity=focusBody.getLinearVelocity();if(velocity.y<0)focusBody.setLinearVelocity(new Vector3(velocity.x,0,velocity.z));focusBody.activate();
     }
 
     private void maybeRebase() {

@@ -162,10 +162,20 @@ public final class QatarWorldRenderer implements WorldStreamer.Listener, QatarDe
         for(int step=1;step<=12;step++){
             candidate.set(target).lerp(requested,step/12f);
             double globalX=physics.originX()+candidate.x,globalZ=physics.originZ()+candidate.z;
-            if(cameraBlocked(globalX,candidate.y,globalZ))return safe;
+            if(cameraBlocked(globalX,candidate.y,globalZ))return ensureCameraSeparation(safe,requested,target);
             safe.set(candidate);
         }
-        return safe;
+        return ensureCameraSeparation(safe,requested,target);
+    }
+
+    private Vector3 ensureCameraSeparation(Vector3 current,Vector3 requested,Vector3 target){
+        if(current.dst2(target)>=6.25f)return current;float base=(float)Math.atan2(requested.x-target.x,requested.z-target.z);
+        for(float distance:new float[]{4,6})for(float turn:new float[]{0,.7f,-.7f,1.4f,-1.4f,3.14f}){
+            Vector3 option=new Vector3(target.x+(float)Math.sin(base+turn)*distance,target.y+2f,target.z+(float)Math.cos(base+turn)*distance);
+            double globalX=physics.originX()+option.x,globalZ=physics.originZ()+option.z;option.y=Math.max(option.y,terrainHeight(globalX,globalZ)+1.5f);
+            if(!cameraBlocked(globalX,option.y,globalZ))return option;
+        }
+        return current;
     }
 
     private boolean cameraBlocked(double globalX,float localY,double globalZ){
