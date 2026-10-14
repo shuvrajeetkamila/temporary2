@@ -57,9 +57,13 @@ final class LoadingScreen extends ScreenAdapter {
                 if(startupDetail.roads().length==0||startupDetail.buildings().length==0)throw new IllegalStateException("Souq Waqif OSM detail is empty");
                 progress=.86f;status="Finding a clear OSM footway spawn near Souq Waqif…";
                 QatarSpawnResolver.Spawn spawn=QatarSpawnResolver.resolve(detailPack,start.x(),start.z());
+                QatarPack.ChunkEntry spawnEntry=pack.entry(pack.chunkX(spawn.x()),pack.chunkY(spawn.z()));
+                if(spawnEntry==null)throw new IllegalStateException("Resolved OSM spawn is outside national terrain");
+                QatarPack.WorldChunk spawnTerrain=spawnEntry.equals(entry)?startup:pack.load(spawnEntry);
+                float groundHeight=pack.terrainHeight(spawnTerrain,(float)(spawn.x()-spawnEntry.x()*(double)pack.chunkMetres),(float)(spawn.z()-spawnEntry.y()*(double)pack.chunkMetres));
                 progress=1;status="Full Qatar terrain and OSM packs indexed. Starting local streamers…";
-                final QatarPack readyPack=pack;final QatarDetailPack readyDetail=detailPack;final QatarSpawnResolver.Spawn readySpawn=spawn;
-                Gdx.app.postRunnable(()->{if(!launched){launched=true;game.start(readyPack,readyDetail,readySpawn);dispose();}});
+                final QatarPack readyPack=pack;final QatarDetailPack readyDetail=detailPack;final QatarSpawnResolver.Spawn readySpawn=spawn;final float readyGround=groundHeight;
+                Gdx.app.postRunnable(()->{if(!launched){launched=true;game.start(readyPack,readyDetail,readySpawn,readyGround);dispose();}});
             }catch(Throwable error){
                 failure=error.getClass().getSimpleName()+": "+error.getMessage();status="Pack validation failed";
                 if(detailPack!=null){try{detailPack.close();}catch(Exception ignored){}}

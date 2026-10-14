@@ -41,7 +41,9 @@ public final class QatarWorldRenderer implements WorldStreamer.Listener, QatarDe
     private final ModelBuilder builder = new ModelBuilder();
     private final Environment environment = new Environment();
     private final Map<Long, RenderChunk> chunks = new HashMap<>();
+    private final Map<Long, QatarPack.WorldChunk> nationalData = new HashMap<>();
     private final Map<Long, RenderChunk> detailCells = new HashMap<>();
+    private final Map<Long, QatarDetailPack.DetailChunk> detailData = new HashMap<>();
     private final EarClippingTriangulator footprintTriangulator = new EarClippingTriangulator();
     private final Map<Integer, Material> terrainMaterials = new HashMap<>();
     private final Material roadMaterial = diffuse(.16f,.18f,.19f,1);
@@ -132,15 +134,16 @@ public final class QatarWorldRenderer implements WorldStreamer.Listener, QatarDe
     }
 
     @Override public void activate(QatarPack.WorldChunk chunk) {
-        Model model=buildChunk(chunk);
-        try{physics.activateChunk(chunk,pack.chunkMetres);}catch(RuntimeException|Error error){model.dispose();throw error;}
-        long key=key(chunk.entry().x(),chunk.entry().y());
-        chunks.put(key,new RenderChunk(chunk.entry().x()*pack.chunkMetres,chunk.entry().y()*pack.chunkMetres,model,new ModelInstance(model)));
+        Model model=buildChunk(chunk);long chunkKey=key(chunk.entry().x(),chunk.entry().y());
+        nationalData.put(chunkKey,chunk);
+        try{physics.activateChunk(chunk,pack.chunkMetres);}catch(RuntimeException|Error error){nationalData.remove(chunkKey);model.dispose();throw error;}
+        chunks.put(chunkKey,new RenderChunk(chunk.entry().x()*pack.chunkMetres,chunk.entry().y()*pack.chunkMetres,model,new ModelInstance(model)));
+        for(QatarDetailPack.DetailChunk detail:detailData.values())if(parentNationalKey(detail)==chunkKey)rebuildDetail(detail);
     }
 
     @Override public void deactivate(QatarPack.WorldChunk chunk) {
-        physics.deactivateChunk(chunk);
-        RenderChunk removed=chunks.remove(key(chunk.entry().x(),chunk.entry().y()));
+        physics.deactivateChunk(chunk);long chunkKey=key(chunk.entry().x(),chunk.entry().y());nationalData.remove(chunkKey);
+        RenderChunk removed=chunks.remove(chunkKey);
         if(removed!=null) removed.model.dispose();
     }
 
@@ -156,27 +159,38 @@ public final class QatarWorldRenderer implements WorldStreamer.Listener, QatarDe
         MeshPartBuilder land=builder.part("terrain-"+chunk.entry().biome(),GL20.GL_TRIANGLES,ATTRS,terrainMaterials.get(chunk.entry().biome()));
         float sub=size/16f;
         for(int row=0;row<16;row++){
-            int bits=chunk.landRows()[row],start=-1;
-            for(int col=0;col<=16;col++){
-                boolean filled=col<16&&(bits&(1<<col))!=0;
-                if(filled&&start<0)start=col;
-                if(!filled&&start>=0){int run=col-start;land.box((start+run/2f)*sub,-.1f,(row+.5f)*sub,run*sub,.2f,sub);start=-1;}
+            int bits=chunk.landRows()[row];
+            for(int col=0;col<16;col++){
+                if((bits&(1<<col))==0)continue;
+                float x0=col*sub,x1=(col+1)*sub,z0=row*sub,z1=(row+1)*sub;
+                float h00=pack.terrainHeight(chunk,x0,z0),h10=pack.terrainHeight(chunk,x1,z0),h11=pack.terrainHeight(chunk,x1,z1),h01=pack.terrainHeight(chunk,x0,z1);
+                terrainTriangle(land,x0,h00,z0,x0,h01,z1,x1,h11,z1);
+                terrainTriangle(land,x1,h11,z1,x1,h10,z0,x0,h00,z0);
             }
         }
         return builder.end();
     }
 
     @Override public void activateDetail(QatarDetailPack.DetailChunk chunk){
-        Model model=buildDetailCell(chunk);
-        long key=key(chunk.entry().x(),chunk.entry().y());
-        detailCells.put(key,new RenderChunk(chunk.entry().x()*(double)detailCellMetres,chunk.entry().y()*(double)detailCellMetres,model,new ModelInstance(model)));
-        physics.registerDetailChunk(chunk,detailCellMetres);
+        detailData.put(key(chunk.entry().x(),chunk.entry().y()),chunk);rebuildDetail(chunk);
         if(!loggedRealDetail){loggedRealDetail=true;Gdx.app.log("QatarStreaming","OSM_READY cell="+chunk.entry().x()+","+chunk.entry().y()+" roads="+chunk.roads().length+" buildings="+chunk.buildings().length);}
     }
 
+    private void rebuildDetail(QatarDetailPack.DetailChunk chunk){
+        Model model=buildDetailCell(chunk);long detailKey=key(chunk.entry().x(),chunk.entry().y());
+        RenderChunk old=detailCells.put(detailKey,new RenderChunk(chunk.entry().x()*(double)detailCellMetres,chunk.entry().y()*(double)detailCellMetres,model,new ModelInstance(model)));
+        if(old!=null)old.model.dispose();
+        physics.registerDetailChunk(chunk,detailCellMetres,nationalData.get(parentNationalKey(chunk)),pack);
+    }
+
+    private long parentNationalKey(QatarDetailPack.DetailChunk chunk){
+        double x=chunk.entry().x()*(double)detailCellMetres,z=chunk.entry().y()*(double)detailCellMetres;
+        return key(pack.chunkX(x),pack.chunkY(z));
+    }
+
     @Override public void deactivateDetail(QatarDetailPack.DetailChunk chunk){
-        physics.unregisterDetailChunk(chunk);
-        RenderChunk removed=detailCells.remove(key(chunk.entry().x(),chunk.entry().y()));
+        physics.unregisterDetailChunk(chunk);long detailKey=key(chunk.entry().x(),chunk.entry().y());detailData.remove(detailKey);
+        RenderChunk removed=detailCells.remove(detailKey);
         if(removed!=null)removed.model.dispose();
     }
 
@@ -186,12 +200,13 @@ public final class QatarWorldRenderer implements WorldStreamer.Listener, QatarDe
 
     private Model buildDetailCell(QatarDetailPack.DetailChunk chunk){
         builder.begin();
+        double cellOriginX=chunk.entry().x()*(double)detailCellMetres,cellOriginZ=chunk.entry().y()*(double)detailCellMetres;
         if(chunk.roads().length>0){
             MeshPartBuilder roads=builder.part("osm-paved-roads",GL20.GL_TRIANGLES,ATTRS,roadMaterial);
             MeshPartBuilder paths=builder.part("osm-paths-tracks",GL20.GL_TRIANGLES,ATTRS,pathMaterial);
-            for(QatarPack.Road road:chunk.roads())roadQuad(road.roadClass()==7||road.roadClass()==8?paths:roads,road,.13f,road.width());
+            for(QatarPack.Road road:chunk.roads())roadQuad(road.roadClass()==7||road.roadClass()==8?paths:roads,road,cellOriginX,cellOriginZ,.13f,road.width());
             MeshPartBuilder marks=builder.part("osm-centre-lines",GL20.GL_TRIANGLES,ATTRS,markingMaterial);
-            for(QatarPack.Road road:chunk.roads())if(road.roadClass()<=4)roadQuad(marks,road,.145f,.16f);
+            for(QatarPack.Road road:chunk.roads())if(road.roadClass()<=4)roadQuad(marks,road,cellOriginX,cellOriginZ,.145f,.16f);
         }
         MeshPartBuilder towers=builder.part("osm-towers",GL20.GL_TRIANGLES,ATTRS,towerMaterial);
         MeshPartBuilder villas=builder.part("osm-villas",GL20.GL_TRIANGLES,ATTRS,villaMaterial);
@@ -200,16 +215,17 @@ public final class QatarWorldRenderer implements WorldStreamer.Listener, QatarDe
         MeshPartBuilder windows=builder.part("osm-facade-windows",GL20.GL_TRIANGLES,ATTRS,windowMaterial);
         for(QatarPack.Building building:chunk.buildings()){
             MeshPartBuilder target=switch(building.archetype()){case 1->towers;case 4->industry;case 5->farms;default->villas;};
-            if(building.hasSourceFootprint())extrudeFootprint(target,windows,building);
-            else target.box(building.x(),building.height()/2,building.z(),building.width(),building.height(),building.depth());
+            float baseHeight=terrainHeight(cellOriginX+building.x(),cellOriginZ+building.z());
+            if(building.hasSourceFootprint())extrudeFootprint(target,windows,building,baseHeight);
+            else target.box(building.x(),baseHeight+building.height()/2,building.z(),building.width(),building.height(),building.depth());
         }
         return builder.end();
     }
 
-    private void extrudeFootprint(MeshPartBuilder part,MeshPartBuilder windows,QatarPack.Building building){
+    private void extrudeFootprint(MeshPartBuilder part,MeshPartBuilder windows,QatarPack.Building building,float baseHeight){
         float[] polygon=building.footprint();
         ShortArray triangles=footprintTriangulator.computeTriangles(polygon);
-        float height=building.height();
+        float height=baseHeight+building.height();
         MeshPartBuilder.VertexInfo a=new MeshPartBuilder.VertexInfo(),b=new MeshPartBuilder.VertexInfo(),c=new MeshPartBuilder.VertexInfo();
         for(int i=0;i<triangles.size;i+=3){
             int ia=triangles.get(i)*2,ib=triangles.get(i+1)*2,ic=triangles.get(i+2)*2;
@@ -225,13 +241,13 @@ public final class QatarWorldRenderer implements WorldStreamer.Listener, QatarDe
             int j=(i+1)%points;float ax=polygon[i*2],az=polygon[i*2+1],bx=polygon[j*2],bz=polygon[j*2+1];
             float dx=bx-ax,dz=bz-az,length=(float)Math.hypot(dx,dz);if(length<.02f)continue;
             float direction=counterClockwise?1:-1,nx=direction*dz/length,nz=-direction*dx/length;
-            facadeRect(part,ax,0,az,bx,height,bz,nx,nz,counterClockwise);
-            if(points<=24&&length>=4&&height>=5&&building.archetype()!=5){
+            facadeRect(part,ax,baseHeight,az,bx,height,bz,nx,nz,counterClockwise);
+            if(points<=24&&length>=4&&building.height()>=5&&building.archetype()!=5){
                 float margin=Math.min(1.2f,length*.18f),start=margin/length,end=1-start;
                 float wx1=ax+dx*start,wz1=az+dz*start,wx2=ax+dx*end,wz2=az+dz*end;
-                int floors=Math.min(4,Math.max(1,(int)((height-1.5f)/3.2f)));
+                int floors=Math.min(4,Math.max(1,(int)((building.height()-1.5f)/3.2f)));
                 for(int floor=0;floor<floors;floor++){
-                    float bottom=1.35f+floor*3.2f,top=Math.min(height-.35f,bottom+1.1f);if(top<=bottom)continue;
+                    float bottom=baseHeight+1.35f+floor*3.2f,top=Math.min(height-.35f,bottom+1.1f);if(top<=bottom)continue;
                     float offset=.035f;facadeRect(windows,wx1+nx*offset,bottom,wz1+nz*offset,wx2+nx*offset,top,wz2+nz*offset,nx,nz,counterClockwise);
                 }
             }
@@ -243,11 +259,33 @@ public final class QatarWorldRenderer implements WorldStreamer.Listener, QatarDe
         else part.rect(ax,bottom,az,bx,bottom,bz,bx,top,bz,ax,top,az,nx,0,nz);
     }
 
-    private static void roadQuad(MeshPartBuilder part,QatarPack.Road r,float y,float width){
+    private static void terrainTriangle(MeshPartBuilder part,float ax,float ay,float az,float bx,float by,float bz,float cx,float cy,float cz){
+        float ux=bx-ax,uy=by-ay,uz=bz-az,vx=cx-ax,vy=cy-ay,vz=cz-az;
+        float nx=uy*vz-uz*vy,ny=uz*vx-ux*vz,nz=ux*vy-uy*vx,length=(float)Math.sqrt(nx*nx+ny*ny+nz*nz);
+        if(length<.0001f){nx=0;ny=1;nz=0;}else{nx/=length;ny/=length;nz/=length;}
+        MeshPartBuilder.VertexInfo a=new MeshPartBuilder.VertexInfo().setPos(ax,ay,az).setNor(nx,ny,nz);
+        MeshPartBuilder.VertexInfo b=new MeshPartBuilder.VertexInfo().setPos(bx,by,bz).setNor(nx,ny,nz);
+        MeshPartBuilder.VertexInfo c=new MeshPartBuilder.VertexInfo().setPos(cx,cy,cz).setNor(nx,ny,nz);
+        part.triangle(a,b,c);
+    }
+
+    private void roadQuad(MeshPartBuilder part,QatarPack.Road r,double cellOriginX,double cellOriginZ,float offset,float width){
         float dx=r.x2()-r.x1(),dz=r.z2()-r.z1(),length=(float)Math.hypot(dx,dz);
         if(length<.01f)return;
         float px=-dz/length*width/2,pz=dx/length*width/2;
-        part.rect(r.x1()+px,y,r.z1()+pz,r.x1()-px,y,r.z1()-pz,r.x2()-px,y,r.z2()-pz,r.x2()+px,y,r.z2()+pz,0,1,0);
+        float x1a=r.x1()+px,z1a=r.z1()+pz,x1b=r.x1()-px,z1b=r.z1()-pz;
+        float x2b=r.x2()-px,z2b=r.z2()-pz,x2a=r.x2()+px,z2a=r.z2()+pz;
+        float h1a=terrainHeight(cellOriginX+x1a,cellOriginZ+z1a)+offset,h1b=terrainHeight(cellOriginX+x1b,cellOriginZ+z1b)+offset;
+        float h2b=terrainHeight(cellOriginX+x2b,cellOriginZ+z2b)+offset,h2a=terrainHeight(cellOriginX+x2a,cellOriginZ+z2a)+offset;
+        terrainTriangle(part,x1a,h1a,z1a,x2a,h2a,z2a,x2b,h2b,z2b);
+        terrainTriangle(part,x2b,h2b,z2b,x1b,h1b,z1b,x1a,h1a,z1a);
+    }
+
+    private float terrainHeight(double globalX,double globalZ){
+        int chunkX=pack.chunkX(globalX),chunkY=pack.chunkY(globalZ);
+        QatarPack.WorldChunk terrain=nationalData.get(key(chunkX,chunkY));
+        if(terrain==null)return 0;
+        return pack.terrainHeight(terrain,(float)(globalX-chunkX*(double)pack.chunkMetres),(float)(globalZ-chunkY*(double)pack.chunkMetres));
     }
 
     private void rebuildFocusModel(){
@@ -282,7 +320,7 @@ public final class QatarWorldRenderer implements WorldStreamer.Listener, QatarDe
     public String fatalStreamingError(){return fatalStreamingError;}
     public int renderChunkCount(){return chunks.size();}
 
-    @Override public void dispose(){for(RenderChunk value:chunks.values())value.model.dispose();for(RenderChunk value:detailCells.values())value.model.dispose();chunks.clear();detailCells.clear();if(focusModel!=null)focusModel.dispose();batch.dispose();}
+    @Override public void dispose(){for(RenderChunk value:chunks.values())value.model.dispose();for(RenderChunk value:detailCells.values())value.model.dispose();chunks.clear();nationalData.clear();detailCells.clear();detailData.clear();if(focusModel!=null)focusModel.dispose();batch.dispose();}
     private static Material diffuse(float r,float g,float b,float a){return new Material(ColorAttribute.createDiffuse(new Color(r,g,b,a)));}
     private static long key(int x,int y){return ((long)x<<32)^(y&0xffffffffL);}
     private record RenderChunk(double x,double z,Model model,ModelInstance instance){}

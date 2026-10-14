@@ -24,10 +24,11 @@ public final class QatarGame extends Game {
         setScreen(new LoadingScreen(this,nationalSourceFactory,detailSourceFactory));
     }
 
-    void start(QatarPack validatedPack,QatarDetailPack validatedDetailPack,QatarSpawnResolver.Spawn spawn) {
+    void start(QatarPack validatedPack,QatarDetailPack validatedDetailPack,QatarSpawnResolver.Spawn spawn,float groundHeight) {
         pack=validatedPack;detailPack=validatedDetailPack;
-        Gdx.app.log("QatarStreaming","SPAWN_READY x="+spawn.x()+" z="+spawn.z()+" roadClass="+spawn.roadClass()+" basis="+spawn.basis());
-        setScreen(new WorldScreen(pack,detailPack,spawn));
+        Gdx.app.log("QatarStreaming","PACK_READY epoch="+pack.worldEpoch+" terrainSample="+groundHeight+"m OSM="+detailPack.roadSegmentCount+"/"+(detailPack.simpleBuildingCount+detailPack.relationBuildingCount));
+        Gdx.app.log("QatarStreaming","SPAWN_READY x="+spawn.x()+" z="+spawn.z()+" elevation="+groundHeight+" roadClass="+spawn.roadClass()+" basis="+spawn.basis());
+        setScreen(new WorldScreen(pack,detailPack,spawn,groundHeight));
     }
 
     @Override public void dispose() {

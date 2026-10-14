@@ -58,7 +58,9 @@ public class QatarNationalPackTest {
         byte[] bytes=Files.readAllBytes(packPath());
         StringBuilder value=new StringBuilder();
         for(byte b:MessageDigest.getInstance("SHA-256").digest(bytes))value.append(String.format("%02x",b));
-        assertEquals("6aa220910d0214b3d38fb5c7764534c5242b1ddab24ae6ffddb377d95a22a6b7",value.toString());
+        Path checksums=Files.exists(Path.of("data/qatar/SHA256SUMS"))?Path.of("data/qatar/SHA256SUMS"):Path.of("../data/qatar/SHA256SUMS");
+        String declared=Files.readAllLines(checksums).stream().filter(line->line.endsWith("app/src/main/assets/world/qatar-national.qpak")).findFirst().orElseThrow().split("\\s+")[0];
+        assertEquals(declared,value.toString());
     }
 
     private static final class FileSource implements SeekableDataSource {

@@ -32,6 +32,8 @@ OUTPUT_PATH = ROOT / "app/src/main/assets/world/qatar-national.qpak"
 REPORT_PATH = ROOT / "data/qatar/compiled/qatar-world-report.json"
 MANIFEST_PATH = ROOT / "app/src/main/assets/world/qatar-manifest.json"
 CHECKSUM_PATH = ROOT / "data/qatar/SHA256SUMS"
+QDEM_PATH = ROOT / "data/qatar/source/qatar-srtm-250m.qdem"
+QDEM_REPORT_PATH = ROOT / "data/qatar/compiled/qatar-dem-report.json"
 
 MAGIC = b"QTPK"
 CHUNK_MAGIC = b"QCHK"
@@ -40,7 +42,7 @@ EPSG = 32639
 CHUNK_METRES = 2000
 MASK_DIM = 16
 WATER_BUFFER_METRES = 8000
-WORLD_EPOCH = "2026-10-12-coarse-foundation"
+WORLD_EPOCH = "2026-10-14-srtm-osm-v0.3"
 
 # IDs are stable serialization values. Do not reorder in a released format.
 MUNICIPALITY_CANONICAL = [
@@ -108,6 +110,36 @@ def sha256(path: Path) -> str:
         for block in iter(lambda: f.read(1024 * 1024), b""):
             h.update(block)
     return h.hexdigest()
+
+
+class QdemGrid:
+    """Compact centimetre elevation grid aligned to the national QTPK origin."""
+    HEADER = struct.Struct("<4sIIIIIddddI")
+
+    def __init__(self, path: Path):
+        raw = path.read_bytes()
+        if len(raw) < self.HEADER.size:
+            raise ValueError("QDEM is truncated")
+        magic, version, epsg, spacing, columns, rows, oe, on, width, height, expected_crc = self.HEADER.unpack_from(raw)
+        if magic != b"QDEM" or version != 1 or epsg != EPSG or spacing != 250:
+            raise ValueError("QDEM spatial contract mismatch")
+        payload = raw[self.HEADER.size:]
+        if len(payload) != columns * rows * 2 or (binascii.crc32(payload) & 0xffffffff) != expected_crc:
+            raise ValueError("QDEM payload length/checksum mismatch")
+        self.path = path
+        self.spacing = spacing
+        self.columns = columns
+        self.rows = rows
+        self.origin_easting = oe
+        self.origin_northing = on
+        self.width = width
+        self.height = height
+        self.payload = payload
+
+    def centimetres(self, column: int, row: int) -> int:
+        if not (0 <= column < self.columns and 0 <= row < self.rows):
+            raise IndexError(f"QDEM sample outside grid {column},{row}")
+        return struct.unpack_from("<h", self.payload, (row * self.columns + column) * 2)[0]
 
 
 def utm39(lon_deg: float, lat_deg: float) -> tuple[float, float]:
@@ -300,28 +332,22 @@ def make_buildings(cell_x, cell_y, mask_rows, biome, hub_xy, seed):
     return buildings
 
 
-def make_terrain(seed: int, biome: int):
+def make_terrain(seed: int, biome: int, chunk_x: int, chunk_y: int, dem: QdemGrid | None):
+    if dem is not None:
+        # A 2 km chunk contains eight 250 m intervals and therefore 9x9 samples.
+        return [dem.centimetres(chunk_x * 8 + i, chunk_y * 8 + j) for j in range(9) for i in range(9)]
+    # Bootstrap fallback retained only so source changes can compile before the
+    # independently checksummed DEM import workflow publishes its derivative.
     rng = random.Random(seed ^ 0xA110CA7E)
     amplitude_cm = {
-        BIOME_ID["GULF_WATER"]: 0,
-        BIOME_ID["URBAN"]: 25,
-        BIOME_ID["LIMESTONE_GRAVEL"]: 180,
-        BIOME_ID["SAND_DUNES"]: 850,
-        BIOME_ID["SABKHA"]: 35,
-        BIOME_ID["MANGROVE_TIDAL"]: 20,
-        BIOME_ID["FARM_RAWDA"]: 70,
-        BIOME_ID["INDUSTRIAL_PORT"]: 20,
-        BIOME_ID["ROCK_FORMATION"]: 360,
-        BIOME_ID["BEACH_SHALLOW"]: 45,
+        BIOME_ID["GULF_WATER"]: 0, BIOME_ID["URBAN"]: 25,
+        BIOME_ID["LIMESTONE_GRAVEL"]: 180, BIOME_ID["SAND_DUNES"]: 850,
+        BIOME_ID["SABKHA"]: 35, BIOME_ID["MANGROVE_TIDAL"]: 20,
+        BIOME_ID["FARM_RAWDA"]: 70, BIOME_ID["INDUSTRIAL_PORT"]: 20,
+        BIOME_ID["ROCK_FORMATION"]: 360, BIOME_ID["BEACH_SHALLOW"]: 45,
     }[biome]
-    # 9x9 centimetre microheight field; base DEM arrives in Milestone 3.
-    vals=[]
     phases=(rng.random()*6.28,rng.random()*6.28,rng.random()*6.28)
-    for j in range(9):
-        for i in range(9):
-            n=(math.sin(i*.71+phases[0])+math.sin(j*.49+phases[1])+math.sin((i+j)*.31+phases[2]))/3
-            vals.append(int(max(-32768,min(32767,n*amplitude_cm))))
-    return vals
+    return [int(max(-32768,min(32767,((math.sin(i*.71+phases[0])+math.sin(j*.49+phases[1])+math.sin((i+j)*.31+phases[2]))/3)*amplitude_cm))) for j in range(9) for i in range(9)]
 
 
 def compile_world(output: Path, report_path: Path, manifest_path: Path):
@@ -358,6 +384,13 @@ def compile_world(output: Path, report_path: Path, manifest_path: Path):
     grid_origin_n=math.floor(min_n/CHUNK_METRES)*CHUNK_METRES
     nx=math.ceil((max_e-grid_origin_e)/CHUNK_METRES)
     ny=math.ceil((max_n-grid_origin_n)/CHUNK_METRES)
+    dem=QdemGrid(QDEM_PATH) if QDEM_PATH.is_file() else None
+    world_epoch=WORLD_EPOCH if dem is not None else "2026-10-14-dem-bootstrap"
+    if dem is not None:
+        if (abs(dem.origin_easting-grid_origin_e)>.01 or abs(dem.origin_northing-grid_origin_n)>.01 or
+                abs(dem.width-nx*CHUNK_METRES)>.01 or abs(dem.height-ny*CHUNK_METRES)>.01 or
+                dem.columns!=nx*8+1 or dem.rows!=ny*8+1):
+            raise ValueError("QDEM and national grid extents differ")
 
     hub_xy=[utm39(lon,lat) for _,_,lat,lon,_ in HUBS]
     road_by_chunk=defaultdict(list)
@@ -401,7 +434,7 @@ def compile_world(output: Path, report_path: Path, manifest_path: Path):
             biome=classify_biome(cx,cy,land,hub_xy,adm0_polygons)
             flags=(1 if land else 0)|(2 if land and not full else 0)|(4 if not land else 0)
             seed=binascii.crc32(struct.pack("<ii",ix,iy)) & 0xffffffff
-            terrain=make_terrain(seed,biome)
+            terrain=make_terrain(seed,biome,ix,iy,dem)
             buildings=make_buildings(cell_x,cell_y,rows,biome,hub_xy,seed)
             roads=road_by_chunk.get((ix,iy),[])
             raw=bytearray()
@@ -424,8 +457,9 @@ def compile_world(output: Path, report_path: Path, manifest_path: Path):
             land_chunks += int(full); coast_chunks += int(land and not full); water_chunks += int(not land)
 
     metadata=bytearray()
-    write_string(metadata,WORLD_EPOCH)
-    source_digest=hashlib.sha256((sha256(ADM0_PATH)+sha256(ADM1_PATH)+sha256(NE_PATH)).encode()).digest()
+    write_string(metadata,world_epoch)
+    source_hashes=sha256(ADM0_PATH)+sha256(ADM1_PATH)+sha256(NE_PATH)+(sha256(QDEM_PATH) if dem is not None else "NO_DEM")
+    source_digest=hashlib.sha256(source_hashes.encode()).digest()
     metadata.extend(source_digest)
     metadata.extend(struct.pack("<H",len(MUNICIPALITY_CANONICAL)))
     for iso,en,ar in MUNICIPALITY_CANONICAL:
@@ -457,22 +491,26 @@ def compile_world(output: Path, report_path: Path, manifest_path: Path):
         for c in chunks: f.write(c["data"])
 
     report={
-        "format":"QTPK","version":VERSION,"worldEpoch":WORLD_EPOCH,"epsg":EPSG,
+        "format":"QTPK","version":VERSION,"worldEpoch":world_epoch,"epsg":EPSG,
         "chunkMetres":CHUNK_METRES,"maskDimension":MASK_DIM,"grid":{"columns":nx,"rows":ny,"chunks":len(chunks)},
         "coverage":{"fullLandChunks":land_chunks,"coastChunks":coast_chunks,"waterBufferChunks":water_chunks,"adm0PolygonCount":len(adm0_polygons)},
         "municipalities":[{"id":i,"iso":iso,"name":en,"arabic":ar,"landChunks":municipality_counts[i]} for i,(iso,en,ar) in enumerate(MUNICIPALITY_CANONICAL)],
         "biomes":[{"id":i,"name":name,"chunks":biome_counts[i]} for i,name in enumerate(BIOMES)],
         "hubs":len(HUBS),"coarseRoadSegments":sum(c["roads"] for c in chunks),"generatedMassingBuildings":sum(c["buildings"] for c in chunks),
         "qpakBytes":output.stat().st_size,"qpakSha256":sha256(output),
+        "terrain":{"source":"NASA SRTM-derived 250 m QDEM" if dem is not None else "bootstrap deterministic microheight","measuredDem":dem is not None,
+                   "sampleSpacingMetres":dem.spacing if dem is not None else 250,
+                   "qdemPath":str(QDEM_PATH.relative_to(ROOT)) if dem is not None else None,
+                   "qdemSha256":sha256(QDEM_PATH) if dem is not None else None},
         "sources":{"adm0":{"path":str(ADM0_PATH.relative_to(ROOT)),"sha256":sha256(ADM0_PATH)},"adm1":{"path":str(ADM1_PATH.relative_to(ROOT)),"sha256":sha256(ADM1_PATH)},"crossCheck":{"path":str(NE_PATH.relative_to(ROOT)),"sha256":sha256(NE_PATH)}},
-        "limitations":["Milestone 1 uses geoBoundaries geometry and deterministic coarse road/settlement derivatives.","Complete OpenStreetMap roads and footprints plus DEM are scheduled for subsequent compiler milestones."]
+        "limitations":["National coast classification uses geoBoundaries and still requires a reclamation-by-reclamation audit.","SRTM elevation is terrain-scale data, not survey, aviation, or navigation data."]
     }
     if any(m["landChunks"]<=0 for m in report["municipalities"]):
         raise ValueError("A municipality has no represented land chunk")
     report_path.parent.mkdir(parents=True,exist_ok=True)
     report_path.write_text(json.dumps(report,ensure_ascii=False,indent=2)+"\n",encoding="utf-8")
     manifest_path.parent.mkdir(parents=True,exist_ok=True)
-    manifest={k:report[k] for k in ("format","version","worldEpoch","epsg","chunkMetres","maskDimension","grid","coverage","municipalities","biomes","hubs","coarseRoadSegments","generatedMassingBuildings","qpakBytes","qpakSha256","limitations")}
+    manifest={k:report[k] for k in ("format","version","worldEpoch","epsg","chunkMetres","maskDimension","grid","coverage","municipalities","biomes","hubs","coarseRoadSegments","generatedMassingBuildings","terrain","qpakBytes","qpakSha256","limitations")}
     manifest_path.write_text(json.dumps(manifest,ensure_ascii=False,indent=2)+"\n",encoding="utf-8")
     return report
 
@@ -494,7 +532,9 @@ def main():
             return 0
     report=compile_world(OUTPUT_PATH,REPORT_PATH,MANIFEST_PATH)
     lines=[]
-    for p in (ADM0_PATH,ADM1_PATH,NE_PATH,OUTPUT_PATH,MANIFEST_PATH,REPORT_PATH):
+    sources=[ADM0_PATH,ADM1_PATH,NE_PATH]
+    if QDEM_PATH.is_file():sources.extend([QDEM_PATH,QDEM_REPORT_PATH])
+    for p in (*sources,OUTPUT_PATH,MANIFEST_PATH,REPORT_PATH):
         lines.append(f"{sha256(p)}  {p.relative_to(ROOT)}")
     CHECKSUM_PATH.parent.mkdir(parents=True,exist_ok=True)
     CHECKSUM_PATH.write_text("\n".join(lines)+"\n")

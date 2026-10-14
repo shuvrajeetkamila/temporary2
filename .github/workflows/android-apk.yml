@@ -12,6 +12,8 @@ on:
       - '.github/workflows/android-runtime-smoke.yml'
       - '.github/qatar-osm-import-request.txt'
       - '.github/workflows/qatar-osm-import.yml'
+      - '.github/qatar-dem-import-request.txt'
+      - '.github/workflows/qatar-dem-import.yml'
   workflow_dispatch:
 
 permissions:
@@ -50,6 +52,7 @@ jobs:
           python3 tools/compile_qatar_world.py --verify | tee qa/qatar-current/world-validation.txt
           sha256sum -c data/qatar/SHA256SUMS | tee qa/qatar-current/source-checksums.txt
           sha256sum -c data/qatar/OSM_SHA256SUMS | tee qa/qatar-current/osm-checksums.txt
+          if [ -f data/qatar/DEM_SHA256SUMS ]; then sha256sum -c data/qatar/DEM_SHA256SUMS | tee qa/qatar-current/dem-checksums.txt; fi
 
       - name: Test and compile fresh installable APK
         id: compile
@@ -117,33 +120,33 @@ jobs:
           PY
           AAPT="$(find "$ANDROID_HOME/build-tools" -type f -name aapt | sort -V | tail -1)"
           "$AAPT" dump badging app/build/outputs/apk/debug/app-debug.apk | tee qa/qatar-current/aapt-badging.txt
-          grep -q "package: name='ai.arena.qatar.peninsula' versionCode='2' versionName='0.2.0-real-osm-microstreaming'" qa/qatar-current/aapt-badging.txt
+          grep -q "package: name='ai.arena.qatar.peninsula' versionCode='3' versionName='0.3.0-real-terrain-preproduction'" qa/qatar-current/aapt-badging.txt
           ! grep -q "android.permission.INTERNET" qa/qatar-current/aapt-badging.txt
 
       - name: Stage named APK and checksum
         run: |
           mkdir -p artifacts
-          NAME='Qatar-The-Peninsula-REAL-OSM-STREAMING-v0.2.0.apk'
+          NAME='Qatar-The-Peninsula-REAL-TERRAIN-v0.3.0.apk'
           cp app/build/outputs/apk/debug/app-debug.apk "artifacts/$NAME"
           (cd artifacts && sha256sum "$NAME" > "$NAME.sha256")
           cp data/qatar/compiled/qatar-world-report.json qa/qatar-current/world-report.json
           cp data/qatar/compiled/qatar-osm-report.json qa/qatar-current/osm-report.json
           python3 - <<'PY'
           import json,hashlib,pathlib,subprocess
-          apk=pathlib.Path('artifacts/Qatar-The-Peninsula-REAL-OSM-STREAMING-v0.2.0.apk')
+          apk=pathlib.Path('artifacts/Qatar-The-Peninsula-REAL-TERRAIN-v0.3.0.apk')
           report=json.loads(pathlib.Path('data/qatar/compiled/qatar-world-report.json').read_text())
           osm=json.loads(pathlib.Path('data/qatar/compiled/qatar-osm-report.json').read_text())
-          result={'sourceCommit':subprocess.check_output(['git','rev-parse','HEAD'],text=True).strip(),'apk':apk.name,'apkBytes':apk.stat().st_size,'apkSha256':hashlib.sha256(apk.read_bytes()).hexdigest(),'packageId':'ai.arena.qatar.peninsula','versionCode':2,'versionName':'0.2.0-real-osm-microstreaming','minSdk':26,'targetSdk':35,'abis':['arm64-v8a','armeabi-v7a','x86_64'],'countryChunks':report['grid']['chunks'],'municipalities':len(report['municipalities']),'adm0Polygons':report['coverage']['adm0PolygonCount'],'qpakSha256':report['qpakSha256'],'qodSha256':osm['qodSha256'],'osmDetailCells':osm['detailChunks'],'osmRoadSegments':osm['roadSegments'],'osmBuildingFootprints':osm['totalBuildingFootprints'],'status':'PASSED'}
+          result={'sourceCommit':subprocess.check_output(['git','rev-parse','HEAD'],text=True).strip(),'apk':apk.name,'apkBytes':apk.stat().st_size,'apkSha256':hashlib.sha256(apk.read_bytes()).hexdigest(),'packageId':'ai.arena.qatar.peninsula','versionCode':3,'versionName':'0.3.0-real-terrain-preproduction','minSdk':26,'targetSdk':35,'abis':['arm64-v8a','armeabi-v7a','x86_64'],'countryChunks':report['grid']['chunks'],'municipalities':len(report['municipalities']),'adm0Polygons':report['coverage']['adm0PolygonCount'],'qpakSha256':report['qpakSha256'],'measuredDem':report['terrain']['measuredDem'],'terrainSource':report['terrain']['source'],'qodSha256':osm['qodSha256'],'osmDetailCells':osm['detailChunks'],'osmRoadSegments':osm['roadSegments'],'osmBuildingFootprints':osm['totalBuildingFootprints'],'status':'PASSED'}
           pathlib.Path('qa/qatar-current/build-record.json').write_text(json.dumps(result,indent=2)+'\n')
           PY
 
       - name: Upload current APK artifact
         uses: actions/upload-artifact@v4
         with:
-          name: Qatar-The-Peninsula-v0.2.0-Real-OSM-Android
+          name: Qatar-The-Peninsula-v0.3.0-Real-Terrain-Android
           path: |
-            artifacts/Qatar-The-Peninsula-REAL-OSM-STREAMING-v0.2.0.apk
-            artifacts/Qatar-The-Peninsula-REAL-OSM-STREAMING-v0.2.0.apk.sha256
+            artifacts/Qatar-The-Peninsula-REAL-TERRAIN-v0.3.0.apk
+            artifacts/Qatar-The-Peninsula-REAL-TERRAIN-v0.3.0.apk.sha256
             qa/qatar-current/**
           if-no-files-found: error
           retention-days: 30
@@ -153,6 +156,6 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add -f artifacts/Qatar-The-Peninsula-REAL-OSM-STREAMING-v0.2.0.apk artifacts/Qatar-The-Peninsula-REAL-OSM-STREAMING-v0.2.0.apk.sha256 qa/qatar-current
-          git diff --cached --quiet || git commit -m "Publish tested Qatar real OSM streaming APK v0.2.0 [skip ci]"
+          git add -f artifacts/Qatar-The-Peninsula-REAL-TERRAIN-v0.3.0.apk artifacts/Qatar-The-Peninsula-REAL-TERRAIN-v0.3.0.apk.sha256 qa/qatar-current
+          git diff --cached --quiet || git commit -m "Publish tested Qatar real terrain APK v0.3.0 [skip ci]"
           git push origin "HEAD:${GITHUB_REF_NAME}"

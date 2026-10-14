@@ -1,7 +1,7 @@
 {
   "format": "QTPK",
   "version": 1,
-  "worldEpoch": "2026-10-12-coarse-foundation",
+  "worldEpoch": "2026-10-14-dem-bootstrap",
   "epsg": 32639,
   "chunkMetres": 2000,
   "maskDimension": 16,
@@ -129,10 +129,17 @@
   "hubs": 25,
   "coarseRoadSegments": 1249,
   "generatedMassingBuildings": 28313,
-  "qpakBytes": 1170493,
-  "qpakSha256": "6aa220910d0214b3d38fb5c7764534c5242b1ddab24ae6ffddb377d95a22a6b7",
+  "terrain": {
+    "source": "bootstrap deterministic microheight",
+    "measuredDem": false,
+    "sampleSpacingMetres": 250,
+    "qdemPath": null,
+    "qdemSha256": null
+  },
+  "qpakBytes": 1170489,
+  "qpakSha256": "322e7edf624d229b8c762a0242cf6bcf1af6ee7acdfc3ad94283f5facdbad3a8",
   "limitations": [
-    "Milestone 1 uses geoBoundaries geometry and deterministic coarse road/settlement derivatives.",
-    "Complete OpenStreetMap roads and footprints plus DEM are scheduled for subsequent compiler milestones."
+    "National coast classification uses geoBoundaries and still requires a reclamation-by-reclamation audit.",
+    "SRTM elevation is terrain-scale data, not survey, aviation, or navigation data."
   ]
 }

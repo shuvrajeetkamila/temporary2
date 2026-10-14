@@ -1,0 +1,80 @@
+name: Import Qatar NASA SRTM elevation
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - arena/8288058f-temporary2
+    paths:
+      - '.github/qatar-dem-import-request.txt'
+
+permissions:
+  contents: write
+
+concurrency:
+  group: qatar-dem-import-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  import-dem:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - name: Check out deterministic Qatar compiler
+        uses: actions/checkout@v4
+
+      - name: Download six NASA SRTM source tiles
+        run: |
+          set -euo pipefail
+          mkdir -p /tmp/qatar-dem data/qatar/source data/qatar/compiled
+          BASE='https://s3.amazonaws.com/elevation-tiles-prod/skadi'
+          for TILE in N24E050 N24E051 N25E050 N25E051 N26E050 N26E051; do
+            curl --fail --location --retry 5 --retry-all-errors \
+              --user-agent 'QatarThePeninsula/0.3 deterministic-SRTM-import' \
+              "$BASE/${TILE:0:3}/$TILE.hgt.gz" --output "/tmp/qatar-dem/$TILE.hgt.gz"
+            gzip -t "/tmp/qatar-dem/$TILE.hgt.gz"
+            gzip -dc "/tmp/qatar-dem/$TILE.hgt.gz" > "/tmp/qatar-dem/$TILE.hgt"
+            test "$(wc -c < "/tmp/qatar-dem/$TILE.hgt")" -eq 25934402
+          done
+          sha256sum /tmp/qatar-dem/*.hgt /tmp/qatar-dem/*.hgt.gz | tee /tmp/qatar-dem/source-checksums.txt
+
+      - name: Compile compact national elevation grid and QTPK
+        run: |
+          EPOCH="$(date -u +'%Y-%m-%dT%H:%M:%SZ')"
+          python3 tools/import_qatar_dem.py \
+            --tile /tmp/qatar-dem/N24E050.hgt --tile /tmp/qatar-dem/N24E051.hgt \
+            --tile /tmp/qatar-dem/N25E050.hgt --tile /tmp/qatar-dem/N25E051.hgt \
+            --tile /tmp/qatar-dem/N26E050.hgt --tile /tmp/qatar-dem/N26E051.hgt \
+            --epoch "$EPOCH" | tee /tmp/qatar-dem/import-log.txt
+          python3 tools/compile_qatar_world.py | tee /tmp/qatar-dem/world-log.txt
+          python3 tools/compile_qatar_world.py --verify
+          python3 tools/import_qatar_dem.py --validate data/qatar/source/qatar-srtm-250m.qdem
+
+      - name: Record immutable elevation provenance
+        run: |
+          python3 - <<'PY'
+          import hashlib,json,pathlib,subprocess
+          def digest(path):
+              h=hashlib.sha256()
+              with pathlib.Path(path).open('rb') as f:
+                  for block in iter(lambda:f.read(1024*1024),b''):h.update(block)
+              return h.hexdigest()
+          report=json.loads(pathlib.Path('data/qatar/compiled/qatar-dem-report.json').read_text())
+          metadata={'provider':'Mapzen/AWS Terrain Tiles Skadi mirror','dataset':'NASA SRTM 1 arc-second global elevation','license':'NASA SRTM public domain (United States); attribution requested','attribution':'NASA SRTM, USGS; Mapzen/AWS Terrain Tiles distribution','retrievedUtc':report['epoch'],'importerCommit':subprocess.check_output(['git','rev-parse','HEAD'],text=True).strip(),'sourceTiles':report['tiles'],'qdemBytes':pathlib.Path('data/qatar/source/qatar-srtm-250m.qdem').stat().st_size,'qdemSha256':digest('data/qatar/source/qatar-srtm-250m.qdem')}
+          pathlib.Path('data/qatar/QATAR_DEM_IMPORT.json').write_text(json.dumps(metadata,indent=2)+'\n')
+          PY
+          sha256sum data/qatar/source/qatar-srtm-250m.qdem \
+            data/qatar/compiled/qatar-dem-report.json data/qatar/QATAR_DEM_IMPORT.json \
+            > data/qatar/DEM_SHA256SUMS
+
+      - name: Publish measured elevation derivative
+        if: github.ref == 'refs/heads/arena/8288058f-temporary2'
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/qatar/source/qatar-srtm-250m.qdem data/qatar/compiled/qatar-dem-report.json \
+            data/qatar/QATAR_DEM_IMPORT.json data/qatar/DEM_SHA256SUMS data/qatar/SHA256SUMS \
+            app/src/main/assets/world/qatar-national.qpak app/src/main/assets/world/qatar-manifest.json \
+            data/qatar/compiled/qatar-world-report.json
+          git diff --cached --quiet || git commit -m "Import measured Qatar SRTM terrain"
+          git push origin "HEAD:${GITHUB_REF_NAME}"

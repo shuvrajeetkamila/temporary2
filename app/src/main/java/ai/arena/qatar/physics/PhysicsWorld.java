@@ -53,7 +53,7 @@ public final class PhysicsWorld implements Disposable {
     private final btDiscreteDynamicsWorld world;
     private final Map<Long, ChunkCollision> chunkBodies = new HashMap<>();
     private final Map<Long, ChunkCollision> detailBodies = new HashMap<>();
-    private final Map<Long, QatarDetailPack.DetailChunk> availableDetail = new HashMap<>();
+    private final Map<Long, DetailSource> availableDetail = new HashMap<>();
     private int detailCellMetres;
     private long detailRevision;
     private long collisionRevision=-1;
@@ -76,7 +76,7 @@ public final class PhysicsWorld implements Disposable {
     private boolean action;
     private float temporaryFloorTime;
 
-    public PhysicsWorld(double spawnX, double spawnZ) {
+    public PhysicsWorld(double spawnX,double spawnZ,float groundHeight) {
         Bullet.init();
         configuration = new btDefaultCollisionConfiguration();
         dispatcher = new btCollisionDispatcher(configuration);
@@ -86,13 +86,13 @@ public final class PhysicsWorld implements Disposable {
         world.setGravity(new Vector3(0, -9.80665f, 0));
         originX = spawnX;
         originZ = spawnZ;
-        createTemporaryFloor();
-        createFocusBody(mode, 0, 3.0f, 0);
+        createTemporaryFloor(groundHeight);
+        createFocusBody(mode,0,groundHeight+3.0f,0);
     }
 
-    private void createTemporaryFloor() {
+    private void createTemporaryFloor(float surfaceY) {
         temporaryFloorShape = new btBoxShape(new Vector3(80, .5f, 80));
-        temporaryFloor = body(0, temporaryFloorShape, new Matrix4().setToTranslation(0,-.5f,0));
+        temporaryFloor = body(0, temporaryFloorShape, new Matrix4().setToTranslation(0,surfaceY-.5f,0));
         world.addRigidBody(temporaryFloor);
     }
 
@@ -135,23 +135,12 @@ public final class PhysicsWorld implements Disposable {
         this.action = action;
     }
 
-    public void switchMode(Mode requested, QatarPack pack) {
-        if (requested == mode) return;
-        double targetX, targetZ;
-        float altitude;
-        if (requested == Mode.AEROPLANE) {
-            QatarPack.Hub hub = pack.hub("Hamad International Airport"); targetX=hub.x(); targetZ=hub.z(); altitude=6;
-        } else if (requested == Mode.BOAT) {
-            QatarPack.Hub hub = pack.hub("Doha Corniche"); targetX=hub.x()+2600; targetZ=hub.z()+700; altitude=.4f;
-        } else {
-            QatarPack.Hub hub = pack.hub("Souq Waqif"); targetX=hub.x(); targetZ=hub.z(); altitude=requested==Mode.HELICOPTER?4:3;
-        }
-        mode=requested;
-        originX=targetX; originZ=targetZ;
-        headingRadians=0;
-        relocateChunkBodies();
-        createFocusBody(requested,0,altitude,0);
-        if (temporaryFloor == null) createTemporaryFloor();
+    public void switchMode(Mode requested,QatarPack pack) {
+        if(requested==mode)return;
+        Vector3 current=position();Vector3 velocity=velocity();mode=requested;
+        float lift=requested==Mode.HELICOPTER?2.5f:requested==Mode.AEROPLANE?1.5f:.8f;
+        createFocusBody(requested,current.x,current.y+lift,current.z);
+        focusBody.setLinearVelocity(velocity.scl(requested==Mode.WALK?.35f:1));
         temporaryFloorTime=0;
     }
 
@@ -265,19 +254,19 @@ public final class PhysicsWorld implements Disposable {
         btCompoundShape compound=new btCompoundShape();
         List<btCollisionShape> children=new ArrayList<>();
         float sub=chunkMetres/16f;
-        for (int row=0;row<16;row++) {
-            int bits=chunk.landRows()[row];
-            int start=-1;
-            for (int col=0;col<=16;col++) {
-                boolean filled=col<16 && (bits&(1<<col))!=0;
-                if (filled&&start<0) start=col;
-                if (!filled&&start>=0) {
-                    int run=col-start;
-                    btBoxShape shape=new btBoxShape(new Vector3(run*sub/2,.5f,sub/2));
-                    children.add(shape);
-                    Matrix4 child=new Matrix4().setToTranslation((start+run/2f)*sub,-.5f,(row+.5f)*sub);
-                    compound.addChildShape(child,shape); start=-1;
+        for(int row=0;row<16;row++){
+            int bits=chunk.landRows()[row],start=-1;float sumHeight=0,previousHeight=0;
+            for(int col=0;col<=16;col++){
+                boolean filled=col<16&&(bits&(1<<col))!=0;
+                float height=filled?sampleTerrain(chunk,chunkMetres,(col+.5f)*sub,(row+.5f)*sub):0;
+                boolean split=filled&&start>=0&&Math.abs(height-previousHeight)>.40f;
+                if((!filled||split)&&start>=0){
+                    int run=col-start;float top=sumHeight/run;
+                    btBoxShape shape=new btBoxShape(new Vector3(run*sub/2,.75f,sub/2));children.add(shape);
+                    Matrix4 child=new Matrix4().setToTranslation((start+run/2f)*sub,top-.75f,(row+.5f)*sub);
+                    compound.addChildShape(child,shape);start=-1;sumHeight=0;
                 }
+                if(filled){if(start<0)start=col;sumHeight+=height;previousHeight=height;}
             }
         }
         float localX=(float)(chunk.entry().x()*chunkMetres-originX);
@@ -303,9 +292,11 @@ public final class PhysicsWorld implements Disposable {
     }
 
     /** Registers decoded visual detail without immediately creating thousands of Bullet shapes. */
-    public void registerDetailChunk(QatarDetailPack.DetailChunk chunk,int cellMetres){
+    public void registerDetailChunk(QatarDetailPack.DetailChunk chunk,int cellMetres,QatarPack.WorldChunk terrain,QatarPack pack){
         if(detailCellMetres!=0&&detailCellMetres!=cellMetres)throw new IllegalArgumentException("Detail cell-size mismatch");
-        detailCellMetres=cellMetres;availableDetail.put(key(chunk.entry().x(),chunk.entry().y()),chunk);detailRevision++;
+        detailCellMetres=cellMetres;long detailKey=key(chunk.entry().x(),chunk.entry().y());
+        availableDetail.put(detailKey,new DetailSource(chunk,terrain,pack));detailRevision++;
+        ChunkCollision previous=detailBodies.remove(detailKey);if(previous!=null)previous.dispose(world);
     }
 
     public void unregisterDetailChunk(QatarDetailPack.DetailChunk chunk){
@@ -321,8 +312,8 @@ public final class PhysicsWorld implements Disposable {
         collisionRevision=detailRevision;collisionCellX=focusCellX;collisionCellY=focusCellY;
         double radius=detailCellMetres*1.45,radiusSquared=radius*radius;
         List<DetailCandidate> candidates=new ArrayList<>();
-        for(Map.Entry<Long,QatarDetailPack.DetailChunk> item:availableDetail.entrySet()){
-            QatarDetailPack.DetailEntry entry=item.getValue().entry();
+        for(Map.Entry<Long,DetailSource> item:availableDetail.entrySet()){
+            QatarDetailPack.DetailEntry entry=item.getValue().chunk().entry();
             double minX=entry.x()*(double)detailCellMetres,minZ=entry.y()*(double)detailCellMetres;
             double dx=axisDistance(focusGlobalX,minX,minX+detailCellMetres),dz=axisDistance(focusGlobalZ,minZ,minZ+detailCellMetres);
             double distanceSquared=dx*dx+dz*dz;
@@ -332,14 +323,14 @@ public final class PhysicsWorld implements Disposable {
         Set<Long> wanted=new HashSet<>();
         for(int i=0;i<Math.min(MAX_DETAIL_COLLISION_CELLS,candidates.size());i++){
             DetailCandidate candidate=candidates.get(i);wanted.add(candidate.key());
-            if(!detailBodies.containsKey(candidate.key()))activateDetailCollision(candidate.chunk(),focusGlobalX,focusGlobalZ);
+            if(!detailBodies.containsKey(candidate.key()))activateDetailCollision(candidate.source(),focusGlobalX,focusGlobalZ);
         }
         List<Long> departing=new ArrayList<>();for(long key:detailBodies.keySet())if(!wanted.contains(key))departing.add(key);
         for(long key:departing){ChunkCollision value=detailBodies.remove(key);if(value!=null)value.dispose(world);}
     }
 
-    private void activateDetailCollision(QatarDetailPack.DetailChunk chunk,double focusGlobalX,double focusGlobalZ){
-        QatarPack.Building[] source=chunk.buildings();if(source.length==0)return;
+    private void activateDetailCollision(DetailSource detail,double focusGlobalX,double focusGlobalZ){
+        QatarDetailPack.DetailChunk chunk=detail.chunk();QatarPack.Building[] source=chunk.buildings();if(source.length==0)return;
         List<QatarPack.Building> buildings=new ArrayList<>(source.length);
         for(QatarPack.Building building:source)if(building.width()>=.5f&&building.depth()>=.5f&&building.height()>=.5f)buildings.add(building);
         final double cellX=chunk.entry().x()*(double)detailCellMetres,cellZ=chunk.entry().y()*(double)detailCellMetres;
@@ -350,7 +341,10 @@ public final class PhysicsWorld implements Disposable {
         btCompoundShape compound=new btCompoundShape();List<btCollisionShape> children=new ArrayList<>(buildings.size());
         for(QatarPack.Building building:buildings){
             btBoxShape shape=new btBoxShape(new Vector3(building.width()/2,building.height()/2,building.depth()/2));children.add(shape);
-            Matrix4 child=new Matrix4().setToTranslation(building.x(),building.height()/2,building.z()).rotate(Vector3.Y,(float)Math.toDegrees(building.yaw()));
+            float base=detail.terrain()==null?0:sampleTerrain(detail.terrain(),detail.pack().chunkMetres,
+                    (float)(cellX+building.x()-detail.terrain().entry().x()*(double)detail.pack().chunkMetres),
+                    (float)(cellZ+building.z()-detail.terrain().entry().y()*(double)detail.pack().chunkMetres));
+            Matrix4 child=new Matrix4().setToTranslation(building.x(),base+building.height()/2,building.z()).rotate(Vector3.Y,(float)Math.toDegrees(building.yaw()));
             compound.addChildShape(child,shape);
         }
         if(children.isEmpty()){compound.dispose();return;}
@@ -391,13 +385,19 @@ public final class PhysicsWorld implements Disposable {
         world.dispose(); solver.dispose(); broadphase.dispose(); dispatcher.dispose(); configuration.dispose();
     }
 
-    private record DetailCandidate(long key,QatarDetailPack.DetailChunk chunk,double distanceSquared){}
+    private record DetailSource(QatarDetailPack.DetailChunk chunk,QatarPack.WorldChunk terrain,QatarPack pack){}
+    private record DetailCandidate(long key,DetailSource source,double distanceSquared){}
 
     private static final class ChunkCollision {
         final btRigidBody body; final btCompoundShape compound; final List<btCollisionShape> children;
         final double globalX,globalZ;
         ChunkCollision(btRigidBody body,btCompoundShape compound,List<btCollisionShape> children,double globalX,double globalZ){this.body=body;this.compound=compound;this.children=children;this.globalX=globalX;this.globalZ=globalZ;}
         void dispose(btDiscreteDynamicsWorld world){world.removeRigidBody(body);body.dispose();compound.dispose();for(btCollisionShape shape:children)shape.dispose();}
+    }
+    private static float sampleTerrain(QatarPack.WorldChunk chunk,int chunkMetres,float localX,float localZ){
+        float interval=chunkMetres/8f,gx=Math.max(0,Math.min(8,localX/interval)),gz=Math.max(0,Math.min(8,localZ/interval));
+        int x0=Math.min(7,(int)Math.floor(gx)),z0=Math.min(7,(int)Math.floor(gz)),x1=Math.min(8,x0+1),z1=Math.min(8,z0+1);float tx=gx-x0,tz=gz-z0;short[] v=chunk.terrainCm();
+        float a=v[z0*9+x0]*(1-tx)+v[z0*9+x1]*tx,b=v[z1*9+x0]*(1-tx)+v[z1*9+x1]*tx;return(a*(1-tz)+b*tz)/100f;
     }
     private static float clamp(float value,float min,float max){return Math.max(min,Math.min(max,value));}
     private static double axisDistance(double value,double min,double max){return value<min?min-value:value>max?value-max:0;}

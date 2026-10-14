@@ -14,7 +14,7 @@ public class PhysicsFoundationTest {
     @Test public void bulletWorldStepsForceDrivenHumanFoundationWithoutInvalidState() {
         HeadlessApplication app=new HeadlessApplication(new ApplicationAdapter(){},new HeadlessApplicationConfiguration());
         try {
-            PhysicsWorld physics=new PhysicsWorld(0,0);
+            PhysicsWorld physics=new PhysicsWorld(0,0,0);
             try {
                 for(int i=0;i<180;i++){
                     physics.setControls(.55f,.18f,0,false);

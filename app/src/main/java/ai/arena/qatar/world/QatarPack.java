@@ -171,6 +171,18 @@ public final class QatarPack implements AutoCloseable {
         return new WorldChunk(entry, seed, landRows, terrainCm, roads, buildings);
     }
 
+    /** Bilinear 9x9 terrain sample in metres for coordinates local to a 2 km chunk. */
+    public float terrainHeight(WorldChunk chunk,float localX,float localZ) {
+        float interval=chunkMetres/8f;
+        float gx=Math.max(0,Math.min(8,localX/interval)),gz=Math.max(0,Math.min(8,localZ/interval));
+        int x0=Math.min(7,(int)Math.floor(gx)),z0=Math.min(7,(int)Math.floor(gz));
+        int x1=Math.min(8,x0+1),z1=Math.min(8,z0+1);float tx=gx-x0,tz=gz-z0;
+        short[] values=chunk.terrainCm();
+        float a=values[z0*9+x0]*(1-tx)+values[z0*9+x1]*tx;
+        float b=values[z1*9+x0]*(1-tx)+values[z1*9+x1]*tx;
+        return (a*(1-tz)+b*tz)/100f;
+    }
+
     public int chunkX(double globalX) { return (int)Math.floor(globalX / chunkMetres); }
     public int chunkY(double globalZ) { return (int)Math.floor(globalZ / chunkMetres); }
 

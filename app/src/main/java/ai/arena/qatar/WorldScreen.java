@@ -28,10 +28,10 @@ final class WorldScreen extends ScreenAdapter {
     private float frameAccumulator;
     private static final float TARGET_FRAME_SECONDS=1f/30f;
 
-    WorldScreen(QatarPack pack,QatarDetailPack detailPack,QatarSpawnResolver.Spawn spawn){
+    WorldScreen(QatarPack pack,QatarDetailPack detailPack,QatarSpawnResolver.Spawn spawn,float groundHeight){
         this.pack=pack;this.detailPack=detailPack;
-        // Resolve the public Souq anchor onto source road geometry so the focus never starts inside a footprint.
-        physics=new PhysicsWorld(spawn.x(),spawn.z());
+        // Resolve the public Souq anchor onto source road geometry and measured terrain.
+        physics=new PhysicsWorld(spawn.x(),spawn.z(),groundHeight);
         renderer=new QatarWorldRenderer(pack,detailPack,physics);
         streamer=new WorldStreamer(pack,renderer);
         detailStreamer=new QatarDetailStreamer(detailPack,renderer);

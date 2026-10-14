@@ -1,6 +1,6 @@
 9afaa263f5f2385de40208af9ea0de55a5bc8d9384df241efd7be86b1793eaca  data/qatar/source/geoboundaries-6-QAT-ADM0.geojson
 8021dc98ea5a92564b87a69633bca4d17374226d42926fabe40e4de64721403e  data/qatar/source/geoboundaries-6-QAT-ADM1.geojson
 f896e9634a98a81ffddd753ccdea2bad09ef8b8ca5b90a1038de8f22bf669c03  data/qatar/source/natural-earth-10m-QAT.geojson
-6aa220910d0214b3d38fb5c7764534c5242b1ddab24ae6ffddb377d95a22a6b7  app/src/main/assets/world/qatar-national.qpak
-6815549c4906400ca145d58aaa553b4ad2e56e6878d3703a4f562b62d85b9a94  app/src/main/assets/world/qatar-manifest.json
-006f08d473b2cffc7094480661ae9fa7a8639f1e022e3bbd3dc43ce0ae0084a5  data/qatar/compiled/qatar-world-report.json
+322e7edf624d229b8c762a0242cf6bcf1af6ee7acdfc3ad94283f5facdbad3a8  app/src/main/assets/world/qatar-national.qpak
+7d63d1c27637d2e50853a4b57c5befc9cba65fa63a4bd855ff6709a2893ae245  app/src/main/assets/world/qatar-manifest.json
+fb39c644f20bcb1a35655420c75e7b77ace0ccd449768f1a7be06028c2a160e8  data/qatar/compiled/qatar-world-report.json
