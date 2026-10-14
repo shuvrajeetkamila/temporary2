@@ -43,6 +43,7 @@ final class WorldScreen extends ScreenAdapter {
         controls=new TouchController();
         hud=new HudRenderer(pack,detailPack,physics,streamer,detailStreamer,renderer,controls,climate);
         applyProfile(ThermalGovernor.profileForAndroidStatus(thermalStatus.getAsInt()));
+        Gdx.app.log("QatarEnvironment","ENV_READY presets=CLEAR,SHAMAL,DUST,RAIN tide=dynamic wind=enabled");
         Gdx.input.setInputProcessor(controls);
     }
 

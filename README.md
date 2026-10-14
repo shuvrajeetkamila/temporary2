@@ -2,15 +2,19 @@
 
 A fresh Android open-world project built from the definitive Qatar prompt book in this repository. The active application does not reuse the previous Nauru Java sources, package ID, resources, or world binaries.
 
-## Current source milestone: v0.3.0 measured-terrain preproduction
+## Current source milestone: v0.4.0 Qatar-environments preproduction
 
-This incremental release combines the complete source-derived Qatar road/building layer with measured terrain-scale elevation and elevation-aware rendering/collision:
+This incremental release retains the complete source-derived Qatar road/building and measured-terrain layers, then adds a bounded Qatar environment and Android thermal-control pass:
 
 - New package: `ai.arena.qatar.peninsula`
 - Android API 26–35, libGDX/OpenGL ES 3, and gdx-bullet
 - WGS84 / UTM zone 39N (`EPSG:32639`) at true 1:1 metre scale with a floating origin
 - Complete installed Qatar national pack: 5,665 indexed 2 km safety/terrain chunks
 - Measured 250 m Mapzen/SRTM/ETOPO1 elevation grid aligned to all 5,665 chunks
+- Deterministic clear, shamal, dust, and rain environment presets with bounded daylight, wind, visibility, and compressed Gulf tide models
+- Coast/water-only animated tide surfaces with deterministic wave normals; terrain-aware boat buoyancy and wind-aware aircraft
+- Android thermal listener with automatic NORMAL 30 fps, WARM 20 fps, and HOT 15 fps streaming/render/collision budgets
+- Qatar-specific road shoulders, rail/runway/taxiway surfaces, separate roofs/facades/windows, and smoother original player vehicles
 - Complete installed Qatar OpenStreetMap derivative: 88,965 indexed 250 m microcells
 - 182,110 source road ways represented by 1,441,102 road segments
 - 189,446 source building footprints, including 356 relation outer rings
@@ -25,13 +29,14 @@ This incremental release combines the complete source-derived Qatar road/buildin
 
 ## Honest status
 
-v0.3.0 is a playable **incremental prototype**, not a claim that the prompt book’s multi-year AAA end state is complete. It now uses real current OSM road vectors and building footprints instead of rendered procedural massing. Survey-grade terrain, hydrodynamic bathymetry, high-fidelity coastline/reclamation work, hero landmarks, final vehicle models/dynamics, traffic/transit/activity, complete Arabic shaping/localization, audio, and broad physical-device profiling remain later milestones.
+v0.4.0 is a playable **incremental prototype**, not a claim that the prompt book’s multi-year AAA end state is complete. It uses real current OSM road vectors/building footprints, measured terrain, authored (not live) Qatar weather presets, and automatic platform thermal downshifts. Survey-grade terrain, hydrodynamic bathymetry, high-fidelity coastline/reclamation work, hero landmarks, final vehicle models/dynamics, traffic/transit/activity, complete Arabic shaping/localization, audio, and broad physical-device profiling remain later milestones.
 
 See:
 
 - `QATAR_DEFINITIVE_FULL_OFFLINE_MAP_LOCAL_STREAMING_AAA_PROMPT_BOOK_v2.txt`
 - `QATAR_BOUNDARY_REPORT.md`
 - `QATAR_WORLD_EPOCH.md`
+- `QATAR_ENVIRONMENT_REPORT.md`
 - `DATA_SOURCES.md`
 - `ASSET_LICENSES.md`
 - `data/qatar/QATAR_OSM_IMPORT.json`

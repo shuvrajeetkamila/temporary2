@@ -84,6 +84,6 @@ Exact source-tile hashes, retrieval epoch, QDEM CRC/hash, import identity, limit
 
 The QTOD derivative is distributed in the APK and this public repository under the ODbL database terms. It retains source IDs and complete accepted simple-building outer footprints. Relation outer rings are retained; relation inner holes are a declared QTOD v1 limitation. Exact HTTP response metadata, upstream/extract sizes and checksums, tool output, and import identity are recorded in `data/qatar/QATAR_OSM_IMPORT.json`, `data/qatar/OSM_SHA256SUMS`, and `data/qatar/compiled/qatar-osm-report.json`.
 
-## Data not yet claimed in v0.3.0
+## Data not yet claimed in v0.4.0
 
-Version 0.3.0 includes measured terrain-scale elevation and coarse ocean bathymetry, but does **not** claim survey-grade elevation, hydrodynamic bathymetry, final reclaimed-coast epoch accuracy, navigation suitability, or final hand-authored landmark geometry. Those remain subsequent content/validation milestones and require source timestamps, checksums, licensing, and explicit tests before corresponding release claims are made.
+Version 0.4.0 includes measured terrain-scale elevation and coarse ocean bathymetry, but does **not** claim survey-grade elevation, hydrodynamic bathymetry, final reclaimed-coast epoch accuracy, navigation suitability, or final hand-authored landmark geometry. Those remain subsequent content/validation milestones and require source timestamps, checksums, licensing, and explicit tests before corresponding release claims are made.

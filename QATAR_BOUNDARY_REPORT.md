@@ -1,4 +1,4 @@
-# Qatar boundary and packaged-coverage report — v0.3.0
+# Qatar boundary and packaged-coverage report — v0.4.0
 
 National figures come from `data/qatar/compiled/qatar-world-report.json`; source-detail figures come from `data/qatar/compiled/qatar-osm-report.json`.
 
