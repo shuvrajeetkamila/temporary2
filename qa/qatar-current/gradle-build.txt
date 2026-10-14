@@ -33,12 +33,16 @@ The AGP Upgrade Assistant can remove the attribute from the AndroidManifest.xml 
 > Task :app:javaPreCompileDebugUnitTest FROM-CACHE
 > Task :app:mergeDebugShaders
 > Task :app:compileDebugShaders NO-SOURCE
-> Task :app:processDebugManifestForPackage
 > Task :app:generateDebugAssets UP-TO-DATE
 > Task :app:mergeDebugAssets
+> Task :app:processDebugManifestForPackage
 > Task :app:processDebugJavaRes NO-SOURCE
-> Task :app:processDebugResources
 > Task :app:processDebugUnitTestJavaRes NO-SOURCE
+> Task :app:mergeDebugNativeDebugMetadata NO-SOURCE
+> Task :app:desugarDebugFileDependencies
+> Task :app:processDebugResources
+> Task :app:mergeDebugJavaResource
+> Task :app:compressDebugAssets
 
 > Task :app:compileDebugJavaWithJavac
 Note: /home/runner/work/temporary2/temporary2/app/src/main/java/ai/arena/qatar/render/QatarWorldRenderer.java uses or overrides a deprecated API.
@@ -48,17 +52,13 @@ Note: Recompile with -Xlint:deprecation for details.
 > Task :app:bundleDebugClassesToCompileJar
 > Task :app:packageDebugUnitTestForUnitTest
 > Task :app:compileDebugUnitTestJavaWithJavac
-> Task :app:mergeDebugNativeDebugMetadata NO-SOURCE
 > Task :app:generateDebugUnitTestConfig
-> Task :app:compressDebugAssets
-> Task :app:testDebugUnitTest
-> Task :app:desugarDebugFileDependencies
 > Task :app:dexBuilderDebug
-> Task :app:checkDebugDuplicateClasses
+> Task :app:testDebugUnitTest
 > Task :app:mergeDebugGlobalSynthetics
+> Task :app:checkDebugDuplicateClasses
 > Task :app:mergeDebugJniLibFolders
 > Task :app:mergeLibDexDebug
-> Task :app:mergeDebugJavaResource
 > Task :app:mergeProjectDexDebug
 > Task :app:mergeDebugNativeLibs
 > Task :app:validateSigningDebug
@@ -72,7 +72,7 @@ Unable to strip the following libraries, packaging them as they are: libgdx-bull
 > Task :app:packageDebug
 > Task :app:createDebugApkListingFileRedirect
 > Task :app:assembleDebug
-gradle/actions: Writing build results to /home/runner/work/_temp/.gradle-actions/build-results/compile-1791990928808.json
+gradle/actions: Writing build results to /home/runner/work/_temp/.gradle-actions/build-results/compile-1791991329733.json
 
-BUILD SUCCESSFUL in 1m 3s
+BUILD SUCCESSFUL in 1m 30s
 42 actionable tasks: 41 executed, 1 from cache
