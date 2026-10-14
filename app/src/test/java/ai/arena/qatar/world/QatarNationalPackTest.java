@@ -28,12 +28,14 @@ public class QatarNationalPackTest {
             assertEquals(7,pack.nationalPolygons.size());
             assertTrue(pack.worldWidth>100_000);
             assertTrue(pack.worldHeight>190_000);
-            Set<Integer> represented=new HashSet<>();
+            Set<Integer> represented=new HashSet<>(),representedBiomes=new HashSet<>();
             int land=0,coast=0,water=0;
             for(QatarPack.ChunkEntry entry:pack.entries().values()){
+                representedBiomes.add(entry.biome());
                 if(entry.hasLand()){land++;represented.add(entry.municipality());if(entry.isCoast())coast++;}else water++;
             }
             assertEquals(8,represented.size());
+            assertEquals("Every packaged Qatar biome must be represented",10,representedBiomes.size());
             assertTrue(land>3000);
             assertTrue(coast>400);
             assertTrue(water>2000);

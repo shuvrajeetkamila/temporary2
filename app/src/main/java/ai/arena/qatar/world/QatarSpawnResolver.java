@@ -7,7 +7,8 @@ import java.util.List;
 /** Selects an OSM road/footway point near a hub that is clear of source building collision. */
 public final class QatarSpawnResolver {
     private static final int SEARCH_RADIUS_CELLS=2;
-    private static final double BUILDING_CLEARANCE_METRES=3.0;
+    private static final double MINIMUM_BUILDING_CLEARANCE_METRES=3.0;
+    private static final double PREFERRED_CAMERA_CLEARANCE_METRES=12.0;
     private QatarSpawnResolver(){}
 
     public static Spawn resolve(QatarDetailPack pack,double fallbackX,double fallbackZ)throws IOException{
@@ -31,21 +32,22 @@ public final class QatarSpawnResolver {
             double roadside=road.roadClass()==8?0:road.width()/2+1.4;
             for(int side:roadside==0?new int[]{0}:new int[]{-1,1,0}){
                 double candidateX=centreX+perpendicularX*roadside*side,candidateZ=centreZ+perpendicularZ*roadside*side;
-                if(blocked(candidateX,candidateZ,buildings))continue;
+                if(blocked(candidateX,candidateZ,buildings,MINIMUM_BUILDING_CLEARANCE_METRES))continue;
                 double centrePenalty=side==0&&roadside>0?14:0;
-                double score=Math.hypot(candidateX-fallbackX,candidateZ-fallbackZ)+classPenalty(road.roadClass())+centrePenalty;
+                double cameraPenalty=blocked(candidateX,candidateZ,buildings,PREFERRED_CAMERA_CLEARANCE_METRES)?35:0;
+                double score=Math.hypot(candidateX-fallbackX,candidateZ-fallbackZ)+classPenalty(road.roadClass())+centrePenalty+cameraPenalty;
                 if(score<bestScore){bestScore=score;best=new Spawn(candidateX,candidateZ,road.roadClass(),side==0?"nearest clear OSM footway/road":"nearest clear OSM roadside");}
             }
         }
         return best!=null?best:new Spawn(fallbackX,fallbackZ,-1,"public hub fallback; no clear OSM road candidate");
     }
 
-    private static boolean blocked(double x,double z,List<LocatedBuilding> buildings){
+    private static boolean blocked(double x,double z,List<LocatedBuilding> buildings,double clearance){
         for(LocatedBuilding located:buildings){
             QatarPack.Building building=located.building;double dx=x-(located.originX+building.x()),dz=z-(located.originZ+building.z());
             double cosine=Math.cos(building.yaw()),sine=Math.sin(building.yaw());
             double along=dx*cosine+dz*sine,across=-dx*sine+dz*cosine;
-            if(Math.abs(along)<=building.width()/2+BUILDING_CLEARANCE_METRES&&Math.abs(across)<=building.depth()/2+BUILDING_CLEARANCE_METRES)return true;
+            if(Math.abs(along)<=building.width()/2+clearance&&Math.abs(across)<=building.depth()/2+clearance)return true;
         }
         return false;
     }
