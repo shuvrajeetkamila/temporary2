@@ -74,6 +74,18 @@ jobs:
           "$ADB" shell input swipe 150 600 150 430 900 || true
           sleep 12
           "$ADB" exec-out screencap -p > qa/qatar-runtime/gameplay.png
+          # Exercise every focus-physics implementation after preserving the grounded walk image.
+          "$ADB" shell input tap 1140 52; sleep 2
+          "$ADB" shell input swipe 150 600 150 430 1200; sleep 10
+          "$ADB" exec-out screencap -p > qa/qatar-runtime/car.png
+          "$ADB" shell input tap 1140 52; sleep 12
+          "$ADB" exec-out screencap -p > qa/qatar-runtime/boat.png
+          "$ADB" shell input tap 1140 52; sleep 1
+          "$ADB" shell input swipe 1150 600 1150 430 1600; sleep 10
+          "$ADB" exec-out screencap -p > qa/qatar-runtime/helicopter.png
+          "$ADB" shell input tap 1140 52; sleep 1
+          "$ADB" shell input swipe 150 600 150 430 1600; sleep 10
+          "$ADB" exec-out screencap -p > qa/qatar-runtime/aeroplane.png
           "$ADB" logcat -d > qa/qatar-runtime/logcat.txt
           "$ADB" shell dumpsys activity activities > qa/qatar-runtime/activity-dump.txt
           PID="$("$ADB" shell pidof ai.arena.qatar.peninsula | tr -d '\r')"
@@ -86,31 +98,35 @@ jobs:
           PACK_READY="$(grep 'QatarStreaming.*PACK_READY epoch=2026-10-14-srtm-osm-v0.3' qa/qatar-runtime/logcat.txt || true)"
           ENV_READY="$(grep 'QatarEnvironment.*ENV_READY' qa/qatar-runtime/logcat.txt || true)"
           THERMAL_READY="$(grep 'QatarThermal.*PROFILE NORMAL fps=30' qa/qatar-runtime/logcat.txt || true)"
-          STATE_READY="$(grep 'QatarRuntime.*STATE' qa/qatar-runtime/logcat.txt | tail -1 || true)"
+          WALK_STATE="$(grep 'QatarRuntime.*STATE mode=WALK' qa/qatar-runtime/logcat.txt | tail -1 || true)"
+          CAR_STATE="$(grep 'QatarRuntime.*STATE mode=CAR' qa/qatar-runtime/logcat.txt | tail -1 || true)"
+          BOAT_STATE="$(grep 'QatarRuntime.*STATE mode=BOAT' qa/qatar-runtime/logcat.txt | tail -1 || true)"
+          HELI_STATE="$(grep 'QatarRuntime.*STATE mode=HELICOPTER' qa/qatar-runtime/logcat.txt | tail -1 || true)"
+          PLANE_STATE="$(grep 'QatarRuntime.*STATE mode=AEROPLANE' qa/qatar-runtime/logcat.txt | tail -1 || true)"
           {
 
             echo "install_exit=$INSTALL_EXIT"
             echo "start_exit=$START_EXIT"
             echo "pid=$PID"
             echo "screenshot_bytes=$(wc -c < qa/qatar-runtime/gameplay.png)"
+            for IMAGE in car boat helicopter aeroplane; do IMAGE_BYTES="$(wc -c < "qa/qatar-runtime/$IMAGE.png")"; echo "${IMAGE}_screenshot_bytes=$IMAGE_BYTES"; done
             if [ -n "$OSM_READY" ]; then echo 'osm_detail_rendered=yes'; else echo 'osm_detail_rendered=no'; fi
             if [ -n "$PACK_READY" ]; then echo 'terrain_pack_loaded=yes'; else echo 'terrain_pack_loaded=no'; fi
             if [ -n "$ENV_READY" ]; then echo 'qatar_environment_ready=yes'; else echo 'qatar_environment_ready=no'; fi
             if [ -n "$THERMAL_READY" ]; then echo 'thermal_governor_ready=yes'; else echo 'thermal_governor_ready=no'; fi
-            if [[ "$STATE_READY" == *'stable=yes'* ]]; then echo 'runtime_state_stable=yes'; else echo 'runtime_state_stable=no'; fi
-            echo "runtime_state=$STATE_READY"
+            for MODE in WALK CAR BOAT HELI PLANE; do STATE_VAR="${MODE}_STATE"; STATE_VALUE="${!STATE_VAR}"; if [[ "$STATE_VALUE" == *'stable=yes'* ]]; then echo "${MODE,,}_runtime_stable=yes"; else echo "${MODE,,}_runtime_stable=no"; fi; echo "${MODE,,}_state=$STATE_VALUE"; done
             if [ -n "$FATALS" ]; then echo 'fatal_log=yes'; else echo 'fatal_log=no'; fi
           } | tee qa/qatar-runtime/status.txt
           set -e
           test "$INSTALL_EXIT" -eq 0
           test "$START_EXIT" -eq 0
           test -n "$PID"
-          test "$(wc -c < qa/qatar-runtime/gameplay.png)" -gt 10000
+          for IMAGE in gameplay car boat helicopter aeroplane; do test "$(wc -c < "qa/qatar-runtime/$IMAGE.png")" -gt 10000; done
           test -n "$OSM_READY"
           test -n "$PACK_READY"
           test -n "$ENV_READY"
           test -n "$THERMAL_READY"
-          [[ "$STATE_READY" == *'stable=yes'* ]]
+          for STATE in "$WALK_STATE" "$CAR_STATE" "$BOAT_STATE" "$HELI_STATE" "$PLANE_STATE"; do [[ "$STATE" == *'stable=yes'* ]]; done
           test -z "$FATALS"
 
       - name: Persist runtime evidence

@@ -405,6 +405,8 @@ public final class PhysicsWorld implements Disposable {
     public double globalX() { return originX + position().x; }
     public double globalZ() { return originZ + position().z; }
     public float heightAboveGround(){return position().y-groundReference;}
+    public float supportClearance(){return mode==Mode.BOAT&&waterAvailable?position().y-waterSurface:heightAboveGround();}
+    public boolean hasWaterSupport(){return waterAvailable;}
     public double originX() { return originX; }
     public double originZ() { return originZ; }
     public float headingRadians() { return headingRadians; }

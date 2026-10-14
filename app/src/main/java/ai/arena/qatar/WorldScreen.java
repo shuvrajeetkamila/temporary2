@@ -3,6 +3,7 @@ package ai.arena.qatar;
 import ai.arena.qatar.environment.QatarEnvironment;
 import ai.arena.qatar.input.TouchController;
 import ai.arena.qatar.performance.ThermalGovernor;
+import ai.arena.qatar.physics.PhysicsHealth;
 import ai.arena.qatar.physics.PhysicsWorld;
 import ai.arena.qatar.render.QatarWorldRenderer;
 import ai.arena.qatar.ui.HudRenderer;
@@ -69,9 +70,9 @@ final class WorldScreen extends ScreenAdapter {
         if(controls.consumeRecoveryRequested())physics.recover();
         physics.syncDetailCollisions(focusX,focusZ);physics.step(simulationDelta);renderer.render(simulationDelta);hud.render();
         runtimeHealthAccumulator+=simulationDelta;if(runtimeHealthAccumulator>=10f){
-            runtimeHealthAccumulator=0;Vector3 stateVelocity=physics.velocity();float height=physics.heightAboveGround(),speed=stateVelocity.len(),cameraDistance=renderer.cameraDistance();
-            boolean stable=Float.isFinite(height)&&Float.isFinite(speed)&&cameraDistance>=5.5f&&(physics.mode()!=PhysicsWorld.Mode.WALK||(height>-.25f&&height<12&&speed<12));
-            Gdx.app.log("QatarRuntime","STATE mode="+physics.mode()+" heightAboveGround="+height+" speed="+speed+" cameraDistance="+cameraDistance+" stable="+(stable?"yes":"no"));
+            runtimeHealthAccumulator=0;Vector3 stateVelocity=physics.velocity();float height=physics.heightAboveGround(),support=physics.supportClearance(),speed=stateVelocity.len(),cameraDistance=renderer.cameraDistance();
+            boolean stable=PhysicsHealth.stable(physics.mode(),height,support,speed,cameraDistance);
+            Gdx.app.log("QatarRuntime","STATE mode="+physics.mode()+" heightAboveGround="+height+" supportClearance="+support+" water="+(physics.hasWaterSupport()?"yes":"no")+" speed="+speed+" cameraDistance="+cameraDistance+" stable="+(stable?"yes":"no"));
         }
     }
 

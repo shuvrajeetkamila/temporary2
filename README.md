@@ -25,7 +25,7 @@ This incremental release retains the complete source-derived Qatar road/building
 - Explicit 30 fps foreground budget to avoid wasteful 60/90/120 Hz rendering on modest phones
 - Human, 4×4, boat, helicopter, and aeroplane physical prototype modes
 - No Android `INTERNET` permission and no post-install map download
-- Deterministic compilers, provenance/checksums, coverage tests, APK structure checks, emulator smoke testing, and SHA-256 publication
+- Deterministic compilers, provenance/checksums, coverage tests, APK structure checks, all-five-mode emulator physics/camera smoke testing, and SHA-256 publication
 
 ## Honest status
 
@@ -37,6 +37,7 @@ See:
 - `QATAR_BOUNDARY_REPORT.md`
 - `QATAR_WORLD_EPOCH.md`
 - `QATAR_ENVIRONMENT_REPORT.md`
+- `QATAR_PHYSICS_REPORT.md`
 - `DATA_SOURCES.md`
 - `ASSET_LICENSES.md`
 - `data/qatar/QATAR_OSM_IMPORT.json`
