@@ -149,21 +149,23 @@ public final class QatarWorldRenderer implements WorldStreamer.Listener, QatarDe
             default -> throw new IllegalStateException();
         }
         Vector3 wanted=new Vector3(focus.x-(float)Math.sin(heading)*distance,focus.y+height,focus.z-(float)Math.cos(heading)*distance);
+        float wantedGround=terrainHeight(physics.originX()+wanted.x,physics.originZ()+wanted.z);wanted.y=Math.max(wanted.y,wantedGround+1.5f);
         if(!cameraInitialized){smoothCamera.set(wanted);cameraInitialized=true;} else smoothCamera.lerp(wanted,Math.min(1,delta*4.5f));
-        Vector3 target=new Vector3(focus.x,focus.y+1.2f,focus.z);camera.position.set(resolveCamera(smoothCamera,target));
+        float focusGround=terrainHeight(physics.globalX(),physics.globalZ());Vector3 target=new Vector3(focus.x,Math.max(focus.y+1.2f,focusGround+1.25f),focus.z);camera.position.set(resolveCamera(smoothCamera,target));
         camera.up.set(Vector3.Y);
         camera.lookAt(target);
         camera.update();
     }
 
     private Vector3 resolveCamera(Vector3 requested,Vector3 target){
-        Vector3 candidate=new Vector3();
-        for(int step=0;step<=9;step++){
-            candidate.set(requested).lerp(target,step/9f);
+        Vector3 candidate=new Vector3(),safe=new Vector3(target).lerp(requested,.04f).add(0,.5f,0);
+        for(int step=1;step<=12;step){
+            candidate.set(target).lerp(requested,step/12f);
             double globalX=physics.originX()+candidate.x,globalZ=physics.originZ()+candidate.z;
-            if(!cameraBlocked(globalX,candidate.y,globalZ))return candidate;
+            if(cameraBlocked(globalX,candidate.y,globalZ))return safe;
+            safe.set(candidate);
         }
-        return candidate.set(target).add(0,1.2f,0);
+        return safe;
     }
 
     private boolean cameraBlocked(double globalX,float localY,double globalZ){
@@ -362,7 +364,10 @@ public final class QatarWorldRenderer implements WorldStreamer.Listener, QatarDe
         int chunkX=pack.chunkX(globalX),chunkY=pack.chunkY(globalZ);
         QatarPack.WorldChunk terrain=nationalData.get(key(chunkX,chunkY));
         if(terrain==null)return absent;
-        return pack.terrainHeight(terrain,(float)(globalX-chunkX*(double)pack.chunkMetres),(float)(globalZ-chunkY*(double)pack.chunkMetres));
+        float localX=(float)(globalX-chunkX*(double)pack.chunkMetres),localZ=(float)(globalZ-chunkY*(double)pack.chunkMetres),sub=pack.chunkMetres/16f;
+        int col=Math.max(0,Math.min(15,(int)Math.floor(localX/sub))),row=Math.max(0,Math.min(15,(int)Math.floor(localZ/sub)));float x0=col*sub,z0=row*sub,u=Math.max(0,Math.min(1,(localX-x0)/sub)),v=Math.max(0,Math.min(1,(localZ-z0)/sub));
+        float h00=pack.terrainHeight(terrain,x0,z0),h10=pack.terrainHeight(terrain,x0+sub,z0),h11=pack.terrainHeight(terrain,x0+sub,z0+sub),h01=pack.terrainHeight(terrain,x0,z0+sub);
+        return v>=u?(1-v)*h00+(v-u)*h01+u*h11:(1-u)*h00+v*h11+(u-v)*h10;
     }
 
     private void rebuildFocusModel(){
