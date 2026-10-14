@@ -1,5 +1,5 @@
-Qatar Android v0.4.0 collision-safe release-candidate runtime request
-APK SHA-256: cfda5b65862acbb70dc5c208d5eb9e6cd270bae8db413bce832094e3750e0a36
-Build run: 38587634183
-Requested UTC: 2026-10-14T15:26:00Z
-Checks: install, cold launch, QTPK/OSM/environment/thermal readiness, retained-land spawn collision, periodic stable runtime state, unobstructed textured gameplay screenshot, process survival, memory and frame diagnostics.
+Qatar Android v0.4.0 terrain-collision release-candidate runtime request
+APK SHA-256: de1635f4dde1b018312b7adf899c4f2e71f63dcf647a91050034c19591450a0c
+Build run: 38588554871
+Requested UTC: 2026-10-14T15:35:00Z
+Checks: install, cold launch, QTPK/OSM/environment/thermal readiness, clearance-safe retained-land spawn, terrain-matched coastal collision, mandatory stable post-movement runtime state, unobstructed textured gameplay screenshot, process survival and diagnostics.
