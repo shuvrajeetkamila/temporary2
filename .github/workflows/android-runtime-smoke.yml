@@ -86,9 +86,9 @@ jobs:
           "$ADB" shell input tap 1140 52; sleep 1
           "$ADB" shell input swipe 150 600 150 430 1600; sleep 10
           "$ADB" exec-out screencap -p > qa/qatar-runtime/aeroplane.png
-          "$ADB" logcat -d > qa/qatar-runtime/logcat.txt
-          "$ADB" shell dumpsys activity activities > qa/qatar-runtime/activity-dump.txt
           PID="$("$ADB" shell pidof ai.arena.qatar.peninsula | tr -d '\r')"
+          if [ -n "$PID" ]; then "$ADB" logcat -d --pid="$PID" > qa/qatar-runtime/logcat.txt; else "$ADB" logcat -d > qa/qatar-runtime/logcat.txt; fi
+          "$ADB" shell dumpsys activity activities > qa/qatar-runtime/activity-dump.txt
           printf '%s\n' "$PID" > qa/qatar-runtime/app-pid.txt
           "$ADB" shell dumpsys meminfo ai.arena.qatar.peninsula > qa/qatar-runtime/meminfo.txt
           "$ADB" shell dumpsys gfxinfo ai.arena.qatar.peninsula > qa/qatar-runtime/gfxinfo.txt

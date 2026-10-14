@@ -1,5 +1,5 @@
-Qatar Android v0.4.0 all-focus terrain-contact runtime request
+Qatar Android v0.4.0 final all-focus runtime request
 APK SHA-256: c209d180a97b8e7140a7071387c5d89299c9839aa989f412c2cb2386b996e405
 Build run: 38602720986
-Requested UTC: 2026-10-14T17:13:00Z
-Checks: install/cold launch/readiness, grounded walking, then 4x4, boat, helicopter and aeroplane activation/input after terrain-contact and transition fixes; require positive support/altitude, bounded speed, camera separation, five screenshots, live process and no fatal log.
+Requested UTC: 2026-10-14T17:24:00Z
+Checks: install/cold launch/readiness; grounded walk, 4x4, boat, helicopter and aeroplane positive support, bounded speed and camera separation; five screenshots; fatal scan scoped to the live Qatar PID so unrelated emulator-system crashes cannot create a false failure.
