@@ -1,7 +1,9 @@
 install_exit=0
 start_exit=0
-pid=3305
-screenshot_bytes=58153
+pid=3718
+screenshot_bytes=55903
 osm_detail_rendered=yes
 terrain_pack_loaded=yes
+qatar_environment_ready=yes
+thermal_governor_ready=yes
 fatal_log=no
