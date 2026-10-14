@@ -1,5 +1,5 @@
-Qatar Android v0.4.0 final textured-environment runtime smoke request
+Qatar Android v0.4.0 unobstructed final runtime evidence request
 APK SHA-256: f9e347135294f1d5ae79c9bcdd0b5251a1c2525ebb01ca1c4e239af9a9cac97d
 Build run: 38584876059
-Requested UTC: 2026-10-14T15:04:00Z
-Checks: install, cold launch, measured QTPK epoch, OSM rendering, procedural terrain texture, environment and thermal markers, camera-safe screenshot, process survival, memory and frame diagnostics.
+Requested UTC: 2026-10-14T15:09:00Z
+Checks: suppress emulator immersive tutorial, install, cold launch, measured QTPK/OSM/environment/thermal markers, unobstructed textured gameplay screenshot, process survival, memory and frame diagnostics.
