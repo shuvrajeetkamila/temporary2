@@ -170,14 +170,14 @@ public final class QatarWorldRenderer implements WorldStreamer.Listener, QatarDe
     }
 
     private Vector3 ensureCameraSeparation(Vector3 current,Vector3 requested,Vector3 target){
-        if(current.dst2(target)>=36f)return current;float base=(float)Math.atan2(requested.x-target.x,requested.z-target.z);Vector3 forced=null;
+        if(current.dst2(target)>=36f)return current;float base=(float)Math.atan2(requested.x-target.x,requested.z-target.z);
         for(float distance:new float[]{10,8,12})for(float turn:new float[]{0,.7f,-.7f,1.4f,-1.4f,3.14f}){
             Vector3 option=new Vector3(target.x+(float)Math.sin(base+turn)*distance,target.y+Math.max(4f,distance*.6f),target.z+(float)Math.cos(base+turn)*distance);
-            double globalX=physics.originX()+option.x,globalZ=physics.originZ()+option.z;option.y=Math.max(option.y,terrainHeight(globalX,globalZ)+2f);if(forced==null)forced=new Vector3(option);
+            double globalX=physics.originX()+option.x,globalZ=physics.originZ()+option.z;option.y=Math.max(option.y,terrainHeight(globalX,globalZ)+2f);
             if(!cameraBlocked(globalX,option.y,globalZ))return option;
         }
-        // A distant elevated fallback is safer than collapsing into the focus model when imperfect OSM envelopes overlap every probe.
-        return forced==null?current:forced;
+        // Never collapse into the focus model: exact OSM multipolygons can omit courtyard holes, so retain the terrain-safe requested view as the final fallback.
+        return requested;
     }
 
     private boolean cameraBlocked(double globalX,float localY,double globalZ){
