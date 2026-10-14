@@ -150,9 +150,11 @@ public final class PhysicsWorld implements Disposable {
 
     public void switchMode(Mode requested,QatarPack pack) {
         if(requested==mode)return;
-        Vector3 current=position();Vector3 velocity=velocity();mode=requested;
+        Vector3 current=position(),velocity=velocity();mode=requested;
         float lift=requested==Mode.HELICOPTER?2.5f:requested==Mode.AEROPLANE?1.5f:.8f;
-        createFocusBody(requested,current.x,current.y+lift,current.z);
+        float requestedY=Math.max(current.y+lift,groundReference+supportHeight(requested)+(requested==Mode.HELICOPTER?2.5f:requested==Mode.AEROPLANE?1.0f:.2f));
+        createFocusBody(requested,current.x,requestedY,current.z);
+        velocity.y=requested==Mode.HELICOPTER||requested==Mode.AEROPLANE?Math.max(0,velocity.y*.25f):0;
         focusBody.setLinearVelocity(velocity.scl(requested==Mode.WALK?.35f:1));
         temporaryFloorTime=0;
     }
@@ -172,7 +174,7 @@ public final class PhysicsWorld implements Disposable {
             world.removeRigidBody(temporaryFloor); temporaryFloor.dispose(); temporaryFloor=null;
             temporaryFloorShape.dispose(); temporaryFloorShape=null;
         }
-        stabilizeWalkingContact();
+        stabilizeTerrainContact();
         maybeRebase();
         recoverIfInvalid();
         action=false;
@@ -238,13 +240,15 @@ public final class PhysicsWorld implements Disposable {
         focusBody.setWorldTransform(matrix);
     }
 
-    /** Bullet remains authoritative horizontally; a grounded capsule snap prevents coastal triangle seams from swallowing the walker. */
-    private void stabilizeWalkingContact(){
-        if(mode!=Mode.WALK||waterAvailable)return;Vector3 position=position();float standingY=groundReference+.96f;
-        if(position.y>=standingY||position.y<groundReference-12f)return;
+    /** Bullet remains authoritative horizontally; this narrow vertical guard rejects numerical tunnelling at streamed coastal seams. */
+    private void stabilizeTerrainContact(){
+        if(mode==Mode.BOAT&&waterAvailable)return;Vector3 position=position();float standingY=groundReference+supportHeight(mode);
+        if(position.y>=standingY||position.y<groundReference-30f)return;
         Matrix4 at=focusBody.getWorldTransform();at.setTranslation(position.x,standingY,position.z);focusBody.setWorldTransform(at);
         Vector3 velocity=focusBody.getLinearVelocity();if(velocity.y<0)focusBody.setLinearVelocity(new Vector3(velocity.x,0,velocity.z));focusBody.activate();
     }
+
+    private static float supportHeight(Mode mode){return switch(mode){case WALK->.96f;case CAR->.76f;case BOAT->.69f;case HELICOPTER->.79f;case AEROPLANE->.69f;};}
 
     private void maybeRebase() {
         Vector3 p=position();

@@ -11,7 +11,7 @@ This document describes the bounded gameplay-physics foundation in the v0.4 prep
 - The installed QDEM drives inland heightfields. Coastal retained-land cells use terrain-aligned triangular convex prisms so collision follows the same triangles that are rendered.
 - Nearby OSM building collision is activation-budgeted and capped per detail cell; distant collision is evicted.
 - A short-lived startup floor protects the focus body only while the first required terrain collider is activating.
-- Recovery rejects non-finite transforms and extreme falls. Walking contact has a narrow terrain-following stabilization guard against numerical gaps along streamed coastal triangle seams.
+- Recovery rejects non-finite transforms and extreme falls. Every land-supported focus body has a narrow vertical terrain-following guard against numerical tunnelling along streamed coastal triangle seams; horizontal motion remains Bullet-authoritative.
 
 ## Current focus modes
 
