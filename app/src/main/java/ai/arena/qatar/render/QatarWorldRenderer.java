@@ -187,13 +187,23 @@ public final class QatarWorldRenderer implements WorldStreamer.Listener, QatarDe
             if(Math.abs(chunk.entry().x()-cameraCellX)>1||Math.abs(chunk.entry().y()-cameraCellZ)>1)continue;
             double originX=chunk.entry().x()*(double)detailCellMetres,originZ=chunk.entry().y()*(double)detailCellMetres;
             for(QatarPack.Building building:chunk.buildings()){
-                double centreX=originX+building.x(),centreZ=originZ+building.z(),dx=globalX-centreX,dz=globalZ-centreZ;
-                double cosine=Math.cos(building.yaw()),sine=Math.sin(building.yaw()),along=dx*cosine+dz*sine,across=-dx*sine+dz*cosine;
-                if(Math.abs(along)>building.width()/2+.45||Math.abs(across)>building.depth()/2+.45)continue;
-                float base=terrainHeight(centreX,centreZ);if(localY>=base-.4f&&localY<=base+building.height()+.8f)return true;
+                double centreX=originX+building.x(),centreZ=originZ+building.z();boolean inside;
+                if(building.hasSourceFootprint())inside=insideOrNearFootprint(building.sourceFootprint(),globalX-originX,globalZ-originZ,.45);
+                else{double dx=globalX-centreX,dz=globalZ-centreZ,cosine=Math.cos(building.yaw()),sine=Math.sin(building.yaw()),along=dx*cosine+dz*sine,across=-dx*sine+dz*cosine;inside=Math.abs(along)<=building.width()/2+.45&&Math.abs(across)<=building.depth()/2+.45;}
+                if(!inside)continue;float base=terrainHeight(centreX,centreZ);if(localY>=base-.4f&&localY<=base+building.height()+.8f)return true;
             }
         }
         return false;
+    }
+
+    private static boolean insideOrNearFootprint(float[] polygon,double x,double z,double clearance){
+        int points=polygon.length/2;if(points<3)return false;boolean inside=false;double clearanceSquared=clearance*clearance;
+        for(int i=0,j=points-1;i<points;j=i++){
+            double xi=polygon[i*2],zi=polygon[i*2+1],xj=polygon[j*2],zj=polygon[j*2+1],dx=xi-xj,dz=zi-zj,lengthSquared=dx*dx+dz*dz;
+            if(lengthSquared>1e-6){double t=Math.max(0,Math.min(1,((x-xj)*dx+(z-zj)*dz)/lengthSquared)),nearestX=xj+t*dx,nearestZ=zj+t*dz;if((x-nearestX)*(x-nearestX)+(z-nearestZ)*(z-nearestZ)<=clearanceSquared)return true;}
+            if((zi>z)!=(zj>z)&&x<(xj-xi)*(z-zi)/(zj-zi)+xi)inside=!inside;
+        }
+        return inside;
     }
 
     @Override public void activate(QatarPack.WorldChunk chunk) {
