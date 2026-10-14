@@ -146,10 +146,36 @@ public final class QatarWorldRenderer implements WorldStreamer.Listener, QatarDe
         }
         Vector3 wanted=new Vector3(focus.x-(float)Math.sin(heading)*distance,focus.y+height,focus.z-(float)Math.cos(heading)*distance);
         if(!cameraInitialized){smoothCamera.set(wanted);cameraInitialized=true;} else smoothCamera.lerp(wanted,Math.min(1,delta*4.5f));
-        camera.position.set(smoothCamera);
+        Vector3 target=new Vector3(focus.x,focus.y+1.2f,focus.z);camera.position.set(resolveCamera(smoothCamera,target));
         camera.up.set(Vector3.Y);
-        camera.lookAt(focus.x,focus.y+1.2f,focus.z);
+        camera.lookAt(target);
         camera.update();
+    }
+
+    private Vector3 resolveCamera(Vector3 requested,Vector3 target){
+        Vector3 candidate=new Vector3();
+        for(int step=0;step<=9;step++){
+            candidate.set(requested).lerp(target,step/9f);
+            double globalX=physics.originX()+candidate.x,globalZ=physics.originZ()+candidate.z;
+            if(!cameraBlocked(globalX,candidate.y,globalZ))return candidate;
+        }
+        return candidate.set(target).add(0,1.2f,0);
+    }
+
+    private boolean cameraBlocked(double globalX,float localY,double globalZ){
+        float ground=terrainHeight(globalX,globalZ);if(localY<ground+.55f)return true;
+        int cameraCellX=(int)Math.floor(globalX/detailCellMetres),cameraCellZ=(int)Math.floor(globalZ/detailCellMetres);
+        for(QatarDetailPack.DetailChunk chunk:detailData.values()){
+            if(Math.abs(chunk.entry().x()-cameraCellX)>1||Math.abs(chunk.entry().y()-cameraCellZ)>1)continue;
+            double originX=chunk.entry().x()*(double)detailCellMetres,originZ=chunk.entry().y()*(double)detailCellMetres;
+            for(QatarPack.Building building:chunk.buildings()){
+                double centreX=originX+building.x(),centreZ=originZ+building.z(),dx=globalX-centreX,dz=globalZ-centreZ;
+                double cosine=Math.cos(building.yaw()),sine=Math.sin(building.yaw()),along=dx*cosine+dz*sine,across=-dx*sine+dz*cosine;
+                if(Math.abs(along)>building.width()/2+.45||Math.abs(across)>building.depth()/2+.45)continue;
+                float base=terrainHeight(centreX,centreZ);if(localY>=base-.4f&&localY<=base+building.height()+.8f)return true;
+            }
+        }
+        return false;
     }
 
     @Override public void activate(QatarPack.WorldChunk chunk) {
