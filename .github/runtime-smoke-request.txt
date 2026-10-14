@@ -1,5 +1,5 @@
-Qatar Android v0.4.0 final all-focus runtime request
-APK SHA-256: c209d180a97b8e7140a7071387c5d89299c9839aa989f412c2cb2386b996e405
-Build run: 38602720986
-Requested UTC: 2026-10-14T17:24:00Z
-Checks: install/cold launch/readiness; grounded walk, 4x4, boat, helicopter and aeroplane positive support, bounded speed and camera separation; five screenshots; fatal scan scoped to the live Qatar PID so unrelated emulator-system crashes cannot create a false failure.
+Qatar Android v0.4.0 visually-clear all-focus runtime request
+APK SHA-256: 178609eb9c68ad6aa7c942c04b5d49ce2dcdb1e8135d9685b9890a029631c09d
+Build run: 38604777793
+Requested UTC: 2026-10-14T17:34:00Z
+Checks: install/cold launch/readiness; five bounded focus modes; grounded/afloat/aircraft support and camera separation; mode-aware urban camera distances; reject flat façade-filled or sky-only gameplay viewports using deterministic PNG analysis; app-scoped fatal scan.
