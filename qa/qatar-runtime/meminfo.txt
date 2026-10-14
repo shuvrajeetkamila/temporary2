@@ -1,45 +1,45 @@
 Applications Memory Usage (in Kilobytes):
-Uptime: 159987 Realtime: 159987
+Uptime: 153488 Realtime: 153488
 
-** MEMINFO in pid 3150 [ai.arena.qatar.peninsula] **
+** MEMINFO in pid 3445 [ai.arena.qatar.peninsula] **
                    Pss  Private  Private  SwapPss     Heap     Heap     Heap
                  Total    Dirty    Clean    Dirty     Size    Alloc     Free
                 ------   ------   ------   ------   ------   ------   ------
-  Native Heap    20020    19996        0    20755    43020    41405     1614
-  Dalvik Heap    15421    15404        0       81    21722    15594     6128
- Dalvik Other     1566     1500        0      108                           
+  Native Heap    34570    34544        0      311    45416    41513     3902
+  Dalvik Heap    23986    23968        0       42    21734    15590     6144
+ Dalvik Other     1695     1632        0       62                           
         Stack       44       44        0        0                           
-       Ashmem       12        0        0        0                           
+       Ashmem       11        0        0        0                           
     Other dev        8        0        8        0                           
-     .so mmap     2404      136     1032      126                           
-    .jar mmap      925        0        4        0                           
-    .apk mmap      554        0        0        0                           
-    .dex mmap     7093     7092        0     1916                           
-    .oat mmap       61        0        0        0                           
-    .art mmap     2237     1996        0     3538                           
-   Other mmap      628      224        0        0                           
-      Unknown      467      420        0      436                           
-        TOTAL    78400    46812     1044    26960    64742    56999     7742
+     .so mmap     2084      244      564       16                           
+    .jar mmap      828        0        0        0                           
+    .apk mmap      533        0        0        0                           
+    .dex mmap     9009     9008        0        0                           
+    .oat mmap       55        0        0        0                           
+    .art mmap     5740     5504        0       26                           
+   Other mmap      623      224        0        0                           
+      Unknown      919      876        0        2                           
+        TOTAL    80564    76044      572      459    67150    57103    10046
  
  App Summary
                        Pss(KB)
                         ------
-           Java Heap:    17400
-         Native Heap:    19996
-                Code:     8264
+           Java Heap:    29472
+         Native Heap:    34544
+                Code:     9816
                Stack:       44
             Graphics:        0
-       Private Other:     2152
-              System:    30544
+       Private Other:     2740
+              System:     3948
  
-               TOTAL:    78400       TOTAL SWAP PSS:    26960
+               TOTAL:    80564       TOTAL SWAP PSS:      459
  
  Objects
                Views:        8         ViewRootImpl:        2
          AppContexts:        6           Activities:        1
               Assets:       10        AssetManagers:        0
        Local Binders:       13        Proxy Binders:       32
-       Parcel memory:        4         Parcel count:       17
+       Parcel memory:        4         Parcel count:       18
     Death Recipients:        0      OpenSSL Sockets:        0
             WebViews:        0
  
