@@ -1,5 +1,5 @@
-Qatar Android v0.4.0 natural-camera release-candidate runtime request
-APK SHA-256: 85bf2a7c21832ff4f93998d25f39acfeb583205294bc61e5cf84dc580e71e404
-Build run: 38598775585
-Requested UTC: 2026-10-14T16:40:00Z
-Checks: install, cold launch, QTPK/OSM/environment/thermal readiness, terrain-following walker, stable post-movement state, natural terrain-safe camera retained through imperfect courtyard metadata, distance at least 5.5 metres, unobstructed scene, process survival and diagnostics.
+Qatar Android v0.4.0 all-focus-physics release-candidate runtime request
+APK SHA-256: 89f010f58417783eb7947b5bfd64b4baa8b05ea6bdb91f623eebb10055e9aa7d
+Build run: 38601449528
+Requested UTC: 2026-10-14T17:02:00Z
+Checks: install, cold launch, QTPK/OSM/environment/thermal readiness, grounded walking and camera, then bounded 4x4, boat, helicopter and aeroplane activation/input/state plus one screenshot per mode, live process and fatal-log gate.
