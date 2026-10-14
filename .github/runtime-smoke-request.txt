@@ -1,5 +1,5 @@
-Qatar Android v0.4.0 render-aligned collision runtime request
-APK SHA-256: c6c9a0e6046dd16e67a401d36e4e5e223fd54225a5494130a6267a436906c305
-Build run: 38593525929
-Requested UTC: 2026-10-14T15:56:00Z
-Checks: install, cold launch, QTPK/OSM/environment/thermal readiness, clearance-safe spawn, triangle-matched coastal collision, strict above-surface post-movement state, terrain-safe nondegenerate camera, unobstructed textured screenshot, process survival and diagnostics.
+Qatar Android v0.4.0 grounded-walker release-candidate runtime request
+APK SHA-256: bc9538bad6577170bc551d7359d2e3791d1975885934b9de53689e8ab774795e
+Build run: 38594569196
+Requested UTC: 2026-10-14T16:07:00Z
+Checks: install, cold launch, QTPK/OSM/environment/thermal readiness, terrain-following capsule contact after movement, strict stable state, minimum third-person camera separation, unobstructed textured scene, process survival and diagnostics.
