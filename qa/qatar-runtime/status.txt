@@ -1,7 +1,7 @@
 install_exit=0
 start_exit=0
-pid=3484
-screenshot_bytes=270837
+pid=3055
+screenshot_bytes=46838
 osm_detail_rendered=yes
 terrain_pack_loaded=yes
 qatar_environment_ready=yes
