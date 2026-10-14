@@ -1,5 +1,5 @@
-Qatar Android v0.4.0 playable-camera release-candidate runtime request
-APK SHA-256: 66a19422cf83ddd47112909f27ca0b23b7552d49728f6c8a84781136f746b1cd
-Build run: 38595596873
-Requested UTC: 2026-10-14T16:15:00Z
-Checks: install, cold launch, QTPK/OSM/environment/thermal readiness, terrain-following walker, mandatory stable post-movement state, measured camera distance at least 5.5 metres, unobstructed textured scene, process survival and diagnostics.
+Qatar Android v0.4.0 elevated-camera release-candidate runtime request
+APK SHA-256: 9e3ce2224202c9095fb132d2714d4a772c7dd931cc7baadd972f90cb5b0b1283
+Build run: 38596563768
+Requested UTC: 2026-10-14T16:23:00Z
+Checks: install, cold launch, QTPK/OSM/environment/thermal readiness, terrain-following walker, mandatory stable post-movement state, camera distance at least 5.5 metres with elevated obstruction fallback, unobstructed scene, process survival and diagnostics.
