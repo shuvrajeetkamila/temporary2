@@ -1,5 +1,5 @@
-Qatar Android v0.4.0 environment and thermal runtime smoke request
-APK SHA-256: e28e0a56ea789f4e90abcad3eecf1e3ba86af96ee95af2e40685a74aea67b7c7
-Build run: 38582801979
-Requested UTC: 2026-10-14T14:50:00Z
-Checks: install, cold launch, measured QTPK epoch, OSM rendering, Qatar environment marker, thermal governor marker, process survival, screenshot, memory and frame diagnostics.
+Qatar Android v0.4.0 final environment/camera runtime smoke request
+APK SHA-256: 12bee6335cd635c388e49ed1a323361dc46b12d63399455ffc2ba13fff4ff88d
+Build run: 38583820532
+Requested UTC: 2026-10-14T14:57:00Z
+Checks: install, cold launch, measured QTPK epoch, OSM rendering, Qatar environment marker, thermal governor marker, camera-safe gameplay screenshot, process survival, memory and frame diagnostics.
