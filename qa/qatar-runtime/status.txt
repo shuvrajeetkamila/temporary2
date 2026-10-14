@@ -1,11 +1,11 @@
 install_exit=0
 start_exit=0
-pid=3531
-screenshot_bytes=46639
+pid=3479
+screenshot_bytes=46202
 osm_detail_rendered=yes
 terrain_pack_loaded=yes
 qatar_environment_ready=yes
 thermal_governor_ready=yes
-runtime_state_stable=no
-runtime_state=10-14 15:19:18.700  3531  3577 I QatarRuntime: STATE mode=WALK heightAboveGround=-2.4891376 speed=8.3263194E-7 stable=no
+runtime_state_stable=yes
+runtime_state=10-14 15:26:40.182  3479  3521 I QatarRuntime: STATE mode=WALK heightAboveGround=-1.0927534 speed=0.0029869198 stable=yes
 fatal_log=no
