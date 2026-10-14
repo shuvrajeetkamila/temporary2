@@ -40,9 +40,11 @@ The AGP Upgrade Assistant can remove the attribute from the AndroidManifest.xml 
 > Task :app:mergeDebugNativeDebugMetadata NO-SOURCE
 > Task :app:desugarDebugFileDependencies
 > Task :app:processDebugManifestForPackage
-> Task :app:processDebugResources
-> Task :app:compressDebugAssets
 > Task :app:mergeDebugJavaResource
+> Task :app:compressDebugAssets
+> Task :app:checkDebugDuplicateClasses
+> Task :app:processDebugResources
+> Task :app:mergeDebugJniLibFolders
 
 > Task :app:compileDebugJavaWithJavac
 Note: /home/runner/work/temporary2/temporary2/app/src/main/java/ai/arena/qatar/render/QatarWorldRenderer.java uses or overrides a deprecated API.
@@ -55,9 +57,7 @@ Note: Recompile with -Xlint:deprecation for details.
 > Task :app:generateDebugUnitTestConfig
 > Task :app:dexBuilderDebug
 > Task :app:testDebugUnitTest
-> Task :app:checkDebugDuplicateClasses
 > Task :app:mergeDebugGlobalSynthetics
-> Task :app:mergeDebugJniLibFolders
 > Task :app:mergeLibDexDebug
 > Task :app:mergeProjectDexDebug
 > Task :app:mergeDebugNativeLibs
@@ -72,7 +72,7 @@ Unable to strip the following libraries, packaging them as they are: libgdx-bull
 > Task :app:packageDebug
 > Task :app:createDebugApkListingFileRedirect
 > Task :app:assembleDebug
-gradle/actions: Writing build results to /home/runner/work/_temp/.gradle-actions/build-results/compile-1791994201946.json
+gradle/actions: Writing build results to /home/runner/work/_temp/.gradle-actions/build-results/compile-1791994605921.json
 
-BUILD SUCCESSFUL in 1m 23s
+BUILD SUCCESSFUL in 1m 31s
 42 actionable tasks: 41 executed, 1 from cache

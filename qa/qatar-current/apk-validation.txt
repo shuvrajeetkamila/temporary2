@@ -1,6 +1,6 @@
 {
-  "apkBytes": 37910455,
-  "sha256": "66a19422cf83ddd47112909f27ca0b23b7552d49728f6c8a84781136f746b1cd",
+  "apkBytes": 37910511,
+  "sha256": "9e3ce2224202c9095fb132d2714d4a772c7dd931cc7baadd972f90cb5b0b1283",
   "qpakStoredBytes": 1410075,
   "qodStoredBytes": 27551391,
   "abis": [
