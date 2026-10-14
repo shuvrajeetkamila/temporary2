@@ -13,6 +13,7 @@ import com.badlogic.gdx.physics.bullet.collision.btBroadphaseInterface;
 import com.badlogic.gdx.physics.bullet.collision.btCollisionDispatcher;
 import com.badlogic.gdx.physics.bullet.collision.btCollisionShape;
 import com.badlogic.gdx.physics.bullet.collision.btCompoundShape;
+import com.badlogic.gdx.physics.bullet.collision.btConvexHullShape;
 import com.badlogic.gdx.physics.bullet.collision.btDefaultCollisionConfiguration;
 import com.badlogic.gdx.physics.bullet.collision.btDbvtBroadphase;
 import com.badlogic.gdx.physics.bullet.collision.btHeightfieldTerrainShape;
@@ -278,14 +279,15 @@ public final class PhysicsWorld implements Disposable {
             world.addRigidBody(body);chunkBodies.put(key,new ChunkCollision(body,shape,new ArrayList<>(),chunkX+chunkMetres/2,centreY,chunkZ+chunkMetres/2,bytes));return;
         }
         btCompoundShape compound=new btCompoundShape();List<btCollisionShape> children=new ArrayList<>();float sub=chunkMetres/16f;
-        for(int row=0;row<16;row++){
-            int bits=chunk.landRows()[row],start=-1;float sumHeight=0,previousHeight=0;
-            for(int col=0;col<=16;col++){
-                boolean filled=col<16&&(bits&(1<<col))!=0;float height=filled?sampleTerrain(chunk,chunkMetres,(col+.5f)*sub,(row+.5f)*sub):0;
-                boolean split=filled&&start>=0&&Math.abs(height-previousHeight)>.40f;
-                if((!filled||split)&&start>=0){int run=col-start;float top=sumHeight/run;btBoxShape shape=new btBoxShape(new Vector3(run*sub/2,.75f,sub/2));children.add(shape);compound.addChildShape(new Matrix4().setToTranslation((start+run/2f)*sub,top-.75f,(row+.5f)*sub),shape);start=-1;sumHeight=0;}
-                if(filled){if(start<0)start=col;sumHeight+=height;previousHeight=height;}
-            }
+        for(int row=0;row<16;row++)for(int col=0;col<16;col++){
+            if((chunk.landRows()[row]&(1<<col))==0)continue;
+            float x0=col*sub,x1=(col+1)*sub,z0=row*sub,z1=(row+1)*sub;
+            float h00=sampleTerrain(chunk,chunkMetres,x0,z0),h10=sampleTerrain(chunk,chunkMetres,x1,z0),h11=sampleTerrain(chunk,chunkMetres,x1,z1),h01=sampleTerrain(chunk,chunkMetres,x0,z1);
+            float bottom=Math.min(Math.min(h00,h10),Math.min(h11,h01))-4f;
+            btConvexHullShape shape=new btConvexHullShape();
+            shape.addPoint(new Vector3(x0,h00,z0),false);shape.addPoint(new Vector3(x1,h10,z0),false);shape.addPoint(new Vector3(x1,h11,z1),false);shape.addPoint(new Vector3(x0,h01,z1),false);
+            shape.addPoint(new Vector3(x0,bottom,z0),false);shape.addPoint(new Vector3(x1,bottom,z0),false);shape.addPoint(new Vector3(x1,bottom,z1),false);shape.addPoint(new Vector3(x0,bottom,z1),true);
+            children.add(shape);compound.addChildShape(new Matrix4(),shape);
         }
         btRigidBody body=body(0,compound,new Matrix4().setToTranslation((float)(chunkX-originX),0,(float)(chunkZ-originZ)));world.addRigidBody(body);
         chunkBodies.put(key,new ChunkCollision(body,compound,children,chunkX,0,chunkZ,null));

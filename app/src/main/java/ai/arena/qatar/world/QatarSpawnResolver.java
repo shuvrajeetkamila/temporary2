@@ -35,7 +35,7 @@ public final class QatarSpawnResolver {
             double roadside=road.roadClass()==8?0:road.width()/2+1.4;
             for(int side:roadside==0?new int[]{0}:new int[]{-1,1,0}){
                 double candidateX=centreX+perpendicularX*roadside*side,candidateZ=centreZ+perpendicularZ*roadside*side;
-                if(!isPackagedLand(candidateX,candidateZ,national,terrainChunks))continue;
+                if(!hasRetainedTerrainClearance(candidateX,candidateZ,national,terrainChunks))continue;
                 if(blocked(candidateX,candidateZ,buildings,MINIMUM_BUILDING_CLEARANCE_METRES))continue;
                 double centrePenalty=side==0&&roadside>0?14:0;
                 double cameraPenalty=blocked(candidateX,candidateZ,buildings,PREFERRED_CAMERA_CLEARANCE_METRES)?35:0;
@@ -44,6 +44,12 @@ public final class QatarSpawnResolver {
             }
         }
         return best!=null?best:new Spawn(fallbackX,fallbackZ,-1,"public hub fallback; no clear OSM road candidate");
+    }
+
+    private static boolean hasRetainedTerrainClearance(double x,double z,QatarPack pack,Map<Long,QatarPack.WorldChunk> cache)throws IOException{
+        if(!isPackagedLand(x,z,pack,cache))return false;
+        for(double radius:new double[]{30,75})for(int step=0;step<8;step++){double angle=step*Math.PI/4;if(!isPackagedLand(x+Math.cos(angle)*radius,z+Math.sin(angle)*radius,pack,cache))return false;}
+        return true;
     }
 
     private static boolean isPackagedLand(double x,double z,QatarPack pack,Map<Long,QatarPack.WorldChunk> cache)throws IOException{

@@ -101,6 +101,7 @@ jobs:
             echo "runtime_state=$STATE_READY"
             if [ -n "$FATALS" ]; then echo 'fatal_log=yes'; else echo 'fatal_log=no'; fi
           } | tee qa/qatar-runtime/status.txt
+          set -e
           test "$INSTALL_EXIT" -eq 0
           test "$START_EXIT" -eq 0
           test -n "$PID"
