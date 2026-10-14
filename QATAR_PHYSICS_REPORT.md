@@ -32,8 +32,8 @@ The Android emulator smoke workflow now preserves a grounded walking screenshot 
 - a live finite Bullet state after mode activation and input;
 - mode-specific altitude/support-clearance and speed bounds;
 - at least 5.5 m of usable third-person camera separation;
-- a non-empty screenshot;
-- no fatal Android/native log;
+- a non-empty screenshot whose central gameplay viewport has real luminance/colour variation rather than a sky-only or façade-filled flat frame;
+- no fatal Android/native log from the live Qatar process;
 - continued QTPK, OSM, environment, and thermal-governor readiness.
 
 The bounds are centralized in `PhysicsHealth` and unit-tested, so a sky-only camera, terrain fall-through, non-finite body, or runaway speed cannot be silently published as a successful runtime result.

@@ -144,9 +144,9 @@ public final class QatarWorldRenderer implements WorldStreamer.Listener, QatarDe
         switch(physics.mode()) {
             case WALK -> {distance=8;height=3.7f;camera.far=6500*performanceProfile.viewDistanceScale;}
             case CAR -> {distance=12;height=5.1f;camera.far=9000*performanceProfile.viewDistanceScale;}
-            case BOAT -> {distance=18;height=7;camera.far=11000*performanceProfile.viewDistanceScale;}
-            case HELICOPTER -> {distance=27;height=11;camera.far=14000*performanceProfile.viewDistanceScale;}
-            case AEROPLANE -> {distance=38;height=13;camera.far=16000*performanceProfile.viewDistanceScale;}
+            case BOAT -> {boolean afloat=physics.hasWaterSupport();distance=afloat?18:12;height=afloat?7:6;camera.far=11000*performanceProfile.viewDistanceScale;}
+            case HELICOPTER -> {boolean airborne=physics.heightAboveGround()>6;distance=airborne?27:12;height=airborne?11:7;camera.far=14000*performanceProfile.viewDistanceScale;}
+            case AEROPLANE -> {boolean airborne=physics.heightAboveGround()>6;distance=airborne?38:12;height=airborne?13:7;camera.far=16000*performanceProfile.viewDistanceScale;}
             default -> throw new IllegalStateException();
         }
         Vector3 wanted=new Vector3(focus.x-(float)Math.sin(heading)*distance,focus.y+height,focus.z-(float)Math.cos(heading)*distance);
@@ -176,8 +176,14 @@ public final class QatarWorldRenderer implements WorldStreamer.Listener, QatarDe
             double globalX=physics.originX()+option.x,globalZ=physics.originZ()+option.z;option.y=Math.max(option.y,terrainHeight(globalX,globalZ)+2f);
             if(!cameraBlocked(globalX,option.y,globalZ))return option;
         }
-        // Never collapse into the focus model: exact OSM multipolygons can omit courtyard holes, so retain the terrain-safe requested view as the final fallback.
-        return requested;
+        // Dense souq metadata can leave no low-angle candidate. Rise above nearby façades rather than returning a known blocked point.
+        float emergencyHeight=switch(physics.mode()){case WALK,CAR->14f;case BOAT->17f;case HELICOPTER,AEROPLANE->22f;};
+        for(float turn:new float[]{1.57f,-1.57f,3.14f,0}){
+            Vector3 option=new Vector3(target.x+(float)Math.sin(base+turn)*8f,target.y+emergencyHeight,target.z+(float)Math.cos(base+turn)*8f);
+            double globalX=physics.originX()+option.x,globalZ=physics.originZ()+option.z;option.y=Math.max(option.y,terrainHeight(globalX,globalZ)+emergencyHeight);
+            if(!cameraBlocked(globalX,option.y,globalZ))return option;
+        }
+        return new Vector3(target).add(0,emergencyHeight,8f);
     }
 
     private boolean cameraBlocked(double globalX,float localY,double globalZ){
