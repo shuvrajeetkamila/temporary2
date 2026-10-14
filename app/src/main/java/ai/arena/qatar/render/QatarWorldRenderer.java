@@ -159,7 +159,7 @@ public final class QatarWorldRenderer implements WorldStreamer.Listener, QatarDe
 
     private Vector3 resolveCamera(Vector3 requested,Vector3 target){
         Vector3 candidate=new Vector3(),safe=new Vector3(target).lerp(requested,.04f).add(0,.5f,0);
-        for(int step=1;step<=12;step){
+        for(int step=1;step<=12;step++){
             candidate.set(target).lerp(requested,step/12f);
             double globalX=physics.originX()+candidate.x,globalZ=physics.originZ()+candidate.z;
             if(cameraBlocked(globalX,candidate.y,globalZ))return safe;
