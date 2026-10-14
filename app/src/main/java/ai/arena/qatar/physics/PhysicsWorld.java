@@ -388,6 +388,7 @@ public final class PhysicsWorld implements Disposable {
     public Matrix4 transform() { return new Matrix4(focusBody.getWorldTransform()); }
     public double globalX() { return originX + position().x; }
     public double globalZ() { return originZ + position().z; }
+    public float heightAboveGround(){return position().y-groundReference;}
     public double originX() { return originX; }
     public double originZ() { return originZ; }
     public float headingRadians() { return headingRadians; }

@@ -2,7 +2,9 @@ package ai.arena.qatar.world;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /** Selects an OSM road/footway point near a hub that is clear of source building collision. */
 public final class QatarSpawnResolver {
@@ -11,8 +13,9 @@ public final class QatarSpawnResolver {
     private static final double PREFERRED_CAMERA_CLEARANCE_METRES=12.0;
     private QatarSpawnResolver(){}
 
-    public static Spawn resolve(QatarDetailPack pack,double fallbackX,double fallbackZ)throws IOException{
+    public static Spawn resolve(QatarDetailPack pack,QatarPack national,double fallbackX,double fallbackZ)throws IOException{
         int cx=pack.cellX(fallbackX),cy=pack.cellY(fallbackZ);
+        Map<Long,QatarPack.WorldChunk> terrainChunks=new HashMap<>();
         List<LocatedChunk> chunks=new ArrayList<>();
         List<LocatedBuilding> buildings=new ArrayList<>();
         for(int y=cy-SEARCH_RADIUS_CELLS;y<=cy+SEARCH_RADIUS_CELLS;y++)for(int x=cx-SEARCH_RADIUS_CELLS;x<=cx+SEARCH_RADIUS_CELLS;x++){
@@ -32,6 +35,7 @@ public final class QatarSpawnResolver {
             double roadside=road.roadClass()==8?0:road.width()/2+1.4;
             for(int side:roadside==0?new int[]{0}:new int[]{-1,1,0}){
                 double candidateX=centreX+perpendicularX*roadside*side,candidateZ=centreZ+perpendicularZ*roadside*side;
+                if(!isPackagedLand(candidateX,candidateZ,national,terrainChunks))continue;
                 if(blocked(candidateX,candidateZ,buildings,MINIMUM_BUILDING_CLEARANCE_METRES))continue;
                 double centrePenalty=side==0&&roadside>0?14:0;
                 double cameraPenalty=blocked(candidateX,candidateZ,buildings,PREFERRED_CAMERA_CLEARANCE_METRES)?35:0;
@@ -40,6 +44,16 @@ public final class QatarSpawnResolver {
             }
         }
         return best!=null?best:new Spawn(fallbackX,fallbackZ,-1,"public hub fallback; no clear OSM road candidate");
+    }
+
+    private static boolean isPackagedLand(double x,double z,QatarPack pack,Map<Long,QatarPack.WorldChunk> cache)throws IOException{
+        int chunkX=pack.chunkX(x),chunkY=pack.chunkY(z);QatarPack.ChunkEntry entry=pack.entry(chunkX,chunkY);if(entry==null||!entry.hasLand())return false;
+        long key=((long)chunkX<<32)^(chunkY&0xffffffffL);QatarPack.WorldChunk chunk=cache.get(key);
+        if(chunk==null){chunk=pack.load(entry);cache.put(key,chunk);}
+        double localX=x-chunkX*(double)pack.chunkMetres,localZ=z-chunkY*(double)pack.chunkMetres;
+        int maskX=Math.max(0,Math.min(15,(int)Math.floor(localX/pack.chunkMetres*16)));
+        int maskZ=Math.max(0,Math.min(15,(int)Math.floor(localZ/pack.chunkMetres*16)));
+        return (chunk.landRows()[maskZ]&(1<<maskX))!=0;
     }
 
     private static boolean blocked(double x,double z,List<LocatedBuilding> buildings,double clearance){

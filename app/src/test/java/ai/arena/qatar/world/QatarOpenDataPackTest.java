@@ -44,7 +44,10 @@ public class QatarOpenDataPackTest {
             detail.verifyCompatible(national);QatarPack.Hub souq=national.hub("Souq Waqif");
             QatarDetailPack.DetailEntry entry=detail.entry(detail.cellX(souq.x()),detail.cellY(souq.z()));assertNotNull(entry);
             QatarDetailPack.DetailChunk chunk=detail.load(entry);assertTrue(chunk.roads().length>0);assertTrue(chunk.buildings().length>0);
-            QatarSpawnResolver.Spawn spawn=QatarSpawnResolver.resolve(detail,souq.x(),souq.z());
+            QatarSpawnResolver.Spawn spawn=QatarSpawnResolver.resolve(detail,national,souq.x(),souq.z());
+            QatarPack.ChunkEntry spawnEntry=national.entry(national.chunkX(spawn.x()),national.chunkY(spawn.z()));assertNotNull(spawnEntry);
+            QatarPack.WorldChunk spawnTerrain=national.load(spawnEntry);int maskX=(int)Math.floor((spawn.x()-spawnEntry.x()*(double)national.chunkMetres)/national.chunkMetres*16),maskZ=(int)Math.floor((spawn.z()-spawnEntry.y()*(double)national.chunkMetres)/national.chunkMetres*16);
+            assertTrue("Spawn must have retained terrain collision",(spawnTerrain.landRows()[maskZ]&(1<<maskX))!=0);
             assertTrue(spawn.roadClass()>=0&&spawn.roadClass()<=6);
             assertTrue(Math.hypot(spawn.x()-souq.x(),spawn.z()-souq.z())<100);
             assertTrue("Souq hub is inside a mapped footprint; resolver must move it",Math.hypot(spawn.x()-souq.x(),spawn.z()-souq.z())>3);

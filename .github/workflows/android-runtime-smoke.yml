@@ -72,7 +72,7 @@ jobs:
           sleep 28
           "$ADB" shell input tap 150 600 || true
           "$ADB" shell input swipe 150 600 150 430 900 || true
-          sleep 8
+          sleep 12
           "$ADB" exec-out screencap -p > qa/qatar-runtime/gameplay.png
           "$ADB" logcat -d > qa/qatar-runtime/logcat.txt
           "$ADB" shell dumpsys activity activities > qa/qatar-runtime/activity-dump.txt
@@ -86,7 +86,9 @@ jobs:
           PACK_READY="$(grep 'QatarStreaming.*PACK_READY epoch=2026-10-14-srtm-osm-v0.3' qa/qatar-runtime/logcat.txt || true)"
           ENV_READY="$(grep 'QatarEnvironment.*ENV_READY' qa/qatar-runtime/logcat.txt || true)"
           THERMAL_READY="$(grep 'QatarThermal.*PROFILE NORMAL fps=30' qa/qatar-runtime/logcat.txt || true)"
+          STATE_READY="$(grep 'QatarRuntime.*STATE' qa/qatar-runtime/logcat.txt | tail -1 || true)"
           {
+
             echo "install_exit=$INSTALL_EXIT"
             echo "start_exit=$START_EXIT"
             echo "pid=$PID"
@@ -95,6 +97,8 @@ jobs:
             if [ -n "$PACK_READY" ]; then echo 'terrain_pack_loaded=yes'; else echo 'terrain_pack_loaded=no'; fi
             if [ -n "$ENV_READY" ]; then echo 'qatar_environment_ready=yes'; else echo 'qatar_environment_ready=no'; fi
             if [ -n "$THERMAL_READY" ]; then echo 'thermal_governor_ready=yes'; else echo 'thermal_governor_ready=no'; fi
+            if [[ "$STATE_READY" == *'stable=yes'* ]]; then echo 'runtime_state_stable=yes'; else echo 'runtime_state_stable=no'; fi
+            echo "runtime_state=$STATE_READY"
             if [ -n "$FATALS" ]; then echo 'fatal_log=yes'; else echo 'fatal_log=no'; fi
           } | tee qa/qatar-runtime/status.txt
           test "$INSTALL_EXIT" -eq 0
@@ -105,6 +109,7 @@ jobs:
           test -n "$PACK_READY"
           test -n "$ENV_READY"
           test -n "$THERMAL_READY"
+          [[ "$STATE_READY" == *'stable=yes'* ]]
           test -z "$FATALS"
 
       - name: Persist runtime evidence

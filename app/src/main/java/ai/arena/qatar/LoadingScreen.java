@@ -56,10 +56,12 @@ final class LoadingScreen extends ScreenAdapter {
                 QatarDetailPack.DetailChunk startupDetail=detailPack.load(detailEntry);
                 if(startupDetail.roads().length==0||startupDetail.buildings().length==0)throw new IllegalStateException("Souq Waqif OSM detail is empty");
                 progress=.86f;status="Finding a clear OSM footway spawn near Souq Waqif…";
-                QatarSpawnResolver.Spawn spawn=QatarSpawnResolver.resolve(detailPack,start.x(),start.z());
+                QatarSpawnResolver.Spawn spawn=QatarSpawnResolver.resolve(detailPack,pack,start.x(),start.z());
                 QatarPack.ChunkEntry spawnEntry=pack.entry(pack.chunkX(spawn.x()),pack.chunkY(spawn.z()));
                 if(spawnEntry==null)throw new IllegalStateException("Resolved OSM spawn is outside national terrain");
                 QatarPack.WorldChunk spawnTerrain=spawnEntry.equals(entry)?startup:pack.load(spawnEntry);
+                int spawnMaskX=Math.max(0,Math.min(15,(int)Math.floor((spawn.x()-spawnEntry.x()*(double)pack.chunkMetres)/pack.chunkMetres*16))),spawnMaskZ=Math.max(0,Math.min(15,(int)Math.floor((spawn.z()-spawnEntry.y()*(double)pack.chunkMetres)/pack.chunkMetres*16)));
+                if((spawnTerrain.landRows()[spawnMaskZ]&(1<<spawnMaskX))==0)throw new IllegalStateException("Resolved OSM spawn has no retained terrain collision");
                 float groundHeight=pack.terrainHeight(spawnTerrain,(float)(spawn.x()-spawnEntry.x()*(double)pack.chunkMetres),(float)(spawn.z()-spawnEntry.y()*(double)pack.chunkMetres));
                 progress=1;status="Full Qatar terrain and OSM packs indexed. Starting local streamers…";
                 final QatarPack readyPack=pack;final QatarDetailPack readyDetail=detailPack;final QatarSpawnResolver.Spawn readySpawn=spawn;final float readyGround=groundHeight;
