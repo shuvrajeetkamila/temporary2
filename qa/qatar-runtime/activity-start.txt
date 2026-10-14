@@ -2,6 +2,6 @@ Starting: Intent { cmp=ai.arena.qatar.peninsula/ai.arena.qatar.MainActivity }
 Status: ok
 LaunchState: COLD
 Activity: ai.arena.qatar.peninsula/ai.arena.qatar.MainActivity
-TotalTime: 4522
-WaitTime: 3899
+TotalTime: 2105
+WaitTime: 2308
 Complete
