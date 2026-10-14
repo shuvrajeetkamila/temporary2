@@ -1,8 +1,8 @@
 {
-  "sourceCommit": "7a5f950aef06389327e5fb7175e9877293e3a01a",
+  "sourceCommit": "ab53ad1ce664795215233f66860f36fa38fc7428",
   "apk": "Qatar-The-Peninsula-QATAR-ENVIRONMENTS-v0.4.0.apk",
-  "apkBytes": 37911927,
-  "apkSha256": "c209d180a97b8e7140a7071387c5d89299c9839aa989f412c2cb2386b996e405",
+  "apkBytes": 37912347,
+  "apkSha256": "178609eb9c68ad6aa7c942c04b5d49ce2dcdb1e8135d9685b9890a029631c09d",
   "packageId": "ai.arena.qatar.peninsula",
   "versionCode": 4,
   "versionName": "0.4.0-qatar-environments-preproduction",
