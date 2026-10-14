@@ -1,5 +1,5 @@
-Qatar Android v0.4.0 visually-clear all-focus runtime request
-APK SHA-256: 178609eb9c68ad6aa7c942c04b5d49ce2dcdb1e8135d9685b9890a029631c09d
-Build run: 38604777793
-Requested UTC: 2026-10-14T17:34:00Z
-Checks: install/cold launch/readiness; five bounded focus modes; grounded/afloat/aircraft support and camera separation; mode-aware urban camera distances; reject flat façade-filled or sky-only gameplay viewports using deterministic PNG analysis; app-scoped fatal scan.
+Qatar Android v0.4.0 Education-City all-focus runtime request
+APK SHA-256: 7ed0ab3bce921a57247d627a03222e73aee26bf73f4b69ba59dc9f1f8276a544
+Build run: 38606105934
+Requested UTC: 2026-10-14T17:46:00Z
+Checks: install/cold launch/readiness at a real open Education City OSM roadside; five bounded physics modes; terrain/water/air support and camera separation; mode-aware camera; deterministic rejection of flat façade-filled or sky-only screenshots; app-scoped fatal scan.
