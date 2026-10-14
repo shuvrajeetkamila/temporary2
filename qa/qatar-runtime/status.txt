@@ -1,23 +1,24 @@
 install_exit=0
 start_exit=0
-pid=3555
-screenshot_bytes=408205
-car_screenshot_bytes=415240
-boat_screenshot_bytes=46435
+pid=3306
+screenshot_bytes=719463
+scene_validation_exit=1
+car_screenshot_bytes=710935
+boat_screenshot_bytes=46314
 helicopter_screenshot_bytes=45723
-aeroplane_screenshot_bytes=52661
+aeroplane_screenshot_bytes=52822
 osm_detail_rendered=yes
 terrain_pack_loaded=yes
 qatar_environment_ready=yes
 thermal_governor_ready=yes
 walk_runtime_stable=yes
-walk_state=10-14 17:09:20.243  3555  3666 I QatarRuntime: STATE mode=WALK heightAboveGround=0.96000004 supportClearance=0.96000004 water=no speed=0.47962427 cameraDistance=8.396146 stable=yes
+walk_state=10-14 17:18:49.369  3306  3417 I QatarRuntime: STATE mode=WALK heightAboveGround=0.96000004 supportClearance=0.96000004 water=no speed=0.12631468 cameraDistance=16.124514 stable=yes
 car_runtime_stable=yes
-car_state=10-14 17:09:34.867  3555  3666 I QatarRuntime: STATE mode=CAR heightAboveGround=0.7600002 supportClearance=0.7600002 water=no speed=0.24219957 cameraDistance=12.626785 stable=yes
+car_state=10-14 17:19:14.196  3306  3417 I QatarRuntime: STATE mode=CAR heightAboveGround=0.7600002 supportClearance=0.7600002 water=no speed=0.5827236 cameraDistance=16.124514 stable=yes
 boat_runtime_stable=yes
-boat_state=10-14 17:09:49.656  3555  3666 I QatarRuntime: STATE mode=BOAT heightAboveGround=0.6899996 supportClearance=0.6899996 water=no speed=0.0025229002 cameraDistance=13.994285 stable=yes
+boat_state=10-14 17:19:22.035  3306  3417 I QatarRuntime: STATE mode=BOAT heightAboveGround=0.6899996 supportClearance=0.6899996 water=no speed=0.42353562 cameraDistance=13.994284 stable=yes
 heli_runtime_stable=yes
-heli_state=10-14 17:10:04.977  3555  3666 I QatarRuntime: STATE mode=HELICOPTER heightAboveGround=0.78999996 supportClearance=0.78999996 water=no speed=0.55323356 cameraDistance=13.994284 stable=yes
+heli_state=10-14 17:19:37.500  3306  3417 I QatarRuntime: STATE mode=HELICOPTER heightAboveGround=0.78999996 supportClearance=0.78999996 water=no speed=0.54511696 cameraDistance=13.994286 stable=yes
 plane_runtime_stable=yes
-plane_state=10-14 17:10:19.894  3555  3666 I QatarRuntime: STATE mode=AEROPLANE heightAboveGround=0.6899996 supportClearance=0.6899996 water=no speed=9.941455E-6 cameraDistance=13.994285 stable=yes
+plane_state=10-14 17:20:01.004  3306  3417 I QatarRuntime: STATE mode=AEROPLANE heightAboveGround=0.6899996 supportClearance=0.6899996 water=no speed=0.17849736 cameraDistance=13.994285 stable=yes
 fatal_log=no

@@ -9,54 +9,54 @@ Display #0 (activities from top to bottom):
     mMinWidth=-1
     mMinHeight=-1
     mLastNonFullscreenBounds=null
-    * TaskRecord{fa960ea #6 A=ai.arena.qatar.peninsula U=0 StackId=1 sz=1}
+    * TaskRecord{64337e #6 A=ai.arena.qatar.peninsula U=0 StackId=1 sz=1}
       userId=0 effectiveUid=u0a146 mCallingUid=2000 mUserSetupComplete=true mCallingPackage=null
       affinity=ai.arena.qatar.peninsula
       intent={flg=0x10000000 cmp=ai.arena.qatar.peninsula/ai.arena.qatar.MainActivity}
       mActivityComponent=ai.arena.qatar.peninsula/ai.arena.qatar.MainActivity
       autoRemoveRecents=false isPersistable=true numFullscreen=1 activityType=1
       rootWasReset=false mNeverRelinquishIdentity=true mReuseTask=false mLockTaskAuth=LOCK_TASK_AUTH_PINNABLE
-      Activities=[ActivityRecord{f2b4c3a u0 ai.arena.qatar.peninsula/ai.arena.qatar.MainActivity t6}]
+      Activities=[ActivityRecord{a37d03f u0 ai.arena.qatar.peninsula/ai.arena.qatar.MainActivity t6}]
       askedCompatMode=false inRecents=true isAvailable=true
-      mRootProcess=ProcessRecord{5a1bfdb 3555:ai.arena.qatar.peninsula/u0a146}
+      mRootProcess=ProcessRecord{3ce80df 3306:ai.arena.qatar.peninsula/u0a146}
       stackId=1
-      hasBeenVisible=true mResizeMode=RESIZE_MODE_RESIZEABLE_VIA_SDK_VERSION mSupportsPictureInPicture=false isResizeable=true lastActiveTime=26162 (inactive for 112s)
-      * Hist #0: ActivityRecord{f2b4c3a u0 ai.arena.qatar.peninsula/ai.arena.qatar.MainActivity t6}
+      hasBeenVisible=true mResizeMode=RESIZE_MODE_RESIZEABLE_VIA_SDK_VERSION mSupportsPictureInPicture=false isResizeable=true lastActiveTime=28479 (inactive for 131s)
+      * Hist #0: ActivityRecord{a37d03f u0 ai.arena.qatar.peninsula/ai.arena.qatar.MainActivity t6}
           packageName=ai.arena.qatar.peninsula processName=ai.arena.qatar.peninsula
           launchedFromUid=2000 launchedFromPackage=null userId=0
-          app=ProcessRecord{5a1bfdb 3555:ai.arena.qatar.peninsula/u0a146}
+          app=ProcessRecord{3ce80df 3306:ai.arena.qatar.peninsula/u0a146}
           Intent { flg=0x10000000 cmp=ai.arena.qatar.peninsula/ai.arena.qatar.MainActivity }
-          frontOfTask=true task=TaskRecord{fa960ea #6 A=ai.arena.qatar.peninsula U=0 StackId=1 sz=1}
+          frontOfTask=true task=TaskRecord{64337e #6 A=ai.arena.qatar.peninsula U=0 StackId=1 sz=1}
           taskAffinity=ai.arena.qatar.peninsula
           mActivityComponent=ai.arena.qatar.peninsula/ai.arena.qatar.MainActivity
-          baseDir=/data/app/ai.arena.qatar.peninsula-AT4ONNW91NN0JX-g_moUtg==/base.apk
+          baseDir=/data/app/ai.arena.qatar.peninsula-qB6q0UsqPIfDhVKInoDXxQ==/base.apk
           dataDir=/data/user/0/ai.arena.qatar.peninsula
           stateNotNeeded=false componentSpecified=true mActivityType=standard
           compat={420dpi always-compat} labelRes=0x0 icon=0x7f040008 theme=0x7f090000
           mLastReportedConfigurations:
-           mGlobalConfig={1.0 310mcc260mnc [en_US] ldltr sw274dp w487dp h202dp 420dpi smll land finger qwerty/v/v -nav/h winConfig={ mBounds=Rect(0, 0 - 1280, 720) mAppBounds=Rect(0, 0 - 1280, 594) mWindowingMode=fullscreen mDisplayWindowingMode=fullscreen mActivityType=undefined mAlwaysOnTop=undefined mRotation=ROTATION_0} s.24}
+           mGlobalConfig={1.0 310mcc260mnc [en_US] ldltr sw274dp w487dp h202dp 420dpi smll land finger qwerty/v/v -nav/h winConfig={ mBounds=Rect(0, 0 - 1280, 720) mAppBounds=Rect(0, 0 - 1280, 594) mWindowingMode=fullscreen mDisplayWindowingMode=fullscreen mActivityType=undefined mAlwaysOnTop=undefined mRotation=ROTATION_0} s.22}
            mOverrideConfig={1.0 310mcc260mnc [en_US] ldltr sw274dp w487dp h202dp 420dpi smll land finger qwerty/v/v -nav/h winConfig={ mBounds=Rect(0, 0 - 1280, 720) mAppBounds=Rect(0, 0 - 1280, 594) mWindowingMode=fullscreen mDisplayWindowingMode=fullscreen mActivityType=standard mAlwaysOnTop=undefined mRotation=ROTATION_0} s.1}
           CurrentConfiguration={1.0 310mcc260mnc [en_US] ldltr sw274dp w487dp h202dp 420dpi smll land finger qwerty/v/v -nav/h winConfig={ mBounds=Rect(0, 0 - 1280, 720) mAppBounds=Rect(0, 0 - 1280, 594) mWindowingMode=fullscreen mDisplayWindowingMode=fullscreen mActivityType=standard mAlwaysOnTop=undefined mRotation=ROTATION_0} s.1}
           taskDescription: label="null" icon=null iconResource=0 iconFilename=null primaryColor=fff5f5f5
            backgroundColor=fffafafa
            statusBarColor=ff757575
            navigationBarColor=ff07151b
-          launchFailed=false launchCount=1 lastLaunchTime=-1m52s577ms
+          launchFailed=false launchCount=1 lastLaunchTime=-2m11s776ms
           haveState=false icicle=null
           state=RESUMED stopped=false delayedResume=false finishing=false
           keysPaused=false inHistory=true visible=true sleeping=false idle=true mStartingWindowState=STARTING_WINDOW_SHOWN
           fullscreen=true noDisplay=false immersive=false launchMode=2
           frozenBeforeDestroy=false forceNewConfig=false
           mActivityType=standard
-           nowVisible=true lastVisibleTime=-1m50s793ms
+           nowVisible=true lastVisibleTime=-2m8s926ms
           resizeMode=RESIZE_MODE_RESIZEABLE_VIA_SDK_VERSION
           mLastReportedMultiWindowMode=false mLastReportedPictureInPictureMode=false
 
     Running activities (most recent first):
-      TaskRecord{fa960ea #6 A=ai.arena.qatar.peninsula U=0 StackId=1 sz=1}
-        Run #0: ActivityRecord{f2b4c3a u0 ai.arena.qatar.peninsula/ai.arena.qatar.MainActivity t6}
+      TaskRecord{64337e #6 A=ai.arena.qatar.peninsula U=0 StackId=1 sz=1}
+        Run #0: ActivityRecord{a37d03f u0 ai.arena.qatar.peninsula/ai.arena.qatar.MainActivity t6}
 
-    mResumedActivity: ActivityRecord{f2b4c3a u0 ai.arena.qatar.peninsula/ai.arena.qatar.MainActivity t6}
+    mResumedActivity: ActivityRecord{a37d03f u0 ai.arena.qatar.peninsula/ai.arena.qatar.MainActivity t6}
 
   Stack #0: type=home mode=fullscreen
   isSleeping=false
@@ -67,23 +67,23 @@ Display #0 (activities from top to bottom):
     mMinWidth=-1
     mMinHeight=-1
     mLastNonFullscreenBounds=null
-    * TaskRecord{cb59a78 #5 I=com.google.android.apps.nexuslauncher/.NexusLauncherActivity U=0 StackId=0 sz=1}
+    * TaskRecord{5ab012c #5 I=com.google.android.apps.nexuslauncher/.NexusLauncherActivity U=0 StackId=0 sz=1}
       userId=0 effectiveUid=u0a108 mCallingUid=0 mUserSetupComplete=true mCallingPackage=null
       intent={act=android.intent.action.MAIN cat=[android.intent.category.HOME] flg=0x10000100 cmp=com.google.android.apps.nexuslauncher/.NexusLauncherActivity}
       mActivityComponent=com.google.android.apps.nexuslauncher/.NexusLauncherActivity
       autoRemoveRecents=false isPersistable=true numFullscreen=1 activityType=2
       rootWasReset=false mNeverRelinquishIdentity=true mReuseTask=false mLockTaskAuth=LOCK_TASK_AUTH_PINNABLE
-      Activities=[ActivityRecord{692a412 u0 com.google.android.apps.nexuslauncher/.NexusLauncherActivity t5}]
+      Activities=[ActivityRecord{187c843 u0 com.google.android.apps.nexuslauncher/.NexusLauncherActivity t5}]
       askedCompatMode=false inRecents=true isAvailable=true
-      mRootProcess=ProcessRecord{2209031 2542:com.google.android.apps.nexuslauncher/u0a108}
+      mRootProcess=ProcessRecord{524cd41 2551:com.google.android.apps.nexuslauncher/u0a108}
       stackId=0
-      hasBeenVisible=true mResizeMode=RESIZE_MODE_RESIZEABLE mSupportsPictureInPicture=false isResizeable=true lastActiveTime=25649 (inactive for 113s)
-      * Hist #0: ActivityRecord{692a412 u0 com.google.android.apps.nexuslauncher/.NexusLauncherActivity t5}
+      hasBeenVisible=true mResizeMode=RESIZE_MODE_RESIZEABLE mSupportsPictureInPicture=false isResizeable=true lastActiveTime=27740 (inactive for 132s)
+      * Hist #0: ActivityRecord{187c843 u0 com.google.android.apps.nexuslauncher/.NexusLauncherActivity t5}
           packageName=com.google.android.apps.nexuslauncher processName=com.google.android.apps.nexuslauncher
           launchedFromUid=0 launchedFromPackage=null userId=0
-          app=ProcessRecord{2209031 2542:com.google.android.apps.nexuslauncher/u0a108}
+          app=ProcessRecord{524cd41 2551:com.google.android.apps.nexuslauncher/u0a108}
           Intent { act=android.intent.action.MAIN cat=[android.intent.category.HOME] flg=0x10000100 cmp=com.google.android.apps.nexuslauncher/.NexusLauncherActivity }
-          frontOfTask=true task=TaskRecord{cb59a78 #5 I=com.google.android.apps.nexuslauncher/.NexusLauncherActivity U=0 StackId=0 sz=1}
+          frontOfTask=true task=TaskRecord{5ab012c #5 I=com.google.android.apps.nexuslauncher/.NexusLauncherActivity U=0 StackId=0 sz=1}
           taskAffinity=null
           mActivityComponent=com.google.android.apps.nexuslauncher/.NexusLauncherActivity
           baseDir=/system/product/priv-app/NexusLauncherRelease/NexusLauncherRelease.apk
@@ -91,7 +91,7 @@ Display #0 (activities from top to bottom):
           stateNotNeeded=true componentSpecified=false mActivityType=home
           compat={420dpi always-compat} labelRes=0x7f11004b icon=0x7f0700a6 theme=0x7f12000a
           mLastReportedConfigurations:
-           mGlobalConfig={1.0 310mcc260mnc [en_US] ldltr sw274dp w487dp h202dp 420dpi smll land finger qwerty/v/v -nav/h winConfig={ mBounds=Rect(0, 0 - 1280, 720) mAppBounds=Rect(0, 0 - 1280, 594) mWindowingMode=fullscreen mDisplayWindowingMode=fullscreen mActivityType=undefined mAlwaysOnTop=undefined mRotation=ROTATION_0} s.33}
+           mGlobalConfig={1.0 310mcc260mnc [en_US] ldltr sw274dp w487dp h202dp 420dpi smll land finger qwerty/v/v -nav/h winConfig={ mBounds=Rect(0, 0 - 1280, 720) mAppBounds=Rect(0, 0 - 1280, 594) mWindowingMode=fullscreen mDisplayWindowingMode=fullscreen mActivityType=undefined mAlwaysOnTop=undefined mRotation=ROTATION_0} s.26}
            mOverrideConfig={1.0 310mcc260mnc [en_US] ldltr sw274dp w487dp h202dp 420dpi smll land finger qwerty/v/v -nav/h winConfig={ mBounds=Rect(0, 0 - 1280, 720) mAppBounds=Rect(0, 0 - 1280, 594) mWindowingMode=fullscreen mDisplayWindowingMode=fullscreen mActivityType=home mAlwaysOnTop=undefined mRotation=ROTATION_0} s.2}
           CurrentConfiguration={1.0 310mcc260mnc [en_US] ldltr sw274dp w487dp h202dp 420dpi smll land finger qwerty/v/v -nav/h winConfig={ mBounds=Rect(0, 0 - 1280, 720) mAppBounds=Rect(0, 0 - 1280, 594) mWindowingMode=fullscreen mDisplayWindowingMode=fullscreen mActivityType=home mAlwaysOnTop=undefined mRotation=ROTATION_0} s.2}
           RequestedOverrideConfiguration={0.0 ?mcc?mnc ?localeList ?layoutDir ?swdp ?wdp ?hdp ?density ?lsize ?long ?ldr ?wideColorGamut ?orien ?uimode ?night ?touch ?keyb/?/? ?nav/? winConfig={ mBounds=Rect(0, 0 - 0, 0) mAppBounds=null mWindowingMode=undefined mDisplayWindowingMode=undefined mActivityType=home mAlwaysOnTop=undefined mRotation=undefined}}
@@ -99,34 +99,34 @@ Display #0 (activities from top to bottom):
            backgroundColor=fffafafa
            statusBarColor=0
            navigationBarColor=0
-          launchFailed=false launchCount=0 lastLaunchTime=-1m58s521ms
+          launchFailed=false launchCount=0 lastLaunchTime=-2m15s420ms
           haveState=true icicle=Bundle[mParcelledData.dataSize=3028]
           state=STOPPED stopped=true delayedResume=false finishing=false
-          keysPaused=false inHistory=true visible=false sleeping=false idle=true mStartingWindowState=STARTING_WINDOW_NOT_SHOWN
+          keysPaused=false inHistory=true visible=false sleeping=false idle=true mStartingWindowState=STARTING_WINDOW_SHOWN
           fullscreen=true noDisplay=false immersive=false launchMode=2
           frozenBeforeDestroy=false forceNewConfig=false
           mActivityType=home
-           nowVisible=false lastVisibleTime=-1m58s59ms
-          connections=com.android.server.wm.ActivityServiceConnectionsHolder@c75817d
+           nowVisible=false lastVisibleTime=-2m14s876ms
+          connections=com.android.server.wm.ActivityServiceConnectionsHolder@7409a98
           resizeMode=RESIZE_MODE_RESIZEABLE
           mLastReportedMultiWindowMode=false mLastReportedPictureInPictureMode=false
 
     Running activities (most recent first):
-      TaskRecord{cb59a78 #5 I=com.google.android.apps.nexuslauncher/.NexusLauncherActivity U=0 StackId=0 sz=1}
-        Run #0: ActivityRecord{692a412 u0 com.google.android.apps.nexuslauncher/.NexusLauncherActivity t5}
+      TaskRecord{5ab012c #5 I=com.google.android.apps.nexuslauncher/.NexusLauncherActivity U=0 StackId=0 sz=1}
+        Run #0: ActivityRecord{187c843 u0 com.google.android.apps.nexuslauncher/.NexusLauncherActivity t5}
 
-    mLastPausedActivity: ActivityRecord{692a412 u0 com.google.android.apps.nexuslauncher/.NexusLauncherActivity t5}
+    mLastPausedActivity: ActivityRecord{187c843 u0 com.google.android.apps.nexuslauncher/.NexusLauncherActivity t5}
 
- ResumedActivity:ActivityRecord{f2b4c3a u0 ai.arena.qatar.peninsula/ai.arena.qatar.MainActivity t6}
+ ResumedActivity:ActivityRecord{a37d03f u0 ai.arena.qatar.peninsula/ai.arena.qatar.MainActivity t6}
 
-  ResumedActivity: ActivityRecord{f2b4c3a u0 ai.arena.qatar.peninsula/ai.arena.qatar.MainActivity t6}
+  ResumedActivity: ActivityRecord{a37d03f u0 ai.arena.qatar.peninsula/ai.arena.qatar.MainActivity t6}
 
 ActivityStackSupervisor state:
-  topDisplayFocusedStack=ActivityStack{f2a6872 stackId=1 type=standard mode=fullscreen visible=true translucent=false, 1 tasks}
+  topDisplayFocusedStack=ActivityStack{f2c52f1 stackId=1 type=standard mode=fullscreen visible=true translucent=false, 1 tasks}
   displayId=0 stacks=2
-   mHomeStack=ActivityStack{b0d64c3 stackId=0 type=home mode=fullscreen visible=false translucent=true, 1 tasks}
-   mPreferredTopFocusableStack=ActivityStack{f2a6872 stackId=1 type=standard mode=fullscreen visible=true translucent=false, 1 tasks}
-   mLastFocusedStack=ActivityStack{f2a6872 stackId=1 type=standard mode=fullscreen visible=true translucent=false, 1 tasks}
+   mHomeStack=ActivityStack{e8aeed6 stackId=0 type=home mode=fullscreen visible=false translucent=true, 1 tasks}
+   mPreferredTopFocusableStack=ActivityStack{f2c52f1 stackId=1 type=standard mode=fullscreen visible=true translucent=false, 1 tasks}
+   mLastFocusedStack=ActivityStack{f2c52f1 stackId=1 type=standard mode=fullscreen visible=true translucent=false, 1 tasks}
   mCurTaskIdForUser={0=6}
   mUserStackInFront={}
   isHomeRecentsComponent=true  KeyguardController:

@@ -1,0 +1,5 @@
+qa/qatar-runtime/gameplay.png: scene=yes luminance_sd=10.05 colour_bins=38 samples=38870
+qa/qatar-runtime/car.png: scene=yes luminance_sd=24.57 colour_bins=23 samples=38870
+qa/qatar-runtime/boat.png: scene=no error=flat/obstructed gameplay viewport: luminance_sd=0.00, colour_bins=1
+qa/qatar-runtime/helicopter.png: scene=no error=flat/obstructed gameplay viewport: luminance_sd=0.00, colour_bins=1
+qa/qatar-runtime/aeroplane.png: scene=no error=flat/obstructed gameplay viewport: luminance_sd=0.00, colour_bins=1
