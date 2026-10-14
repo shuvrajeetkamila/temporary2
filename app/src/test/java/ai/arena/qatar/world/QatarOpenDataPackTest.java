@@ -51,6 +51,9 @@ public class QatarOpenDataPackTest {
             assertTrue(spawn.roadClass()>=0&&spawn.roadClass()<=6);
             assertTrue(Math.hypot(spawn.x()-souq.x(),spawn.z()-souq.z())<100);
             assertTrue("Souq hub is inside a mapped footprint; resolver must move it",Math.hypot(spawn.x()-souq.x(),spawn.z()-souq.z())>3);
+            QatarPack.Hub education=national.hub("Education City");QatarDetailPack.DetailEntry educationEntry=detail.entry(detail.cellX(education.x()),detail.cellY(education.z()));assertNotNull(educationEntry);
+            QatarDetailPack.DetailChunk educationDetail=detail.load(educationEntry);assertTrue(educationDetail.roads().length>0);assertTrue(educationDetail.buildings().length>0);
+            QatarSpawnResolver.Spawn educationSpawn=QatarSpawnResolver.resolve(detail,national,education.x(),education.z());assertTrue(educationSpawn.roadClass()>=0);assertTrue(Math.hypot(educationSpawn.x()-education.x(),educationSpawn.z()-education.z())<200);
         }
     }
 
