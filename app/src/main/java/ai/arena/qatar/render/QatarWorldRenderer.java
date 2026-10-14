@@ -188,7 +188,7 @@ public final class QatarWorldRenderer implements WorldStreamer.Listener, QatarDe
             double originX=chunk.entry().x()*(double)detailCellMetres,originZ=chunk.entry().y()*(double)detailCellMetres;
             for(QatarPack.Building building:chunk.buildings()){
                 double centreX=originX+building.x(),centreZ=originZ+building.z();boolean inside;
-                if(building.hasSourceFootprint())inside=insideOrNearFootprint(building.sourceFootprint(),globalX-originX,globalZ-originZ,.45);
+                if(building.hasSourceFootprint())inside=insideOrNearFootprint(building.footprint(),globalX-originX,globalZ-originZ,.45);
                 else{double dx=globalX-centreX,dz=globalZ-centreZ,cosine=Math.cos(building.yaw()),sine=Math.sin(building.yaw()),along=dx*cosine+dz*sine,across=-dx*sine+dz*cosine;inside=Math.abs(along)<=building.width()/2+.45&&Math.abs(across)<=building.depth()/2+.45;}
                 if(!inside)continue;float base=terrainHeight(centreX,centreZ);if(localY>=base-.4f&&localY<=base+building.height()+.8f)return true;
             }
