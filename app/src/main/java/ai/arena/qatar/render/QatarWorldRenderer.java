@@ -76,6 +76,7 @@ public final class QatarWorldRenderer implements WorldStreamer.Listener, QatarDe
     private String fatalStreamingError="";
     private final Vector3 smoothCamera = new Vector3();
     private boolean cameraInitialized;
+    private float lastCameraDistance;
     private boolean loggedRealDetail;
     private ThermalGovernor.Profile performanceProfile=ThermalGovernor.Profile.NORMAL;
 
@@ -151,7 +152,7 @@ public final class QatarWorldRenderer implements WorldStreamer.Listener, QatarDe
         Vector3 wanted=new Vector3(focus.x-(float)Math.sin(heading)*distance,focus.y+height,focus.z-(float)Math.cos(heading)*distance);
         float wantedGround=terrainHeight(physics.originX()+wanted.x,physics.originZ()+wanted.z);wanted.y=Math.max(wanted.y,wantedGround+1.5f);
         if(!cameraInitialized){smoothCamera.set(wanted);cameraInitialized=true;} else smoothCamera.lerp(wanted,Math.min(1,delta*4.5f));
-        float focusGround=terrainHeight(physics.globalX(),physics.globalZ());Vector3 target=new Vector3(focus.x,Math.max(focus.y+1.2f,focusGround+1.25f),focus.z);camera.position.set(resolveCamera(smoothCamera,target));
+        float focusGround=terrainHeight(physics.globalX(),physics.globalZ());Vector3 target=new Vector3(focus.x,Math.max(focus.y+1.2f,focusGround+1.25f),focus.z);camera.position.set(resolveCamera(smoothCamera,target));lastCameraDistance=camera.position.dst(target);
         camera.up.set(Vector3.Y);
         camera.lookAt(target);
         camera.update();
@@ -169,8 +170,8 @@ public final class QatarWorldRenderer implements WorldStreamer.Listener, QatarDe
     }
 
     private Vector3 ensureCameraSeparation(Vector3 current,Vector3 requested,Vector3 target){
-        if(current.dst2(target)>=6.25f)return current;float base=(float)Math.atan2(requested.x-target.x,requested.z-target.z);
-        for(float distance:new float[]{4,6})for(float turn:new float[]{0,.7f,-.7f,1.4f,-1.4f,3.14f}){
+        if(current.dst2(target)>=36f)return current;float base=(float)Math.atan2(requested.x-target.x,requested.z-target.z);
+        for(float distance:new float[]{8,6})for(float turn:new float[]{0,.7f,-.7f,1.4f,-1.4f,3.14f}){
             Vector3 option=new Vector3(target.x+(float)Math.sin(base+turn)*distance,target.y+2f,target.z+(float)Math.cos(base+turn)*distance);
             double globalX=physics.originX()+option.x,globalZ=physics.originZ()+option.z;option.y=Math.max(option.y,terrainHeight(globalX,globalZ)+1.5f);
             if(!cameraBlocked(globalX,option.y,globalZ))return option;
@@ -367,6 +368,7 @@ public final class QatarWorldRenderer implements WorldStreamer.Listener, QatarDe
         return (chunk.landRows()[row]&(1<<column))==0;
     }
     public void setPerformanceProfile(ThermalGovernor.Profile profile){performanceProfile=profile;}
+    public float cameraDistance(){return lastCameraDistance;}
 
     private float terrainHeight(double globalX,double globalZ){return terrainHeightOr(globalX,globalZ,0);}
 
