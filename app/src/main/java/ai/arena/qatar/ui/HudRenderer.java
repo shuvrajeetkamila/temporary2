@@ -1,6 +1,8 @@
 package ai.arena.qatar.ui;
 
+import ai.arena.qatar.environment.QatarEnvironment;
 import ai.arena.qatar.input.TouchController;
+import ai.arena.qatar.performance.ThermalGovernor;
 import ai.arena.qatar.physics.PhysicsWorld;
 import ai.arena.qatar.render.QatarWorldRenderer;
 import ai.arena.qatar.world.QatarDetailPack;
@@ -27,15 +29,18 @@ public final class HudRenderer implements Disposable {
     private final QatarDetailStreamer detailStreamer;
     private final QatarWorldRenderer renderer;
     private final TouchController controls;
+    private final QatarEnvironment climate;
+    private ThermalGovernor.Profile performanceProfile=ThermalGovernor.Profile.NORMAL;
     private final ShapeRenderer shapes=new ShapeRenderer();
     private final SpriteBatch sprites=new SpriteBatch();
     private final BitmapFont font=new BitmapFont();
     private final Color maroon=new Color(.54f,.08f,.22f,.90f);
 
-    public HudRenderer(QatarPack pack,QatarDetailPack detailPack,PhysicsWorld physics,WorldStreamer streamer,QatarDetailStreamer detailStreamer,QatarWorldRenderer renderer,TouchController controls){
-        this.pack=pack;this.detailPack=detailPack;this.physics=physics;this.streamer=streamer;this.detailStreamer=detailStreamer;this.renderer=renderer;this.controls=controls;
+    public HudRenderer(QatarPack pack,QatarDetailPack detailPack,PhysicsWorld physics,WorldStreamer streamer,QatarDetailStreamer detailStreamer,QatarWorldRenderer renderer,TouchController controls,QatarEnvironment climate){
+        this.pack=pack;this.detailPack=detailPack;this.physics=physics;this.streamer=streamer;this.detailStreamer=detailStreamer;this.renderer=renderer;this.controls=controls;this.climate=climate;
         font.getData().setScale(1.02f);
     }
+    public void setPerformanceProfile(ThermalGovernor.Profile profile){performanceProfile=profile;}
 
     public void render(){
         int width=Gdx.graphics.getWidth(),height=Gdx.graphics.getHeight();
@@ -55,13 +60,13 @@ public final class HudRenderer implements Disposable {
         font.setColor(Color.WHITE);
         Vector3 velocity=physics.velocity();
         String biome=localBiome();
-        font.draw(sprites,"QATAR: THE PENINSULA  •  TRUE 1:1 METRES",28,height-37);
-        font.draw(sprites,String.format("%s  |  %.1f m/s  |  %s  |  30 FPS THERMAL CAP",physics.mode().label,velocity.len(),biome),28,height-66);
-        font.draw(sprites,String.format("TERRAIN %d  OSM CELLS %d+%d  •  INSTALLED %,d ROAD SEGMENTS / %,d BUILDINGS",streamer.residentCount(),detailStreamer.residentCount(),detailStreamer.pendingCount(),detailPack.roadSegmentCount,detailPack.simpleBuildingCount+detailPack.relationBuildingCount),28,height-95);
+        font.draw(sprites,"QATAR: THE PENINSULA  |  TRUE 1:1 METRES",28,height-37);
+        font.draw(sprites,String.format("%s | %.1f m/s | %s | %s %d FPS | %s WIND %.1f",physics.mode().label,velocity.len(),biome,performanceProfile.label,performanceProfile.targetFps,climate.preset().label,climate.windMetresPerSecond()),28,height-66);
+        font.draw(sprites,String.format("TERRAIN %d  OSM CELLS %d+%d  |  INSTALLED %,d ROAD SEGMENTS / %,d BUILDINGS",streamer.residentCount(),detailStreamer.residentCount(),detailStreamer.pendingCount(),detailPack.roadSegmentCount,detailPack.simpleBuildingCount+detailPack.relationBuildingCount),28,height-95);
         font.draw(sprites,"SWITCH MODE",width-228,height-46);
         font.draw(sprites,"RECOVER",width-445,height-46);
         font.setColor(.92f,.88f,.74f,1);font.draw(sprites,"Left control: move / steer     Right control: lift / action",24,30);
-        font.draw(sprites,"Offline • © OSM contributors • terrain Mapzen/USGS/NOAA • geoBoundaries/NE",width-760,30);
+        font.draw(sprites,"Offline | OpenStreetMap contributors | terrain Mapzen/USGS/NOAA | geoBoundaries/NE",width-760,30);
         String fatal=renderer.fatalStreamingError();
         if(!fatal.isEmpty()){font.setColor(Color.SCARLET);font.draw(sprites,fatal,25,height-140);}
         sprites.end();

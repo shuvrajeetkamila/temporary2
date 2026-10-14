@@ -17,7 +17,6 @@ import java.util.concurrent.Future;
 
 /** Streams 250 m OSM microcells independently of the 2 km safety terrain. */
 public final class QatarDetailStreamer implements Disposable {
-    private static final int MAX_RESIDENT_CELLS=64;
     private static final int MAX_IN_FLIGHT_CELLS=12;
     public interface Listener {
         void activateDetail(QatarDetailPack.DetailChunk chunk);
@@ -34,13 +33,16 @@ public final class QatarDetailStreamer implements Disposable {
     private final Map<Long,Future<?>> inFlight=new HashMap<>();
     private final ConcurrentLinkedQueue<Ready> ready=new ConcurrentLinkedQueue<>();
     private String lastError="";
+    private int radiusCap=3,maxResidentCells=64,activationBudget=2;
 
     public QatarDetailStreamer(QatarDetailPack pack,Listener listener){this.pack=pack;this.listener=listener;}
 
+    public void setBudgets(int radiusCells,int residentCells,int activationsPerFrame){radiusCap=Math.max(1,Math.min(3,radiusCells));maxResidentCells=Math.max(8,Math.min(64,residentCells));activationBudget=Math.max(1,Math.min(2,activationsPerFrame));}
+
     public void update(double globalX,double globalZ,float velocityX,float velocityZ,WorldStreamer.FocusMode mode){
-        long now=System.nanoTime();drain(now,2);
+        long now=System.nanoTime();drain(now,activationBudget);
         int cx=pack.cellX(globalX),cy=pack.cellY(globalZ);
-        int radius=switch(mode){case WALK->2;case CAR->3;case BOAT->3;case HELICOPTER->3;case AEROPLANE->2;};
+        int radius=Math.min(radiusCap,switch(mode){case WALK->2;case CAR->3;case BOAT->3;case HELICOPTER->3;case AEROPLANE->2;});
         float speed=(float)Math.hypot(velocityX,velocityZ);int leadX=0,leadY=0;
         if(speed>3){float lead=switch(mode){case WALK->1;case CAR,BOAT->3;case HELICOPTER->4;case AEROPLANE->6;};leadX=Math.round(velocityX/speed*lead);leadY=Math.round(velocityZ/speed*lead);}
         Set<Long> required=new HashSet<>();List<QatarDetailPack.DetailEntry> missing=new ArrayList<>();
@@ -59,12 +61,12 @@ public final class QatarDetailStreamer implements Disposable {
             Map.Entry<Long,Resident> item=iterator.next();
             if(!required.contains(item.getKey())&&now-item.getValue().lastRequired>delay){listener.deactivateDetail(item.getValue().chunk);iterator.remove();}
         }
-        if(residents.size()>MAX_RESIDENT_CELLS){
+        if(residents.size()>maxResidentCells){
             List<Map.Entry<Long,Resident>> stale=new ArrayList<>();
             for(Map.Entry<Long,Resident> item:residents.entrySet())if(!required.contains(item.getKey()))stale.add(item);
             stale.sort(Comparator.comparingLong(item->item.getValue().lastRequired));
             for(Map.Entry<Long,Resident> item:stale){
-                if(residents.size()<=MAX_RESIDENT_CELLS)break;
+                if(residents.size()<=maxResidentCells)break;
                 Resident removed=residents.remove(item.getKey());if(removed!=null)listener.deactivateDetail(removed.chunk);
             }
         }

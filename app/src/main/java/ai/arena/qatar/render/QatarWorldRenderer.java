@@ -1,5 +1,7 @@
 package ai.arena.qatar.render;
 
+import ai.arena.qatar.environment.QatarEnvironment;
+import ai.arena.qatar.performance.ThermalGovernor;
 import ai.arena.qatar.physics.PhysicsWorld;
 import ai.arena.qatar.world.QatarDetailPack;
 import ai.arena.qatar.world.QatarDetailStreamer;
@@ -36,6 +38,7 @@ public final class QatarWorldRenderer implements WorldStreamer.Listener, QatarDe
     private final QatarPack pack;
     private final int detailCellMetres;
     private final PhysicsWorld physics;
+    private final QatarEnvironment climate;
     private final PerspectiveCamera camera;
     private final ModelBatch batch = new ModelBatch();
     private final ModelBuilder builder = new ModelBuilder();
@@ -62,12 +65,13 @@ public final class QatarWorldRenderer implements WorldStreamer.Listener, QatarDe
     private final Vector3 smoothCamera = new Vector3();
     private boolean cameraInitialized;
     private boolean loggedRealDetail;
+    private ThermalGovernor.Profile performanceProfile=ThermalGovernor.Profile.NORMAL;
 
-    public QatarWorldRenderer(QatarPack pack,QatarDetailPack detailPack,PhysicsWorld physics) {
-        this.pack=pack;this.detailCellMetres=detailPack.cellMetres;this.physics=physics;
+    public QatarWorldRenderer(QatarPack pack,QatarDetailPack detailPack,PhysicsWorld physics,QatarEnvironment climate) {
+        this.pack=pack;this.detailCellMetres=detailPack.cellMetres;this.physics=physics;this.climate=climate;
         camera=new PerspectiveCamera(64,Gdx.graphics.getWidth(),Gdx.graphics.getHeight());
         camera.near=.15f; camera.far=14_000f;
-        environment.set(new ColorAttribute(ColorAttribute.AmbientLight,.56f,.53f,.48f,1));
+        environment.set(new ColorAttribute(ColorAttribute.AmbientLight,.64f,.61f,.55f,1));
         environment.add(new DirectionalLight().set(1.0f,.91f,.74f,-.42f,-.82f,-.32f));
         initialiseMaterials();
         rebuildFocusModel();
@@ -92,7 +96,7 @@ public final class QatarWorldRenderer implements WorldStreamer.Listener, QatarDe
         updateCamera(delta);
         Gdx.gl.glViewport(0,0,Gdx.graphics.getWidth(),Gdx.graphics.getHeight());
         Gdx.gl.glEnable(GL20.GL_DEPTH_TEST);
-        Gdx.gl.glClearColor(.52f,.72f,.80f,1);
+        Gdx.gl.glClearColor(climate.skyRed(),climate.skyGreen(),climate.skyBlue(),1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT|GL20.GL_DEPTH_BUFFER_BIT);
         batch.begin(camera);
         for (RenderChunk chunk:chunks.values()) batch.render(chunk.instance,environment);
@@ -118,11 +122,11 @@ public final class QatarWorldRenderer implements WorldStreamer.Listener, QatarDe
         float heading=physics.headingRadians();
         float distance,height;
         switch(physics.mode()) {
-            case WALK -> {distance=8;height=3.7f;camera.far=6500;}
-            case CAR -> {distance=12;height=5.1f;camera.far=9000;}
-            case BOAT -> {distance=18;height=7;camera.far=11000;}
-            case HELICOPTER -> {distance=27;height=11;camera.far=14000;}
-            case AEROPLANE -> {distance=38;height=13;camera.far=16000;}
+            case WALK -> {distance=8;height=3.7f;camera.far=6500*performanceProfile.viewDistanceScale;}
+            case CAR -> {distance=12;height=5.1f;camera.far=9000*performanceProfile.viewDistanceScale;}
+            case BOAT -> {distance=18;height=7;camera.far=11000*performanceProfile.viewDistanceScale;}
+            case HELICOPTER -> {distance=27;height=11;camera.far=14000*performanceProfile.viewDistanceScale;}
+            case AEROPLANE -> {distance=38;height=13;camera.far=16000*performanceProfile.viewDistanceScale;}
             default -> throw new IllegalStateException();
         }
         Vector3 wanted=new Vector3(focus.x-(float)Math.sin(heading)*distance,focus.y+height,focus.z-(float)Math.cos(heading)*distance);
@@ -282,6 +286,12 @@ public final class QatarWorldRenderer implements WorldStreamer.Listener, QatarDe
     }
 
     public float terrainHeightAt(double globalX,double globalZ){return terrainHeightOr(globalX,globalZ,Float.NaN);}
+    public boolean waterAt(double globalX,double globalZ){
+        int chunkX=pack.chunkX(globalX),chunkY=pack.chunkY(globalZ);QatarPack.WorldChunk chunk=nationalData.get(key(chunkX,chunkY));if(chunk==null)return false;
+        if(!chunk.entry().hasLand())return true;float sub=pack.chunkMetres/16f;int column=Math.max(0,Math.min(15,(int)((globalX-chunkX*(double)pack.chunkMetres)/sub)));int row=Math.max(0,Math.min(15,(int)((globalZ-chunkY*(double)pack.chunkMetres)/sub)));
+        return (chunk.landRows()[row]&(1<<column))==0;
+    }
+    public void setPerformanceProfile(ThermalGovernor.Profile profile){performanceProfile=profile;}
 
     private float terrainHeight(double globalX,double globalZ){return terrainHeightOr(globalX,globalZ,0);}
 

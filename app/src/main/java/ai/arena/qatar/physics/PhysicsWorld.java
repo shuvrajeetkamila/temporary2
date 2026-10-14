@@ -48,7 +48,6 @@ public final class PhysicsWorld implements Disposable {
 
     private static final float FIXED_STEP = 1f / 60f;
     private static final float REBASE_THRESHOLD = 2200f;
-    private static final int MAX_DETAIL_COLLISION_CELLS = 6;
     private static final int MAX_BUILDING_COLLIDERS_PER_CELL = 160;
     private final btDefaultCollisionConfiguration configuration;
     private final btCollisionDispatcher dispatcher;
@@ -80,6 +79,9 @@ public final class PhysicsWorld implements Disposable {
     private boolean action;
     private float temporaryFloorTime;
     private float groundReference;
+    private float waterSurface=.4f,windX,windZ;
+    private boolean waterAvailable;
+    private int maxDetailCollisionCells=6;
 
     public PhysicsWorld(double spawnX,double spawnZ,float groundHeight) {
         Bullet.init();
@@ -135,6 +137,8 @@ public final class PhysicsWorld implements Disposable {
     }
 
     public void setGroundReference(float groundHeight){if(Float.isFinite(groundHeight))groundReference=groundHeight;}
+    public void setEnvironment(float seaLevel,float windX,float windZ,boolean waterAvailable){this.waterSurface=seaLevel;this.windX=windX;this.windZ=windZ;this.waterAvailable=waterAvailable;}
+    public void setDetailColliderBudget(int cells){maxDetailCollisionCells=Math.max(1,Math.min(6,cells));}
 
     public void setControls(float throttle, float steering, float lift, boolean action) {
         this.throttle = clamp(throttle,-1,1);
@@ -196,10 +200,12 @@ public final class PhysicsWorld implements Disposable {
             }
             case BOAT -> {
                 headingRadians -= steering*dt*(.45f+Math.min(1.2f,velocity.len()*.04f));
-                float waterError=.4f-position().y;
-                focusBody.applyCentralForce(new Vector3(0,2900f*(9.80665f+waterError*3.5f-velocity.y*1.7f),0));
-                focusBody.applyCentralForce(new Vector3(forward).scl(Math.max(0,throttle)*7200f + Math.min(0,throttle)*3000f));
-                focusBody.applyCentralForce(new Vector3(velocity).scl(-240f));
+                if(waterAvailable){
+                    float waterError=waterSurface+.4f-position().y;
+                    focusBody.applyCentralForce(new Vector3(0,2900f*(9.80665f+waterError*3.5f-velocity.y*1.7f),0));
+                    focusBody.applyCentralForce(new Vector3(forward).scl(Math.max(0,throttle)*7200f+Math.min(0,throttle)*3000f));
+                    focusBody.applyCentralForce(new Vector3(velocity.x-windX*.08f,velocity.y,velocity.z-windZ*.08f).scl(-240f));
+                }
                 alignYaw();
             }
             case HELICOPTER -> {
@@ -207,16 +213,17 @@ public final class PhysicsWorld implements Disposable {
                 float collective=1.0f+liftControl*.55f;
                 focusBody.applyCentralForce(new Vector3(0,1250f*9.80665f*collective,0));
                 focusBody.applyCentralForce(new Vector3(forward).scl(throttle*3400f));
-                focusBody.applyCentralForce(new Vector3(velocity).scl(-55f));
+                focusBody.applyCentralForce(new Vector3(velocity.x-windX,velocity.y,velocity.z-windZ).scl(-55f));
                 alignYaw();
             }
             case AEROPLANE -> {
                 headingRadians -= steering*dt*.32f;
-                float airspeed=Math.max(0,velocity.dot(forward));
+                Vector3 relativeAir=new Vector3(velocity.x-windX,velocity.y,velocity.z-windZ);
+                float airspeed=Math.max(0,relativeAir.dot(forward));
                 focusBody.applyCentralForce(new Vector3(forward).scl(Math.max(0,throttle)*4200f));
                 float lift=Math.min(920f*9.80665f*2.2f,airspeed*airspeed*.48f);
                 focusBody.applyCentralForce(new Vector3(0,lift*(1f+liftControl*.35f),0));
-                focusBody.applyCentralForce(new Vector3(velocity).scl(-.48f*velocity.len()));
+                focusBody.applyCentralForce(relativeAir.scl(-.48f*relativeAir.len()));
                 alignYaw();
             }
         }
@@ -251,7 +258,7 @@ public final class PhysicsWorld implements Disposable {
     private void recoverIfInvalid() {
         Vector3 p=position();
         if (!Float.isFinite(p.x)||!Float.isFinite(p.y)||!Float.isFinite(p.z)||p.y < -80) {
-            Matrix4 at=new Matrix4().setToTranslation(0,mode==Mode.BOAT?.5f:groundReference+5f,0).rotate(Vector3.Y,(float)Math.toDegrees(headingRadians));
+            Matrix4 at=new Matrix4().setToTranslation(0,mode==Mode.BOAT?(waterAvailable?waterSurface+.8f:groundReference+3f):groundReference+5f,0).rotate(Vector3.Y,(float)Math.toDegrees(headingRadians));
             focusBody.setWorldTransform(at); focusBody.setLinearVelocity(Vector3.Zero); focusBody.setAngularVelocity(Vector3.Zero); focusBody.activate();
         }
     }
@@ -329,7 +336,7 @@ public final class PhysicsWorld implements Disposable {
         }
         candidates.sort(Comparator.comparingDouble(DetailCandidate::distanceSquared));
         Set<Long> wanted=new HashSet<>();
-        for(int i=0;i<Math.min(MAX_DETAIL_COLLISION_CELLS,candidates.size());i++){
+        for(int i=0;i<Math.min(maxDetailCollisionCells,candidates.size());i++){
             DetailCandidate candidate=candidates.get(i);wanted.add(candidate.key());
             if(!detailBodies.containsKey(candidate.key()))activateDetailCollision(candidate.source(),focusGlobalX,focusGlobalZ);
         }
@@ -368,7 +375,7 @@ public final class PhysicsWorld implements Disposable {
 
     /** Explicit user recovery is the only normal gameplay teleport. */
     public void recover() {
-        Matrix4 at=new Matrix4().setToTranslation(0,mode==Mode.BOAT?.5f:groundReference+5f,0).rotate(Vector3.Y,(float)Math.toDegrees(headingRadians));
+        Matrix4 at=new Matrix4().setToTranslation(0,mode==Mode.BOAT?(waterAvailable?waterSurface+.8f:groundReference+3f):groundReference+5f,0).rotate(Vector3.Y,(float)Math.toDegrees(headingRadians));
         focusBody.setWorldTransform(at);
         focusBody.setLinearVelocity(Vector3.Zero);
         focusBody.setAngularVelocity(Vector3.Zero);

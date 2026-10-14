@@ -103,9 +103,9 @@ final class LoadingScreen extends ScreenAdapter {
         shapes.setColor(.92f,.78f,.55f,1);shapes.rect(width*.16f,height*.31f,width*.68f*progress,22);shapes.end();
         batch.getProjectionMatrix().setToOrtho2D(0,0,width,height);batch.begin();
         font.setColor(Color.WHITE);font.getData().setScale(2.1f);font.draw(batch,"QATAR: THE PENINSULA",width*.16f,height*.78f);
-        font.getData().setScale(1.15f);font.draw(batch,"Full country installed • only nearby chunks become resident",width*.16f,height*.70f);
+        font.getData().setScale(1.15f);font.draw(batch,"Full country installed | only nearby chunks become resident",width*.16f,height*.70f);
         font.draw(batch,status,width*.16f,height*.40f);
-        font.getData().setScale(.90f);font.setColor(.86f,.83f,.74f,1);font.draw(batch,"EPSG:32639 • 1:1 metres • offline APK • deterministic QTPK + QTOD",width*.16f,height*.23f);
+        font.getData().setScale(.90f);font.setColor(.86f,.83f,.74f,1);font.draw(batch,"EPSG:32639 | 1:1 metres | offline APK | deterministic QTPK + QTOD",width*.16f,height*.23f);
         if(!failure.isEmpty()){font.setColor(Color.SCARLET);font.draw(batch,failure,width*.16f,height*.15f);}
         batch.end();
     }
