@@ -1,5 +1,5 @@
-Qatar Android v0.4.0 exact-footprint camera runtime request
-APK SHA-256: 75ecb492403bf70c760aa66f6832d28ec720056c7182e0e9729c63595a6c6deb
-Build run: 38597769015
-Requested UTC: 2026-10-14T16:33:00Z
-Checks: install, cold launch, QTPK/OSM/environment/thermal readiness, terrain-following walker, stable post-movement state, exact-OSM-footprint camera obstruction and safe distance, unobstructed textured scene, process survival and diagnostics.
+Qatar Android v0.4.0 natural-camera release-candidate runtime request
+APK SHA-256: 85bf2a7c21832ff4f93998d25f39acfeb583205294bc61e5cf84dc580e71e404
+Build run: 38598775585
+Requested UTC: 2026-10-14T16:40:00Z
+Checks: install, cold launch, QTPK/OSM/environment/thermal readiness, terrain-following walker, stable post-movement state, natural terrain-safe camera retained through imperfect courtyard metadata, distance at least 5.5 metres, unobstructed scene, process survival and diagnostics.
