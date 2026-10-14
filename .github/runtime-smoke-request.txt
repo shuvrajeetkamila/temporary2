@@ -1,1 +1,5 @@
-Run 8: final v0.2.0 emulator verification for polished source facades, ordinary-road spawn, bounded OSM residency, memory evidence, and crash-free interaction.
+Qatar Android v0.3.0 measured-terrain runtime smoke request
+APK SHA-256: 19785b9f36c2f39d0e707c77b2ae892228af86d55bc17a0813bceb24a83096e1
+Build run: 38565342727
+Requested UTC: 2026-10-14T12:41:30Z
+Checks: install, launch, measured QTPK epoch marker, OSM rendering marker, process survival, gameplay screenshot, memory and frame diagnostics.
