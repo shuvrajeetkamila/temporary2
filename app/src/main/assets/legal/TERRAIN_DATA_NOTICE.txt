@@ -1,0 +1,11 @@
+QATAR TERRAIN DATA NOTICE
+
+The national terrain grid is derived from Mapzen Terrain Tiles distributed through the AWS elevation-tiles-prod Skadi archive.
+
+Land elevation: SRTM data courtesy of the U.S. Geological Survey.
+Ocean bathymetry: global ETOPO1 terrain data from NOAA National Centers for Environmental Information.
+Distribution credit: Mapzen Terrain Tiles.
+
+SRTM and ETOPO1 are U.S. government public-domain datasets. Attribution is requested. The source HGT checksums, retrieval time, processing identity, resampling method, and QDEM checksum are documented in data/qatar/QATAR_DEM_IMPORT.json and data/qatar/compiled/qatar-dem-report.json in the source repository.
+
+The game resamples source elevations onto a 250 metre EPSG:32639 grid and clamps coarse land/coast interpolation for stable gameplay. These data are not suitable for surveying, navigation, aviation, marine operations, flood prediction, or engineering.

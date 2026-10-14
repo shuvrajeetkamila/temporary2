@@ -46,9 +46,26 @@ This is a redistribution-friendly coarse boundary source, not a claim that it is
 - Coverage: all eight municipality records, seven ADM0 polygon components, land, coastline, and an 8 km gameplay-water buffer
 - Coarse routes: deterministic public-hub connectivity graph. These are explicitly marked generated and are not advertised as turn-by-turn road data.
 - Settlement massing: deterministic regional visual massing marked generated/coarse.
-- Terrain: biome-specific deterministic microheight only. It is not yet a DEM.
+- Terrain: 9×9 measured elevation samples per chunk from the separately compiled QDEM derivative described below.
 
-## OpenStreetMap Qatar roads and building footprints — v0.2.0
+## Mapzen Terrain Tiles / SRTM / ETOPO1 — v0.3.0 terrain
+
+- Distribution: Mapzen Terrain Tiles through the AWS `elevation-tiles-prod` Skadi archive
+- Land elevation: SRTM data courtesy of the U.S. Geological Survey
+- Ocean bathymetry: global ETOPO1 terrain data from NOAA National Centers for Environmental Information
+- Retrieved UTC: `2026-10-14T12:25:57Z`
+- Source tiles: `N24E050`, `N24E051`, `N25E050`, `N25E051`, `N26E050`, and `N26E051`; immutable hashes are recorded in `data/qatar/compiled/qatar-dem-report.json`
+- Compiler: `tools/import_qatar_dem.py`
+- Compact derivative: `data/qatar/source/qatar-srtm-250m.qdem`
+- QDEM SHA-256: `23f96979dfcb77cc81c11c0f65c3047a463c7cef0be8d22fc1b1be22191d54eb`
+- Grid: 441×825 samples at 250 m in EPSG:32639, aligned exactly to the national QTPK
+- Processing: bilinear source sampling; coarse land/coast values are clamped to at least −2 m to prevent ETOPO1 ocean depths leaking into land-mask collision
+- Licensing: SRTM and ETOPO1 are U.S. government public-domain datasets; attribution is requested
+- Use: terrain-scale game rendering/collision only—not survey, navigation, aviation, flood, marine, or engineering data
+
+Exact source-tile hashes, retrieval epoch, QDEM CRC/hash, import identity, limitations, terrain seams, land-mask ranges, and spawn checks are recorded in `data/qatar/QATAR_DEM_IMPORT.json`, `data/qatar/DEM_SHA256SUMS`, `data/qatar/TERRAIN_SHA256SUMS`, `data/qatar/compiled/qatar-dem-report.json`, and `data/qatar/compiled/qatar-terrain-validation.json`.
+
+## OpenStreetMap Qatar roads and building footprints — v0.3.0
 
 - Provider: Geofabrik GmbH OpenStreetMap extracts
 - Source: `https://download.geofabrik.de/asia/gcc-states-latest.osm.pbf`
@@ -67,6 +84,6 @@ This is a redistribution-friendly coarse boundary source, not a claim that it is
 
 The QTOD derivative is distributed in the APK and this public repository under the ODbL database terms. It retains source IDs and complete accepted simple-building outer footprints. Relation outer rings are retained; relation inner holes are a declared QTOD v1 limitation. Exact HTTP response metadata, upstream/extract sizes and checksums, tool output, and import identity are recorded in `data/qatar/QATAR_OSM_IMPORT.json`, `data/qatar/OSM_SHA256SUMS`, and `data/qatar/compiled/qatar-osm-report.json`.
 
-## Data not yet claimed in v0.2.0
+## Data not yet claimed in v0.3.0
 
-Version 0.2.0 does **not** claim measured DEM terrain, bathymetry, survey-grade/final reclaimed-coast epoch accuracy, navigation suitability, or final hand-authored landmark geometry. Those remain subsequent compiler/content milestones and must be added with source timestamps, checksums, and licenses before corresponding release claims are made.
+Version 0.3.0 includes measured terrain-scale elevation and coarse ocean bathymetry, but does **not** claim survey-grade elevation, hydrodynamic bathymetry, final reclaimed-coast epoch accuracy, navigation suitability, or final hand-authored landmark geometry. Those remain subsequent content/validation milestones and require source timestamps, checksums, licensing, and explicit tests before corresponding release claims are made.

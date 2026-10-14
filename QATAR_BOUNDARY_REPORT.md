@@ -1,4 +1,4 @@
-# Qatar boundary and packaged-coverage report — v0.2.0
+# Qatar boundary and packaged-coverage report — v0.3.0
 
 National figures come from `data/qatar/compiled/qatar-world-report.json`; source-detail figures come from `data/qatar/compiled/qatar-osm-report.json`.
 
@@ -12,6 +12,7 @@ National figures come from `data/qatar/compiled/qatar-world-report.json`; source
 - Safety/terrain cell: 2,000 m
 - Coast mask resolution: 125 m
 - OSM detail microcell: 250 m
+- Measured terrain grid: 250 m Mapzen/SRTM/ETOPO1 samples, elevation-aware rendering and bounded collision
 
 ## Installed national coverage
 
@@ -54,8 +55,10 @@ No network permission is present in the Android manifest.
 
 ## Integrity
 
-- QTPK size: 1,170,493 bytes
-- QTPK SHA-256: `6aa220910d0214b3d38fb5c7764534c5242b1ddab24ae6ffddb377d95a22a6b7`
+- QTPK size: 1,410,075 bytes
+- QTPK SHA-256: `014c8235725b9d2c29fc675e4db5529e01b782b12aa3312e6ccab0a185d1af1a`
+- QDEM size: 727,710 bytes
+- QDEM SHA-256: `23f96979dfcb77cc81c11c0f65c3047a463c7cef0be8d22fc1b1be22191d54eb`
 - QTOD size: 27,551,391 bytes
 - QTOD SHA-256: `c48a62e1e8f1498bb64bde2864e4ae7894380f5185bc0a3a39ebf47012d9ba00`
 - Every chunk/microcell has declared compressed/raw lengths and CRC-32.
@@ -63,4 +66,4 @@ No network permission is present in the Android manifest.
 
 ## Honest limitations
 
-This is an incremental Android prototype, not the finished AAA-scale release. The seven-component gbOpen boundary is a coarse redistributable country representation and still needs a reclamation/island audit. The OSM layer is real source geometry but is not navigation data; relation inner holes are not yet rendered. Measured DEM, bathymetry, detailed landmark architecture, Arabic shaping, mature vehicle dynamics, traffic/activity, and wider physical-device profiling remain mandatory later milestones. These are validation/roadmap facts, not permission to reduce final country scope.
+This is an incremental Android prototype, not the finished AAA-scale release. The seven-component gbOpen boundary is a coarse redistributable country representation and still needs a reclamation/island audit. The OSM layer is real source geometry but is not navigation data; relation inner holes are not yet rendered. Survey-grade terrain, hydrodynamic bathymetry, detailed landmark architecture, Arabic shaping, mature vehicle dynamics, traffic/activity, and wider physical-device profiling remain mandatory later milestones. These are validation/roadmap facts, not permission to reduce final country scope.

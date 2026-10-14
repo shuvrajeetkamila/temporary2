@@ -52,7 +52,10 @@ jobs:
           python3 tools/compile_qatar_world.py --verify | tee qa/qatar-current/world-validation.txt
           sha256sum -c data/qatar/SHA256SUMS | tee qa/qatar-current/source-checksums.txt
           sha256sum -c data/qatar/OSM_SHA256SUMS | tee qa/qatar-current/osm-checksums.txt
-          if [ -f data/qatar/DEM_SHA256SUMS ]; then sha256sum -c data/qatar/DEM_SHA256SUMS | tee qa/qatar-current/dem-checksums.txt; fi
+          sha256sum -c data/qatar/DEM_SHA256SUMS | tee qa/qatar-current/dem-checksums.txt
+          sha256sum -c data/qatar/TERRAIN_SHA256SUMS | tee qa/qatar-current/terrain-checksums.txt
+          python3 tools/validate_qatar_terrain.py --report /tmp/qatar-terrain-validation.json | tee qa/qatar-current/terrain-validation.txt
+          cmp /tmp/qatar-terrain-validation.json data/qatar/compiled/qatar-terrain-validation.json
 
       - name: Test and compile fresh installable APK
         id: compile
@@ -103,7 +106,7 @@ jobs:
               bad=z.testzip()
               if bad: raise SystemExit('ZIP corruption: '+bad)
               names=set(z.namelist())
-              required=['AndroidManifest.xml','classes.dex','assets/world/qatar-national.qpak','assets/world/qatar-osm-current.qod','assets/world/qatar-manifest.json','assets/legal/CREDITS.txt','assets/legal/OPENSTREETMAP_ODBL_NOTICE.txt']
+              required=['AndroidManifest.xml','classes.dex','assets/world/qatar-national.qpak','assets/world/qatar-osm-current.qod','assets/world/qatar-manifest.json','assets/legal/CREDITS.txt','assets/legal/OPENSTREETMAP_ODBL_NOTICE.txt','assets/legal/TERRAIN_DATA_NOTICE.txt']
               for name in required:
                   if name not in names: raise SystemExit('Missing '+name)
               q=z.getinfo('assets/world/qatar-national.qpak')
@@ -131,12 +134,13 @@ jobs:
           (cd artifacts && sha256sum "$NAME" > "$NAME.sha256")
           cp data/qatar/compiled/qatar-world-report.json qa/qatar-current/world-report.json
           cp data/qatar/compiled/qatar-osm-report.json qa/qatar-current/osm-report.json
+          cp data/qatar/compiled/qatar-terrain-validation.json qa/qatar-current/terrain-report.json
           python3 - <<'PY'
           import json,hashlib,pathlib,subprocess
           apk=pathlib.Path('artifacts/Qatar-The-Peninsula-REAL-TERRAIN-v0.3.0.apk')
           report=json.loads(pathlib.Path('data/qatar/compiled/qatar-world-report.json').read_text())
           osm=json.loads(pathlib.Path('data/qatar/compiled/qatar-osm-report.json').read_text())
-          result={'sourceCommit':subprocess.check_output(['git','rev-parse','HEAD'],text=True).strip(),'apk':apk.name,'apkBytes':apk.stat().st_size,'apkSha256':hashlib.sha256(apk.read_bytes()).hexdigest(),'packageId':'ai.arena.qatar.peninsula','versionCode':3,'versionName':'0.3.0-real-terrain-preproduction','minSdk':26,'targetSdk':35,'abis':['arm64-v8a','armeabi-v7a','x86_64'],'countryChunks':report['grid']['chunks'],'municipalities':len(report['municipalities']),'adm0Polygons':report['coverage']['adm0PolygonCount'],'qpakSha256':report['qpakSha256'],'measuredDem':report['terrain']['measuredDem'],'terrainSource':report['terrain']['source'],'qodSha256':osm['qodSha256'],'osmDetailCells':osm['detailChunks'],'osmRoadSegments':osm['roadSegments'],'osmBuildingFootprints':osm['totalBuildingFootprints'],'status':'PASSED'}
+          result={'sourceCommit':subprocess.check_output(['git','rev-parse','HEAD'],text=True).strip(),'apk':apk.name,'apkBytes':apk.stat().st_size,'apkSha256':hashlib.sha256(apk.read_bytes()).hexdigest(),'packageId':'ai.arena.qatar.peninsula','versionCode':3,'versionName':'0.3.0-real-terrain-preproduction','minSdk':26,'targetSdk':35,'abis':['arm64-v8a','armeabi-v7a','x86_64'],'countryChunks':report['grid']['chunks'],'municipalities':len(report['municipalities']),'adm0Polygons':report['coverage']['adm0PolygonCount'],'qpakSha256':report['qpakSha256'],'measuredDem':report['terrain']['measuredDem'],'terrainSource':report['terrain']['source'],'terrainLandMinimumMetres':report['terrain']['landMinimumMetres'],'terrainClampedSamples':report['terrain']['clampedLandChunkSamples'],'terrainSeamsVerified':report['terrain']['continuousLandSeamsVerified'],'qodSha256':osm['qodSha256'],'osmDetailCells':osm['detailChunks'],'osmRoadSegments':osm['roadSegments'],'osmBuildingFootprints':osm['totalBuildingFootprints'],'status':'PASSED'}
           pathlib.Path('qa/qatar-current/build-record.json').write_text(json.dumps(result,indent=2)+'\n')
           PY
 

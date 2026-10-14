@@ -42,7 +42,8 @@ public class QatarNationalPackTest {
 
     @Test public void everyRegionalHubHasAChecksummedLocalChunk() throws Exception {
         try(QatarPack pack=new QatarPack(new FileSource(packPath()))){
-            assertEquals(25,pack.hubs.size());
+            assertEquals(25,pack.hubs.size());assertEquals("2026-10-14-srtm-osm-v0.3",pack.worldEpoch);
+            int minimum=Integer.MAX_VALUE,maximum=Integer.MIN_VALUE;
             for(QatarPack.Hub hub:pack.hubs){
                 QatarPack.ChunkEntry entry=pack.entry(pack.chunkX(hub.x()),pack.chunkY(hub.z()));
                 assertNotNull("Missing chunk at "+hub.english(),entry);
@@ -50,7 +51,9 @@ public class QatarNationalPackTest {
                 assertEquals(entry.x(),chunk.entry().x());
                 assertEquals(81,chunk.terrainCm().length);
                 assertEquals(16,chunk.landRows().length);
+                for(short elevation:chunk.terrainCm()){minimum=Math.min(minimum,elevation);maximum=Math.max(maximum,elevation);}
             }
+            assertTrue("Measured terrain must vary across Qatar",maximum-minimum>1_000);
         }
     }
 

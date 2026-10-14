@@ -48,12 +48,13 @@ final class WorldScreen extends ScreenAdapter {
         float simulationDelta=Math.min(.1f,frameAccumulator);
         frameAccumulator%=TARGET_FRAME_SECONDS;
         if(controls.consumeModeRequested())physics.switchMode(physics.mode().next(),pack);
-        if(controls.consumeRecoveryRequested())physics.recover();
         physics.setControls(controls.throttle(),controls.steering(),controls.lift(),controls.action());
-        Vector3 velocity=physics.velocity();
-        streamer.update(physics.globalX(),physics.globalZ(),velocity.x,velocity.z,physics.mode().streamMode);
-        detailStreamer.update(physics.globalX(),physics.globalZ(),velocity.x,velocity.z,physics.mode().streamMode);
-        physics.syncDetailCollisions(physics.globalX(),physics.globalZ());
+        Vector3 velocity=physics.velocity();double focusX=physics.globalX(),focusZ=physics.globalZ();
+        streamer.update(focusX,focusZ,velocity.x,velocity.z,physics.mode().streamMode);
+        detailStreamer.update(focusX,focusZ,velocity.x,velocity.z,physics.mode().streamMode);
+        physics.setGroundReference(renderer.terrainHeightAt(focusX,focusZ));
+        if(controls.consumeRecoveryRequested())physics.recover();
+        physics.syncDetailCollisions(focusX,focusZ);
         physics.step(simulationDelta);
         renderer.render(simulationDelta);
         hud.render();

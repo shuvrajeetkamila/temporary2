@@ -405,8 +405,10 @@ def compile_world(output: Path, report_path: Path, manifest_path: Path):
     chunks=[]
     municipality_counts=defaultdict(int)
     biome_counts=defaultdict(int)
-    land_chunks=coast_chunks=water_chunks=0
+    land_chunks=coast_chunks=water_chunks=coastal_clamped_samples=terrain_seams_checked=0
+    prior_row_edges=[None]*nx
     for iy in range(ny):
+        left_edge=None
         for ix in range(nx):
             cell_x=grid_origin_e+ix*CHUNK_METRES
             cell_y=grid_origin_n+iy*CHUNK_METRES
@@ -435,6 +437,23 @@ def compile_world(output: Path, report_path: Path, manifest_path: Path):
             flags=(1 if land else 0)|(2 if land and not full else 0)|(4 if not land else 0)
             seed=binascii.crc32(struct.pack("<ii",ix,iy)) & 0xffffffff
             terrain=make_terrain(seed,biome,ix,iy,dem)
+            # Terrain Tiles carry bathymetry offshore; legal land cells must not
+            # inherit deep sea samples across the coarse coast-mask edge.
+            if land:
+                coastal_clamped_samples+=sum(value < -200 for value in terrain)
+                terrain=[max(-200,value) for value in terrain]
+                if min(terrain)<-200:raise AssertionError("land/coast elevation policy failed")
+                west=[terrain[row*9] for row in range(9)]
+                if left_edge is not None:
+                    if west!=left_edge:raise AssertionError(f"terrain seam mismatch west of {ix},{iy}")
+                    terrain_seams_checked+=1
+                if prior_row_edges[ix] is not None:
+                    if terrain[:9]!=prior_row_edges[ix]:raise AssertionError(f"terrain seam mismatch south of {ix},{iy}")
+                    terrain_seams_checked+=1
+                left_edge=[terrain[row*9+8] for row in range(9)]
+                prior_row_edges[ix]=terrain[72:81]
+            else:
+                left_edge=None;prior_row_edges[ix]=None
             buildings=make_buildings(cell_x,cell_y,rows,biome,hub_xy,seed)
             roads=road_by_chunk.get((ix,iy),[])
             raw=bytearray()
@@ -498,12 +517,16 @@ def compile_world(output: Path, report_path: Path, manifest_path: Path):
         "biomes":[{"id":i,"name":name,"chunks":biome_counts[i]} for i,name in enumerate(BIOMES)],
         "hubs":len(HUBS),"coarseRoadSegments":sum(c["roads"] for c in chunks),"generatedMassingBuildings":sum(c["buildings"] for c in chunks),
         "qpakBytes":output.stat().st_size,"qpakSha256":sha256(output),
-        "terrain":{"source":"NASA SRTM-derived 250 m QDEM" if dem is not None else "bootstrap deterministic microheight","measuredDem":dem is not None,
+        "terrain":{"source":"Mapzen SRTM/ETOPO1-derived 250 m QDEM" if dem is not None else "bootstrap deterministic microheight","measuredDem":dem is not None,
                    "sampleSpacingMetres":dem.spacing if dem is not None else 250,
                    "qdemPath":str(QDEM_PATH.relative_to(ROOT)) if dem is not None else None,
-                   "qdemSha256":sha256(QDEM_PATH) if dem is not None else None},
+                   "qdemSha256":sha256(QDEM_PATH) if dem is not None else None,
+                   "landMinimumMetres":-2.0 if dem is not None else None,
+                   "clampedLandChunkSamples":coastal_clamped_samples,
+                   "continuousLandSeamsVerified":terrain_seams_checked},
+
         "sources":{"adm0":{"path":str(ADM0_PATH.relative_to(ROOT)),"sha256":sha256(ADM0_PATH)},"adm1":{"path":str(ADM1_PATH.relative_to(ROOT)),"sha256":sha256(ADM1_PATH)},"crossCheck":{"path":str(NE_PATH.relative_to(ROOT)),"sha256":sha256(NE_PATH)}},
-        "limitations":["National coast classification uses geoBoundaries and still requires a reclamation-by-reclamation audit.","SRTM elevation is terrain-scale data, not survey, aviation, or navigation data."]
+        "limitations":["National coast classification uses geoBoundaries and still requires a reclamation-by-reclamation audit.","Mapzen-composited SRTM/ETOPO1 elevation is terrain-scale data, not survey, aviation, marine, or navigation data.","Land-chunk samples below -2 m are clamped to prevent offshore ETOPO1 bathymetry crossing the coarse coastline mask."]
     }
     if any(m["landChunks"]<=0 for m in report["municipalities"]):
         raise ValueError("A municipality has no represented land chunk")

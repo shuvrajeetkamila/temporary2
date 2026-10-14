@@ -129,14 +129,17 @@
   "hubs": 25,
   "coarseRoadSegments": 1249,
   "generatedMassingBuildings": 28313,
-  "qpakBytes": 1414385,
-  "qpakSha256": "a649d8686c1218bdd124450dcdf33c5eeac277fac0e9316b0437359972f17871",
+  "qpakBytes": 1410075,
+  "qpakSha256": "014c8235725b9d2c29fc675e4db5529e01b782b12aa3312e6ccab0a185d1af1a",
   "terrain": {
-    "source": "NASA SRTM-derived 250 m QDEM",
+    "source": "Mapzen SRTM/ETOPO1-derived 250 m QDEM",
     "measuredDem": true,
     "sampleSpacingMetres": 250,
     "qdemPath": "data/qatar/source/qatar-srtm-250m.qdem",
-    "qdemSha256": "23f96979dfcb77cc81c11c0f65c3047a463c7cef0be8d22fc1b1be22191d54eb"
+    "qdemSha256": "23f96979dfcb77cc81c11c0f65c3047a463c7cef0be8d22fc1b1be22191d54eb",
+    "landMinimumMetres": -2.0,
+    "clampedLandChunkSamples": 5174,
+    "continuousLandSeamsVerified": 6056
   },
   "sources": {
     "adm0": {
@@ -154,6 +157,7 @@
   },
   "limitations": [
     "National coast classification uses geoBoundaries and still requires a reclamation-by-reclamation audit.",
-    "SRTM elevation is terrain-scale data, not survey, aviation, or navigation data."
+    "Mapzen-composited SRTM/ETOPO1 elevation is terrain-scale data, not survey, aviation, marine, or navigation data.",
+    "Land-chunk samples below -2 m are clamped to prevent offshore ETOPO1 bathymetry crossing the coarse coastline mask."
   ]
 }

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Resample pinned NASA SRTM/Mapzen Skadi HGT tiles into the compact Qatar QDEM grid."""
+"""Resample pinned Mapzen SRTM/ETOPO1 Skadi HGT tiles into Qatar's compact QDEM grid."""
 from __future__ import annotations
 
 import argparse
@@ -87,7 +87,7 @@ def compile_dem(tile_paths:list[Path],output:Path,report_path:Path,epoch:str):
  tile_report=[]
  for key,tile in sorted(tiles.items()):
   tile_report.append({'name':tile.path.name,'sourceUrl':f'{SOURCE_BASE}/{tile.path.name[:3]}/{tile.path.name}.gz','bytes':tile.path.stat().st_size,'sha256':sha256(tile.path),'samplesPerSide':tile.samples})
- report={'format':'QDEM','version':1,'epoch':epoch,'dataset':'NASA SRTM 1 arc-second global elevation via Mapzen/AWS Terrain Tiles Skadi mirror','license':'NASA SRTM data are public domain in the United States; attribution requested','attribution':'NASA Shuttle Radar Topography Mission (SRTM), USGS; Mapzen/AWS Terrain Tiles distribution','epsg':32639,'sampleSpacingMetres':spacing,'columns':columns,'rows':rows,'samples':len(values),'originEasting':oe,'originNorthing':on,'worldWidth':width,'worldHeight':height,'minimumMetres':minimum/100,'maximumMetres':maximum/100,'voidSamplesAfterInterpolation':void_samples,'tiles':tile_report,'qdemBytes':output.stat().st_size,'qdemSha256':sha256(output),'notes':['Bilinear source sampling onto the deterministic QTPK 250 m grid.','Elevation is terrain-scale game data, not survey, navigation, aviation, or engineering data.']}
+ report={'format':'QDEM','version':1,'epoch':epoch,'dataset':'Mapzen Terrain Tiles composite: SRTM land elevation and ETOPO1 ocean bathymetry','license':'SRTM and ETOPO1 are U.S. government public-domain datasets; attribution requested','attribution':'Mapzen; SRTM data courtesy of USGS; global ETOPO1 terrain data NOAA NCEI','epsg':32639,'sampleSpacingMetres':spacing,'columns':columns,'rows':rows,'samples':len(values),'originEasting':oe,'originNorthing':on,'worldWidth':width,'worldHeight':height,'minimumMetres':minimum/100,'maximumMetres':maximum/100,'voidSamplesAfterInterpolation':void_samples,'tiles':tile_report,'qdemBytes':output.stat().st_size,'qdemSha256':sha256(output),'notes':['Bilinear source sampling onto the deterministic QTPK 250 m grid.','Elevation is terrain-scale game data, not survey, navigation, aviation, or engineering data.']}
  report_path.parent.mkdir(parents=True,exist_ok=True);report_path.write_text(json.dumps(report,indent=2)+'\n')
  print(json.dumps(report,indent=2));return report
 

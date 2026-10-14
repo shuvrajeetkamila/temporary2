@@ -84,6 +84,7 @@ final class LoadingScreen extends ScreenAdapter {
 
     private static void validateCoverage(QatarPack pack){
         if(pack.epsg!=QatarPack.EPSG_UTM_39N)throw new IllegalStateException("CRS mismatch");
+        if(!"2026-10-14-srtm-osm-v0.3".equals(pack.worldEpoch))throw new IllegalStateException("Measured-terrain epoch mismatch");
         if(pack.municipalities.size()!=8)throw new IllegalStateException("Expected all eight municipalities");
         if(pack.nationalPolygons.size()<1)throw new IllegalStateException("Missing ADM0 polygons");
         Set<Integer> represented=new HashSet<>();int land=0,coast=0;

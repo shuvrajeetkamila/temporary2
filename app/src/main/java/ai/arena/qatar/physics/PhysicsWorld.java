@@ -15,11 +15,15 @@ import com.badlogic.gdx.physics.bullet.collision.btCollisionShape;
 import com.badlogic.gdx.physics.bullet.collision.btCompoundShape;
 import com.badlogic.gdx.physics.bullet.collision.btDefaultCollisionConfiguration;
 import com.badlogic.gdx.physics.bullet.collision.btDbvtBroadphase;
+import com.badlogic.gdx.physics.bullet.collision.btHeightfieldTerrainShape;
 import com.badlogic.gdx.physics.bullet.dynamics.btDiscreteDynamicsWorld;
 import com.badlogic.gdx.physics.bullet.dynamics.btRigidBody;
 import com.badlogic.gdx.physics.bullet.dynamics.btSequentialImpulseConstraintSolver;
 import com.badlogic.gdx.utils.Disposable;
 
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
+import java.nio.FloatBuffer;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -75,6 +79,7 @@ public final class PhysicsWorld implements Disposable {
     private float liftControl;
     private boolean action;
     private float temporaryFloorTime;
+    private float groundReference;
 
     public PhysicsWorld(double spawnX,double spawnZ,float groundHeight) {
         Bullet.init();
@@ -86,6 +91,7 @@ public final class PhysicsWorld implements Disposable {
         world.setGravity(new Vector3(0, -9.80665f, 0));
         originX = spawnX;
         originZ = spawnZ;
+        groundReference=groundHeight;
         createTemporaryFloor(groundHeight);
         createFocusBody(mode,0,groundHeight+3.0f,0);
     }
@@ -127,6 +133,8 @@ public final class PhysicsWorld implements Disposable {
         focusBody.setActivationState(4); // DISABLE_DEACTIVATION
         world.addRigidBody(focusBody);
     }
+
+    public void setGroundReference(float groundHeight){if(Float.isFinite(groundHeight))groundReference=groundHeight;}
 
     public void setControls(float throttle, float steering, float lift, boolean action) {
         this.throttle = clamp(throttle,-1,1);
@@ -175,7 +183,7 @@ public final class PhysicsWorld implements Disposable {
                 Vector3 desired = new Vector3(forward).scl(throttle*targetSpeed);
                 Vector3 horizontal = new Vector3(velocity.x,0,velocity.z);
                 focusBody.applyCentralForce(desired.sub(horizontal).scl(78f*7f));
-                if (action && Math.abs(velocity.y)<.45f && position().y<2.1f) focusBody.applyCentralImpulse(new Vector3(0,265,0));
+                if (action && Math.abs(velocity.y)<.45f && position().y-groundReference<2.1f) focusBody.applyCentralImpulse(new Vector3(0,265,0));
             }
             case CAR -> {
                 float speedForward=velocity.dot(forward);
@@ -243,37 +251,37 @@ public final class PhysicsWorld implements Disposable {
     private void recoverIfInvalid() {
         Vector3 p=position();
         if (!Float.isFinite(p.x)||!Float.isFinite(p.y)||!Float.isFinite(p.z)||p.y < -80) {
-            Matrix4 at=new Matrix4().setToTranslation(0,mode==Mode.BOAT?.5f:5f,0).rotate(Vector3.Y,(float)Math.toDegrees(headingRadians));
+            Matrix4 at=new Matrix4().setToTranslation(0,mode==Mode.BOAT?.5f:groundReference+5f,0).rotate(Vector3.Y,(float)Math.toDegrees(headingRadians));
             focusBody.setWorldTransform(at); focusBody.setLinearVelocity(Vector3.Zero); focusBody.setAngularVelocity(Vector3.Zero); focusBody.activate();
         }
     }
 
-    public void activateChunk(QatarPack.WorldChunk chunk, int chunkMetres) {
+    public void activateChunk(QatarPack.WorldChunk chunk,int chunkMetres) {
         long key=key(chunk.entry().x(),chunk.entry().y());
-        if (chunkBodies.containsKey(key)||!chunk.entry().hasLand()) return;
-        btCompoundShape compound=new btCompoundShape();
-        List<btCollisionShape> children=new ArrayList<>();
-        float sub=chunkMetres/16f;
+        if(chunkBodies.containsKey(key)||!chunk.entry().hasLand())return;
+        double chunkX=chunk.entry().x()*(double)chunkMetres,chunkZ=chunk.entry().y()*(double)chunkMetres;
+        if(!chunk.entry().isCoast()){
+            short[] centimetres=chunk.terrainCm();float minimum=Float.MAX_VALUE,maximum=-Float.MAX_VALUE;
+            ByteBuffer bytes=ByteBuffer.allocateDirect(centimetres.length*Float.BYTES).order(ByteOrder.nativeOrder());FloatBuffer heights=bytes.asFloatBuffer();
+            for(short value:centimetres){float metres=value/100f;heights.put(metres);minimum=Math.min(minimum,metres);maximum=Math.max(maximum,metres);}heights.flip();
+            if(maximum-minimum<.01f)maximum=minimum+.01f;
+            btHeightfieldTerrainShape shape=new btHeightfieldTerrainShape(9,9,heights,1,minimum,maximum,1,true);
+            shape.setLocalScaling(new Vector3(chunkMetres/8f,1,chunkMetres/8f));float centreY=(minimum+maximum)/2;
+            btRigidBody body=body(0,shape,new Matrix4().setToTranslation((float)(chunkX+chunkMetres/2-originX),centreY,(float)(chunkZ+chunkMetres/2-originZ)));
+            world.addRigidBody(body);chunkBodies.put(key,new ChunkCollision(body,shape,new ArrayList<>(),chunkX+chunkMetres/2,centreY,chunkZ+chunkMetres/2,bytes));return;
+        }
+        btCompoundShape compound=new btCompoundShape();List<btCollisionShape> children=new ArrayList<>();float sub=chunkMetres/16f;
         for(int row=0;row<16;row++){
             int bits=chunk.landRows()[row],start=-1;float sumHeight=0,previousHeight=0;
             for(int col=0;col<=16;col++){
-                boolean filled=col<16&&(bits&(1<<col))!=0;
-                float height=filled?sampleTerrain(chunk,chunkMetres,(col+.5f)*sub,(row+.5f)*sub):0;
+                boolean filled=col<16&&(bits&(1<<col))!=0;float height=filled?sampleTerrain(chunk,chunkMetres,(col+.5f)*sub,(row+.5f)*sub):0;
                 boolean split=filled&&start>=0&&Math.abs(height-previousHeight)>.40f;
-                if((!filled||split)&&start>=0){
-                    int run=col-start;float top=sumHeight/run;
-                    btBoxShape shape=new btBoxShape(new Vector3(run*sub/2,.75f,sub/2));children.add(shape);
-                    Matrix4 child=new Matrix4().setToTranslation((start+run/2f)*sub,top-.75f,(row+.5f)*sub);
-                    compound.addChildShape(child,shape);start=-1;sumHeight=0;
-                }
+                if((!filled||split)&&start>=0){int run=col-start;float top=sumHeight/run;btBoxShape shape=new btBoxShape(new Vector3(run*sub/2,.75f,sub/2));children.add(shape);compound.addChildShape(new Matrix4().setToTranslation((start+run/2f)*sub,top-.75f,(row+.5f)*sub),shape);start=-1;sumHeight=0;}
                 if(filled){if(start<0)start=col;sumHeight+=height;previousHeight=height;}
             }
         }
-        float localX=(float)(chunk.entry().x()*chunkMetres-originX);
-        float localZ=(float)(chunk.entry().y()*chunkMetres-originZ);
-        btRigidBody body=body(0,compound,new Matrix4().setToTranslation(localX,0,localZ));
-        world.addRigidBody(body);
-        chunkBodies.put(key,new ChunkCollision(body,compound,children,chunk.entry().x()*chunkMetres,chunk.entry().y()*chunkMetres));
+        btRigidBody body=body(0,compound,new Matrix4().setToTranslation((float)(chunkX-originX),0,(float)(chunkZ-originZ)));world.addRigidBody(body);
+        chunkBodies.put(key,new ChunkCollision(body,compound,children,chunkX,0,chunkZ,null));
     }
 
     private void relocateChunkBodies() {
@@ -282,7 +290,7 @@ public final class PhysicsWorld implements Disposable {
     }
 
     private void relocate(ChunkCollision chunk){
-        chunk.body.setWorldTransform(new Matrix4().setToTranslation((float)(chunk.globalX-originX),0,(float)(chunk.globalZ-originZ)));
+        chunk.body.setWorldTransform(new Matrix4().setToTranslation((float)(chunk.globalX-originX),chunk.globalY,(float)(chunk.globalZ-originZ)));
         chunk.body.activate();
     }
 
@@ -349,7 +357,7 @@ public final class PhysicsWorld implements Disposable {
         }
         if(children.isEmpty()){compound.dispose();return;}
         btRigidBody body=body(0,compound,new Matrix4().setToTranslation((float)(cellX-originX),0,(float)(cellZ-originZ)));
-        world.addRigidBody(body);detailBodies.put(key(chunk.entry().x(),chunk.entry().y()),new ChunkCollision(body,compound,children,cellX,cellZ));
+        world.addRigidBody(body);detailBodies.put(key(chunk.entry().x(),chunk.entry().y()),new ChunkCollision(body,compound,children,cellX,0,cellZ,null));
     }
 
     private void clearChunkBodies() {
@@ -360,7 +368,7 @@ public final class PhysicsWorld implements Disposable {
 
     /** Explicit user recovery is the only normal gameplay teleport. */
     public void recover() {
-        Matrix4 at=new Matrix4().setToTranslation(0,mode==Mode.BOAT?.5f:5f,0).rotate(Vector3.Y,(float)Math.toDegrees(headingRadians));
+        Matrix4 at=new Matrix4().setToTranslation(0,mode==Mode.BOAT?.5f:groundReference+5f,0).rotate(Vector3.Y,(float)Math.toDegrees(headingRadians));
         focusBody.setWorldTransform(at);
         focusBody.setLinearVelocity(Vector3.Zero);
         focusBody.setAngularVelocity(Vector3.Zero);
@@ -389,10 +397,10 @@ public final class PhysicsWorld implements Disposable {
     private record DetailCandidate(long key,DetailSource source,double distanceSquared){}
 
     private static final class ChunkCollision {
-        final btRigidBody body; final btCompoundShape compound; final List<btCollisionShape> children;
-        final double globalX,globalZ;
-        ChunkCollision(btRigidBody body,btCompoundShape compound,List<btCollisionShape> children,double globalX,double globalZ){this.body=body;this.compound=compound;this.children=children;this.globalX=globalX;this.globalZ=globalZ;}
-        void dispose(btDiscreteDynamicsWorld world){world.removeRigidBody(body);body.dispose();compound.dispose();for(btCollisionShape shape:children)shape.dispose();}
+        final btRigidBody body;final btCollisionShape shape;final List<btCollisionShape> children;final double globalX,globalZ;final float globalY;
+        @SuppressWarnings("unused") final Object backingData;
+        ChunkCollision(btRigidBody body,btCollisionShape shape,List<btCollisionShape> children,double globalX,float globalY,double globalZ,Object backingData){this.body=body;this.shape=shape;this.children=children;this.globalX=globalX;this.globalY=globalY;this.globalZ=globalZ;this.backingData=backingData;}
+        void dispose(btDiscreteDynamicsWorld world){world.removeRigidBody(body);body.dispose();shape.dispose();for(btCollisionShape child:children)child.dispose();}
     }
     private static float sampleTerrain(QatarPack.WorldChunk chunk,int chunkMetres,float localX,float localZ){
         float interval=chunkMetres/8f,gx=Math.max(0,Math.min(8,localX/interval)),gz=Math.max(0,Math.min(8,localZ/interval));

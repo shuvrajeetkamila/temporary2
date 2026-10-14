@@ -10,6 +10,12 @@ Current Geofabrik extract compiled into the installed QTOD database.
 https://www.openstreetmap.org/copyright
 This game geometry is not navigation data.
 
+Terrain and bathymetry foundation:
+Mapzen/AWS Terrain Tiles distribution.
+SRTM land-elevation data courtesy of the U.S. Geological Survey.
+Global ETOPO1 terrain/bathymetry data: NOAA National Centers for Environmental Information.
+Resampled to the offline 250 m QDEM grid; not suitable for navigation or engineering.
+
 Independent country cross-check:
 Natural Earth public-domain data through geojson-regions (Unlicense).
 

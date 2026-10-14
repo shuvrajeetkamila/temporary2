@@ -281,10 +281,14 @@ public final class QatarWorldRenderer implements WorldStreamer.Listener, QatarDe
         terrainTriangle(part,x2b,h2b,z2b,x1b,h1b,z1b,x1a,h1a,z1a);
     }
 
-    private float terrainHeight(double globalX,double globalZ){
+    public float terrainHeightAt(double globalX,double globalZ){return terrainHeightOr(globalX,globalZ,Float.NaN);}
+
+    private float terrainHeight(double globalX,double globalZ){return terrainHeightOr(globalX,globalZ,0);}
+
+    private float terrainHeightOr(double globalX,double globalZ,float absent){
         int chunkX=pack.chunkX(globalX),chunkY=pack.chunkY(globalZ);
         QatarPack.WorldChunk terrain=nationalData.get(key(chunkX,chunkY));
-        if(terrain==null)return 0;
+        if(terrain==null)return absent;
         return pack.terrainHeight(terrain,(float)(globalX-chunkX*(double)pack.chunkMetres),(float)(globalZ-chunkY*(double)pack.chunkMetres));
     }
 

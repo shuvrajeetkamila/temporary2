@@ -1,8 +1,8 @@
 {
   "provider": "Mapzen/AWS Terrain Tiles Skadi mirror",
-  "dataset": "NASA SRTM 1 arc-second global elevation",
-  "license": "NASA SRTM public domain (United States); attribution requested",
-  "attribution": "NASA SRTM, USGS; Mapzen/AWS Terrain Tiles distribution",
+  "dataset": "Mapzen Terrain Tiles composite: SRTM land elevation and ETOPO1 ocean bathymetry",
+  "license": "SRTM and ETOPO1 are U.S. government public-domain datasets; attribution requested",
+  "attribution": "Mapzen; SRTM data courtesy of USGS; global ETOPO1 terrain data NOAA NCEI",
   "retrievedUtc": "2026-10-14T12:25:57Z",
   "importerCommit": "7ab695c81a22df727c921456e1c7fb7f04a08101",
   "sourceTiles": [
