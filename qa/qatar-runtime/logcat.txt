@@ -1,84 +1,80 @@
 --------- beginning of main
-10-14 17:17:53.589  3306  3306 I qatar.peninsul: Late-enabling -Xcheck:jni
-10-14 17:17:53.669  3306  3306 E qatar.peninsul: Unknown bits set in runtime_flags: 0x8000
-10-14 17:17:53.669  3306  3306 W qatar.peninsul: Unexpected CPU variant for X86 using defaults: x86_64
-10-14 17:17:54.230  3306  3306 D libEGL  : Emulator has host GPU support, qemu.gles is set to 1.
-10-14 17:17:54.231  3306  3306 W libc    : Unable to set property "qemu.gles" to "1": connection failed; errno=13 (Permission denied)
-10-14 17:17:54.237  3306  3306 D libEGL  : loaded /vendor/lib64/egl/libEGL_emulation.so
-10-14 17:17:54.237  3306  3306 D libEGL  : loaded /vendor/lib64/egl/libGLESv1_CM_emulation.so
-10-14 17:17:54.238  3306  3306 D libEGL  : loaded /vendor/lib64/egl/libGLESv2_emulation.so
-10-14 17:17:54.245  3306  3306 D HostConnection: HostConnection::get() New Host Connection established 0x72ebb33300a0, tid 3306
-10-14 17:17:54.247  3306  3306 D HostConnection: HostComposition ext ANDROID_EMU_CHECKSUM_HELPER_v1 ANDROID_EMU_native_sync_v2 ANDROID_EMU_dma_v1 ANDROID_EMU_direct_mem ANDROID_EMU_host_composition_v1 ANDROID_EMU_host_composition_v2 ANDROID_EMU_vulkan ANDROID_EMU_deferred_vulkan_commands ANDROID_EMU_vulkan_null_optional_strings ANDROID_EMU_vulkan_create_resources_with_requirements ANDROID_EMU_YUV_Cache ANDROID_EMU_vulkan_ignored_handles ANDROID_EMU_vulkan_free_memory_sync ANDROID_EMU_vulkan_shader_float16_int8 ANDROID_EMU_vulkan_async_queue_submit ANDROID_EMU_sync_buffer_data ANDROID_EMU_vulkan_async_qsri ANDROID_EMU_hwc_color_transform GL_OES_EGL_image_external_essl3 GL_OES_vertex_array_object GL_KHR_texture_compression_astc_ldr ANDROID_EMU_host_side_tracing ANDROID_EMU_gles_max_version_3_0 
-10-14 17:17:54.344  3306  3306 I AndroidInput: sensor listener setup
-10-14 17:17:54.419  3306  3408 D HostConnection: HostConnection::get() New Host Connection established 0x72ebb3330500, tid 3408
-10-14 17:17:54.424  3306  3408 D HostConnection: HostComposition ext ANDROID_EMU_CHECKSUM_HELPER_v1 ANDROID_EMU_native_sync_v2 ANDROID_EMU_dma_v1 ANDROID_EMU_direct_mem ANDROID_EMU_host_composition_v1 ANDROID_EMU_host_composition_v2 ANDROID_EMU_vulkan ANDROID_EMU_deferred_vulkan_commands ANDROID_EMU_vulkan_null_optional_strings ANDROID_EMU_vulkan_create_resources_with_requirements ANDROID_EMU_YUV_Cache ANDROID_EMU_vulkan_ignored_handles ANDROID_EMU_vulkan_free_memory_sync ANDROID_EMU_vulkan_shader_float16_int8 ANDROID_EMU_vulkan_async_queue_submit ANDROID_EMU_sync_buffer_data ANDROID_EMU_vulkan_async_qsri ANDROID_EMU_hwc_color_transform GL_OES_EGL_image_external_essl3 GL_OES_vertex_array_object GL_KHR_texture_compression_astc_ldr ANDROID_EMU_host_side_tracing ANDROID_EMU_gles_max_version_3_0 
-10-14 17:17:54.430  3306  3408 D EGL_emulation: eglCreateContext: 0x72ebb33305a0: maj 3 min 0 rcv 3
-10-14 17:17:54.430  3306  3408 D EGL_emulation: eglMakeCurrent: 0x72ebb33305a0: ver 3 0 (tinfo 0x72ebfe524700)
-10-14 17:17:54.447  3306  3408 W Gralloc3: mapper 3.x is not supported
-10-14 17:17:54.450  3306  3417 D HostConnection: HostConnection::get() New Host Connection established 0x72ebfea4a180, tid 3417
-10-14 17:17:54.451  3306  3408 D HostConnection: createUnique: call
-10-14 17:17:54.451  3306  3408 D HostConnection: HostConnection::get() New Host Connection established 0x72ebb33315e0, tid 3408
-10-14 17:17:54.461  3306  3408 D HostConnection: HostComposition ext ANDROID_EMU_CHECKSUM_HELPER_v1 ANDROID_EMU_native_sync_v2 ANDROID_EMU_dma_v1 ANDROID_EMU_direct_mem ANDROID_EMU_host_composition_v1 ANDROID_EMU_host_composition_v2 ANDROID_EMU_vulkan ANDROID_EMU_deferred_vulkan_commands ANDROID_EMU_vulkan_null_optional_strings ANDROID_EMU_vulkan_create_resources_with_requirements ANDROID_EMU_YUV_Cache ANDROID_EMU_vulkan_ignored_handles ANDROID_EMU_vulkan_free_memory_sync ANDROID_EMU_vulkan_shader_float16_int8 ANDROID_EMU_vulkan_async_queue_submit ANDROID_EMU_sync_buffer_data ANDROID_EMU_vulkan_async_qsri ANDROID_EMU_hwc_color_transform GL_OES_EGL_image_external_essl3 GL_OES_vertex_array_object GL_KHR_texture_compression_astc_ldr ANDROID_EMU_host_side_tracing ANDROID_EMU_gles_max_version_3_0 
-10-14 17:17:54.463  3306  3408 D eglCodecCommon: allocate: Ask for block of size 0x1000
-10-14 17:17:54.463  3306  3408 D eglCodecCommon: allocate: ioctl allocate returned offset 0x3ffc6a000 size 0x2000
-10-14 17:17:54.486  3306  3417 D HostConnection: HostComposition ext ANDROID_EMU_CHECKSUM_HELPER_v1 ANDROID_EMU_native_sync_v2 ANDROID_EMU_dma_v1 ANDROID_EMU_direct_mem ANDROID_EMU_host_composition_v1 ANDROID_EMU_host_composition_v2 ANDROID_EMU_vulkan ANDROID_EMU_deferred_vulkan_commands ANDROID_EMU_vulkan_null_optional_strings ANDROID_EMU_vulkan_create_resources_with_requirements ANDROID_EMU_YUV_Cache ANDROID_EMU_vulkan_ignored_handles ANDROID_EMU_vulkan_free_memory_sync ANDROID_EMU_vulkan_shader_float16_int8 ANDROID_EMU_vulkan_async_queue_submit ANDROID_EMU_sync_buffer_data ANDROID_EMU_vulkan_async_qsri ANDROID_EMU_hwc_color_transform GL_OES_EGL_image_external_essl3 GL_OES_vertex_array_object GL_KHR_texture_compression_astc_ldr ANDROID_EMU_host_side_tracing ANDROID_EMU_gles_max_version_3_0 
-10-14 17:17:54.490  3306  3417 W GL2JNIView: creating OpenGL ES 3.0 context
-10-14 17:17:54.492  3306  3417 D EGL_emulation: eglCreateContext: 0x72ebfea4a220: maj 3 min 0 rcv 3
-10-14 17:17:54.492  3306  3417 W GL2JNIView: Returning a GLES 3 context
-10-14 17:17:54.493  3306  3408 D EGL_emulation: eglMakeCurrent: 0x72ebb33305a0: ver 3 0 (tinfo 0x72ebfe524700)
-10-14 17:17:54.591  3306  3417 D EGL_emulation: eglMakeCurrent: 0x72ebfea4a220: ver 3 0 (tinfo 0x72ebfea18d60)
-10-14 17:17:54.909  3306  3417 W qatar.peninsul: Verification of void com.badlogic.gdx.backends.android.AndroidGL30.glBeginTransformFeedback(int) took 125.253ms
-10-14 17:17:54.912  3306  3417 I AndroidGraphics: OGL renderer: Android Emulator OpenGL ES Translator (Google SwiftShader)
-10-14 17:17:54.912  3306  3417 I AndroidGraphics: OGL vendor: Google (Google Inc.)
-10-14 17:17:54.913  3306  3417 I AndroidGraphics: OGL version: OpenGL ES 3.0 (OpenGL ES 3.0 SwiftShader 4.0.0.1)
-10-14 17:17:54.913  3306  3417 I AndroidGraphics: OGL extensions: GL_EXT_debug_marker GL_EXT_robustness GL_OES_EGL_sync GL_OES_EGL_image GL_OES_EGL_image_external GL_OES_depth24 GL_OES_depth32 GL_OES_element_index_uint GL_OES_texture_float GL_OES_texture_float_linear GL_OES_compressed_paletted_texture GL_OES_compressed_ETC1_RGB8_texture GL_OES_depth_texture GL_OES_texture_half_float GL_OES_texture_half_float_linear GL_OES_packed_depth_stencil GL_OES_vertex_half_float GL_OES_standard_derivatives GL_OES_texture_npot GL_OES_rgb8_rgba8 GL_EXT_color_buffer_float GL_EXT_color_buffer_half_float GL_EXT_texture_format_BGRA8888 GL_APPLE_texture_format_BGRA8888 ANDROID_EMU_CHECKSUM_HELPER_v1 ANDROID_EMU_native_sync_v2 ANDROID_EMU_dma_v1 ANDROID_EMU_direct_mem ANDROID_EMU_host_composition_v1 ANDROID_EMU_host_composition_v2 ANDROID_EMU_vulkan ANDROID_EMU_deferred_vulkan_commands ANDROID_EMU_vulkan_null_optional_strings ANDROID_EMU_vulkan_create_resources_with_requirements ANDROID_EMU_YUV_Cache ANDROID_EMU_vulkan_ignored_handles ANDROID_EMU_vulkan_free_memory_sync ANDROID_EMU_vulkan_shader_float16_int8 ANDROID_EMU_vulkan_async_queue_submit ANDROID_EMU_sync_buffer_data ANDROID_EMU_vulkan_async_qsri ANDROID_EMU_hwc_color_transform GL_OES_EGL_image_external_essl3 GL_OES_vertex_array_object GL_KHR_texture_compression_astc_ldr ANDROID_EMU_host_side_tracing ANDROID_EMU_gles_max_version_3_0 
-10-14 17:17:54.913  3306  3417 I AndroidGraphics: framebuffer: (8, 8, 8, 8)
-10-14 17:17:54.913  3306  3417 I AndroidGraphics: depthbuffer: (24)
-10-14 17:17:54.913  3306  3417 I AndroidGraphics: stencilbuffer: (8)
-10-14 17:17:54.913  3306  3417 I AndroidGraphics: samples: (2)
-10-14 17:17:54.913  3306  3417 I AndroidGraphics: coverage sampling: (false)
-10-14 17:17:55.191  3306  3417 I AndroidGraphics: Managed meshes/app: { }
-10-14 17:17:55.198  3306  3417 I AndroidGraphics: Managed textures/app: { }
-10-14 17:17:55.198  3306  3417 I AndroidGraphics: Managed cubemap/app: { }
-10-14 17:17:55.200  3306  3417 I AndroidGraphics: Managed shaders/app: { }
-10-14 17:17:55.200  3306  3417 I AndroidGraphics: Managed buffers/app: { }
-10-14 17:17:55.480  3306  3417 W qatar.peninsul: Accessing hidden field Ljava/nio/Buffer;->position:I (greylist, JNI, allowed)
-10-14 17:17:55.480  3306  3417 W qatar.peninsul: Accessing hidden field Ljava/nio/Buffer;->limit:I (greylist, JNI, allowed)
-10-14 17:17:55.480  3306  3417 W qatar.peninsul: Accessing hidden field Ljava/nio/Buffer;->_elementSizeShift:I (greylist, JNI, allowed)
-10-14 17:17:55.480  3306  3417 W qatar.peninsul: Accessing hidden field Ljava/nio/Buffer;->address:J (greylist, JNI, allowed)
-10-14 17:17:55.933  3306  3371 I qatar.peninsul: Background young concurrent copying GC freed 14446(2709KB) AllocSpace objects, 0(0B) LOS objects, 80% free, 1449KB/7593KB, paused 769us total 259.829ms
-10-14 17:17:56.330  3306  3417 W qatar.peninsul: Verification of void com.badlogic.gdx.graphics.g2d.GlyphLayout.setText(com.badlogic.gdx.graphics.g2d.BitmapFont, java.lang.CharSequence, int, int, com.badlogic.gdx.graphics.Color, float, int, boolean, java.lang.String) took 196.747ms
-10-14 17:17:57.081  3306  3371 I qatar.peninsul: Background concurrent copying GC freed 18196(499KB) AllocSpace objects, 4(400KB) LOS objects, 38% free, 9834KB/15MB, paused 455us total 199.086ms
-10-14 17:17:58.507  3306  3371 I qatar.peninsul: Background young concurrent copying GC freed 87060(1428KB) AllocSpace objects, 0(0B) LOS objects, 0% free, 18MB/18MB, paused 687us total 921.497ms
-10-14 17:17:54.220  3306  3306 W qatar.peninsula: type=1400 audit(0.0:21): avc: denied { write } for name="property_service" dev="tmpfs" ino=7790 scontext=u:r:untrusted_app:s0:c146,c256,c512,c768 tcontext=u:object_r:property_socket:s0 tclass=sock_file permissive=0 app=ai.arena.qatar.peninsula
-10-14 17:17:59.171  3306  3396 I qatar.peninsul: Waiting for a blocking GC ProfileSaver
-10-14 17:17:59.404  3306  3371 I qatar.peninsul: Background concurrent copying GC freed 98260(1869KB) AllocSpace objects, 3(52KB) LOS objects, 22% free, 21MB/27MB, paused 12.541ms total 895.948ms
-10-14 17:17:59.404  3306  3396 I qatar.peninsul: WaitForGcToComplete blocked ProfileSaver on ClassLinker for 232.520ms
-10-14 17:18:00.082  3306  3765 D ProfileInstaller: Installing profile for ai.arena.qatar.peninsula
-10-14 17:18:03.243  3306  3371 I qatar.peninsul: Background young concurrent copying GC freed 412084(7232KB) AllocSpace objects, 2(32KB) LOS objects, 23% free, 19MB/25MB, paused 9.712ms total 206.959ms
-10-14 17:18:06.284  3306  3417 I QatarStreaming: PACK_READY epoch=2026-10-14-srtm-osm-v0.3 terrainSample=12.346011m OSM=1441102/189446
-10-14 17:18:06.285  3306  3417 I QatarStreaming: SPAWN_READY x=87661.50641961784 z=98727.50808388225 elevation=12.346011 roadClass=4 basis=nearest clear OSM roadside
-10-14 17:18:06.298  3306  3417 I qatar.peninsul: WaitForGcToComplete blocked ClassLinker on None for 13.286ms
-10-14 17:18:07.674  3306  3417 I QatarThermal: PROFILE NORMAL fps=30 detailRadius=3
-10-14 17:18:07.674  3306  3417 I QatarEnvironment: ENV_READY presets=CLEAR,SHAMAL,DUST,RAIN tide=dynamic wind=enabled
-10-14 17:18:08.422  3306  3417 I QatarStreaming: OSM_READY cell=350,394 roads=155 buildings=51
-10-14 17:18:17.790  3306  3371 I qatar.peninsul: Background young concurrent copying GC freed 80344(2082KB) AllocSpace objects, 23(1876KB) LOS objects, 16% free, 21MB/25MB, paused 811us total 147.461ms
-10-14 17:18:17.912  3306  3417 I QatarRuntime: STATE mode=WALK heightAboveGround=0.96000004 supportClearance=0.96000004 water=no speed=4.644003E-8 cameraDistance=11.661902 stable=yes
-10-14 17:18:25.595  3306  3417 I QatarRuntime: STATE mode=WALK heightAboveGround=0.96000004 supportClearance=0.96000004 water=no speed=4.7022513E-5 cameraDistance=11.661904 stable=yes
-10-14 17:18:33.068  3306  3417 I QatarRuntime: STATE mode=WALK heightAboveGround=0.96000004 supportClearance=0.96000004 water=no speed=0.48278627 cameraDistance=16.124516 stable=yes
-10-14 17:18:41.094  3306  3417 I QatarRuntime: STATE mode=WALK heightAboveGround=0.96000004 supportClearance=0.96000004 water=no speed=0.46513528 cameraDistance=16.124516 stable=yes
-10-14 17:18:49.369  3306  3417 I QatarRuntime: STATE mode=WALK heightAboveGround=0.96000004 supportClearance=0.96000004 water=no speed=0.12631468 cameraDistance=16.124514 stable=yes
-10-14 17:18:56.810  3306  3371 I qatar.peninsul: ThreadFlipBegin blocked for 6.052ms
-10-14 17:18:57.130  3306  4098 I qatar.peninsul: IncrementDisableThreadFlip blocked for 5.266ms
-10-14 17:18:57.413  3306  3371 I qatar.peninsul: Background young concurrent copying GC freed 69555(2150KB) AllocSpace objects, 27(1528KB) LOS objects, 14% free, 21MB/25MB, paused 27.334ms total 74.724ms
-10-14 17:18:58.208  3306  3417 I QatarRuntime: STATE mode=CAR heightAboveGround=0.7600002 supportClearance=0.7600002 water=no speed=0.45989943 cameraDistance=16.124516 stable=yes
-10-14 17:19:06.263  3306  3417 I QatarRuntime: STATE mode=CAR heightAboveGround=0.7600002 supportClearance=0.7600002 water=no speed=0.43182513 cameraDistance=16.124516 stable=yes
-10-14 17:19:14.196  3306  3417 I QatarRuntime: STATE mode=CAR heightAboveGround=0.7600002 supportClearance=0.7600002 water=no speed=0.5827236 cameraDistance=16.124514 stable=yes
-10-14 17:19:22.035  3306  3417 I QatarRuntime: STATE mode=BOAT heightAboveGround=0.6899996 supportClearance=0.6899996 water=no speed=0.42353562 cameraDistance=13.994284 stable=yes
-10-14 17:19:29.929  3306  3417 I QatarRuntime: STATE mode=HELICOPTER heightAboveGround=0.78999996 supportClearance=0.78999996 water=no speed=0.28989804 cameraDistance=13.994286 stable=yes
-10-14 17:19:36.363  3306  3371 I qatar.peninsul: Background young concurrent copying GC freed 139866(3207KB) AllocSpace objects, 1(16KB) LOS objects, 12% free, 22MB/25MB, paused 37.729ms total 45.956ms
-10-14 17:19:37.500  3306  3417 I QatarRuntime: STATE mode=HELICOPTER heightAboveGround=0.78999996 supportClearance=0.78999996 water=no speed=0.54511696 cameraDistance=13.994286 stable=yes
-10-14 17:19:42.726  3306  3371 I qatar.peninsul: Background young concurrent copying GC freed 59949(1845KB) AllocSpace objects, 20(776KB) LOS objects, 11% free, 22MB/25MB, paused 15.987ms total 23.965ms
-10-14 17:19:45.969  3306  3417 I QatarRuntime: STATE mode=AEROPLANE heightAboveGround=0.6899996 supportClearance=0.6899996 water=no speed=1.9160187E-7 cameraDistance=13.994284 stable=yes
-10-14 17:19:53.151  3306  3417 I QatarRuntime: STATE mode=AEROPLANE heightAboveGround=0.6899996 supportClearance=0.6899996 water=no speed=0.4573569 cameraDistance=13.994286 stable=yes
-10-14 17:20:01.004  3306  3417 I QatarRuntime: STATE mode=AEROPLANE heightAboveGround=0.6899996 supportClearance=0.6899996 water=no speed=0.17849736 cameraDistance=13.994285 stable=yes
+10-14 17:28:07.197  3259  3259 I qatar.peninsul: Late-enabling -Xcheck:jni
+10-14 17:28:07.263  3259  3259 E qatar.peninsul: Unknown bits set in runtime_flags: 0x8000
+10-14 17:28:07.264  3259  3259 W qatar.peninsul: Unexpected CPU variant for X86 using defaults: x86_64
+10-14 17:28:07.689  3259  3259 D libEGL  : Emulator has host GPU support, qemu.gles is set to 1.
+10-14 17:28:07.689  3259  3259 W libc    : Unable to set property "qemu.gles" to "1": connection failed; errno=13 (Permission denied)
+10-14 17:28:07.702  3259  3259 D libEGL  : loaded /vendor/lib64/egl/libEGL_emulation.so
+10-14 17:28:07.703  3259  3259 D libEGL  : loaded /vendor/lib64/egl/libGLESv1_CM_emulation.so
+10-14 17:28:07.703  3259  3259 D libEGL  : loaded /vendor/lib64/egl/libGLESv2_emulation.so
+10-14 17:28:07.713  3259  3259 D HostConnection: HostConnection::get() New Host Connection established 0x7c7caa5137a0, tid 3259
+10-14 17:28:07.716  3259  3259 D HostConnection: HostComposition ext ANDROID_EMU_CHECKSUM_HELPER_v1 ANDROID_EMU_native_sync_v2 ANDROID_EMU_dma_v1 ANDROID_EMU_direct_mem ANDROID_EMU_host_composition_v1 ANDROID_EMU_host_composition_v2 ANDROID_EMU_vulkan ANDROID_EMU_deferred_vulkan_commands ANDROID_EMU_vulkan_null_optional_strings ANDROID_EMU_vulkan_create_resources_with_requirements ANDROID_EMU_YUV_Cache ANDROID_EMU_vulkan_ignored_handles ANDROID_EMU_vulkan_free_memory_sync ANDROID_EMU_vulkan_shader_float16_int8 ANDROID_EMU_vulkan_async_queue_submit ANDROID_EMU_sync_buffer_data ANDROID_EMU_vulkan_async_qsri ANDROID_EMU_hwc_color_transform GL_OES_EGL_image_external_essl3 GL_OES_vertex_array_object GL_KHR_texture_compression_astc_ldr ANDROID_EMU_host_side_tracing ANDROID_EMU_gles_max_version_3_0 
+10-14 17:28:07.811  3259  3259 I AndroidInput: sensor listener setup
+10-14 17:28:07.837  3259  3321 D HostConnection: HostConnection::get() New Host Connection established 0x7c7caaa54640, tid 3321
+10-14 17:28:07.839  3259  3321 D HostConnection: HostComposition ext ANDROID_EMU_CHECKSUM_HELPER_v1 ANDROID_EMU_native_sync_v2 ANDROID_EMU_dma_v1 ANDROID_EMU_direct_mem ANDROID_EMU_host_composition_v1 ANDROID_EMU_host_composition_v2 ANDROID_EMU_vulkan ANDROID_EMU_deferred_vulkan_commands ANDROID_EMU_vulkan_null_optional_strings ANDROID_EMU_vulkan_create_resources_with_requirements ANDROID_EMU_YUV_Cache ANDROID_EMU_vulkan_ignored_handles ANDROID_EMU_vulkan_free_memory_sync ANDROID_EMU_vulkan_shader_float16_int8 ANDROID_EMU_vulkan_async_queue_submit ANDROID_EMU_sync_buffer_data ANDROID_EMU_vulkan_async_qsri ANDROID_EMU_hwc_color_transform GL_OES_EGL_image_external_essl3 GL_OES_vertex_array_object GL_KHR_texture_compression_astc_ldr ANDROID_EMU_host_side_tracing ANDROID_EMU_gles_max_version_3_0 
+10-14 17:28:07.841  3259  3321 D EGL_emulation: eglCreateContext: 0x7c7caaa546e0: maj 3 min 0 rcv 3
+10-14 17:28:07.842  3259  3321 D EGL_emulation: eglMakeCurrent: 0x7c7caaa546e0: ver 3 0 (tinfo 0x7c7caaa185a0)
+10-14 17:28:07.857  3259  3321 W Gralloc3: mapper 3.x is not supported
+10-14 17:28:07.859  3259  3321 D HostConnection: createUnique: call
+10-14 17:28:07.859  3259  3321 D HostConnection: HostConnection::get() New Host Connection established 0x7c7caaa54820, tid 3321
+10-14 17:28:07.859  3259  3321 D HostConnection: HostComposition ext ANDROID_EMU_CHECKSUM_HELPER_v1 ANDROID_EMU_native_sync_v2 ANDROID_EMU_dma_v1 ANDROID_EMU_direct_mem ANDROID_EMU_host_composition_v1 ANDROID_EMU_host_composition_v2 ANDROID_EMU_vulkan ANDROID_EMU_deferred_vulkan_commands ANDROID_EMU_vulkan_null_optional_strings ANDROID_EMU_vulkan_create_resources_with_requirements ANDROID_EMU_YUV_Cache ANDROID_EMU_vulkan_ignored_handles ANDROID_EMU_vulkan_free_memory_sync ANDROID_EMU_vulkan_shader_float16_int8 ANDROID_EMU_vulkan_async_queue_submit ANDROID_EMU_sync_buffer_data ANDROID_EMU_vulkan_async_qsri ANDROID_EMU_hwc_color_transform GL_OES_EGL_image_external_essl3 GL_OES_vertex_array_object GL_KHR_texture_compression_astc_ldr ANDROID_EMU_host_side_tracing ANDROID_EMU_gles_max_version_3_0 
+10-14 17:28:07.861  3259  3321 D eglCodecCommon: allocate: Ask for block of size 0x1000
+10-14 17:28:07.861  3259  3321 D eglCodecCommon: allocate: ioctl allocate returned offset 0x3ffc6a000 size 0x2000
+10-14 17:28:07.869  3259  3343 D HostConnection: HostConnection::get() New Host Connection established 0x7c7caa648320, tid 3343
+10-14 17:28:07.870  3259  3321 D EGL_emulation: eglMakeCurrent: 0x7c7caaa546e0: ver 3 0 (tinfo 0x7c7caaa185a0)
+10-14 17:28:07.883  3259  3343 D HostConnection: HostComposition ext ANDROID_EMU_CHECKSUM_HELPER_v1 ANDROID_EMU_native_sync_v2 ANDROID_EMU_dma_v1 ANDROID_EMU_direct_mem ANDROID_EMU_host_composition_v1 ANDROID_EMU_host_composition_v2 ANDROID_EMU_vulkan ANDROID_EMU_deferred_vulkan_commands ANDROID_EMU_vulkan_null_optional_strings ANDROID_EMU_vulkan_create_resources_with_requirements ANDROID_EMU_YUV_Cache ANDROID_EMU_vulkan_ignored_handles ANDROID_EMU_vulkan_free_memory_sync ANDROID_EMU_vulkan_shader_float16_int8 ANDROID_EMU_vulkan_async_queue_submit ANDROID_EMU_sync_buffer_data ANDROID_EMU_vulkan_async_qsri ANDROID_EMU_hwc_color_transform GL_OES_EGL_image_external_essl3 GL_OES_vertex_array_object GL_KHR_texture_compression_astc_ldr ANDROID_EMU_host_side_tracing ANDROID_EMU_gles_max_version_3_0 
+10-14 17:28:07.883  3259  3343 W GL2JNIView: creating OpenGL ES 3.0 context
+10-14 17:28:07.886  3259  3343 D EGL_emulation: eglCreateContext: 0x7c7caa6483c0: maj 3 min 0 rcv 3
+10-14 17:28:07.886  3259  3343 W GL2JNIView: Returning a GLES 3 context
+10-14 17:28:07.916  3259  3343 D EGL_emulation: eglMakeCurrent: 0x7c7caa6483c0: ver 3 0 (tinfo 0x7c7caa541e40)
+10-14 17:28:08.406  3259  3343 I AndroidGraphics: OGL renderer: Android Emulator OpenGL ES Translator (Google SwiftShader)
+10-14 17:28:08.406  3259  3343 I AndroidGraphics: OGL vendor: Google (Google Inc.)
+10-14 17:28:08.406  3259  3343 I AndroidGraphics: OGL version: OpenGL ES 3.0 (OpenGL ES 3.0 SwiftShader 4.0.0.1)
+10-14 17:28:08.406  3259  3343 I AndroidGraphics: OGL extensions: GL_EXT_debug_marker GL_EXT_robustness GL_OES_EGL_sync GL_OES_EGL_image GL_OES_EGL_image_external GL_OES_depth24 GL_OES_depth32 GL_OES_element_index_uint GL_OES_texture_float GL_OES_texture_float_linear GL_OES_compressed_paletted_texture GL_OES_compressed_ETC1_RGB8_texture GL_OES_depth_texture GL_OES_texture_half_float GL_OES_texture_half_float_linear GL_OES_packed_depth_stencil GL_OES_vertex_half_float GL_OES_standard_derivatives GL_OES_texture_npot GL_OES_rgb8_rgba8 GL_EXT_color_buffer_float GL_EXT_color_buffer_half_float GL_EXT_texture_format_BGRA8888 GL_APPLE_texture_format_BGRA8888 ANDROID_EMU_CHECKSUM_HELPER_v1 ANDROID_EMU_native_sync_v2 ANDROID_EMU_dma_v1 ANDROID_EMU_direct_mem ANDROID_EMU_host_composition_v1 ANDROID_EMU_host_composition_v2 ANDROID_EMU_vulkan ANDROID_EMU_deferred_vulkan_commands ANDROID_EMU_vulkan_null_optional_strings ANDROID_EMU_vulkan_create_resources_with_requirements ANDROID_EMU_YUV_Cache ANDROID_EMU_vulkan_ignored_handles ANDROID_EMU_vulkan_free_memory_sync ANDROID_EMU_vulkan_shader_float16_int8 ANDROID_EMU_vulkan_async_queue_submit ANDROID_EMU_sync_buffer_data ANDROID_EMU_vulkan_async_qsri ANDROID_EMU_hwc_color_transform GL_OES_EGL_image_external_essl3 GL_OES_vertex_array_object GL_KHR_texture_compression_astc_ldr ANDROID_EMU_host_side_tracing ANDROID_EMU_gles_max_version_3_0 
+10-14 17:28:08.406  3259  3343 I AndroidGraphics: framebuffer: (8, 8, 8, 8)
+10-14 17:28:08.406  3259  3343 I AndroidGraphics: depthbuffer: (24)
+10-14 17:28:08.406  3259  3343 I AndroidGraphics: stencilbuffer: (8)
+10-14 17:28:08.406  3259  3343 I AndroidGraphics: samples: (2)
+10-14 17:28:08.406  3259  3343 I AndroidGraphics: coverage sampling: (false)
+10-14 17:28:08.641  3259  3343 I AndroidGraphics: Managed meshes/app: { }
+10-14 17:28:08.641  3259  3343 I AndroidGraphics: Managed textures/app: { }
+10-14 17:28:08.641  3259  3343 I AndroidGraphics: Managed cubemap/app: { }
+10-14 17:28:08.641  3259  3343 I AndroidGraphics: Managed shaders/app: { }
+10-14 17:28:08.691  3259  3343 I AndroidGraphics: Managed buffers/app: { }
+10-14 17:28:08.947  3259  3343 W qatar.peninsul: Verification of com.badlogic.gdx.math.Vector3 com.badlogic.gdx.math.Vector3.scl(float) took 225.069ms
+10-14 17:28:09.067  3259  3343 W qatar.peninsul: Accessing hidden field Ljava/nio/Buffer;->position:I (greylist, JNI, allowed)
+10-14 17:28:09.067  3259  3343 W qatar.peninsul: Accessing hidden field Ljava/nio/Buffer;->limit:I (greylist, JNI, allowed)
+10-14 17:28:09.067  3259  3343 W qatar.peninsul: Accessing hidden field Ljava/nio/Buffer;->_elementSizeShift:I (greylist, JNI, allowed)
+10-14 17:28:09.067  3259  3343 W qatar.peninsul: Accessing hidden field Ljava/nio/Buffer;->address:J (greylist, JNI, allowed)
+10-14 17:28:09.748  3259  3343 W qatar.peninsul: Verification of int com.badlogic.gdx.graphics.Pixmap.getGLFormat() took 216.431ms
+10-14 17:28:11.677  3259  3272 I qatar.peninsul: Background concurrent copying GC freed 18134(503KB) AllocSpace objects, 3(220KB) LOS objects, 37% free, 10159KB/15MB, paused 367us total 328.879ms
+10-14 17:28:07.680  3259  3259 W qatar.peninsula: type=1400 audit(0.0:19): avc: denied { write } for name="property_service" dev="tmpfs" ino=263 scontext=u:r:untrusted_app:s0:c146,c256,c512,c768 tcontext=u:object_r:property_socket:s0 tclass=sock_file permissive=0 app=ai.arena.qatar.peninsula
+10-14 17:28:12.785  3259  3319 I qatar.peninsul: Waiting for a blocking GC ProfileSaver
+10-14 17:28:12.924  3259  3755 D ProfileInstaller: Installing profile for ai.arena.qatar.peninsula
+10-14 17:28:12.955  3259  3272 I qatar.peninsul: Background young concurrent copying GC freed 88998(1458KB) AllocSpace objects, 0(0B) LOS objects, 0% free, 19MB/19MB, paused 413us total 534.523ms
+10-14 17:28:12.955  3259  3319 I qatar.peninsul: WaitForGcToComplete blocked ProfileSaver on ClassLinker for 169.671ms
+10-14 17:28:14.578  3259  3272 I qatar.peninsul: Background concurrent copying GC freed 123436(2706KB) AllocSpace objects, 2(200KB) LOS objects, 21% free, 21MB/27MB, paused 3.281ms total 1.621s
+10-14 17:28:17.100  3259  3272 I qatar.peninsul: Background young concurrent copying GC freed 483497(7922KB) AllocSpace objects, 0(0B) LOS objects, 23% free, 19MB/25MB, paused 445us total 109.688ms
+10-14 17:28:17.315  3259  3343 I QatarStreaming: PACK_READY epoch=2026-10-14-srtm-osm-v0.3 terrainSample=10.4493065m OSM=1441102/189446
+10-14 17:28:17.315  3259  3343 I QatarStreaming: SPAWN_READY x=78079.34507326268 z=101953.34731172574 elevation=10.4493065 roadClass=6 basis=nearest clear OSM roadside
+10-14 17:28:20.157  3259  3343 W qatar.peninsul: Verification of int com.badlogic.gdx.graphics.g3d.model.Node.getChildCount() took 100.890ms
+10-14 17:28:20.260  3259  3343 I QatarThermal: PROFILE NORMAL fps=30 detailRadius=3
+10-14 17:28:20.260  3259  3343 I QatarEnvironment: ENV_READY presets=CLEAR,SHAMAL,DUST,RAIN tide=dynamic wind=enabled
+10-14 17:28:21.174  3259  3343 I QatarStreaming: OSM_READY cell=312,407 roads=81 buildings=4
+10-14 17:28:30.151  3259  3343 I QatarRuntime: STATE mode=WALK heightAboveGround=0.96000004 supportClearance=0.96000004 water=no speed=0.38303062 cameraDistance=8.172373 stable=yes
+10-14 17:28:37.756  3259  3343 I QatarRuntime: STATE mode=WALK heightAboveGround=0.96000004 supportClearance=0.96000004 water=no speed=0.0 cameraDistance=8.381526 stable=yes
+10-14 17:28:45.387  3259  3343 I QatarRuntime: STATE mode=WALK heightAboveGround=0.96000004 supportClearance=0.96000004 water=no speed=0.0 cameraDistance=8.381526 stable=yes
+10-14 17:28:53.482  3259  3343 I QatarRuntime: STATE mode=WALK heightAboveGround=0.96000004 supportClearance=0.96000004 water=no speed=1.7652657E-6 cameraDistance=8.381529 stable=yes
+10-14 17:29:01.356  3259  3343 I QatarRuntime: STATE mode=WALK heightAboveGround=0.96000004 supportClearance=0.96000004 water=no speed=2.014729E-6 cameraDistance=8.381529 stable=yes
+10-14 17:29:07.695  3259  3272 I qatar.peninsul: Background young concurrent copying GC freed 99412(3148KB) AllocSpace objects, 39(1672KB) LOS objects, 17% free, 21MB/25MB, paused 7.575ms total 54.010ms
+10-14 17:29:10.435  3259  3343 I QatarRuntime: STATE mode=CAR heightAboveGround=0.7600002 supportClearance=0.7600002 water=no speed=2.3740509 cameraDistance=12.881238 stable=yes
+10-14 17:29:18.207  3259  3343 I QatarRuntime: STATE mode=CAR heightAboveGround=0.7600002 supportClearance=0.7600002 water=no speed=0.09490619 cameraDistance=12.602885 stable=yes
+10-14 17:29:25.836  3259  3343 I QatarRuntime: STATE mode=BOAT heightAboveGround=0.6899996 supportClearance=0.6899996 water=no speed=0.22586653 cameraDistance=12.914037 stable=yes
+10-14 17:29:33.173  3259  3343 I QatarRuntime: STATE mode=BOAT heightAboveGround=0.6899996 supportClearance=0.6899996 water=no speed=0.097705625 cameraDistance=12.919822 stable=yes
+10-14 17:29:40.291  3259  3343 I QatarRuntime: STATE mode=HELICOPTER heightAboveGround=4.5664406 supportClearance=4.5664406 water=no speed=2.9132004 cameraDistance=13.219442 stable=yes
+10-14 17:29:47.383  3259  3343 I QatarRuntime: STATE mode=HELICOPTER heightAboveGround=49.577415 supportClearance=49.577415 water=no speed=2.6671312 cameraDistance=28.70098 stable=yes
+10-14 17:29:54.480  3259  3343 I QatarRuntime: STATE mode=AEROPLANE heightAboveGround=43.95941 supportClearance=43.95941 water=no speed=18.100256 cameraDistance=40.794373 stable=yes
+10-14 17:30:01.767  3259  3343 I QatarRuntime: STATE mode=AEROPLANE heightAboveGround=20.424822 supportClearance=20.424822 water=no speed=1.10197136E-4 cameraDistance=39.78997 stable=yes
+10-14 17:30:08.837  3259  3343 I QatarRuntime: STATE mode=AEROPLANE heightAboveGround=20.424818 supportClearance=20.424818 water=no speed=1.10192195E-4 cameraDistance=39.78997 stable=yes
+10-14 17:30:13.067  3259  3272 I qatar.peninsul: Background young concurrent copying GC freed 186029(4271KB) AllocSpace objects, 0(0B) LOS objects, 16% free, 21MB/25MB, paused 59.475ms total 85.492ms
+10-14 17:30:16.354  3259  3343 I QatarRuntime: STATE mode=AEROPLANE heightAboveGround=20.424812 supportClearance=20.424812 water=no speed=4.5761466E-5 cameraDistance=39.78997 stable=yes
