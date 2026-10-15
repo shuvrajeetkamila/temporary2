@@ -42,6 +42,8 @@ public final class MainActivity extends AndroidApplication {
     private void refreshPowerSaveMode(){powerSaveMode=powerManager!=null&&powerManager.isPowerSaveMode();}
     private int effectiveThermalStatus(){return ThermalGovernor.effectiveAndroidStatus(thermalStatus,powerSaveMode);}
 
+    @Override protected void onResume(){refreshPowerSaveMode();super.onResume();}
+
     @Override protected void onDestroy(){
         if(Build.VERSION.SDK_INT>=Build.VERSION_CODES.Q&&powerManager!=null&&thermalListener!=null)powerManager.removeThermalStatusListener(thermalListener);
         if(powerReceiverRegistered){unregisterReceiver(powerReceiver);powerReceiverRegistered=false;}

@@ -88,8 +88,10 @@ jobs:
           "$ADB" shell input tap 1140 52; sleep 1
           "$ADB" shell input swipe 150 600 150 430 1600; sleep 10
           "$ADB" exec-out screencap -p > qa/qatar-runtime/aeroplane.png
-          "$ADB" shell cmd power set-mode 1 > qa/qatar-runtime/power-save.txt 2>&1
+          "$ADB" shell dumpsys battery unplug > qa/qatar-runtime/power-save.txt 2>&1
+          "$ADB" shell cmd power set-mode 1 >> qa/qatar-runtime/power-save.txt 2>&1
           POWER_SAVE_EXIT=$?
+          "$ADB" shell settings get global low_power >> qa/qatar-runtime/power-save.txt 2>&1
           sleep 12
           PID_BEFORE_LIFECYCLE="$("$ADB" shell pidof ai.arena.qatar.peninsula | tr -d '\r')"
           "$ADB" shell input keyevent 3; sleep 3
@@ -99,6 +101,7 @@ jobs:
           PID="$("$ADB" shell pidof ai.arena.qatar.peninsula | tr -d '\r')"
           "$ADB" exec-out screencap -p > qa/qatar-runtime/resumed.png
           "$ADB" shell cmd power set-mode 0 || true
+          "$ADB" shell dumpsys battery reset || true
           python3 tools/check_png_scene.py qa/qatar-runtime/{gameplay,car,boat,helicopter,aeroplane,resumed}.png | tee qa/qatar-runtime/scene-validation.txt
           SCENE_EXIT=${PIPESTATUS[0]}
           if [ -n "$PID" ]; then "$ADB" logcat -d --pid="$PID" > qa/qatar-runtime/logcat.txt; else "$ADB" logcat -d > qa/qatar-runtime/logcat.txt; fi
