@@ -81,4 +81,44 @@ The clean GitHub build must:
 8. retain `extraRenderGate=no smooth=yes` cadence evidence in every movement mode; and
 9. produce non-flat gameplay screenshots for visual inspection.
 
-Final CI run IDs, APK byte count/SHA-256, runtime telemetry, and screenshot findings are recorded here after the authoritative build and emulator run complete.
+## Final validated artifact
+
+| Item | Result |
+|---|---|
+| Source commit compiled | `35fd496546faa5419828bcb44977f5aa628a04f7` |
+| GitHub build run | `38794894452` — passed |
+| GitHub Android runtime run | `38795289999` — passed |
+| APK | `artifacts/Qatar-The-Peninsula-REALISTIC-WORLD-v0.8.0.apk` |
+| APK bytes | `38,151,103` |
+| APK SHA-256 | `17da8a2ee366d4f13b02189306e5040045c94a24109ee0ae33201ea50ce0e6ba` |
+| Package/version | `ai.arena.qatar.peninsula`, code `8`, `0.8.0-realistic-world-preproduction` |
+| Android SDK / ABIs | minimum 26, target 35; `arm64-v8a`, `armeabi-v7a`, `x86_64` |
+| Signing continuity | v2 signature; certificate SHA-256 `ccce47e341dde37e9cb94ab7cb9298ee39df967483ca6c618491cd43a7ae390c` |
+| Visual geometry audit | passed |
+| Unit/assemble/package gates | passed |
+
+The final emulator run installed and then reinstalled the APK, retained the same process through pause/resume, entered Battery Saver’s WARM profile, opened/selected/closed the national map, teleported, exercised all five modes, found no app-scoped fatal log, and emitted:
+
+```text
+QatarVisual: V08_PIPELINE mipmappedSurfaces=5 mipmappedFacades=2 roadSegments=81 joinedCaps=78 markingStrips=0 roadHeightFallback=residentClamp buildings=4 roofDetails=16 boundedJointCap=384
+```
+
+The first streamed residential/service-road cell legitimately had no eligible lane-marking strips; the complete-source audit and renderer tests cover their bounded generation on higher road classes.
+
+Final settled cadence samples retained the accepted v0.7 single-pacer contract:
+
+| Mode | Average frame interval | Gate |
+|---|---:|---|
+| WALK | 31.16 ms | `extraRenderGate=no smooth=yes` |
+| CAR | 34.92 ms | `extraRenderGate=no smooth=yes` |
+| BOAT | 35.81 ms | `extraRenderGate=no smooth=yes` |
+| HELICOPTER | 32.13 ms | `extraRenderGate=no smooth=yes` |
+| AEROPLANE | 30.13 ms | `extraRenderGate=no smooth=yes` |
+
+All nine captured scenes passed the non-flat viewport check. Final gameplay recorded `luminance_sd=35.56` and 49 colour bins. Offline map checks recorded `edges=2,820`, density `0.2049` for the local minimap and `edges=18,177`, density `0.2459` for the expanded atlas. The screenshots were inspected during implementation; lighting was reduced after an overexposed intermediate run, distance fog was removed after it flattened façade colours, road heights were clamped after long-segment artifacts were observed, and façade bay contrast was enlarged for distance legibility.
+
+Runtime run `38793852904` is not an application failure: its runner stopped in `sdkmanager` before APK installation. The ordinary marker retry produced the passing authoritative run above.
+
+## Honest remaining limits
+
+This is a bounded mobile procedural foundation, not photorealistic final architecture. OSM footprints/heights remain the source silhouette, relation inner holes are still absent in QTOD v1, generic façade patterns do not replace future original hero-landmark models, and emulator screenshots cannot prove subjective ARM-phone appearance, heat, or compositor behaviour. The user’s physical confirmation establishes v0.7 motion smoothness; v0.8 still requires physical-device confirmation for its added visual load and thermal comfort. Character and vehicle model work remains deliberately deferred to v0.9.

@@ -40,6 +40,12 @@ This incremental release preserves the physically confirmed v0.7 smooth-motion a
 - No Android `INTERNET` permission and no post-install map download
 - Deterministic compilers, provenance/checksums, coverage tests, certificate checks, reinstall/lifecycle checks, all-five-mode emulator physics/camera smoke testing, and SHA-256 publication
 
+## Validated Android APK
+
+- File: `artifacts/Qatar-The-Peninsula-REALISTIC-WORLD-v0.8.0.apk`
+- SHA-256: `17da8a2ee366d4f13b02189306e5040045c94a24109ee0ae33201ea50ce0e6ba`
+- Direct GitHub download: <https://github.com/shuvrajeetkamila/temporary2/raw/refs/heads/arena/8288058f-temporary2/artifacts/Qatar-The-Peninsula-REALISTIC-WORLD-v0.8.0.apk>
+
 ## Honest status
 
 v0.8.0 is a playable **incremental preproduction prototype**, not a claim that the prompt book’s multi-year AAA end state is complete. It uses real current OSM road vectors/building footprints, measured terrain, original procedural materials and geometry, authored (not live) Qatar weather presets, automatic platform thermal/power downshifts, the accepted v0.7 fixed-step/single-pacer camera presentation, locally rendered offline OSM street maps, and a public development certificate rather than production signing. Survey-grade terrain, hydrodynamic bathymetry, reclamation-by-reclamation coastline work, hero landmark models, the planned v0.9 character/vehicle overhaul, traffic/transit/activity, complete Arabic shaping/localization, audio, and broad physical-device profiling remain later milestones.
