@@ -1,11 +1,11 @@
 {
-  "sourceCommit": "9db6324e89f56aea4a75f4e42e86cf6601da9f91",
-  "apk": "Qatar-The-Peninsula-QATAR-STABILITY-v0.5.0.apk",
-  "apkBytes": 37913339,
-  "apkSha256": "2255f8ad572ba2eb309e2031c67c778bcc45f9bf459ea11fdd1644c67cd525bf",
+  "sourceCommit": "2339f1eccbcb6f0ab8202d8d4c66a4e9d2bb6596",
+  "apk": "Qatar-The-Peninsula-CAMERA-MAP-v0.6.0.apk",
+  "apkBytes": 37929379,
+  "apkSha256": "111bd8ef7ea4d268b01dd39bcf6502b03d40cb384cda63ad00fe2c49a42623c1",
   "packageId": "ai.arena.qatar.peninsula",
-  "versionCode": 5,
-  "versionName": "0.5.0-qatar-stability-preproduction",
+  "versionCode": 6,
+  "versionName": "0.6.0-camera-map-teleport-preproduction",
   "minSdk": 26,
   "targetSdk": 35,
   "abis": [
@@ -39,6 +39,9 @@
     "HOT": 15
   },
   "androidThermalListener": true,
+  "fixedStepRenderInterpolation": true,
+  "touchNationalMap": true,
+  "modeSafeTeleport": true,
   "preproductionSigningCertificateSha256": "ccce47e341dde37e9cb94ab7cb9298ee39df967483ca6c618491cd43a7ae390c",
   "productionSigned": false,
   "status": "PASSED"
