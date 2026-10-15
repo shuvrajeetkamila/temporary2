@@ -1,0 +1,18 @@
+Verifies
+Verified using v1 scheme (JAR signing): false
+Verified using v2 scheme (APK Signature Scheme v2): true
+Verified using v3 scheme (APK Signature Scheme v3): false
+Verified using v3.1 scheme (APK Signature Scheme v3.1): false
+Verified using v3.2 scheme (APK Signature Scheme v3.2): false
+Verified using v4 scheme (APK Signature Scheme v4): false
+Verified for SourceStamp: false
+Number of signers: 1
+V2 Signer: certificate DN: CN=Qatar Preproduction Development, OU=Arena Android Testing, O=Arena.ai, L=Kolkata, ST=West Bengal, C=IN
+V2 Signer: certificate SHA-256 digest: ccce47e341dde37e9cb94ab7cb9298ee39df967483ca6c618491cd43a7ae390c
+V2 Signer: certificate SHA-1 digest: 7a91d55f861f14a15a6e68c24c5ea58130485f50
+V2 Signer: certificate MD5 digest: 59b57a139fd29e5fa524fa6b00643f38
+V2 Signer: key algorithm: RSA
+V2 Signer: key size (bits): 3072
+V2 Signer: public key SHA-256 digest: 771fbb8f3d8143c409bc70b4f4d6d566d3114cdf576ed3347904852693698bb1
+V2 Signer: public key SHA-1 digest: 4da5129221c05e3a93e78c07d69baeb010b45761
+V2 Signer: public key MD5 digest: adfc21a7b28746762a721cac45632331
