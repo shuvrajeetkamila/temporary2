@@ -1,5 +1,6 @@
-qa/qatar-runtime/gameplay.png: scene=yes luminance_sd=53.28 colour_bins=71 samples=38870
-qa/qatar-runtime/car.png: scene=yes luminance_sd=56.42 colour_bins=35 samples=38870
-qa/qatar-runtime/boat.png: scene=yes luminance_sd=48.99 colour_bins=41 samples=38870
-qa/qatar-runtime/helicopter.png: scene=yes luminance_sd=53.43 colour_bins=61 samples=38870
-qa/qatar-runtime/aeroplane.png: scene=yes luminance_sd=61.60 colour_bins=62 samples=38870
+qa/qatar-runtime/gameplay.png: scene=yes luminance_sd=53.37 colour_bins=45 samples=38870
+qa/qatar-runtime/car.png: scene=yes luminance_sd=56.63 colour_bins=20 samples=38870
+qa/qatar-runtime/boat.png: scene=yes luminance_sd=51.96 colour_bins=26 samples=38870
+qa/qatar-runtime/helicopter.png: scene=yes luminance_sd=54.47 colour_bins=33 samples=38870
+qa/qatar-runtime/aeroplane.png: scene=yes luminance_sd=62.09 colour_bins=38 samples=38870
+qa/qatar-runtime/resumed.png: scene=yes luminance_sd=62.51 colour_bins=36 samples=38870
