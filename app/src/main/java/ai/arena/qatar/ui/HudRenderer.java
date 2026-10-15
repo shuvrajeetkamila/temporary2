@@ -140,8 +140,8 @@ public final class HudRenderer implements Disposable {
         }else{font.setColor(.73f,.80f,.81f,1);font.draw(sprites,"No destination selected yet",layout.sideX(),panel.top()-268);}
         font.setColor(.92f,.88f,.73f,1);font.draw(sprites,mapStatus,layout.sideX(),teleport.top()+28);
         font.getData().setScale(1.06f);font.setColor(Color.WHITE);font.draw(sprites,"TELEPORT",teleport.x()+teleport.width()/2-48,teleport.y()+35);
-        font.getData().setScale(.76f);font.setColor(.78f,.86f,.87f,1);font.draw(sprites,"Green = player    Red = selected destination",layout.sideX(),panel.y()+98);
-        font.draw(sprites,"CLOSE and Android Back return to gameplay",layout.sideX(),panel.y()+82);
+        font.getData().setScale(.76f);font.setColor(.78f,.86f,.87f,1);font.draw(sprites,"Green = player    Red = selected destination",panel.x()+24,panel.y()+53);
+        font.draw(sprites,"CLOSE and Android Back return to gameplay",panel.x()+24,panel.y()+31);
         font.getData().setScale(1.02f);sprites.end();
     }
 
