@@ -95,7 +95,9 @@ jobs:
       - name: Require successful compilation
         run: test "${{ steps.compile.outcome }}" = "success"
 
-      - name: Validate final APK structure and uncompressed random-access pack
+      - name: Validate final APK structure, signing, and uncompressed random-access pack
+        id: package
+        continue-on-error: true
         run: |
           python3 - <<'PY' | tee qa/qatar-current/apk-validation.txt
           import json, zipfile, hashlib, pathlib, sys
@@ -130,6 +132,27 @@ jobs:
           "$APKSIGNER" verify --verbose --print-certs app/build/outputs/apk/debug/app-debug.apk | tee qa/qatar-current/apk-signing.txt
           grep -qi 'Signer #1 certificate SHA-256 digest: ccce47e341dde37e9cb94ab7cb9298ee39df967483ca6c618491cd43a7ae390c' qa/qatar-current/apk-signing.txt
           grep -q 'Verified using v2 scheme (APK Signature Scheme v2): true' qa/qatar-current/apk-signing.txt
+
+      - name: Surface package/signing diagnostics
+        if: steps.package.outcome != 'success'
+        run: |
+          {
+            echo 'APK validation failed. AAPT output:'
+            cat qa/qatar-current/aapt-badging.txt 2>/dev/null || true
+            echo 'Signing output:'
+            cat qa/qatar-current/apk-signing.txt 2>/dev/null || true
+            echo 'Keystore hash:'
+            sha256sum app/signing/qatar-preproduction.p12 2>/dev/null || true
+          } > qa/qatar-current/package-diagnostics.txt
+          python3 - <<'PY'
+          from pathlib import Path
+          message=Path('qa/qatar-current/package-diagnostics.txt').read_text(errors='replace')[-50000:]
+          escaped=message.replace('%','%25').replace('\r','%0D').replace('\n','%0A')
+          print(f'::error title=Qatar APK package diagnostics::{escaped}')
+          PY
+
+      - name: Require successful APK package validation
+        run: test "${{ steps.package.outcome }}" = "success"
 
       - name: Stage named APK and checksum
         run: |
