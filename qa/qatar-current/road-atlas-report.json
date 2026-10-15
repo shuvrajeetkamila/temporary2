@@ -1,0 +1,26 @@
+{
+  "format": "Qatar offline OSM road atlas PNG",
+  "width": 550,
+  "height": 1030,
+  "epsg": 32639,
+  "sourceQodSha256": "c48a62e1e8f1498bb64bde2864e4ae7894380f5185bc0a3a39ebf47012d9ba00",
+  "atlasSha256": "18c8bb4eeaa4328a764c0cb79bfd84632ede0d13973eb5786296b769162a9ae4",
+  "atlasBytes": 208062,
+  "roadSegments": 1441102,
+  "roadClassCounts": {
+    "0": 21949,
+    "1": 14638,
+    "2": 19988,
+    "3": 33027,
+    "4": 60488,
+    "5": 334395,
+    "6": 308187,
+    "7": 216975,
+    "8": 417621,
+    "9": 4777,
+    "10": 147,
+    "11": 8910
+  },
+  "license": "Open Database License 1.0; \u00a9 OpenStreetMap contributors",
+  "use": "offline game UI street overview; not navigation"
+}
