@@ -1,5 +1,5 @@
-Qatar Android v0.4.0 Education-City all-focus runtime request
-APK SHA-256: 7ed0ab3bce921a57247d627a03222e73aee26bf73f4b69ba59dc9f1f8276a544
-Build run: 38606105934
-Requested UTC: 2026-10-14T17:46:00Z
-Checks: install/cold launch/readiness at a real open Education City OSM roadside; five bounded physics modes; terrain/water/air support and camera separation; mode-aware camera; deterministic rejection of flat façade-filled or sky-only screenshots; app-scoped fatal scan.
+Qatar Android v0.5.0 installation, lifecycle, and power-stability runtime request
+APK SHA-256: 93dc6dc65e4b833744826e7ff32cc3e161207c3d0bd22fb461f19f886c77661a
+Build run: 38717970044
+Requested UTC: 2026-10-15T10:10:00Z
+Checks: install and same-certificate reinstall; cold launch/readiness at Education City; six visually non-flat screenshots; five bounded physics modes; Battery Saver WARM downshift; Home/background/resume with the same PID and lifecycle callbacks; app-scoped fatal scan.
