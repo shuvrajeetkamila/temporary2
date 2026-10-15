@@ -21,7 +21,7 @@ jobs:
     timeout-minutes: 25
     steps:
       - name: Check out deterministic Qatar compiler
-        uses: actions/checkout@v7
+        uses: actions/checkout@v7.0.1
 
       - name: Download six Mapzen terrain source tiles
         run: |
