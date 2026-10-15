@@ -137,12 +137,12 @@ jobs:
         if: steps.package.outcome != 'success'
         run: |
           {
-            echo 'APK validation failed. AAPT output:'
-            cat qa/qatar-current/aapt-badging.txt 2>/dev/null || true
-            echo 'Signing output:'
-            cat qa/qatar-current/apk-signing.txt 2>/dev/null || true
+            echo 'APK validation failed. Signing output:'
+            cat qa/qatar-current/apk-signing.txt 2>/dev/null || echo '(signing output was not reached)'
             echo 'Keystore hash:'
             sha256sum app/signing/qatar-preproduction.p12 2>/dev/null || true
+            echo 'AAPT package header:'
+            head -8 qa/qatar-current/aapt-badging.txt 2>/dev/null || true
           } > qa/qatar-current/package-diagnostics.txt
           python3 - <<'PY'
           from pathlib import Path
