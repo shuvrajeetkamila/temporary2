@@ -481,7 +481,7 @@ public final class QatarWorldRenderer implements WorldStreamer.Listener, QatarDe
     }
 
     private void facadeRect(MeshPartBuilder part,float ax,float bottom,float az,float bx,float top,float bz,float nx,float nz,boolean counterClockwise){
-        float u=Math.max(.1f,(float)Math.hypot(bx-ax,bz-az)/3.4f),v=Math.max(.1f,(top-bottom)/3.2f);
+        float u=Math.max(.1f,(float)Math.hypot(bx-ax,bz-az)/7.5f),v=Math.max(.1f,(top-bottom)/4.2f);
         if(counterClockwise){
             facadeA.setPos(bx,bottom,bz).setNor(nx,0,nz).setUV(u,0);facadeB.setPos(ax,bottom,az).setNor(nx,0,nz).setUV(0,0);
             facadeC.setPos(ax,top,az).setNor(nx,0,nz).setUV(0,v);facadeD.setPos(bx,top,bz).setNor(nx,0,nz).setUV(u,v);
@@ -685,12 +685,12 @@ public final class QatarWorldRenderer implements WorldStreamer.Listener, QatarDe
     private static Texture createFacadeTexture(boolean glass){
         final int size=64;Pixmap pixmap=new Pixmap(size,size,Pixmap.Format.RGBA8888);
         for(int y=0;y<size;y++)for(int x=0;x<size;x++){
-            boolean frame=x<5||x>=59||y<7||y>=57;float shade=.96f+.035f*(float)Math.sin((x+y)*.16f);
+            boolean frame=glass?(x<6||x>=58||y<7||y>=57):(x<13||x>=51||y<15||y>=47);float shade=.97f+.025f*(float)Math.sin((x+y)*.16f);
             float r,g,b;
             if(glass){
-                if(frame){r=.76f;g=.79f;b=.78f;}else{float reflection=.72f+.10f*(float)Math.sin((x-y)*.08f);r=reflection*.58f;g=reflection*.82f;b=reflection*.90f;}
+                if(frame){r=.78f;g=.81f;b=.80f;}else{float reflection=.72f+.10f*(float)Math.sin((x-y)*.08f);r=reflection*.58f;g=reflection*.82f;b=reflection*.90f;}
             }else if(frame){r=shade;g=shade*.99f;b=shade*.96f;}
-            else{float reflection=.70f+.08f*(float)Math.sin((x+y)*.09f);r=reflection*.48f;g=reflection*.70f;b=reflection*.76f;}
+            else{float reflection=.67f+.08f*(float)Math.sin((x+y)*.09f);r=reflection*.42f;g=reflection*.66f;b=reflection*.74f;}
             pixmap.drawPixel(x,y,Color.rgba8888(clampColour(r),clampColour(g),clampColour(b),1));
         }
         Texture texture=new Texture(pixmap,true);pixmap.dispose();texture.setWrap(Texture.TextureWrap.Repeat,Texture.TextureWrap.Repeat);texture.setFilter(Texture.TextureFilter.MipMapLinearLinear,Texture.TextureFilter.Linear);return texture;
