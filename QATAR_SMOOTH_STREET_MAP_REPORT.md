@@ -56,4 +56,27 @@ The Android runtime must additionally:
 - require smooth single-pacer cadence diagnostics for all five modes;
 - repeat map open/close/select/teleport, nine-scene, Battery Saver, lifecycle, process-preservation, and fatal-log gates.
 
-Final APK identity and evidence are added only after the new candidate passes those workflows. Physical-phone confirmation remains necessary because emulator cadence cannot reproduce every handset compositor, thermal, or display-refresh interaction.
+## Final emulator evidence
+
+- APK: `artifacts/Qatar-The-Peninsula-SMOOTH-STREETS-v0.7.0.apk`
+- Size: 38,142,203 bytes
+- SHA-256: `6cfea38f3b78c031987e16ba733dc408db8dbb5adfd3e0fc01cafb3e463a6049`
+- Passing clean build/unit/atlas run: `38784037090`
+- Passing extended Android runtime: `38784569735`
+- Local minimap street validation: edge density `0.2016`, 68 quantized colour bins
+- Expanded national map street validation: edge density `0.2459`, 209 quantized colour bins
+- Steady cadence samples selected by the gate:
+  - WALK: 24.97 ms average / 49.53 ms maximum
+  - CAR: 30.96 ms average / 74.09 ms maximum
+  - BOAT: 29.43 ms average / 83.48 ms maximum
+  - HELICOPTER: 30.54 ms average / 59.95 ms maximum
+  - AEROPLANE: 25.13 ms average / 33.95 ms maximum
+- Every selected sample records `extraRenderGate=no` and `smooth=yes`.
+- Map open/select/close, northern-Qatar teleport, nine visual scenes, all five physics modes, Battery Saver WARM, same-PID lifecycle callbacks, and application fatal scan: passed
+- Total PSS after the exercise: 67,296 KB on the Android 29 x86_64 emulator
+
+An early emulator startup/loading window still recorded a transient 57.48 ms WALK average before settling; it was not hidden from the evidence. Physical-phone confirmation remains necessary because emulator cadence cannot reproduce every handset compositor, thermal, and display-refresh interaction.
+
+## Signing boundary
+
+The APK continues to use the fixed public preproduction certificate introduced in v0.5. It updates v0.5/v0.6 directly but is not production signing.
