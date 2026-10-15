@@ -1,5 +1,5 @@
-Qatar Android v0.5.0 final installation, lifecycle, and power-stability runtime request
-APK SHA-256: 2255f8ad572ba2eb309e2031c67c778bcc45f9bf459ea11fdd1644c67cd525bf
-Build run: 38718954801
-Requested UTC: 2026-10-15T10:22:00Z
-Checks: stable-certificate install/reinstall; cold launch/readiness; six visually non-flat screenshots; all five bounded physics modes; unplugged-emulator Battery Saver WARM downshift; Home/background/resume with same PID and callbacks; app-scoped fatal scan.
+Qatar Android v0.6.0 camera stabilization, national map, and teleport runtime request
+APK SHA-256: 111bd8ef7ea4d268b01dd39bcf6502b03d40cb384cda63ad00fe2c49a42623c1
+Build run: 38777447629
+Requested UTC: 2026-10-15T17:29:58Z
+Checks: stable-certificate install/reinstall; cold launch; fixed-step camera presentation in all five movement modes; minimap open; full-country map render; destination select; explicit close; northern-Qatar WALK teleport; destination chunk readiness; nine valid screenshots; unplugged Battery Saver WARM downshift; same-PID Home/resume callbacks; no app-scoped fatal log.
