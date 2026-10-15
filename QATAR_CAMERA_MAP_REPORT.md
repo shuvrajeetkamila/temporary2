@@ -51,7 +51,24 @@ The source tests cover fixed-step midpoint/rebase interpolation, shortest-path h
 
 The extended Android workflow additionally opens and closes the map, selects northern Qatar, captures the open and selected windows, performs a WALK teleport, validates the destination scene, then continues through all five physics modes, Battery Saver, lifecycle, screenshot, and fatal-log gates.
 
-Final APK hash and passing build/runtime identifiers are recorded only after those workflows complete.
+## Final emulator evidence
+
+- APK: `artifacts/Qatar-The-Peninsula-CAMERA-MAP-v0.6.0.apk`
+- Size: 37,929,427 bytes
+- SHA-256: `76d1bf32702d1eca80a6ea3bb9fd12dfaa2d827da5148b464364d3074b0f5f5e`
+- Passing clean build and unit-test run: `38778614626`
+- Passing extended Android runtime: `38778982654`
+- Install, same-certificate reinstall, cold start, and hot resume: passed
+- Minimap open, explicit close, reopen, destination selection, and teleport logs: present
+- Selected northern-Qatar coordinate: local `54955.59 / 168812.17`; safely resolved 187.69 m away to a clear OSM footway/road at 29.83 m terrain elevation
+- Gameplay, open map, selected map, teleported scene, five modes, and resumed scene: nine screenshots passed deterministic non-flat visual validation
+- Human, car, boat, helicopter, and aeroplane runtime bounds: passed after the teleport
+- Battery Saver NORMAL-to-WARM transition: passed
+- Home/resume lifecycle callbacks and same PID 3811: passed
+- Application-scoped fatal log: none
+- Total PSS after the expanded exercise: 74,433 KB on the Android 29 x86_64 emulator
+
+The deterministic camera tests prove interpolation and noise attenuation in code, while the emulator confirms finite camera distances throughout the five-mode exercise. Subjective rattle and heat still require confirmation on the user’s physical handset.
 
 ## Signing boundary
 
