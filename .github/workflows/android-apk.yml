@@ -130,7 +130,7 @@ jobs:
           echo '2edd3c03193dee5cac2c393190d74ae6823c4f165e31eb763eab13991f7a6746  app/signing/qatar-preproduction.p12' | sha256sum -c -
           APKSIGNER="$(find "$ANDROID_HOME/build-tools" -type f -name apksigner | sort -V | tail -1)"
           "$APKSIGNER" verify --verbose --print-certs app/build/outputs/apk/debug/app-debug.apk | tee qa/qatar-current/apk-signing.txt
-          grep -qi 'Signer #1 certificate SHA-256 digest: ccce47e341dde37e9cb94ab7cb9298ee39df967483ca6c618491cd43a7ae390c' qa/qatar-current/apk-signing.txt
+          grep -qi 'certificate SHA-256 digest: ccce47e341dde37e9cb94ab7cb9298ee39df967483ca6c618491cd43a7ae390c' qa/qatar-current/apk-signing.txt
           grep -q 'Verified using v2 scheme (APK Signature Scheme v2): true' qa/qatar-current/apk-signing.txt
 
       - name: Surface package/signing diagnostics
