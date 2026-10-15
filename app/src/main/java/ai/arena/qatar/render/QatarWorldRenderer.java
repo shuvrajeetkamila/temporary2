@@ -74,8 +74,11 @@ public final class QatarWorldRenderer implements WorldStreamer.Listener, QatarDe
     private ModelInstance focusInstance;
     private PhysicsWorld.Mode renderedMode;
     private String fatalStreamingError="";
-    private final Vector3 smoothCamera = new Vector3();
-    private boolean cameraInitialized;
+    private final CameraMotionFilter cameraFilter=new CameraMotionFilter();
+    private final Vector3 renderFocus=new Vector3();
+    private final Vector3 desiredCamera=new Vector3();
+    private final Vector3 desiredTarget=new Vector3();
+    private final Matrix4 renderFocusTransform=new Matrix4();
     private float lastCameraDistance;
     private boolean loggedRealDetail;
     private ThermalGovernor.Profile performanceProfile=ThermalGovernor.Profile.NORMAL;
@@ -113,7 +116,7 @@ public final class QatarWorldRenderer implements WorldStreamer.Listener, QatarDe
         batch.begin(camera);
         for(RenderChunk chunk:chunks.values()){batch.render(chunk.instance,environment);if(chunk.waterInstance!=null)batch.render(chunk.waterInstance,environment);}
         for (RenderChunk detail:detailCells.values()) batch.render(detail.instance,environment);
-        focusInstance.transform.set(physics.transform());
+        focusInstance.transform.set(physics.renderTransform(renderFocusTransform));
         batch.render(focusInstance,environment);
         batch.end();
     }
@@ -138,21 +141,25 @@ public final class QatarWorldRenderer implements WorldStreamer.Listener, QatarDe
     }
 
     private void updateCamera(float delta) {
-        Vector3 focus=physics.position();
-        float heading=physics.headingRadians();
-        float distance,height;
+        Vector3 focus=physics.renderPosition(renderFocus);
+        float heading=physics.renderHeadingRadians();
+        float distance,height,cameraResponse,targetResponse;
         switch(physics.mode()) {
-            case WALK -> {distance=8;height=3.7f;camera.far=6500*performanceProfile.viewDistanceScale;}
-            case CAR -> {distance=12;height=5.1f;camera.far=9000*performanceProfile.viewDistanceScale;}
-            case BOAT -> {boolean afloat=physics.hasWaterSupport();distance=afloat?18:12;height=afloat?7:6;camera.far=11000*performanceProfile.viewDistanceScale;}
-            case HELICOPTER -> {boolean airborne=physics.heightAboveGround()>6;distance=airborne?27:12;height=airborne?11:7;camera.far=14000*performanceProfile.viewDistanceScale;}
-            case AEROPLANE -> {boolean airborne=physics.heightAboveGround()>6;distance=airborne?38:12;height=airborne?13:7;camera.far=16000*performanceProfile.viewDistanceScale;}
+            case WALK -> {distance=8;height=3.7f;cameraResponse=7.2f;targetResponse=10f;camera.far=6500*performanceProfile.viewDistanceScale;}
+            case CAR -> {distance=12;height=5.1f;cameraResponse=6.5f;targetResponse=9f;camera.far=9000*performanceProfile.viewDistanceScale;}
+            case BOAT -> {boolean afloat=physics.hasWaterSupport();distance=afloat?18:12;height=afloat?7:6;cameraResponse=5.8f;targetResponse=8f;camera.far=11000*performanceProfile.viewDistanceScale;}
+            case HELICOPTER -> {boolean airborne=physics.heightAboveGround()>6;distance=airborne?27:12;height=airborne?11:7;cameraResponse=5.2f;targetResponse=7f;camera.far=14000*performanceProfile.viewDistanceScale;}
+            case AEROPLANE -> {boolean airborne=physics.heightAboveGround()>6;distance=airborne?38:12;height=airborne?13:7;cameraResponse=4.8f;targetResponse=6.5f;camera.far=16000*performanceProfile.viewDistanceScale;}
             default -> throw new IllegalStateException();
         }
-        Vector3 wanted=new Vector3(focus.x-(float)Math.sin(heading)*distance,focus.y+height,focus.z-(float)Math.cos(heading)*distance);
-        float wantedGround=terrainHeight(physics.originX()+wanted.x,physics.originZ()+wanted.z);wanted.y=Math.max(wanted.y,wantedGround+1.5f);
-        if(!cameraInitialized){smoothCamera.set(wanted);cameraInitialized=true;} else smoothCamera.lerp(wanted,Math.min(1,delta*4.5f));
-        float focusGround=terrainHeight(physics.globalX(),physics.globalZ());Vector3 target=new Vector3(focus.x,Math.max(focus.y+1.2f,focusGround+1.25f),focus.z);camera.position.set(resolveCamera(smoothCamera,target));lastCameraDistance=camera.position.dst(target);
+        desiredCamera.set(focus.x-(float)Math.sin(heading)*distance,focus.y+height,focus.z-(float)Math.cos(heading)*distance);
+        float wantedGround=terrainHeight(physics.originX()+desiredCamera.x,physics.originZ()+desiredCamera.z);
+        desiredCamera.y=Math.max(desiredCamera.y,wantedGround+1.5f);
+        float focusGround=terrainHeight(physics.originX()+focus.x,physics.originZ()+focus.z);
+        desiredTarget.set(focus.x,Math.max(focus.y+1.2f,focusGround+1.25f),focus.z);
+        cameraFilter.update(desiredCamera,desiredTarget,delta,cameraResponse,targetResponse);
+        Vector3 target=cameraFilter.target();
+        camera.position.set(resolveCamera(cameraFilter.camera(),target));lastCameraDistance=camera.position.dst(target);
         camera.up.set(Vector3.Y);
         camera.lookAt(target);
         camera.update();
@@ -438,9 +445,10 @@ public final class QatarWorldRenderer implements WorldStreamer.Listener, QatarDe
                 builder.part("wing",GL20.GL_TRIANGLES,ATTRS,maroon).box(0,.48f,.15f,9.0f,.14f,1.32f);builder.part("tailplane",GL20.GL_TRIANGLES,ATTRS,maroon).box(0,.78f,-3.05f,3.5f,.12f,.70f);builder.part("cockpit",GL20.GL_TRIANGLES,ATTRS,glass).box(0,.78f,2.55f,.92f,.48f,1.18f);
             }
         }
-        focusModel=builder.end();focusInstance=new ModelInstance(focusModel);
+        focusModel=builder.end();focusInstance=new ModelInstance(focusModel);cameraFilter.reset();
     }
 
+    public void resetCamera(){cameraFilter.reset();}
     public PerspectiveCamera camera(){return camera;}
     public String fatalStreamingError(){return fatalStreamingError;}
     public int renderChunkCount(){return chunks.size();}

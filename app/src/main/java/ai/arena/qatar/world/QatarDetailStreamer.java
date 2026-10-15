@@ -23,7 +23,7 @@ public final class QatarDetailStreamer implements Disposable {
         void deactivateDetail(QatarDetailPack.DetailChunk chunk);
         void detailCellFailed(QatarDetailPack.DetailEntry entry,Throwable error);
     }
-    private record Ready(QatarDetailPack.DetailEntry entry,QatarDetailPack.DetailChunk chunk,Throwable error){}
+    private record Ready(long generation,QatarDetailPack.DetailEntry entry,QatarDetailPack.DetailChunk chunk,Throwable error){}
     private static final class Resident { final QatarDetailPack.DetailChunk chunk;long lastRequired;Resident(QatarDetailPack.DetailChunk chunk,long now){this.chunk=chunk;lastRequired=now;} }
 
     private final QatarDetailPack pack;
@@ -34,6 +34,7 @@ public final class QatarDetailStreamer implements Disposable {
     private final ConcurrentLinkedQueue<Ready> ready=new ConcurrentLinkedQueue<>();
     private String lastError="";
     private int radiusCap=3,maxResidentCells=64,activationBudget=2;
+    private volatile long generation;
 
     public QatarDetailStreamer(QatarDetailPack pack,Listener listener){this.pack=pack;this.listener=listener;}
 
@@ -53,7 +54,8 @@ public final class QatarDetailStreamer implements Disposable {
         for(QatarDetailPack.DetailEntry entry:missing){
             if(inFlight.size()>=MAX_IN_FLIGHT_CELLS)break;long key=key(entry.x(),entry.y());
             if(residents.containsKey(key)||inFlight.containsKey(key))continue;
-            inFlight.put(key,decoder.submit(()->{try{ready.add(new Ready(entry,pack.load(entry),null));}catch(Throwable error){ready.add(new Ready(entry,null,error));}}));
+            long requestGeneration=generation;
+            inFlight.put(key,decoder.submit(()->{try{QatarDetailPack.DetailChunk decoded=pack.load(entry);if(requestGeneration==generation)ready.add(new Ready(requestGeneration,entry,decoded,null));}catch(Throwable error){if(requestGeneration==generation)ready.add(new Ready(requestGeneration,entry,null,error));}}));
         }
         long delay=4_000_000_000L;
         Iterator<Map.Entry<Long,Resident>> iterator=residents.entrySet().iterator();
@@ -81,13 +83,19 @@ public final class QatarDetailStreamer implements Disposable {
     }
     private void drain(long now,int activationBudget){
         for(int i=0;i<activationBudget;i++){
-            Ready item=ready.poll();if(item==null)break;long key=key(item.entry.x(),item.entry.y());inFlight.remove(key);
+            Ready item=ready.poll();if(item==null)break;if(item.generation!=generation)continue;long key=key(item.entry.x(),item.entry.y());inFlight.remove(key);
             if(item.error!=null){lastError=item.entry.x()+","+item.entry.y()+": "+item.error.getMessage();listener.detailCellFailed(item.entry,item.error);}
             else if(!residents.containsKey(key)){
                 try{listener.activateDetail(item.chunk);residents.put(key,new Resident(item.chunk,now));}
                 catch(Throwable error){lastError=item.entry.x()+","+item.entry.y()+": "+error.getMessage();listener.detailCellFailed(item.entry,error);}
             }
         }
+    }
+    /** Drops old microcells and ignores decoder completions from before a national teleport. */
+    public void resetForTeleport(){
+        generation++;for(Future<?> future:inFlight.values())future.cancel(true);inFlight.clear();ready.clear();
+        for(Resident resident:new ArrayList<>(residents.values()))listener.deactivateDetail(resident.chunk);
+        residents.clear();lastError="";
     }
     public int residentCount(){return residents.size();}
     public int pendingCount(){return inFlight.size()+ready.size();}

@@ -2,9 +2,9 @@
 
 A fresh Android open-world project built from the definitive Qatar prompt book in this repository. The active application does not reuse the previous Nauru Java sources, package ID, resources, or world binaries.
 
-## Current source milestone: v0.5.0 Qatar-stability preproduction
+## Current source milestone: v0.6.0 camera-map and teleport preproduction
 
-This incremental release retains the complete source-derived Qatar road/building, measured-terrain, environment, and five-mode physics foundation, then adds Android installation, lifecycle, and power stability:
+This incremental release retains the complete source-derived Qatar road/building, measured-terrain, environment, installation, lifecycle, and power foundation, then stabilizes high-speed camera motion and adds a touchable full-country map with safe teleportation:
 
 - New package: `ai.arena.qatar.peninsula`
 - Android API 26–35, libGDX/OpenGL ES 3, and gdx-bullet
@@ -27,12 +27,16 @@ This incremental release retains the complete source-derived Qatar road/building
 - Mode-sensitive nearby/predictive activation, delayed eviction, a hard 64-cell visual cap, and a smaller capped Bullet collision set
 - Explicit 30 fps foreground budget to avoid wasteful 60/90/120 Hz rendering on modest phones
 - Human, 4×4, boat, helicopter, and aeroplane physical prototype modes
+- 60 Hz fixed-step pose interpolation plus frame-rate-independent camera/aim damping to suppress speed-amplified visual rattle without reducing physics speed
+- The existing minimap is a touch target that opens a modal complete-country Qatar map with explicit CLOSE/Back navigation
+- Touch destination selection with EPSG:32639 coordinate display and mode-safe teleportation: ground/road for human and car, Gulf water for boat, and exact elevated placement for aircraft
+- Long-distance teleport resets stale prediction queues, evicts old local geometry, preserves bounded streaming, zeroes forces, and establishes temporary support while destination chunks arrive
 - No Android `INTERNET` permission and no post-install map download
 - Deterministic compilers, provenance/checksums, coverage tests, certificate checks, reinstall/lifecycle checks, all-five-mode emulator physics/camera smoke testing, and SHA-256 publication
 
 ## Honest status
 
-v0.5.0 is a playable **incremental preproduction prototype**, not a claim that the prompt book’s multi-year AAA end state is complete. It uses real current OSM road vectors/building footprints, measured terrain, authored (not live) Qatar weather presets, automatic platform thermal/power downshifts, and a public development certificate rather than production signing. Survey-grade terrain, hydrodynamic bathymetry, high-fidelity coastline/reclamation work, hero landmarks, final vehicle models/dynamics, traffic/transit/activity, complete Arabic shaping/localization, audio, and broad physical-device profiling remain later milestones.
+v0.6.0 is a playable **incremental preproduction prototype**, not a claim that the prompt book’s multi-year AAA end state is complete. It uses real current OSM road vectors/building footprints, measured terrain, authored (not live) Qatar weather presets, automatic platform thermal/power downshifts, fixed-step visual interpolation, an offline national travel map, and a public development certificate rather than production signing. Survey-grade terrain, hydrodynamic bathymetry, high-fidelity coastline/reclamation work, hero landmarks, final vehicle models/dynamics, traffic/transit/activity, complete Arabic shaping/localization, audio, and broad physical-device profiling remain later milestones.
 
 See:
 
@@ -43,6 +47,7 @@ See:
 - `QATAR_PHYSICS_REPORT.md`
 - `QATAR_RUNTIME_REPORT.md`
 - `QATAR_STABILITY_REPORT.md`
+- `QATAR_CAMERA_MAP_REPORT.md`
 - `DATA_SOURCES.md`
 - `ASSET_LICENSES.md`
 - `data/qatar/QATAR_OSM_IMPORT.json`

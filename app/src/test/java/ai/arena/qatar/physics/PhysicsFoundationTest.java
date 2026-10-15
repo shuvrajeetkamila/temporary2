@@ -26,6 +26,12 @@ public class PhysicsFoundationTest {
                 assertTrue(Float.isFinite(velocity.x)&&Float.isFinite(velocity.y)&&Float.isFinite(velocity.z));
                 physics.recover();
                 assertTrue(physics.position().y>0);
+                physics.teleport(80_000,150_000,12,.25f,false);
+                assertTrue(Math.abs(physics.globalX()-80_000)<.01);
+                assertTrue(Math.abs(physics.globalZ()-150_000)<.01);
+                for(int i=0;i<30;i++)physics.step(1f/30f);
+                Vector3 rendered=physics.renderPosition(new Vector3());
+                assertTrue(Float.isFinite(rendered.x)&&Float.isFinite(rendered.y)&&Float.isFinite(rendered.z));
             } finally {
                 physics.dispose();
             }

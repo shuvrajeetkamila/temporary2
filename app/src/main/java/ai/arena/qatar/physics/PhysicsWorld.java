@@ -65,6 +65,7 @@ public final class PhysicsWorld implements Disposable {
     private final Vector3 tmp = new Vector3();
     private final Vector3 tmp2 = new Vector3();
     private final Matrix4 transform = new Matrix4();
+    private final PoseInterpolator renderPose=new PoseInterpolator();
     private btRigidBody focusBody;
     private btCollisionShape focusShape;
     private btRigidBody temporaryFloor;
@@ -97,12 +98,19 @@ public final class PhysicsWorld implements Disposable {
         groundReference=groundHeight;
         createTemporaryFloor(groundHeight);
         createFocusBody(mode,0,groundHeight+3.0f,0);
+        renderPose.reset(position(),headingRadians);
     }
 
     private void createTemporaryFloor(float surfaceY) {
+        discardTemporaryFloor();
         temporaryFloorShape = new btBoxShape(new Vector3(80, .5f, 80));
         temporaryFloor = body(0, temporaryFloorShape, new Matrix4().setToTranslation(0,surfaceY-.5f,0));
         world.addRigidBody(temporaryFloor);
+    }
+
+    private void discardTemporaryFloor(){
+        if(temporaryFloor!=null){world.removeRigidBody(temporaryFloor);temporaryFloor.dispose();temporaryFloor=null;}
+        if(temporaryFloorShape!=null){temporaryFloorShape.dispose();temporaryFloorShape=null;}
     }
 
     private btRigidBody body(float mass, btCollisionShape shape, Matrix4 at) {
@@ -156,7 +164,7 @@ public final class PhysicsWorld implements Disposable {
         createFocusBody(requested,current.x,requestedY,current.z);
         velocity.y=requested==Mode.HELICOPTER||requested==Mode.AEROPLANE?Math.max(0,velocity.y*.25f):0;
         focusBody.setLinearVelocity(velocity.scl(requested==Mode.WALK?.35f:1));
-        temporaryFloorTime=0;
+        accumulator=0;temporaryFloorTime=0;renderPose.reset(position(),headingRadians);
     }
 
     public void step(float frameDelta) {
@@ -166,15 +174,14 @@ public final class PhysicsWorld implements Disposable {
         while (accumulator >= FIXED_STEP && steps < 5) {
             applyModeForces(FIXED_STEP);
             world.stepSimulation(FIXED_STEP,0,FIXED_STEP);
+            renderPose.advance(position(),headingRadians);
             accumulator -= FIXED_STEP;
             steps++;
         }
         temporaryFloorTime += delta;
-        if (temporaryFloor != null && temporaryFloorTime > 3f && !chunkBodies.isEmpty()) {
-            world.removeRigidBody(temporaryFloor); temporaryFloor.dispose(); temporaryFloor=null;
-            temporaryFloorShape.dispose(); temporaryFloorShape=null;
-        }
+        if (temporaryFloor != null && temporaryFloorTime > 3f && !chunkBodies.isEmpty()) discardTemporaryFloor();
         stabilizeTerrainContact();
+        renderPose.correctCurrent(position(),headingRadians);
         maybeRebase();
         recoverIfInvalid();
         action=false;
@@ -258,6 +265,7 @@ public final class PhysicsWorld implements Disposable {
         if (temporaryFloor != null) shiftBody(temporaryFloor,dx,dz);
         for (ChunkCollision chunk : chunkBodies.values()) shiftBody(chunk.body,dx,dz);
         for (ChunkCollision detail : detailBodies.values()) shiftBody(detail.body,dx,dz);
+        renderPose.shift(dx,dz);
         originX += dx; originZ += dz;
     }
 
@@ -274,6 +282,7 @@ public final class PhysicsWorld implements Disposable {
         if (!Float.isFinite(p.x)||!Float.isFinite(p.y)||!Float.isFinite(p.z)||p.y < -80) {
             Matrix4 at=new Matrix4().setToTranslation(0,mode==Mode.BOAT?(waterAvailable?waterSurface+.8f:groundReference+3f):groundReference+5f,0).rotate(Vector3.Y,(float)Math.toDegrees(headingRadians));
             focusBody.setWorldTransform(at); focusBody.setLinearVelocity(Vector3.Zero); focusBody.setAngularVelocity(Vector3.Zero); focusBody.activate();
+            accumulator=0;renderPose.reset(position(),headingRadians);
         }
     }
 
@@ -393,7 +402,26 @@ public final class PhysicsWorld implements Disposable {
         chunkBodies.clear();detailBodies.clear();availableDetail.clear();
     }
 
-    /** Explicit user recovery is the only normal gameplay teleport. */
+    /** Moves the current mode to an independently validated national-map destination. */
+    public void teleport(double globalX,double globalZ,float surfaceHeight,float seaLevel,boolean water){
+        setControls(0,0,0,false);originX=globalX;originZ=globalZ;groundReference=surfaceHeight;
+        waterSurface=seaLevel;waterAvailable=water;headingRadians=0;relocateChunkBodies();discardTemporaryFloor();
+        float y=switch(mode){
+            case WALK->surfaceHeight+supportHeight(mode)+.15f;
+            case CAR->surfaceHeight+supportHeight(mode)+.12f;
+            case BOAT->water?seaLevel+supportHeight(mode):surfaceHeight+supportHeight(mode)+.2f;
+            case HELICOPTER->Math.max(surfaceHeight,seaLevel)+60f;
+            case AEROPLANE->Math.max(surfaceHeight,seaLevel)+120f;
+        };
+        Matrix4 at=new Matrix4().setToTranslation(0,y,0).rotate(Vector3.Y,0);
+        focusBody.setWorldTransform(at);focusBody.setLinearVelocity(Vector3.Zero);focusBody.setAngularVelocity(Vector3.Zero);
+        focusBody.clearForces();focusBody.activate();
+        if(mode==Mode.WALK||mode==Mode.CAR)createTemporaryFloor(surfaceHeight);
+        accumulator=0;temporaryFloorTime=0;collisionRevision=-1;collisionCellX=Integer.MIN_VALUE;collisionCellY=Integer.MIN_VALUE;
+        renderPose.reset(position(),headingRadians);
+    }
+
+    /** Returns to stable support at the current streamed location. */
     public void recover() {
         Matrix4 at=new Matrix4().setToTranslation(0,mode==Mode.BOAT?(waterAvailable?waterSurface+.8f:groundReference+3f):groundReference+5f,0).rotate(Vector3.Y,(float)Math.toDegrees(headingRadians));
         focusBody.setWorldTransform(at);
@@ -401,9 +429,13 @@ public final class PhysicsWorld implements Disposable {
         focusBody.setAngularVelocity(Vector3.Zero);
         focusBody.clearForces();
         focusBody.activate();
+        accumulator=0;renderPose.reset(position(),headingRadians);
     }
 
     public Vector3 position() { return focusBody.getWorldTransform().getTranslation(new Vector3()); }
+    public Vector3 renderPosition(Vector3 out){return renderPose.sample(accumulator/FIXED_STEP,out);}
+    public float renderHeadingRadians(){return renderPose.sampleHeading(accumulator/FIXED_STEP);}
+    public Matrix4 renderTransform(Matrix4 out){return renderPose.sampleTransform(accumulator/FIXED_STEP,out);}
     public Vector3 velocity() { return new Vector3(focusBody.getLinearVelocity()); }
     public Matrix4 transform() { return new Matrix4(focusBody.getWorldTransform()); }
     public double globalX() { return originX + position().x; }
@@ -417,8 +449,7 @@ public final class PhysicsWorld implements Disposable {
     public Mode mode() { return mode; }
 
     @Override public void dispose() {
-        clearChunkBodies();
-        if (temporaryFloor!=null) { world.removeRigidBody(temporaryFloor); temporaryFloor.dispose(); temporaryFloorShape.dispose(); }
+        clearChunkBodies();discardTemporaryFloor();
         if (focusBody!=null) { world.removeRigidBody(focusBody); focusBody.dispose(); focusShape.dispose(); }
         world.dispose(); solver.dispose(); broadphase.dispose(); dispatcher.dispose(); configuration.dispose();
     }

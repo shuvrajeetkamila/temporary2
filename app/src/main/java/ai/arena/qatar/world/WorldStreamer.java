@@ -28,7 +28,7 @@ public final class WorldStreamer implements Disposable {
         void requiredChunkFailed(QatarPack.ChunkEntry entry, Throwable error);
     }
 
-    private record Ready(QatarPack.ChunkEntry entry, QatarPack.WorldChunk chunk, Throwable error) { }
+    private record Ready(long generation,QatarPack.ChunkEntry entry,QatarPack.WorldChunk chunk,Throwable error) { }
     private static final class Resident {
         final QatarPack.WorldChunk chunk;
         long lastRequiredNanos;
@@ -49,6 +49,7 @@ public final class WorldStreamer implements Disposable {
     private final AtomicInteger decodedCount = new AtomicInteger();
     private volatile String lastError = "";
     private int requestedCount;
+    private volatile long generation;
 
     public WorldStreamer(QatarPack pack, Listener listener) {
         this.pack = pack;
@@ -92,12 +93,12 @@ public final class WorldStreamer implements Disposable {
             if (inFlight.size() >= maxInFlight) break;
             long key = key(entry.x(), entry.y());
             if (residents.containsKey(key) || inFlight.containsKey(key)) continue;
-            requestedCount++;
+            requestedCount++;long requestGeneration=generation;
             Future<?> future = io.submit(() -> {
                 try {
-                    ready.add(new Ready(entry, pack.load(entry), null));
+                    QatarPack.WorldChunk decoded=pack.load(entry);if(requestGeneration==generation)ready.add(new Ready(requestGeneration,entry,decoded,null));
                 } catch (IOException | RuntimeException error) {
-                    ready.add(new Ready(entry, null, error));
+                    if(requestGeneration==generation)ready.add(new Ready(requestGeneration,entry,null,error));
                 }
             });
             inFlight.put(key, future);
@@ -138,6 +139,7 @@ public final class WorldStreamer implements Disposable {
         for (int i = 0; i < uploadBudget; i++) {
             Ready item = ready.poll();
             if (item == null) break;
+            if(item.generation!=generation)continue;
             long key = key(item.entry.x(), item.entry.y());
             inFlight.remove(key);
             if (item.error != null) {
@@ -154,6 +156,15 @@ public final class WorldStreamer implements Disposable {
                 }
             }
         }
+    }
+
+    /** Cancels stale prediction and evicts old-country geometry before a long-distance teleport. */
+    public void resetForTeleport(){
+        generation++;
+        for(Future<?> future:inFlight.values())future.cancel(true);
+        inFlight.clear();ready.clear();
+        for(Resident resident:new ArrayList<>(residents.values()))listener.deactivate(resident.chunk);
+        residents.clear();lastError="";
     }
 
     public int residentCount() { return residents.size(); }
