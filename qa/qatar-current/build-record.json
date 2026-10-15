@@ -1,8 +1,8 @@
 {
-  "sourceCommit": "7da92729441a6ea27b9c9f4f6fb987e37708f715",
+  "sourceCommit": "9db6324e89f56aea4a75f4e42e86cf6601da9f91",
   "apk": "Qatar-The-Peninsula-QATAR-STABILITY-v0.5.0.apk",
-  "apkBytes": 37913299,
-  "apkSha256": "93dc6dc65e4b833744826e7ff32cc3e161207c3d0bd22fb461f19f886c77661a",
+  "apkBytes": 37913339,
+  "apkSha256": "2255f8ad572ba2eb309e2031c67c778bcc45f9bf459ea11fdd1644c67cd525bf",
   "packageId": "ai.arena.qatar.peninsula",
   "versionCode": 5,
   "versionName": "0.5.0-qatar-stability-preproduction",
