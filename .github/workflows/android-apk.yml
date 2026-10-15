@@ -58,6 +58,8 @@ jobs:
           cmp /tmp/qatar-terrain-validation.json data/qatar/compiled/qatar-terrain-validation.json
           python3 tools/build_qatar_road_atlas.py --verify | tee qa/qatar-current/road-atlas-validation.txt
           sha256sum -c data/qatar/ROAD_ATLAS_SHA256SUMS | tee qa/qatar-current/road-atlas-checksums.txt
+          python3 tools/audit_qatar_visual_geometry.py --report /tmp/qatar-visual-geometry-audit.json | tee qa/qatar-current/visual-geometry-validation.txt
+          cmp /tmp/qatar-visual-geometry-audit.json data/qatar/compiled/qatar-visual-geometry-audit.json
 
       - name: Test and compile fresh installable APK
         id: compile
@@ -127,7 +129,7 @@ jobs:
           PY
           AAPT="$(find "$ANDROID_HOME/build-tools" -type f -name aapt | sort -V | tail -1)"
           "$AAPT" dump badging app/build/outputs/apk/debug/app-debug.apk | tee qa/qatar-current/aapt-badging.txt
-          grep -q "package: name='ai.arena.qatar.peninsula' versionCode='7' versionName='0.7.0-smooth-street-map-preproduction'" qa/qatar-current/aapt-badging.txt
+          grep -q "package: name='ai.arena.qatar.peninsula' versionCode='8' versionName='0.8.0-realistic-world-preproduction'" qa/qatar-current/aapt-badging.txt
           ! grep -q "android.permission.INTERNET" qa/qatar-current/aapt-badging.txt
           echo '2edd3c03193dee5cac2c393190d74ae6823c4f165e31eb763eab13991f7a6746  app/signing/qatar-preproduction.p12' | sha256sum -c -
           APKSIGNER="$(find "$ANDROID_HOME/build-tools" -type f -name apksigner | sort -V | tail -1)"
@@ -159,30 +161,32 @@ jobs:
       - name: Stage named APK and checksum
         run: |
           mkdir -p artifacts
-          NAME='Qatar-The-Peninsula-SMOOTH-STREETS-v0.7.0.apk'
+          NAME='Qatar-The-Peninsula-REALISTIC-WORLD-v0.8.0.apk'
           cp app/build/outputs/apk/debug/app-debug.apk "artifacts/$NAME"
           (cd artifacts && sha256sum "$NAME" > "$NAME.sha256")
           cp data/qatar/compiled/qatar-world-report.json qa/qatar-current/world-report.json
           cp data/qatar/compiled/qatar-osm-report.json qa/qatar-current/osm-report.json
           cp data/qatar/compiled/qatar-terrain-validation.json qa/qatar-current/terrain-report.json
           cp data/qatar/compiled/qatar-road-atlas-report.json qa/qatar-current/road-atlas-report.json
+          cp data/qatar/compiled/qatar-visual-geometry-audit.json qa/qatar-current/visual-geometry-report.json
           python3 - <<'PY'
           import json,hashlib,pathlib,subprocess
-          apk=pathlib.Path('artifacts/Qatar-The-Peninsula-SMOOTH-STREETS-v0.7.0.apk')
+          apk=pathlib.Path('artifacts/Qatar-The-Peninsula-REALISTIC-WORLD-v0.8.0.apk')
           report=json.loads(pathlib.Path('data/qatar/compiled/qatar-world-report.json').read_text())
           osm=json.loads(pathlib.Path('data/qatar/compiled/qatar-osm-report.json').read_text())
           atlas=json.loads(pathlib.Path('data/qatar/compiled/qatar-road-atlas-report.json').read_text())
-          result={'sourceCommit':subprocess.check_output(['git','rev-parse','HEAD'],text=True).strip(),'apk':apk.name,'apkBytes':apk.stat().st_size,'apkSha256':hashlib.sha256(apk.read_bytes()).hexdigest(),'packageId':'ai.arena.qatar.peninsula','versionCode':7,'versionName':'0.7.0-smooth-street-map-preproduction','minSdk':26,'targetSdk':35,'abis':['arm64-v8a','armeabi-v7a','x86_64'],'countryChunks':report['grid']['chunks'],'municipalities':len(report['municipalities']),'adm0Polygons':report['coverage']['adm0PolygonCount'],'qpakSha256':report['qpakSha256'],'measuredDem':report['terrain']['measuredDem'],'terrainSource':report['terrain']['source'],'terrainLandMinimumMetres':report['terrain']['landMinimumMetres'],'terrainClampedSamples':report['terrain']['clampedLandChunkSamples'],'terrainSeamsVerified':report['terrain']['continuousLandSeamsVerified'],'qodSha256':osm['qodSha256'],'osmDetailCells':osm['detailChunks'],'osmRoadSegments':osm['roadSegments'],'osmBuildingFootprints':osm['totalBuildingFootprints'],'environmentPresets':['CLEAR','SHAMAL','DUST','RAIN'],'dynamicGulfTide':True,'thermalProfiles':{'NORMAL':30,'WARM':20,'HOT':15},'androidThermalListener':True,'fixedStepRenderInterpolation':True,'singleLayerFramePacing':True,'verticalOnlyCameraDamping':True,'localStreetMinimap':True,'nationalStreetAtlas':True,'roadAtlasSha256':atlas['atlasSha256'],'roadAtlasSegments':atlas['roadSegments'],'touchNationalMap':True,'modeSafeTeleport':True,'preproductionSigningCertificateSha256':'ccce47e341dde37e9cb94ab7cb9298ee39df967483ca6c618491cd43a7ae390c','productionSigned':False,'status':'PASSED'}
+          visual=json.loads(pathlib.Path('data/qatar/compiled/qatar-visual-geometry-audit.json').read_text())
+          result={'sourceCommit':subprocess.check_output(['git','rev-parse','HEAD'],text=True).strip(),'apk':apk.name,'apkBytes':apk.stat().st_size,'apkSha256':hashlib.sha256(apk.read_bytes()).hexdigest(),'packageId':'ai.arena.qatar.peninsula','versionCode':8,'versionName':'0.8.0-realistic-world-preproduction','minSdk':26,'targetSdk':35,'abis':['arm64-v8a','armeabi-v7a','x86_64'],'countryChunks':report['grid']['chunks'],'municipalities':len(report['municipalities']),'adm0Polygons':report['coverage']['adm0PolygonCount'],'qpakSha256':report['qpakSha256'],'measuredDem':report['terrain']['measuredDem'],'terrainSource':report['terrain']['source'],'terrainLandMinimumMetres':report['terrain']['landMinimumMetres'],'terrainClampedSamples':report['terrain']['clampedLandChunkSamples'],'terrainSeamsVerified':report['terrain']['continuousLandSeamsVerified'],'qodSha256':osm['qodSha256'],'osmDetailCells':osm['detailChunks'],'osmRoadSegments':osm['roadSegments'],'osmBuildingFootprints':osm['totalBuildingFootprints'],'environmentPresets':['CLEAR','SHAMAL','DUST','RAIN'],'dynamicGulfTide':True,'thermalProfiles':{'NORMAL':30,'WARM':20,'HOT':15},'androidThermalListener':True,'fixedStepRenderInterpolation':True,'singleLayerFramePacing':True,'verticalOnlyCameraDamping':True,'localStreetMinimap':True,'nationalStreetAtlas':True,'roadAtlasSha256':atlas['atlasSha256'],'roadAtlasSegments':atlas['roadSegments'],'touchNationalMap':True,'modeSafeTeleport':True,'realisticGroundWorldV08':True,'mipmappedProceduralTerrainSurfaces':5,'boundedRoadJunctionCaps':visual['roadJointCapPerCell'],'terrainFollowingRoadStepMetres':visual['terrainFollowingStepMetres'],'maximumRoadMaterialVertices':visual['maximumEstimatedRoadMaterialVertices'],'maximumMarkingMaterialVertices':visual['maximumMarkingMaterialVertices'],'visualGeometryAudit':visual['status'],'qatarFacadePalettes':7,'proceduralRooftopAndMosqueDetails':True,'preproductionSigningCertificateSha256':'ccce47e341dde37e9cb94ab7cb9298ee39df967483ca6c618491cd43a7ae390c','productionSigned':False,'status':'PASSED'}
           pathlib.Path('qa/qatar-current/build-record.json').write_text(json.dumps(result,indent=2)+'\n')
           PY
 
       - name: Upload current APK artifact
         uses: actions/upload-artifact@v7.0.2
         with:
-          name: Qatar-The-Peninsula-v0.7.0-Smooth-Streets-Android
+          name: Qatar-The-Peninsula-v0.8.0-Realistic-World-Android
           path: |
-            artifacts/Qatar-The-Peninsula-SMOOTH-STREETS-v0.7.0.apk
-            artifacts/Qatar-The-Peninsula-SMOOTH-STREETS-v0.7.0.apk.sha256
+            artifacts/Qatar-The-Peninsula-REALISTIC-WORLD-v0.8.0.apk
+            artifacts/Qatar-The-Peninsula-REALISTIC-WORLD-v0.8.0.apk.sha256
             qa/qatar-current/**
           if-no-files-found: error
           retention-days: 30
@@ -192,6 +196,6 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add -f artifacts/Qatar-The-Peninsula-SMOOTH-STREETS-v0.7.0.apk artifacts/Qatar-The-Peninsula-SMOOTH-STREETS-v0.7.0.apk.sha256 qa/qatar-current
-          git diff --cached --quiet || git commit -m "Publish tested Qatar smooth-streets APK v0.7.0 [skip ci]"
+          git add -f artifacts/Qatar-The-Peninsula-REALISTIC-WORLD-v0.8.0.apk artifacts/Qatar-The-Peninsula-REALISTIC-WORLD-v0.8.0.apk.sha256 qa/qatar-current
+          git diff --cached --quiet || git commit -m "Publish tested Qatar realistic-world APK v0.8.0 [skip ci]"
           git push origin "HEAD:${GITHUB_REF_NAME}"

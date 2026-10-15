@@ -1,0 +1,30 @@
+{
+  "format": "QatarVisualGeometryAudit",
+  "qodCells": 88965,
+  "indexedRoadSegments": 1441102,
+  "indexedBuildings": 189446,
+  "maximumRoadSegmentsInCell": 1011,
+  "maximumRoadCell": {
+    "x": 348,
+    "y": 458
+  },
+  "maximumBuildingsInCell": 368,
+  "maximumBuildingCell": {
+    "x": 303,
+    "y": 397
+  },
+  "roadJointCapPerCell": 384,
+  "roadJointDivisions": 8,
+  "roadSubdivisionCap": 16,
+  "terrainFollowingStepMetres": 32.0,
+  "markingStripCapPerCell": 2400,
+  "maximumEstimatedRoadMaterialVertices": 11958,
+  "maximumRoadMaterialCell": {
+    "x": 339,
+    "y": 398,
+    "material": "paved"
+  },
+  "maximumMarkingMaterialVertices": 14400,
+  "conservativePerMaterialVertexLimit": 16384,
+  "status": "PASSED"
+}

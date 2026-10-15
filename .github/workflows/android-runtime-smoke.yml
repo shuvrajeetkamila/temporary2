@@ -59,7 +59,7 @@ jobs:
         run: |
           set +e
           ADB="$ANDROID_HOME/platform-tools/adb"
-          APK='artifacts/Qatar-The-Peninsula-SMOOTH-STREETS-v0.7.0.apk'
+          APK='artifacts/Qatar-The-Peninsula-REALISTIC-WORLD-v0.8.0.apk'
           "$ADB" install -r "$APK" > qa/qatar-runtime/install.txt 2>&1
           INSTALL_EXIT=$?
           "$ADB" install -r "$APK" > qa/qatar-runtime/reinstall.txt 2>&1
@@ -133,6 +133,7 @@ jobs:
           MAP_CLOSE_READY="$(grep 'QatarTeleport.*MAP_CLOSE gameplay=resumed' qa/qatar-runtime/logcat.txt | head -1 || true)"
           TELEPORT_READY="$(grep 'QatarTeleport.*TELEPORT mode=WALK' qa/qatar-runtime/logcat.txt | tail -1 || true)"
           STREET_MAP_READY="$(grep 'QatarMap.*STREET_ATLAS_READY.*offline-OSM' qa/qatar-runtime/logcat.txt | tail -1 || true)"
+          VISUAL_READY="$(grep 'QatarVisual.*V08_PIPELINE.*mipmappedSurfaces=5.*joinedCaps=.*boundedJointCap=384' qa/qatar-runtime/logcat.txt | tail -1 || true)"
           WALK_CADENCE="$(grep 'QatarFrameCadence.*mode=WALK.*extraRenderGate=no smooth=yes' qa/qatar-runtime/logcat.txt | tail -1 || true)"
           CAR_CADENCE="$(grep 'QatarFrameCadence.*mode=CAR.*extraRenderGate=no smooth=yes' qa/qatar-runtime/logcat.txt | tail -1 || true)"
           BOAT_CADENCE="$(grep 'QatarFrameCadence.*mode=BOAT.*extraRenderGate=no smooth=yes' qa/qatar-runtime/logcat.txt | tail -1 || true)"
@@ -169,6 +170,8 @@ jobs:
             if [ -n "$TELEPORT_READY" ]; then echo 'national_teleport_completed=yes'; else echo 'national_teleport_completed=no'; fi
             echo "teleport_state=$TELEPORT_READY"
             if [ -n "$OSM_READY" ]; then echo 'osm_detail_rendered=yes'; else echo 'osm_detail_rendered=no'; fi
+            if [ -n "$VISUAL_READY" ]; then echo 'realistic_visual_pipeline_ready=yes'; else echo 'realistic_visual_pipeline_ready=no'; fi
+            echo "visual_pipeline=$VISUAL_READY"
             if [ -n "$PACK_READY" ]; then echo 'terrain_pack_loaded=yes'; else echo 'terrain_pack_loaded=no'; fi
             if [ -n "$ENV_READY" ]; then echo 'qatar_environment_ready=yes'; else echo 'qatar_environment_ready=no'; fi
             if [ -n "$THERMAL_READY" ]; then echo 'thermal_governor_ready=yes'; else echo 'thermal_governor_ready=no'; fi
@@ -196,6 +199,7 @@ jobs:
           test -n "$MAP_CLOSE_READY"
           test -n "$TELEPORT_READY"
           test -n "$OSM_READY"
+          test -n "$VISUAL_READY"
           test -n "$PACK_READY"
           test -n "$ENV_READY"
           test -n "$THERMAL_READY"
