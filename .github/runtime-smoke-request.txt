@@ -1,5 +1,4 @@
-Qatar Android v0.7.0 smooth-motion and offline street-map runtime request
-APK SHA-256: 6cfea38f3b78c031987e16ba733dc408db8dbb5adfd3e0fc01cafb3e463a6049
-Build run: 38784037090
-Requested UTC: 2026-10-15T18:18:31Z
-Checks: stable-certificate install/reinstall; cold launch; one-pacer cadence with no manual render skipping in all five movement modes; direct interpolated horizontal camera tracking; visible nearby OSM streets in gameplay minimap; full national 1,441,102-segment OSM street atlas; map open/select/close; northern-Qatar teleport; nine valid screenshots; Battery Saver WARM; same-PID lifecycle callbacks; no app-scoped fatal log.
+Qatar Android v0.8.0 realistic ground-world runtime request
+Build source commit: 73480cf14b44d268b7a5daad9116869b14c2dd29
+Published APK SHA-256: 421101a19f871bf231e8e2c5e67a2637d795268faf016e9ebf274a3a46743fe5
+Requested: 2026-10-16 Asia/Calcutta
