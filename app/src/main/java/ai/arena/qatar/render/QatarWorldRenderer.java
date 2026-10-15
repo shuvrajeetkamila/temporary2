@@ -37,6 +37,7 @@ import java.util.Map;
 
 /** Qatar-specific mobile 3D renderer. All geometry is generated, never imagery. */
 public final class QatarWorldRenderer implements WorldStreamer.Listener, QatarDetailStreamer.Listener, Disposable {
+    @FunctionalInterface public interface MapRoadVisitor { void road(double x1,double z1,double x2,double z2,int roadClass,float width); }
     private static final long ATTRS = VertexAttributes.Usage.Position | VertexAttributes.Usage.Normal | VertexAttributes.Usage.TextureCoordinates;
     private final QatarPack pack;
     private final int detailCellMetres;
@@ -81,6 +82,7 @@ public final class QatarWorldRenderer implements WorldStreamer.Listener, QatarDe
     private final Matrix4 renderFocusTransform=new Matrix4();
     private float lastCameraDistance;
     private boolean loggedRealDetail;
+    private long detailMapRevision;
     private ThermalGovernor.Profile performanceProfile=ThermalGovernor.Profile.NORMAL;
 
     public QatarWorldRenderer(QatarPack pack,QatarDetailPack detailPack,PhysicsWorld physics,QatarEnvironment climate) {
@@ -267,7 +269,7 @@ public final class QatarWorldRenderer implements WorldStreamer.Listener, QatarDe
 
 
     @Override public void activateDetail(QatarDetailPack.DetailChunk chunk){
-        detailData.put(key(chunk.entry().x(),chunk.entry().y()),chunk);rebuildDetail(chunk);
+        detailData.put(key(chunk.entry().x(),chunk.entry().y()),chunk);detailMapRevision++;rebuildDetail(chunk);
         if(!loggedRealDetail){loggedRealDetail=true;Gdx.app.log("QatarStreaming","OSM_READY cell="+chunk.entry().x()+","+chunk.entry().y()+" roads="+chunk.roads().length+" buildings="+chunk.buildings().length);}
     }
 
@@ -284,7 +286,7 @@ public final class QatarWorldRenderer implements WorldStreamer.Listener, QatarDe
     }
 
     @Override public void deactivateDetail(QatarDetailPack.DetailChunk chunk){
-        physics.unregisterDetailChunk(chunk);long detailKey=key(chunk.entry().x(),chunk.entry().y());detailData.remove(detailKey);
+        physics.unregisterDetailChunk(chunk);long detailKey=key(chunk.entry().x(),chunk.entry().y());detailData.remove(detailKey);detailMapRevision++;
         RenderChunk removed=detailCells.remove(detailKey);
         if(removed!=null)removed.model.dispose();
     }
@@ -393,6 +395,13 @@ public final class QatarWorldRenderer implements WorldStreamer.Listener, QatarDe
     }
     public void setPerformanceProfile(ThermalGovernor.Profile profile){performanceProfile=profile;}
     public float cameraDistance(){return lastCameraDistance;}
+    public long detailMapRevision(){return detailMapRevision;}
+    public void visitVisibleRoads(MapRoadVisitor visitor){
+        for(QatarDetailPack.DetailChunk chunk:detailData.values()){
+            double originX=chunk.entry().x()*(double)detailCellMetres,originZ=chunk.entry().y()*(double)detailCellMetres;
+            for(QatarPack.Road road:chunk.roads())visitor.road(originX+road.x1(),originZ+road.z1(),originX+road.x2(),originZ+road.z2(),road.roadClass(),road.width());
+        }
+    }
 
     private float terrainHeight(double globalX,double globalZ){return terrainHeightOr(globalX,globalZ,0);}
 

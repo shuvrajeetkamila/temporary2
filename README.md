@@ -2,9 +2,9 @@
 
 A fresh Android open-world project built from the definitive Qatar prompt book in this repository. The active application does not reuse the previous Nauru Java sources, package ID, resources, or world binaries.
 
-## Current source milestone: v0.6.0 camera-map and teleport preproduction
+## Current source milestone: v0.7.0 smooth-motion and offline street-map preproduction
 
-This incremental release retains the complete source-derived Qatar road/building, measured-terrain, environment, installation, lifecycle, and power foundation, then stabilizes high-speed camera motion and adds a touchable full-country map with safe teleportation:
+This incremental release retains the complete source-derived Qatar road/building, measured-terrain, environment, installation, lifecycle, power, and safe-teleport foundation, then removes double frame throttling and replaces pinpoint-only maps with offline OpenStreetMap street cartography:
 
 - New package: `ai.arena.qatar.peninsula`
 - Android API 26–35, libGDX/OpenGL ES 3, and gdx-bullet
@@ -27,8 +27,11 @@ This incremental release retains the complete source-derived Qatar road/building
 - Mode-sensitive nearby/predictive activation, delayed eviction, a hard 64-cell visual cap, and a smaller capped Bullet collision set
 - Explicit 30 fps foreground budget to avoid wasteful 60/90/120 Hz rendering on modest phones
 - Human, 4×4, boat, helicopter, and aeroplane physical prototype modes
-- 60 Hz fixed-step pose interpolation plus frame-rate-independent camera/aim damping to suppress speed-amplified visual rattle without reducing physics speed
-- The existing minimap is a touch target that opens a modal complete-country Qatar map with explicit CLOSE/Back navigation
+- 60 Hz fixed-step pose interpolation with direct interpolated horizontal camera tracking and vertical-only contact damping; physics speed is not reduced
+- A single Android/libGDX frame pacer replaces the previous second manual render gate, which could irregularly turn a nominal 30 Hz presentation into roughly 15 Hz
+- The gameplay minimap now renders nearby OSM streets from a throttled 256×256 vector cache, with water/land context and a heading arrow rather than a blind country pin
+- The expanded map overlays a deterministic 550×1030 national atlas generated from all 1,441,102 packaged OSM road segments; no Google map data, tiles, or network service is used
+- The street minimap remains a touch target that opens the complete-country map with explicit CLOSE/Back navigation
 - Touch destination selection with EPSG:32639 coordinate display and mode-safe teleportation: ground/road for human and car, Gulf water for boat, and exact elevated placement for aircraft
 - Long-distance teleport resets stale prediction queues, evicts old local geometry, preserves bounded streaming, zeroes forces, and establishes temporary support while destination chunks arrive
 - No Android `INTERNET` permission and no post-install map download
@@ -36,7 +39,7 @@ This incremental release retains the complete source-derived Qatar road/building
 
 ## Honest status
 
-v0.6.0 is a playable **incremental preproduction prototype**, not a claim that the prompt book’s multi-year AAA end state is complete. It uses real current OSM road vectors/building footprints, measured terrain, authored (not live) Qatar weather presets, automatic platform thermal/power downshifts, fixed-step visual interpolation, an offline national travel map, and a public development certificate rather than production signing. Survey-grade terrain, hydrodynamic bathymetry, high-fidelity coastline/reclamation work, hero landmarks, final vehicle models/dynamics, traffic/transit/activity, complete Arabic shaping/localization, audio, and broad physical-device profiling remain later milestones.
+v0.7.0 is a playable **incremental preproduction prototype**, not a claim that the prompt book’s multi-year AAA end state is complete. It uses real current OSM road vectors/building footprints, measured terrain, authored (not live) Qatar weather presets, automatic platform thermal/power downshifts, fixed-step visual interpolation, locally rendered offline OSM street maps, and a public development certificate rather than production signing. Survey-grade terrain, hydrodynamic bathymetry, high-fidelity coastline/reclamation work, hero landmarks, final vehicle models/dynamics, traffic/transit/activity, complete Arabic shaping/localization, audio, and broad physical-device profiling remain later milestones.
 
 See:
 
@@ -48,6 +51,7 @@ See:
 - `QATAR_RUNTIME_REPORT.md`
 - `QATAR_STABILITY_REPORT.md`
 - `QATAR_CAMERA_MAP_REPORT.md`
+- `QATAR_SMOOTH_STREET_MAP_REPORT.md`
 - `DATA_SOURCES.md`
 - `ASSET_LICENSES.md`
 - `data/qatar/QATAR_OSM_IMPORT.json`

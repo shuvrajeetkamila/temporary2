@@ -24,6 +24,7 @@ public class CameraMotionFilterTest {
             float noise=(frame&1)==0?.18f:-.18f;
             desiredCamera.set(frame*2f,8+noise,-20);target.set(frame*2f,2+noise,0);
             filter.update(desiredCamera,target,1f/30f,5,7);
+            assertEquals("horizontal aim must not acquire elastic lag",target.x,filter.target().x,.0001f);
             if(frame>5)maximumFilteredVerticalStep=Math.max(maximumFilteredVerticalStep,Math.abs(filter.target().y-previousY));
             previousY=filter.target().y;
         }

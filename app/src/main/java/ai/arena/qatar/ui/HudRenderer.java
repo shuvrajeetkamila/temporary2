@@ -13,12 +13,16 @@ import ai.arena.qatar.world.WorldStreamer;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.graphics.Pixmap;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Disposable;
+import com.badlogic.gdx.utils.TimeUtils;
 
 /** Gameplay HUD plus the touch-selectable, complete-country Qatar map. */
 public final class HudRenderer implements Disposable {
@@ -39,13 +43,21 @@ public final class HudRenderer implements Disposable {
     private final BitmapFont font=new BitmapFont();
     private final Color maroon=new Color(.54f,.08f,.22f,.90f);
     private final Vector2 mapPoint=new Vector2();
+    private final Pixmap minimapPixmap=new Pixmap(256,256,Pixmap.Format.RGBA8888);
+    private final Texture minimapStreetTexture=new Texture(minimapPixmap);
+    private final Texture nationalRoadAtlas=new Texture(Gdx.files.internal("ui/qatar-road-atlas.png"));
+    private final TextureRegion nationalRoadRegion=new TextureRegion(nationalRoadAtlas);
+    private long minimapRoadRevision=-1,lastMinimapBuildMillis;
+    private double minimapCentreX,minimapCentreZ;
+    private float minimapRadius=-1;
     private boolean hasMapSelection;
     private double mapSelectionX,mapSelectionZ;
     private String mapStatus="Touch anywhere on Qatar, then press TELEPORT";
 
     public HudRenderer(QatarPack pack,QatarDetailPack detailPack,PhysicsWorld physics,WorldStreamer streamer,QatarDetailStreamer detailStreamer,QatarWorldRenderer renderer,TouchController controls,QatarEnvironment climate){
         this.pack=pack;this.detailPack=detailPack;this.physics=physics;this.streamer=streamer;this.detailStreamer=detailStreamer;this.renderer=renderer;this.controls=controls;this.climate=climate;
-        font.getData().setScale(1.02f);
+        font.getData().setScale(1.02f);minimapStreetTexture.setFilter(Texture.TextureFilter.Linear,Texture.TextureFilter.Linear);nationalRoadAtlas.setFilter(Texture.TextureFilter.Linear,Texture.TextureFilter.Linear);
+        Gdx.app.log("QatarMap","STREET_ATLAS_READY source=offline-OSM segments="+detailPack.roadSegmentCount+" localMinimap=vector-cache");
     }
     public void setPerformanceProfile(ThermalGovernor.Profile profile){performanceProfile=profile;}
     public void setMapSelection(double x,double z){hasMapSelection=true;mapSelectionX=x;mapSelectionZ=z;mapStatus="Destination selected - press TELEPORT";}
@@ -85,16 +97,62 @@ public final class HudRenderer implements Disposable {
     }
 
     private void drawMinimap(int width,int height){
-        NationalMapLayout.Rect frame=NationalMapLayout.minimap(width,height);
-        float mapX=frame.x()+8,mapY=frame.y()+8,mapW=frame.width()-16,mapH=frame.height()-16;
-        shapes.begin(ShapeRenderer.ShapeType.Filled);shapes.setColor(.02f,.06f,.075f,.82f);shapes.rect(frame.x(),frame.y(),frame.width(),frame.height());
-        shapes.setColor(.54f,.08f,.22f,.94f);shapes.rect(mapX,mapY,mapW,25);shapes.end();
-        shapes.begin(ShapeRenderer.ShapeType.Line);shapes.setColor(.95f,.84f,.62f,.95f);
-        drawNationalOutlines(new NationalMapLayout.Rect(mapX,mapY,mapW,mapH));shapes.end();
-        shapes.begin(ShapeRenderer.ShapeType.Filled);shapes.setColor(.95f,.15f,.28f,1);
-        NationalMapLayout.worldToScreen(new NationalMapLayout.Rect(mapX,mapY,mapW,mapH),physics.globalX(),physics.globalZ(),pack.worldWidth,pack.worldHeight,mapPoint);shapes.circle(mapPoint.x,mapPoint.y,5,16);shapes.end();
-        sprites.getProjectionMatrix().setToOrtho2D(0,0,width,height);sprites.begin();font.getData().setScale(.82f);font.setColor(Color.WHITE);font.draw(sprites,"OPEN MAP",mapX+42,mapY+19);sprites.end();
+        NationalMapLayout.Rect frame=NationalMapLayout.minimap(width,height);float radius=minimapRadiusForMode();
+        updateMinimapStreetCache(radius);
+        float roadSize=160,roadX=frame.x()+(frame.width()-roadSize)/2,roadY=frame.y()+33,buttonX=frame.x()+8,buttonY=frame.y()+8,buttonW=frame.width()-16;
+        shapes.begin(ShapeRenderer.ShapeType.Filled);shapes.setColor(.02f,.06f,.075f,.88f);shapes.rect(frame.x(),frame.y(),frame.width(),frame.height());shapes.end();
+        sprites.getProjectionMatrix().setToOrtho2D(0,0,width,height);sprites.begin();sprites.setColor(Color.WHITE);sprites.draw(minimapStreetTexture,roadX,roadY,roadSize,roadSize);sprites.end();
+        float markerX=roadX+(float)((physics.globalX()-minimapCentreX+minimapRadius)/(minimapRadius*2))*roadSize;
+        float markerY=roadY+(float)((physics.globalZ()-minimapCentreZ+minimapRadius)/(minimapRadius*2))*roadSize;
+        markerX=Math.max(roadX+5,Math.min(roadX+roadSize-5,markerX));markerY=Math.max(roadY+5,Math.min(roadY+roadSize-5,markerY));
+        float heading=physics.renderHeadingRadians(),tipX=markerX+(float)Math.sin(heading)*10,tipY=markerY+(float)Math.cos(heading)*10;
+        float leftX=markerX+(float)Math.sin(heading+2.45f)*7,leftY=markerY+(float)Math.cos(heading+2.45f)*7;
+        float rightX=markerX+(float)Math.sin(heading-2.45f)*7,rightY=markerY+(float)Math.cos(heading-2.45f)*7;
+        shapes.begin(ShapeRenderer.ShapeType.Filled);shapes.setColor(.08f,.12f,.13f,.9f);shapes.circle(markerX,markerY,7,16);shapes.setColor(1f,.06f,.20f,1);shapes.triangle(tipX,tipY,leftX,leftY,rightX,rightY);
+        shapes.setColor(.54f,.08f,.22f,.96f);shapes.rect(buttonX,buttonY,buttonW,25);shapes.end();
+        shapes.begin(ShapeRenderer.ShapeType.Line);shapes.setColor(.95f,.84f,.62f,.95f);shapes.rect(roadX,roadY,roadSize,roadSize);shapes.end();
+        sprites.begin();font.getData().setScale(.72f);font.setColor(Color.WHITE);font.draw(sprites,"STREETS  |  OPEN MAP",buttonX+20,buttonY+18);sprites.end();
     }
+
+    private float minimapRadiusForMode(){return switch(physics.mode()){case WALK->550f;case CAR,BOAT->700f;case HELICOPTER,AEROPLANE->850f;};}
+
+    private void updateMinimapStreetCache(float radius){
+        long revision=renderer.detailMapRevision(),now=TimeUtils.millis();double dx=physics.globalX()-minimapCentreX,dz=physics.globalZ()-minimapCentreZ;
+        boolean moved=minimapRadius<0||dx*dx+dz*dz>radius*radius*.0225;
+        boolean changed=revision!=minimapRoadRevision&&now-lastMinimapBuildMillis>=700;
+        if(!moved&&Math.abs(radius-minimapRadius)<1&&!changed)return;
+        minimapCentreX=physics.globalX();minimapCentreZ=physics.globalZ();minimapRadius=radius;minimapRoadRevision=revision;lastMinimapBuildMillis=now;
+        int blocks=16,blockSize=256/blocks;
+        for(int row=0;row<blocks;row++)for(int column=0;column<blocks;column++){
+            double x=minimapCentreX+((column+.5)/blocks*2-1)*radius,z=minimapCentreZ+(1-(row+.5)/blocks*2)*radius;
+            minimapPixmap.setColor(renderer.waterAt(x,z)?Color.rgba8888(.53f,.76f,.82f,1):Color.rgba8888(.84f,.80f,.69f,1));
+            minimapPixmap.fillRectangle(column*blockSize,row*blockSize,blockSize,blockSize);
+        }
+        renderer.visitVisibleRoads((x1,z1,x2,z2,roadClass,roadWidth)->rasterMinimapRoad(x1,z1,x2,z2,roadClass,roadWidth,true));
+        renderer.visitVisibleRoads((x1,z1,x2,z2,roadClass,roadWidth)->rasterMinimapRoad(x1,z1,x2,z2,roadClass,roadWidth,false));
+        minimapStreetTexture.draw(minimapPixmap,0,0);
+    }
+
+    private void rasterMinimapRoad(double x1,double z1,double x2,double z2,int roadClass,float roadWidth,boolean casing){
+        double minimumX=minimapCentreX-minimapRadius,maximumX=minimapCentreX+minimapRadius,minimumZ=minimapCentreZ-minimapRadius,maximumZ=minimapCentreZ+minimapRadius;
+        if(Math.max(x1,x2)<minimumX||Math.min(x1,x2)>maximumX||Math.max(z1,z2)<minimumZ||Math.min(z1,z2)>maximumZ)return;
+        x1=Math.max(minimumX,Math.min(maximumX,x1));x2=Math.max(minimumX,Math.min(maximumX,x2));z1=Math.max(minimumZ,Math.min(maximumZ,z1));z2=Math.max(minimumZ,Math.min(maximumZ,z2));
+        int px1=(int)Math.round((x1-minimumX)/(maximumX-minimumX)*255),px2=(int)Math.round((x2-minimumX)/(maximumX-minimumX)*255);
+        int py1=255-(int)Math.round((z1-minimumZ)/(maximumZ-minimumZ)*255),py2=255-(int)Math.round((z2-minimumZ)/(maximumZ-minimumZ)*255);
+        int pixels=Math.max(1,Math.min(6,Math.round(roadWidth/(minimapRadius*2)*256)));
+        if(casing){if(roadClass>=7&&roadClass!=9)return;minimapPixmap.setColor(Color.rgba8888(.38f,.36f,.32f,1));drawPixmapLine(px1,py1,px2,py2,Math.min(7,pixels+2));return;}
+        minimapPixmap.setColor(minimapRoadColour(roadClass));drawPixmapLine(px1,py1,px2,py2,pixels);
+    }
+
+    private void drawPixmapLine(int x1,int y1,int x2,int y2,int width){
+        int half=width/2;if(Math.abs(x2-x1)>=Math.abs(y2-y1))for(int offset=-half;offset<=half;offset++)minimapPixmap.drawLine(x1,y1+offset,x2,y2+offset);
+        else for(int offset=-half;offset<=half;offset++)minimapPixmap.drawLine(x1+offset,y1,x2+offset,y2);
+    }
+
+    private static int minimapRoadColour(int roadClass){return switch(roadClass){
+        case 0,1->Color.rgba8888(.83f,.27f,.16f,1);case 2,3->Color.rgba8888(.95f,.55f,.20f,1);case 4->Color.rgba8888(.98f,.76f,.35f,1);
+        case 5,6->Color.rgba8888(.98f,.97f,.92f,1);case 7,8->Color.rgba8888(.62f,.53f,.39f,1);case 9->Color.rgba8888(.20f,.22f,.23f,1);default->Color.rgba8888(.63f,.65f,.64f,1);
+    };}
 
     private void drawNationalMapWindow(int width,int height){
         NationalMapLayout.Layout layout=NationalMapLayout.fullscreen(width,height,pack.worldWidth,pack.worldHeight);
@@ -113,6 +171,7 @@ public final class HudRenderer implements Disposable {
         shapes.setColor(.54f,.08f,.22f,1);shapes.rect(close.x(),close.y(),close.width(),close.height());
         shapes.setColor(hasMapSelection?.54f:.20f,hasMapSelection?.08f:.22f,hasMapSelection?.22f:.24f,1f);shapes.rect(teleport.x(),teleport.y(),teleport.width(),teleport.height());
         shapes.end();
+        sprites.begin();sprites.setColor(Color.WHITE);sprites.draw(nationalRoadRegion,map.x(),map.y(),map.width(),map.height());sprites.end();
 
         shapes.begin(ShapeRenderer.ShapeType.Line);shapes.setColor(.99f,.91f,.70f,1);drawNationalOutlines(map);
         shapes.setColor(.73f,.85f,.86f,.55f);shapes.rect(map.x(),map.y(),map.width(),map.height());shapes.end();
@@ -124,11 +183,11 @@ public final class HudRenderer implements Disposable {
         shapes.end();
 
         sprites.begin();font.getData().setScale(1.25f);font.setColor(Color.WHITE);font.draw(sprites,"QATAR NATIONAL MAP",panel.x()+24,panel.top()-27);
-        font.getData().setScale(.88f);font.setColor(.92f,.86f,.69f,1);font.draw(sprites,"Complete installed country | EPSG:32639 | north is up",panel.x()+24,panel.top()-51);
+        font.getData().setScale(.88f);font.setColor(.92f,.86f,.69f,1);font.draw(sprites,"Complete offline OSM street atlas | EPSG:32639 | north is up",panel.x()+24,panel.top()-51);
         font.setColor(Color.WHITE);font.draw(sprites,"CLOSE",close.x()+29,close.y()+27);
         font.getData().setScale(1.0f);font.draw(sprites,"TOUCH-TO-TELEPORT",layout.sideX(),panel.top()-98);
         font.getData().setScale(.84f);font.setColor(.83f,.89f,.89f,1);
-        font.draw(sprites,"1. Touch a destination on the map",layout.sideX(),panel.top()-132);
+        font.draw(sprites,"1. Touch a visible street or destination",layout.sideX(),panel.top()-132);
         font.draw(sprites,"2. Check the red destination marker",layout.sideX(),panel.top()-158);
         font.draw(sprites,"3. Press TELEPORT, or CLOSE to cancel",layout.sideX(),panel.top()-184);
         font.setColor(.98f,.86f,.64f,1);font.draw(sprites,"Placement for "+physics.mode().label+": "+placementDescription(),layout.sideX(),panel.top()-226);
@@ -170,5 +229,5 @@ public final class HudRenderer implements Disposable {
         return result;
     }
     private String localBiome(){QatarPack.ChunkEntry entry=pack.entry(pack.chunkX(physics.globalX()),pack.chunkY(physics.globalZ()));return entry==null?"OUTSIDE PACK":pack.biomes.get(entry.biome());}
-    @Override public void dispose(){font.dispose();sprites.dispose();shapes.dispose();}
+    @Override public void dispose(){font.dispose();sprites.dispose();shapes.dispose();minimapStreetTexture.dispose();minimapPixmap.dispose();nationalRoadAtlas.dispose();}
 }

@@ -84,6 +84,17 @@ Exact source-tile hashes, retrieval epoch, QDEM CRC/hash, import identity, limit
 
 The QTOD derivative is distributed in the APK and this public repository under the ODbL database terms. It retains source IDs and complete accepted simple-building outer footprints. Relation outer rings are retained; relation inner holes are a declared QTOD v1 limitation. Exact HTTP response metadata, upstream/extract sizes and checksums, tool output, and import identity are recorded in `data/qatar/QATAR_OSM_IMPORT.json`, `data/qatar/OSM_SHA256SUMS`, and `data/qatar/compiled/qatar-osm-report.json`.
 
-## Data not yet claimed in v0.6.0
+## Offline OSM street-atlas derivative (v0.7)
 
-Version 0.6.0 retains measured terrain-scale elevation and coarse ocean bathymetry, but does **not** claim survey-grade elevation, hydrodynamic bathymetry, final reclaimed-coast epoch accuracy, navigation suitability, or final hand-authored landmark geometry. Those remain subsequent content/validation milestones and require source timestamps, checksums, licensing, and explicit tests before corresponding release claims are made.
+- Deterministic compiler: `tools/build_qatar_road_atlas.py`
+- Runtime asset: `app/src/main/assets/ui/qatar-road-atlas.png`
+- Source: the packaged QTOD derivative described above; all 1,441,102 accepted road segments participate
+- Output: transparent 550×1030 cartographic overlay, SHA-256 and class counts recorded in `data/qatar/compiled/qatar-road-atlas-report.json`
+- Licence/attribution: Open Database License 1.0, **© OpenStreetMap contributors**
+- Use: offline game UI street overview, not navigation
+
+This is locally generated cartography. It contains no Google Maps, Google tiles, satellite imagery, API output, or network dependency.
+
+## Data not yet claimed in v0.7.0
+
+Version 0.7.0 retains measured terrain-scale elevation and coarse ocean bathymetry, but does **not** claim survey-grade elevation, hydrodynamic bathymetry, final reclaimed-coast epoch accuracy, navigation suitability, or final hand-authored landmark geometry. Those remain subsequent content/validation milestones and require source timestamps, checksums, licensing, and explicit tests before corresponding release claims are made.

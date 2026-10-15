@@ -37,11 +37,13 @@ final class WorldScreen extends ScreenAdapter {
     private final Vector2 selectedWorld=new Vector2();
     private ThermalGovernor.Profile profile;
     private boolean disposed;
-    private float frameAccumulator;
     private float runtimeHealthAccumulator;
     private float teleportSupportSeconds;
     private float teleportFallbackGround;
     private boolean teleportFallbackWater;
+    private PhysicsWorld.Mode cadenceMode;
+    private float cadenceSeconds,cadenceDeltaSum,cadenceMaximumDelta;
+    private int cadenceSamples;
 
     WorldScreen(QatarPack pack,QatarDetailPack detailPack,QatarSpawnResolver.Spawn spawn,float groundHeight,IntSupplier thermalStatus){
         this.pack=pack;this.detailPack=detailPack;this.thermalStatus=thermalStatus;
@@ -65,8 +67,10 @@ final class WorldScreen extends ScreenAdapter {
 
     @Override public void render(float delta){
         applyProfile(ThermalGovernor.profileForAndroidStatus(thermalStatus.getAsInt()));
-        float targetFrameSeconds=1f/profile.targetFps;frameAccumulator+=Math.min(delta,.1f);if(frameAccumulator<targetFrameSeconds)return;
-        float simulationDelta=Math.min(.1f,frameAccumulator);frameAccumulator%=targetFrameSeconds;climate.update(simulationDelta);
+        // Android/libGDX already paces the foreground at the thermal profile FPS.
+        // Never skip an additional render here: double-throttling 30 Hz into an
+        // irregular 15 Hz cadence was the source of the reported speed-amplified jerks.
+        float simulationDelta=Math.min(.1f,Math.max(0,delta));climate.update(simulationDelta);recordFrameCadence(simulationDelta);
         processMapInput();
         if(controls.mapOpen()){
             physics.setControls(0,0,0,false);renderer.render(simulationDelta);hud.render();return;
@@ -89,6 +93,17 @@ final class WorldScreen extends ScreenAdapter {
             boolean stable=PhysicsHealth.stable(physics.mode(),height,support,speed,cameraDistance);
             Gdx.app.log("QatarRuntime","STATE mode="+physics.mode()+" heightAboveGround="+height+" supportClearance="+support+" water="+(physics.hasWaterSupport()?"yes":"no")+" speed="+speed+" cameraDistance="+cameraDistance+" stable="+(stable?"yes":"no"));
         }
+    }
+
+    private void recordFrameCadence(float delta){
+        PhysicsWorld.Mode current=physics.mode();
+        if(cadenceMode!=current){cadenceMode=current;cadenceSeconds=0;cadenceDeltaSum=0;cadenceMaximumDelta=0;cadenceSamples=0;}
+        if(delta<=0)return;cadenceSeconds+=delta;cadenceDeltaSum+=delta;cadenceMaximumDelta=Math.max(cadenceMaximumDelta,delta);cadenceSamples++;
+        if(cadenceSeconds<5||cadenceSamples==0)return;
+        float averageMs=cadenceDeltaSum/cadenceSamples*1000f,maximumMs=cadenceMaximumDelta*1000f,expectedMs=1000f/profile.targetFps;
+        boolean smooth=averageMs<=expectedMs*1.65f&&maximumMs<=150f;
+        Gdx.app.log("QatarFrameCadence","CADENCE mode="+current+" profile="+profile.label+" samples="+cadenceSamples+" averageMs="+averageMs+" maxMs="+maximumMs+" extraRenderGate=no smooth="+(smooth?"yes":"no"));
+        cadenceSeconds=0;cadenceDeltaSum=0;cadenceMaximumDelta=0;cadenceSamples=0;
     }
 
     private void processMapInput(){
