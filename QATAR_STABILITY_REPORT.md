@@ -37,6 +37,22 @@ After exercising human, 4×4, boat, helicopter, and aeroplane modes, Android CI 
 - captures and visually validates the resumed scene;
 - requires all readiness, physics, camera, and fatal-log gates to remain passing.
 
+## Final emulator evidence
+
+- APK: `artifacts/Qatar-The-Peninsula-QATAR-STABILITY-v0.5.0.apk`
+- Size: 37,913,339 bytes
+- SHA-256: `2255f8ad572ba2eb309e2031c67c778bcc45f9bf459ea11fdd1644c67cd525bf`
+- Passing clean build: `38718954801`
+- Passing extended Android runtime: `38719285427`
+- Install/reinstall/start/resume exits: all zero
+- Cold ActivityManager start: 1,212 ms; hot task resume: 30 ms on the CI emulator
+- Process preserved across Home/resume: yes, PID 3800
+- Battery Saver transition: NORMAL 30 fps to WARM 20 fps, then back to NORMAL after reset
+- Six gameplay/resume screenshots: all non-flat and visually parseable
+- Five focus modes: all finite and within support/speed/camera bounds
+- Application-scoped fatal log: none
+- Total PSS after the extended exercise: 85,658 KB; this is an emulator observation, not an ARM-device guarantee
+
 ## Signing boundary
 
 Production signing remains excluded. A production key must be private, stored outside this repository, backed up securely, and used only after representative ARM-device thermal, battery, lifecycle, traversal, and soak gates pass.
