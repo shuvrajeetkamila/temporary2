@@ -18,7 +18,7 @@ v0.8 upgrades the visible ground-world foundation—roads, terrain, lighting, an
 - Widths remain source-derived and hierarchy-aware; motorway/trunk/primary roads receive wider aggregate shoulders than secondary/tertiary roads.
 - Endpoint coordinates are quantized to 0.25 m only for visual node matching. Intersections are filled with deterministic eight-sided pavement caps, with intersections prioritised before dangling ends.
 - Junction generation is capped at 384 nodes per cell.
-- Long strips are split at a target 32 m interval, capped at 16 subdivisions per source segment, and each generated vertex samples the unchanged measured terrain. This reduces long floating ribbons without altering collision or source vectors.
+- Long strips are split at a target 32 m interval, capped at 16 subdivisions per source segment, and each generated vertex samples the unchanged measured terrain. If a very long OSM segment extends beyond currently resident national terrain, its visual height clamps to the nearest measured point in its resident detail cell instead of falling to an artificial 0 m plane. This removes vertical/floating ribbons without altering collision or source vectors.
 - Multi-lane roads receive bounded dashed lane/centre separators; major roads receive edge lines.
 - Runways receive dashed centre and solid edge markings; taxiways receive centre lines.
 - Paths/tracks use a separate earth surface. Rails use a wider path bed and two reflective narrow rails.
@@ -35,15 +35,16 @@ Five deterministic 128×128 procedural surface families are generated at startup
 4. urban/industrial aggregate with subtle seams,
 5. farm/mangrove vegetation variation.
 
-The families map across all ten installed Qatar biome classes. They use repeating UVs and trilinear mipmapped minification (`MipMapLinearLinear`) to reduce distant shimmer. Their harmonised Qatar palette reduces hard colour steps while keeping urban, limestone, dune, sabkha, tidal, farm, industrial, rock, and beach identities. Terrain vertices and heights still come from the measured QDEM and the collision path is unchanged.
+The families map across all ten installed Qatar biome classes. They use seamless 100 m repeating UVs and trilinear mipmapped minification (`MipMapLinearLinear`) to reduce distant shimmer. Multi-directional tile-periodic low-frequency variation replaces axis-aligned texture bands. Their harmonised Qatar palette reduces hard colour steps while keeping urban, limestone, dune, sabkha, tidal, farm, industrial, rock, and beach identities. Terrain vertices and heights still come from the measured QDEM and the collision path is unchanged.
 
 ## Building and lighting presentation
 
 - A deterministic source-ID/archetype rule assigns seven façade families: limestone, sandstone, white plaster, glass tower, civic, industrial, and farm.
 - Façades are brighter and retain source OSM outer footprints and heights.
-- Glass has stronger but bounded highlights; tower window coverage is increased while retaining an eight-floor display cap for ordinary buildings and a twelve-floor cap for towers.
+- Glass has stronger but bounded highlights plus a very low emissive floor so windows remain legible on faces turned away from the sun; tower window coverage is increased while retaining an eight-floor display cap for ordinary buildings and a twelve-floor cap for towers.
+- Bounded pale roofline bands and corner trim break up otherwise blank extruded walls without changing footprint silhouettes.
 - A cool, low-intensity opposite-direction sky fill complements the climate-controlled sun and ambient light, reducing blank black building faces.
-- Source footprints up to 24 points receive low parapets.
+- Source footprints up to 16 points receive low parapets and façade trim; more complex footprints retain their exact silhouette without unbounded decoration.
 - Eligible roofs receive one or two small deterministic equipment housings.
 - Eligible mosque footprints receive bounded generated domes and minarets. No landmark mesh is copied.
 - Streaming, source geometry, collision registration, and country coverage remain unchanged.
@@ -59,10 +60,10 @@ The families map across all ten installed Qatar biome classes. They use repeatin
 | Marking strips per cell | 2,400 |
 | Dashes per source segment | 48 |
 | Procedural terrain textures | 5 × 128×128 RGBA with mipmaps |
-| Parapet footprint size | at most 24 points |
+| Parapet/trim footprint size | at most 16 points |
 | Ordinary/tower displayed window floors | 8 / 12 |
 
-The largest packaged OSM cell contains 1,011 road segments and the largest contains 368 buildings. A source-data geometry audit estimated the worst road-material stream, including the full junction cap allowance, below 12,000 vertices before final GPU batching.
+The largest packaged OSM cell contains 1,011 road segments and the largest contains 368 buildings. The exhaustive source-data geometry audit reports a worst road-material stream of 11,958 vertices including the full junction allowance, a 14,400-vertex marking cap, and maxima of 12,906 roof, 13,008 façade-trim, 6,212 window, 1,680 equipment, and 768 mosque-detail vertices. Every audited stream remains below the conservative 16,384-vertex mobile batching threshold.
 
 ## Validation contract
 

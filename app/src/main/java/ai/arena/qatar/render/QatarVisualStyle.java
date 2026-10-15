@@ -17,6 +17,7 @@ public final class QatarVisualStyle {
     public static final int MAX_MARKING_STRIPS_PER_CELL=2400;
     public static final int MAX_ROAD_SUBDIVISIONS=16;
     public static final float ROAD_TERRAIN_STEP_METRES=32f;
+    public static final int MAX_DECORATED_FOOTPRINT_POINTS=16;
 
     private QatarVisualStyle(){}
 
@@ -42,5 +43,6 @@ public final class QatarVisualStyle {
         return building.height()>=8&&building.width()>=6&&building.depth()>=6&&building.archetype()!=5&&building.archetype()!=6;
     }
     public static boolean mosqueDetails(QatarPack.Building building){return building.archetype()==6&&building.width()>=5&&building.depth()>=5;}
-    public static boolean parapet(QatarPack.Building building){return building.hasSourceFootprint()&&building.footprint().length<=48&&building.height()>=4;}
+    public static boolean parapet(QatarPack.Building building){return building.hasSourceFootprint()&&building.footprint().length<=MAX_DECORATED_FOOTPRINT_POINTS*2&&building.height()>=4;}
+    public static boolean facadeTrim(QatarPack.Building building){return building.hasSourceFootprint()&&building.footprint().length<=MAX_DECORATED_FOOTPRINT_POINTS*2&&building.height()>=4&&building.archetype()!=5;}
 }

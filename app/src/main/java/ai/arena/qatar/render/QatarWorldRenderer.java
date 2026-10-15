@@ -63,24 +63,25 @@ public final class QatarWorldRenderer implements WorldStreamer.Listener, QatarDe
     private final Texture urbanTexture=createSurfaceTexture(0x19be73,3);
     private final Texture vegetationTexture=createSurfaceTexture(0x6d231a,4);
     private final Map<Integer, Material> terrainMaterials = new HashMap<>();
-    private final Material shoulderMaterial=diffuse(.58f,.54f,.47f,1);
-    private final Material roadMaterial=new Material(ColorAttribute.createDiffuse(new Color(.185f,.19f,.195f,1)),ColorAttribute.createSpecular(new Color(.30f,.31f,.32f,1)),FloatAttribute.createShininess(18));
+    private final Material shoulderMaterial=diffuse(.62f,.59f,.53f,1);
+    private final Material roadMaterial=new Material(ColorAttribute.createDiffuse(new Color(.235f,.245f,.25f,1)),ColorAttribute.createSpecular(new Color(.32f,.33f,.34f,1)),FloatAttribute.createShininess(18));
     private final Material pathMaterial=diffuse(.49f,.43f,.34f,1);
     private final Material railMaterial=new Material(ColorAttribute.createDiffuse(new Color(.28f,.28f,.27f,1)),ColorAttribute.createSpecular(new Color(.70f,.68f,.62f,1)),FloatAttribute.createShininess(48));
     private final Material runwayMaterial=diffuse(.14f,.145f,.15f,1);
     private final Material taxiwayMaterial=diffuse(.22f,.225f,.23f,1);
     private final Material markingMaterial=diffuse(.96f,.94f,.84f,1);
     private final Material edgeMarkingMaterial=diffuse(.98f,.98f,.94f,1);
-    private final Material roofMaterial=diffuse(.68f,.64f,.56f,1);
-    private final Material roofDetailMaterial=diffuse(.55f,.54f,.50f,1);
-    private final Material windowMaterial=new Material(ColorAttribute.createDiffuse(new Color(.20f,.39f,.44f,1)),ColorAttribute.createSpecular(new Color(.72f,.82f,.84f,1)),FloatAttribute.createShininess(84));
-    private final Material limestoneMaterial=diffuse(.84f,.80f,.71f,1);
-    private final Material sandstoneMaterial=diffuse(.76f,.67f,.54f,1);
-    private final Material plasterMaterial=diffuse(.90f,.88f,.81f,1);
-    private final Material towerMaterial=new Material(ColorAttribute.createDiffuse(new Color(.50f,.62f,.65f,1)),ColorAttribute.createSpecular(new Color(.72f,.78f,.79f,1)),FloatAttribute.createShininess(64));
-    private final Material industrialMaterial=diffuse(.59f,.60f,.57f,1);
-    private final Material farmMaterial=diffuse(.56f,.60f,.42f,1);
-    private final Material civicMaterial=diffuse(.86f,.82f,.72f,1);
+    private final Material roofMaterial=diffuse(.74f,.70f,.62f,1);
+    private final Material roofDetailMaterial=diffuse(.61f,.61f,.58f,1);
+    private final Material facadeTrimMaterial=diffuse(.94f,.89f,.78f,1);
+    private final Material windowMaterial=new Material(ColorAttribute.createDiffuse(new Color(.34f,.57f,.63f,1)),ColorAttribute.createSpecular(new Color(.82f,.90f,.92f,1)),ColorAttribute.createEmissive(new Color(.025f,.045f,.05f,1)),FloatAttribute.createShininess(84));
+    private final Material limestoneMaterial=diffuse(.89f,.85f,.77f,1);
+    private final Material sandstoneMaterial=diffuse(.82f,.73f,.62f,1);
+    private final Material plasterMaterial=diffuse(.96f,.94f,.88f,1);
+    private final Material towerMaterial=new Material(ColorAttribute.createDiffuse(new Color(.59f,.71f,.73f,1)),ColorAttribute.createSpecular(new Color(.78f,.84f,.85f,1)),FloatAttribute.createShininess(64));
+    private final Material industrialMaterial=diffuse(.66f,.67f,.64f,1);
+    private final Material farmMaterial=diffuse(.62f,.65f,.47f,1);
+    private final Material civicMaterial=diffuse(.92f,.88f,.79f,1);
     private final Material waterMaterial=new Material(ColorAttribute.createDiffuse(new Color(.035f,.34f,.44f,1)),ColorAttribute.createSpecular(new Color(.72f,.88f,.91f,1)),FloatAttribute.createShininess(96));
     private Model focusModel;
     private ModelInstance focusInstance;
@@ -108,15 +109,15 @@ public final class QatarWorldRenderer implements WorldStreamer.Listener, QatarDe
 
     private void initialiseMaterials() {
         terrainMaterials.put(0,textured(.08f,.39f,.48f,saltTexture));
-        terrainMaterials.put(1,textured(.70f,.64f,.54f,urbanTexture));
-        terrainMaterials.put(2,textured(.75f,.69f,.57f,gravelTexture));
-        terrainMaterials.put(3,textured(.83f,.69f,.47f,sandTexture));
-        terrainMaterials.put(4,textured(.80f,.79f,.69f,saltTexture));
-        terrainMaterials.put(5,textured(.39f,.50f,.34f,vegetationTexture));
-        terrainMaterials.put(6,textured(.55f,.59f,.37f,vegetationTexture));
-        terrainMaterials.put(7,textured(.59f,.57f,.51f,urbanTexture));
-        terrainMaterials.put(8,textured(.67f,.62f,.52f,gravelTexture));
-        terrainMaterials.put(9,textured(.89f,.80f,.61f,sandTexture));
+        terrainMaterials.put(1,textured(.73f,.70f,.65f,urbanTexture));
+        terrainMaterials.put(2,textured(.82f,.79f,.72f,gravelTexture));
+        terrainMaterials.put(3,textured(.87f,.75f,.56f,sandTexture));
+        terrainMaterials.put(4,textured(.91f,.90f,.83f,saltTexture));
+        terrainMaterials.put(5,textured(.43f,.54f,.37f,vegetationTexture));
+        terrainMaterials.put(6,textured(.58f,.63f,.41f,vegetationTexture));
+        terrainMaterials.put(7,textured(.64f,.63f,.59f,urbanTexture));
+        terrainMaterials.put(8,textured(.74f,.71f,.66f,gravelTexture));
+        terrainMaterials.put(9,textured(.92f,.84f,.67f,sandTexture));
     }
 
     public void render(float delta) {
@@ -139,7 +140,7 @@ public final class QatarWorldRenderer implements WorldStreamer.Listener, QatarDe
         float ambient=climate.ambient();ambientLight.color.set(ambient,ambient*.96f,ambient*.88f,1);
         fogColor.color.set(climate.skyRed(),climate.skyGreen(),climate.skyBlue(),1);
         sun.color.set(climate.sunRed(),climate.sunGreen(),climate.sunBlue(),1);
-        skyFill.color.set(.28f*ambient,.34f*ambient,.38f*ambient,1);
+        skyFill.color.set(.38f*ambient,.43f*ambient,.46f*ambient,1);
         float azimuth=(climate.solarHour()-6f)/12f*(float)Math.PI;sun.direction.set(-(float)Math.cos(azimuth)*.48f,-Math.max(.28f,climate.daylight()),-.34f).nor();
         skyFill.direction.set(-sun.direction.x,-.38f,-sun.direction.z).nor();
     }
@@ -386,6 +387,7 @@ public final class QatarWorldRenderer implements WorldStreamer.Listener, QatarDe
         MeshPartBuilder roofs=builder.part("osm-roofs",GL20.GL_TRIANGLES,ATTRS,roofMaterial);
         MeshPartBuilder roofEquipment=builder.part("osm-rooftop-equipment",GL20.GL_TRIANGLES,ATTRS,roofDetailMaterial);
         MeshPartBuilder civicRoofDetails=builder.part("osm-mosque-roof-details",GL20.GL_TRIANGLES,ATTRS,civicMaterial);
+        MeshPartBuilder facadeTrim=builder.part("osm-facade-trim",GL20.GL_TRIANGLES,ATTRS,facadeTrimMaterial);
         MeshPartBuilder windows=builder.part("osm-facade-windows",GL20.GL_TRIANGLES,ATTRS,windowMaterial);
         for(QatarPack.Building building:chunk.buildings()){
             MeshPartBuilder target=switch(QatarVisualStyle.facadePalette(building)){
@@ -398,7 +400,7 @@ public final class QatarWorldRenderer implements WorldStreamer.Listener, QatarDe
                 default->limestone;
             };
             float baseHeight=terrainHeight(cellOriginX+building.x(),cellOriginZ+building.z());
-            if(building.hasSourceFootprint())roofDetails+=extrudeFootprint(target,roofs,windows,roofEquipment,civicRoofDetails,building,baseHeight);
+            if(building.hasSourceFootprint())roofDetails+=extrudeFootprint(target,roofs,windows,facadeTrim,roofEquipment,civicRoofDetails,building,baseHeight);
             else{
                 target.setVertexTransform(new Matrix4().setToTranslation(building.x(),baseHeight+building.height()/2,building.z()).rotate(Vector3.Y,(float)Math.toDegrees(building.yaw())));
                 target.box(0,0,0,building.width(),building.height(),building.depth());target.setVertexTransform(null);
@@ -407,12 +409,12 @@ public final class QatarWorldRenderer implements WorldStreamer.Listener, QatarDe
         }
         if(!loggedVisualPipeline&&(chunk.roads().length>0||chunk.buildings().length>0)){
             loggedVisualPipeline=true;
-            Gdx.app.log("QatarVisual","V08_PIPELINE mipmappedSurfaces=5 roadSegments="+chunk.roads().length+" joinedCaps="+renderedJoints+" markingStrips="+renderedMarkingStrips+" buildings="+chunk.buildings().length+" roofDetails="+roofDetails+" boundedJointCap="+QatarVisualStyle.MAX_ROAD_JOINTS_PER_CELL);
+            Gdx.app.log("QatarVisual","V08_PIPELINE mipmappedSurfaces=5 roadSegments="+chunk.roads().length+" joinedCaps="+renderedJoints+" markingStrips="+renderedMarkingStrips+" roadHeightFallback=residentClamp buildings="+chunk.buildings().length+" roofDetails="+roofDetails+" boundedJointCap="+QatarVisualStyle.MAX_ROAD_JOINTS_PER_CELL);
         }
         return builder.end();
     }
 
-    private int extrudeFootprint(MeshPartBuilder part,MeshPartBuilder roofs,MeshPartBuilder windows,MeshPartBuilder roofEquipment,MeshPartBuilder civicRoofDetails,QatarPack.Building building,float baseHeight){
+    private int extrudeFootprint(MeshPartBuilder part,MeshPartBuilder roofs,MeshPartBuilder windows,MeshPartBuilder trim,MeshPartBuilder roofEquipment,MeshPartBuilder civicRoofDetails,QatarPack.Building building,float baseHeight){
         float[] polygon=building.footprint();
         ShortArray triangles=footprintTriangulator.computeTriangles(polygon);
         float height=baseHeight+building.height();
@@ -432,6 +434,12 @@ public final class QatarWorldRenderer implements WorldStreamer.Listener, QatarDe
             float dx=bx-ax,dz=bz-az,length=(float)Math.hypot(dx,dz);if(length<.02f)continue;
             float direction=counterClockwise?1:-1,nx=direction*dz/length,nz=-direction*dx/length;
             facadeRect(part,ax,baseHeight,az,bx,height,bz,nx,nz,counterClockwise);
+            if(QatarVisualStyle.facadeTrim(building)){
+                float trimOffset=.045f,tx1=ax+nx*trimOffset,tz1=az+nz*trimOffset,tx2=bx+nx*trimOffset,tz2=bz+nz*trimOffset;
+                facadeRect(trim,tx1,height-.42f,tz1,tx2,height-.12f,tz2,nx,nz,counterClockwise);
+                float cornerLength=Math.min(.34f,length*.08f),cornerRatio=cornerLength/length;
+                facadeRect(trim,tx1,baseHeight+.22f,tz1,tx1+dx*cornerRatio,height-.44f,tz1+dz*cornerRatio,nx,nz,counterClockwise);
+            }
             if(QatarVisualStyle.parapet(building)){
                 facadeRect(roofs,ax,height,az,bx,height+.42f,bz,nx,nz,counterClockwise);details++;
             }
@@ -480,9 +488,9 @@ public final class QatarWorldRenderer implements WorldStreamer.Listener, QatarDe
         float ux=bx-ax,uy=by-ay,uz=bz-az,vx=cx-ax,vy=cy-ay,vz=cz-az;
         float nx=uy*vz-uz*vy,ny=uz*vx-ux*vz,nz=ux*vy-uy*vx,length=(float)Math.sqrt(nx*nx+ny*ny+nz*nz);
         if(length<.0001f){nx=0;ny=1;nz=0;}else{nx/=length;ny/=length;nz/=length;}
-        MeshPartBuilder.VertexInfo a=new MeshPartBuilder.VertexInfo().setPos(ax,ay,az).setNor(nx,ny,nz).setUV(ax/25f,az/25f);
-        MeshPartBuilder.VertexInfo b=new MeshPartBuilder.VertexInfo().setPos(bx,by,bz).setNor(nx,ny,nz).setUV(bx/25f,bz/25f);
-        MeshPartBuilder.VertexInfo c=new MeshPartBuilder.VertexInfo().setPos(cx,cy,cz).setNor(nx,ny,nz).setUV(cx/25f,cz/25f);
+        MeshPartBuilder.VertexInfo a=new MeshPartBuilder.VertexInfo().setPos(ax,ay,az).setNor(nx,ny,nz).setUV(ax/100f,az/100f);
+        MeshPartBuilder.VertexInfo b=new MeshPartBuilder.VertexInfo().setPos(bx,by,bz).setNor(nx,ny,nz).setUV(bx/100f,bz/100f);
+        MeshPartBuilder.VertexInfo c=new MeshPartBuilder.VertexInfo().setPos(cx,cy,cz).setNor(nx,ny,nz).setUV(cx/100f,cz/100f);
         part.triangle(a,b,c);
     }
 
@@ -530,11 +538,11 @@ public final class QatarWorldRenderer implements WorldStreamer.Listener, QatarDe
     }
 
     private void roadDisc(MeshPartBuilder part,float x,float z,double cellOriginX,double cellOriginZ,float offset,float radius){
-        float centreHeight=terrainHeight(cellOriginX+x,cellOriginZ+z)+offset;
+        float centreHeight=detailTerrainHeight(cellOriginX+x,cellOriginZ+z,cellOriginX,cellOriginZ)+offset;
         for(int side=0;side<QatarVisualStyle.ROAD_JOINT_DIVISIONS;side++){
             double a=Math.PI*2*side/QatarVisualStyle.ROAD_JOINT_DIVISIONS,b=Math.PI*2*(side+1)/QatarVisualStyle.ROAD_JOINT_DIVISIONS;
             float ax=x+(float)Math.cos(a)*radius,az=z+(float)Math.sin(a)*radius,bx=x+(float)Math.cos(b)*radius,bz=z+(float)Math.sin(b)*radius;
-            float ah=terrainHeight(cellOriginX+ax,cellOriginZ+az)+offset,bh=terrainHeight(cellOriginX+bx,cellOriginZ+bz)+offset;
+            float ah=detailTerrainHeight(cellOriginX+ax,cellOriginZ+az,cellOriginX,cellOriginZ)+offset,bh=detailTerrainHeight(cellOriginX+bx,cellOriginZ+bz,cellOriginX,cellOriginZ)+offset;
             terrainTriangle(part,x,centreHeight,z,ax,ah,az,bx,bh,bz);
         }
     }
@@ -557,8 +565,8 @@ public final class QatarWorldRenderer implements WorldStreamer.Listener, QatarDe
         float px=-dz/length*width/2,pz=dx/length*width/2;
         float x1a=x1+px,z1a=z1+pz,x1b=x1-px,z1b=z1-pz;
         float x2b=x2-px,z2b=z2-pz,x2a=x2+px,z2a=z2+pz;
-        float h1a=terrainHeight(cellOriginX+x1a,cellOriginZ+z1a)+offset,h1b=terrainHeight(cellOriginX+x1b,cellOriginZ+z1b)+offset;
-        float h2b=terrainHeight(cellOriginX+x2b,cellOriginZ+z2b)+offset,h2a=terrainHeight(cellOriginX+x2a,cellOriginZ+z2a)+offset;
+        float h1a=detailTerrainHeight(cellOriginX+x1a,cellOriginZ+z1a,cellOriginX,cellOriginZ)+offset,h1b=detailTerrainHeight(cellOriginX+x1b,cellOriginZ+z1b,cellOriginX,cellOriginZ)+offset;
+        float h2b=detailTerrainHeight(cellOriginX+x2b,cellOriginZ+z2b,cellOriginX,cellOriginZ)+offset,h2a=detailTerrainHeight(cellOriginX+x2a,cellOriginZ+z2a,cellOriginX,cellOriginZ)+offset;
         terrainTriangle(part,x1a,h1a,z1a,x2a,h2a,z2a,x2b,h2b,z2b);
         terrainTriangle(part,x2b,h2b,z2b,x1b,h1b,z1b,x1a,h1a,z1a);
     }
@@ -580,6 +588,15 @@ public final class QatarWorldRenderer implements WorldStreamer.Listener, QatarDe
     }
 
     private float terrainHeight(double globalX,double globalZ){return terrainHeightOr(globalX,globalZ,0);}
+
+    private float detailTerrainHeight(double globalX,double globalZ,double cellOriginX,double cellOriginZ){
+        float measured=terrainHeightOr(globalX,globalZ,Float.NaN);if(!Float.isNaN(measured))return measured;
+        double inset=.05,clampedX=Math.max(cellOriginX+inset,Math.min(cellOriginX+detailCellMetres-inset,globalX));
+        double clampedZ=Math.max(cellOriginZ+inset,Math.min(cellOriginZ+detailCellMetres-inset,globalZ));
+        measured=terrainHeightOr(clampedX,clampedZ,Float.NaN);
+        if(!Float.isNaN(measured))return measured;
+        return terrainHeightOr(cellOriginX+detailCellMetres*.5,cellOriginZ+detailCellMetres*.5,0);
+    }
 
     private float terrainHeightOr(double globalX,double globalZ,float absent){
         int chunkX=pack.chunkX(globalX),chunkY=pack.chunkY(globalZ);
@@ -641,17 +658,17 @@ public final class QatarWorldRenderer implements WorldStreamer.Listener, QatarDe
     @Override public void dispose(){for(RenderChunk value:chunks.values()){value.model.dispose();if(value.waterModel!=null)value.waterModel.dispose();}for(RenderChunk value:detailCells.values())value.model.dispose();chunks.clear();nationalData.clear();detailCells.clear();detailData.clear();if(focusModel!=null)focusModel.dispose();sandTexture.dispose();gravelTexture.dispose();saltTexture.dispose();urbanTexture.dispose();vegetationTexture.dispose();batch.dispose();}
     private Material textured(float r,float g,float b,Texture texture){return new Material(ColorAttribute.createDiffuse(new Color(r,g,b,1)),TextureAttribute.createDiffuse(texture));}
     private static Texture createSurfaceTexture(int seed,int style){
-        final int size=128;Pixmap pixmap=new Pixmap(size,size,Pixmap.Format.RGBA8888);
+        final int size=128;final float turn=(float)(Math.PI*2/size);Pixmap pixmap=new Pixmap(size,size,Pixmap.Format.RGBA8888);
         for(int y=0;y<size;y++)for(int x=0;x<size;x++){
             int hash=x*374761393+y*668265263+seed;hash=(hash^(hash>>>13))*1274126177;
             float fine=((hash>>>24)&255)/255f-.5f;
-            float broad=.5f+.25f*(float)Math.sin((x+seed%19)*.105f)+.18f*(float)Math.sin((y-seed%23)*.081f)+.08f*(float)Math.sin((x+y)*.039f);
+            float broad=.5f+.14f*(float)Math.sin(turn*(2*x+y))+.10f*(float)Math.sin(turn*(x-3*y))+.06f*(float)Math.cos(turn*(5*x+2*y));
             float r,g,b;
-            if(style==0){float dune=.84f+.08f*(float)Math.sin(x*.10f+y*.035f)+fine*.055f;r=dune;g=dune*.91f;b=dune*.70f;}
-            else if(style==1){float stone=.78f+broad*.10f+fine*.12f;r=stone;g=stone*.94f;b=stone*.82f;}
-            else if(style==2){float crust=.86f+broad*.05f+fine*.035f;float vein=(Math.abs((x*7+y*11+seed)%41-20)<1)?.10f:0;r=crust-vein;g=crust*.98f-vein;b=crust*.89f-vein*.6f;}
-            else if(style==3){float aggregate=.75f+broad*.055f+fine*.09f;float seam=(x%43==0||y%47==0)?.055f:0;r=aggregate-seam;g=aggregate*.96f-seam;b=aggregate*.88f-seam;}
-            else {float growth=.64f+broad*.13f+fine*.08f;r=growth*.72f;g=growth;b=growth*.52f;}
+            if(style==0){float ripple=.045f*(float)Math.sin(turn*(6*x+2*y))+.022f*(float)Math.sin(turn*(13*x+5*y));float dune=.88f+ripple+fine*.035f;r=dune;g=dune*.93f;b=dune*.78f;}
+            else if(style==1){float stone=.84f+(broad-.5f)*.16f+fine*.08f;r=stone;g=stone*.98f;b=stone*.92f;}
+            else if(style==2){float crust=.92f+(broad-.5f)*.10f+fine*.025f;float vein=(Math.abs(Math.floorMod(x*7+y*11+seed,47)-23)<1)?.075f:0;r=crust-vein;g=crust*.99f-vein;b=crust*.94f-vein*.7f;}
+            else if(style==3){float aggregate=.82f+(broad-.5f)*.11f+fine*.07f;float seam=(Math.floorMod(x+2*y,61)==0)?.04f:0;r=aggregate-seam;g=aggregate*.98f-seam;b=aggregate*.93f-seam;}
+            else {float growth=.68f+(broad-.5f)*.22f+fine*.07f;r=growth*.72f;g=growth;b=growth*.55f;}
             pixmap.drawPixel(x,y,Color.rgba8888(clampColour(r),clampColour(g),clampColour(b),1));
         }
         Texture texture=new Texture(pixmap,true);pixmap.dispose();texture.setWrap(Texture.TextureWrap.Repeat,Texture.TextureWrap.Repeat);texture.setFilter(Texture.TextureFilter.MipMapLinearLinear,Texture.TextureFilter.Linear);return texture;

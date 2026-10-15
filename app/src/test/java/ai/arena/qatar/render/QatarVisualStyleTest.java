@@ -34,5 +34,6 @@ public class QatarVisualStyleTest {
         assertTrue(QatarVisualStyle.rooftopEquipment(building(1,1,20,20,30)));
         assertTrue(QatarVisualStyle.mosqueDetails(building(6,2,20,15,12)));
         assertTrue(QatarVisualStyle.parapet(building(3,3,10,8,7)));
+        assertTrue(QatarVisualStyle.facadeTrim(building(3,4,10,8,7)));
     }
 }

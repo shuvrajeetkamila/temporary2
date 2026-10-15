@@ -16,6 +16,7 @@ STYLE = ROOT / "app/src/main/java/ai/arena/qatar/render/QatarVisualStyle.java"
 HEADER = struct.Struct("<4sIIIII4dII")
 INDEX = struct.Struct("<iiqiiIHH")
 ROAD = struct.Struct("<qiiiiBBBBH")
+BUILDING = struct.Struct("<qiiiiihBBH")
 
 
 def constant(source: str, name: str) -> float:
@@ -36,6 +37,7 @@ def audit() -> dict[str, object]:
     marking_cap = int(constant(style, "MAX_MARKING_STRIPS_PER_CELL"))
     subdivision_cap = int(constant(style, "MAX_ROAD_SUBDIVISIONS"))
     terrain_step = constant(style, "ROAD_TERRAIN_STEP_METRES")
+    decorated_points = int(constant(style, "MAX_DECORATED_FOOTPRINT_POINTS"))
 
     payload = QOD.read_bytes()
     if len(payload) < HEADER.size:
@@ -49,7 +51,9 @@ def audit() -> dict[str, object]:
     max_road_cell: dict[str, int] = {}
     max_building_cell: dict[str, int] = {}
     max_material_vertices = 0
-    max_material_cell: dict[str, int] = {}
+    max_material_cell: dict[str, object] = {}
+    max_roof_vertices = max_trim_vertices = max_window_vertices = max_equipment_vertices = max_mosque_vertices = 0
+    max_building_stream_cells: dict[str, dict[str, int]] = {}
     indexed_roads = indexed_buildings = 0
 
     for cell in range(cell_count):
@@ -78,6 +82,64 @@ def audit() -> dict[str, object]:
             length = math.hypot(x2 - x1, z2 - z1) / 10.0
             by_class[road_class] += pieces(length, terrain_step, subdivision_cap)
 
+        block_buildings = struct.unpack_from("<I", raw, position)[0]
+        position += 4
+        if block_buildings != building_count:
+            raise ValueError(f"QTOD building index/block mismatch {x},{y}")
+        roof_vertices = trim_vertices = window_vertices = equipment_vertices = mosque_vertices = 0
+        for _ in range(building_count):
+            (_source, _bx, _bz, width_dm, depth_dm, height_dm, _yaw, archetype, _flags, point_count) = BUILDING.unpack_from(raw, position)
+            position += BUILDING.size
+            points = [struct.unpack_from("<ii", raw, position + point * 8) for point in range(point_count)]
+            position += point_count * 8
+            width, depth, height = width_dm / 10.0, depth_dm / 10.0, height_dm / 10.0
+            roof_vertices += max(0, point_count - 2) * 3
+            if point_count <= decorated_points and height >= 4:
+                roof_vertices += point_count * 4
+                if archetype != 5:
+                    trim_vertices += point_count * 8
+            if height >= 5 and archetype != 5:
+                stride = max(1, (point_count + 23) // 24)
+                floors = max(1, int((height - 1.5) / 3.2))
+                displayed = min(12 if archetype == 1 else 8, floors)
+                for edge in range(0, point_count, stride):
+                    ax, az = points[edge]
+                    bx, bz = points[(edge + 1) % point_count]
+                    if math.hypot(bx - ax, bz - az) >= 40:
+                        window_vertices += displayed * 4
+            if height >= 8 and width >= 6 and depth >= 6 and archetype not in (5, 6):
+                equipment_vertices += 24
+                if height >= 24 and width >= 12:
+                    equipment_vertices += 24
+            if archetype == 6 and width >= 5 and depth >= 5:
+                # Conservative sphere/cylinder vertex allowance for the bounded dome/minaret builders.
+                mosque_vertices += 256
+        if position != len(raw):
+            raise ValueError(f"unexpected QTOD tail in cell {x},{y}")
+
+        building_streams = {
+            "roofs": roof_vertices,
+            "facadeTrim": trim_vertices,
+            "windows": window_vertices,
+            "roofEquipment": equipment_vertices,
+            "mosqueDetails": mosque_vertices,
+        }
+        for stream, vertices in building_streams.items():
+            current = {
+                "roofs": max_roof_vertices,
+                "facadeTrim": max_trim_vertices,
+                "windows": max_window_vertices,
+                "roofEquipment": max_equipment_vertices,
+                "mosqueDetails": max_mosque_vertices,
+            }[stream]
+            if vertices > current:
+                max_building_stream_cells[stream] = {"x": x, "y": y}
+                if stream == "roofs": max_roof_vertices = vertices
+                elif stream == "facadeTrim": max_trim_vertices = vertices
+                elif stream == "windows": max_window_vertices = vertices
+                elif stream == "roofEquipment": max_equipment_vertices = vertices
+                else: max_mosque_vertices = vertices
+
         # terrainTriangle emits three vertices; a strip quad emits two triangles.
         cap_vertices = joint_cap * joint_divisions * 3
         material_candidates = {
@@ -100,6 +162,16 @@ def audit() -> dict[str, object]:
         raise ValueError(f"road material bound {max_material_vertices} exceeds {conservative_vertex_limit}")
     if marking_vertex_cap >= conservative_vertex_limit:
         raise ValueError(f"marking material bound {marking_vertex_cap} exceeds {conservative_vertex_limit}")
+    building_vertex_caps = {
+        "roofs": max_roof_vertices,
+        "facadeTrim": max_trim_vertices,
+        "windows": max_window_vertices,
+        "roofEquipment": max_equipment_vertices,
+        "mosqueDetails": max_mosque_vertices,
+    }
+    for stream, vertices in building_vertex_caps.items():
+        if vertices >= conservative_vertex_limit:
+            raise ValueError(f"building stream {stream} bound {vertices} exceeds {conservative_vertex_limit}")
 
     return {
         "format": "QatarVisualGeometryAudit",
@@ -118,6 +190,9 @@ def audit() -> dict[str, object]:
         "maximumEstimatedRoadMaterialVertices": max_material_vertices,
         "maximumRoadMaterialCell": max_material_cell,
         "maximumMarkingMaterialVertices": marking_vertex_cap,
+        "maximumDecoratedFootprintPoints": decorated_points,
+        "maximumBuildingStreamVertices": building_vertex_caps,
+        "maximumBuildingStreamCells": max_building_stream_cells,
         "conservativePerMaterialVertexLimit": conservative_vertex_limit,
         "status": "PASSED",
     }
