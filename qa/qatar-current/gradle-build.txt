@@ -38,11 +38,12 @@ The AGP Upgrade Assistant can remove the attribute from the AndroidManifest.xml 
 > Task :app:processDebugJavaRes NO-SOURCE
 > Task :app:processDebugUnitTestJavaRes NO-SOURCE
 > Task :app:mergeDebugNativeDebugMetadata NO-SOURCE
-> Task :app:processDebugManifestForPackage
 > Task :app:desugarDebugFileDependencies
-> Task :app:compressDebugAssets
-> Task :app:processDebugResources
+> Task :app:processDebugManifestForPackage
 > Task :app:mergeDebugJavaResource
+> Task :app:processDebugResources
+> Task :app:checkDebugDuplicateClasses
+> Task :app:compressDebugAssets
 
 > Task :app:compileDebugJavaWithJavac
 Note: /home/runner/work/temporary2/temporary2/app/src/main/java/ai/arena/qatar/render/QatarWorldRenderer.java uses or overrides a deprecated API.
@@ -56,14 +57,13 @@ Note: Recompile with -Xlint:deprecation for details.
 > Task :app:dexBuilderDebug
 > Task :app:testDebugUnitTest
 > Task :app:mergeDebugGlobalSynthetics
-> Task :app:checkDebugDuplicateClasses
-> Task :app:mergeDebugJniLibFolders
 > Task :app:mergeLibDexDebug
+> Task :app:mergeProjectDexDebug
+> Task :app:mergeDebugJniLibFolders
 > Task :app:validateSigningDebug
 > Task :app:writeDebugAppMetadata
 > Task :app:writeDebugSigningConfigVersions
 > Task :app:mergeDebugNativeLibs
-> Task :app:mergeProjectDexDebug
 
 > Task :app:stripDebugDebugSymbols
 Unable to strip the following libraries, packaging them as they are: libgdx-bullet.so, libgdx.so.
@@ -72,7 +72,7 @@ Unable to strip the following libraries, packaging them as they are: libgdx-bull
 > Task :app:packageDebug
 > Task :app:createDebugApkListingFileRedirect
 > Task :app:assembleDebug
-gradle/actions: Writing build results to /home/runner/work/_temp/.gradle-actions/build-results/compile-1792092228343.json
+gradle/actions: Writing build results to /home/runner/work/_temp/.gradle-actions/build-results/compile-1792092880472.json
 
-BUILD SUCCESSFUL in 1m 41s
+BUILD SUCCESSFUL in 1m 10s
 42 actionable tasks: 41 executed, 1 from cache
