@@ -41,9 +41,10 @@ The families map across all ten installed Qatar biome classes. They use seamless
 
 - A deterministic source-ID/archetype rule assigns seven façade families: limestone, sandstone, white plaster, glass tower, civic, industrial, and farm.
 - Façades are brighter and retain source OSM outer footprints and heights.
+- Two generated mipmapped façade patterns add repeated floor/bay-scale windows and mullions to stone/civic/industrial and glass families, including complex footprints that intentionally skip extra trim geometry.
 - Glass has stronger but bounded highlights plus a very low emissive floor so windows remain legible on faces turned away from the sun; tower window coverage is increased while retaining an eight-floor display cap for ordinary buildings and a twelve-floor cap for towers.
 - Bounded pale roofline bands and corner trim break up otherwise blank extruded walls without changing footprint silhouettes.
-- A cool, low-intensity opposite-direction sky fill complements the climate-controlled sun and ambient light, reducing blank black building faces.
+- A calibrated opposite-direction sky fill complements reduced ambient/sun intensity, preserving façade colour and ground texture without clipping sun-facing terrain. Clear-weather distance fog was removed after screenshot inspection showed it flattening nearby regional façade palettes into the sky colour.
 - Source footprints up to 16 points receive low parapets and façade trim; more complex footprints retain their exact silhouette without unbounded decoration.
 - Eligible roofs receive one or two small deterministic equipment housings.
 - Eligible mosque footprints receive bounded generated domes and minarets. No landmark mesh is copied.
@@ -60,6 +61,7 @@ The families map across all ten installed Qatar biome classes. They use seamless
 | Marking strips per cell | 2,400 |
 | Dashes per source segment | 48 |
 | Procedural terrain textures | 5 × 128×128 RGBA with mipmaps |
+| Procedural façade patterns | 2 × 64×64 RGBA with mipmaps |
 | Parapet/trim footprint size | at most 16 points |
 | Ordinary/tower displayed window floors | 8 / 12 |
 

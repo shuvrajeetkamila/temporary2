@@ -20,7 +20,7 @@ This incremental release preserves the physically confirmed v0.7 smooth-motion a
 - Joined OSM road endpoints and intersections using deterministic capped junction geometry, hierarchy-aware shoulders, terrain-following subdivisions, lane/centre dashes, major-road edge lines, runway/taxiway markings, path beds, and twin rails
 - Five generated 128×128 mipmapped surface families for dune sand, limestone/gravel, sabkha/salt, urban aggregate, and vegetation, mapped into all ten Qatar biome classes without replacing measured elevation
 - Seven deterministic Qatar façade families: limestone, sandstone, white plaster, glass tower, civic, industrial, and farm
-- Brighter opposite-direction fill lighting, improved window/roof materials, bounded parapets and rooftop equipment, and procedural mosque domes/minarets
+- Calibrated opposite-direction fill lighting, two mipmapped procedural façade patterns, improved window/roof materials, bounded parapets and rooftop equipment, and procedural mosque domes/minarets
 - Complete installed Qatar OpenStreetMap derivative: 88,965 indexed 250 m microcells
 - 182,110 source road ways represented by 1,441,102 road segments
 - 189,446 source building footprints, including 356 relation outer rings
