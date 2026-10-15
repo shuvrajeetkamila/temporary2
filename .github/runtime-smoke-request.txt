@@ -1,5 +1,5 @@
-Qatar Android v0.6.0 final camera stabilization, national map, and teleport runtime request
-APK SHA-256: 76d1bf32702d1eca80a6ea3bb9fd12dfaa2d827da5148b464364d3074b0f5f5e
-Build run: 38778614626
-Requested UTC: 2026-10-15T17:38:03Z
-Checks: stable-certificate install/reinstall; cold launch; fixed-step camera presentation in all five movement modes; minimap open; unobstructed full-country map UI; destination select; explicit close; northern-Qatar WALK teleport; destination chunk readiness; nine valid screenshots; unplugged Battery Saver WARM downshift; same-PID Home/resume callbacks; no app-scoped fatal log.
+Qatar Android v0.7.0 smooth-motion and offline street-map runtime request
+APK SHA-256: 6cfea38f3b78c031987e16ba733dc408db8dbb5adfd3e0fc01cafb3e463a6049
+Build run: 38784037090
+Requested UTC: 2026-10-15T18:18:31Z
+Checks: stable-certificate install/reinstall; cold launch; one-pacer cadence with no manual render skipping in all five movement modes; direct interpolated horizontal camera tracking; visible nearby OSM streets in gameplay minimap; full national 1,441,102-segment OSM street atlas; map open/select/close; northern-Qatar teleport; nine valid screenshots; Battery Saver WARM; same-PID lifecycle callbacks; no app-scoped fatal log.
