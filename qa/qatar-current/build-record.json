@@ -1,8 +1,8 @@
 {
-  "sourceCommit": "2339f1eccbcb6f0ab8202d8d4c66a4e9d2bb6596",
+  "sourceCommit": "3ee2f0f47c2b25b64d49e69975d2637f17dbb332",
   "apk": "Qatar-The-Peninsula-CAMERA-MAP-v0.6.0.apk",
-  "apkBytes": 37929379,
-  "apkSha256": "111bd8ef7ea4d268b01dd39bcf6502b03d40cb384cda63ad00fe2c49a42623c1",
+  "apkBytes": 37929427,
+  "apkSha256": "76d1bf32702d1eca80a6ea3bb9fd12dfaa2d827da5148b464364d3074b0f5f5e",
   "packageId": "ai.arena.qatar.peninsula",
   "versionCode": 6,
   "versionName": "0.6.0-camera-map-teleport-preproduction",
