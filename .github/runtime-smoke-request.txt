@@ -1,5 +1,5 @@
-Qatar Android v0.6.0 camera stabilization, national map, and teleport runtime request
-APK SHA-256: 111bd8ef7ea4d268b01dd39bcf6502b03d40cb384cda63ad00fe2c49a42623c1
-Build run: 38777447629
-Requested UTC: 2026-10-15T17:29:58Z
-Checks: stable-certificate install/reinstall; cold launch; fixed-step camera presentation in all five movement modes; minimap open; full-country map render; destination select; explicit close; northern-Qatar WALK teleport; destination chunk readiness; nine valid screenshots; unplugged Battery Saver WARM downshift; same-PID Home/resume callbacks; no app-scoped fatal log.
+Qatar Android v0.6.0 final camera stabilization, national map, and teleport runtime request
+APK SHA-256: 76d1bf32702d1eca80a6ea3bb9fd12dfaa2d827da5148b464364d3074b0f5f5e
+Build run: 38778614626
+Requested UTC: 2026-10-15T17:38:03Z
+Checks: stable-certificate install/reinstall; cold launch; fixed-step camera presentation in all five movement modes; minimap open; unobstructed full-country map UI; destination select; explicit close; northern-Qatar WALK teleport; destination chunk readiness; nine valid screenshots; unplugged Battery Saver WARM downshift; same-PID Home/resume callbacks; no app-scoped fatal log.
