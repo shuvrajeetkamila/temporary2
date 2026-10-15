@@ -1,5 +1,5 @@
-Qatar Android v0.8.0 refined realistic ground-world runtime request
-Build source commit: 17789c1148924432de43b835e71b3a61bae6119b
-Published APK SHA-256: 449d82586593292da9e113ddca7465085965ade210e176d201e2eb2cc6b5af5c
+Qatar Android v0.8.0 final realistic ground-world runtime request
+Build source commit: 209bd2eec15d42f2ff3ef6028358ec00676dc1a7
+Published APK SHA-256: f3febf28178a2db8dae898ed53448c864b9428127eb1064231d44d7ef5ea2662
 Requested: 2026-10-16 Asia/Calcutta
-Validation focus: resident-clamped roads, seamless mipmapped terrain, brighter trimmed facades
+Validation focus: calibrated lighting plus two mipmapped facade patterns
