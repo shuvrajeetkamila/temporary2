@@ -3,6 +3,6 @@ Warning: Activity not started, its current task has been brought to the front
 Status: ok
 LaunchState: HOT
 Activity: ai.arena.qatar.peninsula/ai.arena.qatar.MainActivity
-TotalTime: 202
-WaitTime: 240
+TotalTime: 30
+WaitTime: 33
 Complete
