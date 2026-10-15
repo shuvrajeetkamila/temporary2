@@ -16,6 +16,9 @@ public class QatarEnvironmentTest {
         assertEquals(20,ThermalGovernor.profileForAndroidStatus(2).targetFps);
         assertEquals(15,ThermalGovernor.profileForAndroidStatus(3).targetFps);
         assertEquals(15,ThermalGovernor.profileForAndroidStatus(6).targetFps);
+        assertEquals(0,ThermalGovernor.effectiveAndroidStatus(0,false));
+        assertEquals(2,ThermalGovernor.effectiveAndroidStatus(0,true));
+        assertEquals(3,ThermalGovernor.effectiveAndroidStatus(3,true));
         assertTrue(ThermalGovernor.Profile.HOT.maxDetailCells<ThermalGovernor.Profile.NORMAL.maxDetailCells);
     }
 }

@@ -77,7 +77,7 @@ final class WorldScreen extends ScreenAdapter {
     }
 
     @Override public void resize(int width,int height){renderer.camera().viewportWidth=width;renderer.camera().viewportHeight=height;renderer.camera().update();}
-    @Override public void pause(){physics.setControls(0,0,0,false);}
-    @Override public void resume(){Gdx.input.setInputProcessor(controls);applyProfile(ThermalGovernor.profileForAndroidStatus(thermalStatus.getAsInt()));}
+    @Override public void pause(){physics.setControls(0,0,0,false);Gdx.graphics.setContinuousRendering(false);Gdx.app.log("QatarLifecycle","PAUSED mode="+physics.mode()+" rendering=suspended");}
+    @Override public void resume(){Gdx.graphics.setContinuousRendering(true);Gdx.graphics.requestRendering();Gdx.input.setInputProcessor(controls);applyProfile(ThermalGovernor.profileForAndroidStatus(thermalStatus.getAsInt()));Gdx.app.log("QatarLifecycle","RESUMED mode="+physics.mode()+" rendering=active");}
     @Override public void dispose(){if(disposed)return;disposed=true;Gdx.input.setInputProcessor(null);detailStreamer.dispose();streamer.dispose();hud.dispose();renderer.dispose();physics.dispose();}
 }

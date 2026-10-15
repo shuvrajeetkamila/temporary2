@@ -6,11 +6,11 @@
 - National runtime-pack identifier: `2026-10-14-srtm-osm-v0.3`
 - OSM detail retrieval epoch: `2026-10-13T16:30:08Z`
 - Terrain retrieval epoch: `2026-10-14T12:25:57Z`
-- Current release stage: **v0.4.0 Qatar-environments preproduction milestone**
+- Current release stage: **v0.5.0 Qatar-stability preproduction milestone**
 
 ## Source epochs and known mismatches
 
-| Layer | Current v0.4.0 basis | Status |
+| Layer | Current v0.5.0 basis | Status |
 |---|---|---|
 | National boundary/coast envelope | geoBoundaries v6 lineage, retrieved 2026-10-12 | Complete coarse envelope; reclamation-by-reclamation review pending |
 | Municipal divisions | Eight geoBoundaries ADM1 units | Packaged and covered |
@@ -23,4 +23,4 @@
 | Airports/ports | OSM public geometry plus public regional hubs | Detailed surface/operations/architecture work pending |
 | Stadiums/landmarks | OSM footprints where tagged; no copied commercial models | Original hero-asset milestone pending |
 
-The program never labels these layers as navigation, survey, aviation, or engineering data. Version 0.4.0 proves a clean Android/libGDX/Bullet toolchain, complete-country installed index, EPSG:32639 metre coordinates, local random-access streaming, all-municipality coverage, bounded source-derived OSM rendering, measured terrain-scale elevation, deterministic environment presets, Gulf tide/wind coupling, and adaptive Android thermal budgets. Later releases must update this document rather than silently mixing dates.
+The program never labels these layers as navigation, survey, aviation, or engineering data. Version 0.5.0 proves a clean Android/libGDX/Bullet toolchain, complete-country installed index, EPSG:32639 metre coordinates, local random-access streaming, all-municipality coverage, bounded source-derived OSM rendering, measured terrain-scale elevation, deterministic environment presets, Gulf tide/wind coupling, adaptive Android thermal/power budgets, and repeatable preproduction installation/lifecycle validation. Later releases must update this document rather than silently mixing dates.

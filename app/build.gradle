@@ -14,17 +14,30 @@ android {
         applicationId 'ai.arena.qatar.peninsula'
         minSdk 26
         targetSdk 35
-        versionCode 4
-        versionName '0.4.0-qatar-environments-preproduction'
+        versionCode 5
+        versionName '0.5.0-qatar-stability-preproduction'
 
         ndk {
             abiFilters 'arm64-v8a', 'armeabi-v7a', 'x86_64'
         }
     }
 
+    // Public non-production key: stable across CI builds so v0.5+ APKs can update each other.
+    // It provides continuity only, not production trust; production signing remains external.
+    signingConfigs {
+        preproduction {
+            storeFile file('signing/qatar-preproduction.p12')
+            storePassword 'qatar-preproduction-public'
+            keyAlias 'qatar-preproduction'
+            keyPassword 'qatar-preproduction-public'
+            storeType 'PKCS12'
+        }
+    }
+
     buildTypes {
         debug {
             minifyEnabled false
+            signingConfig signingConfigs.preproduction
         }
         release {
             minifyEnabled false

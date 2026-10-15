@@ -21,7 +21,7 @@ jobs:
     timeout-minutes: 35
     steps:
       - name: Check out deterministic importer
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
 
       - name: Install osmium and pyosmium
         run: |

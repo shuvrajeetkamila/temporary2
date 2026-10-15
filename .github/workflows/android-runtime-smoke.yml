@@ -19,7 +19,7 @@ jobs:
       ANDROID_AVD_HOME: /home/runner/.android/avd
     steps:
       - name: Check out published Qatar APK
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
 
       - name: Enable KVM when available
         run: |
@@ -59,9 +59,11 @@ jobs:
         run: |
           set +e
           ADB="$ANDROID_HOME/platform-tools/adb"
-          APK='artifacts/Qatar-The-Peninsula-QATAR-ENVIRONMENTS-v0.4.0.apk'
+          APK='artifacts/Qatar-The-Peninsula-QATAR-STABILITY-v0.5.0.apk'
           "$ADB" install -r "$APK" > qa/qatar-runtime/install.txt 2>&1
           INSTALL_EXIT=$?
+          "$ADB" install -r "$APK" > qa/qatar-runtime/reinstall.txt 2>&1
+          REINSTALL_EXIT=$?
           "$ADB" logcat -c
           "$ADB" shell am start -W -n ai.arena.qatar.peninsula/ai.arena.qatar.MainActivity \
             > qa/qatar-runtime/activity-start.txt 2>&1
@@ -86,9 +88,19 @@ jobs:
           "$ADB" shell input tap 1140 52; sleep 1
           "$ADB" shell input swipe 150 600 150 430 1600; sleep 10
           "$ADB" exec-out screencap -p > qa/qatar-runtime/aeroplane.png
-          python3 tools/check_png_scene.py qa/qatar-runtime/{gameplay,car,boat,helicopter,aeroplane}.png | tee qa/qatar-runtime/scene-validation.txt
-          SCENE_EXIT=${PIPESTATUS[0]}
+          "$ADB" shell cmd power set-mode 1 > qa/qatar-runtime/power-save.txt 2>&1
+          POWER_SAVE_EXIT=$?
+          sleep 12
+          PID_BEFORE_LIFECYCLE="$("$ADB" shell pidof ai.arena.qatar.peninsula | tr -d '\r')"
+          "$ADB" shell input keyevent 3; sleep 3
+          "$ADB" shell am start -W -n ai.arena.qatar.peninsula/ai.arena.qatar.MainActivity > qa/qatar-runtime/activity-resume.txt 2>&1
+          RESUME_EXIT=$?
+          sleep 10
           PID="$("$ADB" shell pidof ai.arena.qatar.peninsula | tr -d '\r')"
+          "$ADB" exec-out screencap -p > qa/qatar-runtime/resumed.png
+          "$ADB" shell cmd power set-mode 0 || true
+          python3 tools/check_png_scene.py qa/qatar-runtime/{gameplay,car,boat,helicopter,aeroplane,resumed}.png | tee qa/qatar-runtime/scene-validation.txt
+          SCENE_EXIT=${PIPESTATUS[0]}
           if [ -n "$PID" ]; then "$ADB" logcat -d --pid="$PID" > qa/qatar-runtime/logcat.txt; else "$ADB" logcat -d > qa/qatar-runtime/logcat.txt; fi
           "$ADB" shell dumpsys activity activities > qa/qatar-runtime/activity-dump.txt
           printf '%s\n' "$PID" > qa/qatar-runtime/app-pid.txt
@@ -100,6 +112,9 @@ jobs:
           PACK_READY="$(grep 'QatarStreaming.*PACK_READY epoch=2026-10-14-srtm-osm-v0.3' qa/qatar-runtime/logcat.txt || true)"
           ENV_READY="$(grep 'QatarEnvironment.*ENV_READY' qa/qatar-runtime/logcat.txt || true)"
           THERMAL_READY="$(grep 'QatarThermal.*PROFILE NORMAL fps=30' qa/qatar-runtime/logcat.txt || true)"
+          POWER_SAVE_READY="$(grep 'QatarThermal.*PROFILE WARM fps=20' qa/qatar-runtime/logcat.txt || true)"
+          LIFECYCLE_PAUSED="$(grep 'QatarLifecycle.*PAUSED' qa/qatar-runtime/logcat.txt | tail -1 || true)"
+          LIFECYCLE_RESUMED="$(grep 'QatarLifecycle.*RESUMED' qa/qatar-runtime/logcat.txt | tail -1 || true)"
           WALK_STATE="$(grep 'QatarRuntime.*STATE mode=WALK' qa/qatar-runtime/logcat.txt | tail -1 || true)"
           CAR_STATE="$(grep 'QatarRuntime.*STATE mode=CAR' qa/qatar-runtime/logcat.txt | tail -1 || true)"
           BOAT_STATE="$(grep 'QatarRuntime.*STATE mode=BOAT' qa/qatar-runtime/logcat.txt | tail -1 || true)"
@@ -108,11 +123,18 @@ jobs:
           {
 
             echo "install_exit=$INSTALL_EXIT"
+            echo "reinstall_exit=$REINSTALL_EXIT"
             echo "start_exit=$START_EXIT"
+            echo "resume_exit=$RESUME_EXIT"
+            echo "power_save_command_exit=$POWER_SAVE_EXIT"
+            if [ -n "$POWER_SAVE_READY" ]; then echo 'power_save_warm_profile=yes'; else echo 'power_save_warm_profile=no'; fi
+            echo "pid_before_lifecycle=$PID_BEFORE_LIFECYCLE"
             echo "pid=$PID"
+            if [ "$PID_BEFORE_LIFECYCLE" = "$PID" ] && [ -n "$PID" ]; then echo 'lifecycle_process_preserved=yes'; else echo 'lifecycle_process_preserved=no'; fi
+            if [ -n "$LIFECYCLE_PAUSED" ] && [ -n "$LIFECYCLE_RESUMED" ]; then echo 'lifecycle_callbacks=yes'; else echo 'lifecycle_callbacks=no'; fi
             echo "screenshot_bytes=$(wc -c < qa/qatar-runtime/gameplay.png)"
             echo "scene_validation_exit=$SCENE_EXIT"
-            for IMAGE in car boat helicopter aeroplane; do IMAGE_BYTES="$(wc -c < "qa/qatar-runtime/$IMAGE.png")"; echo "${IMAGE}_screenshot_bytes=$IMAGE_BYTES"; done
+            for IMAGE in car boat helicopter aeroplane resumed; do IMAGE_BYTES="$(wc -c < "qa/qatar-runtime/$IMAGE.png")"; echo "${IMAGE}_screenshot_bytes=$IMAGE_BYTES"; done
             if [ -n "$OSM_READY" ]; then echo 'osm_detail_rendered=yes'; else echo 'osm_detail_rendered=no'; fi
             if [ -n "$PACK_READY" ]; then echo 'terrain_pack_loaded=yes'; else echo 'terrain_pack_loaded=no'; fi
             if [ -n "$ENV_READY" ]; then echo 'qatar_environment_ready=yes'; else echo 'qatar_environment_ready=no'; fi
@@ -122,9 +144,16 @@ jobs:
           } | tee qa/qatar-runtime/status.txt
           set -e
           test "$INSTALL_EXIT" -eq 0
+          test "$REINSTALL_EXIT" -eq 0
           test "$START_EXIT" -eq 0
+          test "$RESUME_EXIT" -eq 0
+          test "$POWER_SAVE_EXIT" -eq 0
+          test -n "$POWER_SAVE_READY"
           test -n "$PID"
-          for IMAGE in gameplay car boat helicopter aeroplane; do test "$(wc -c < "qa/qatar-runtime/$IMAGE.png")" -gt 10000; done
+          test "$PID_BEFORE_LIFECYCLE" = "$PID"
+          test -n "$LIFECYCLE_PAUSED"
+          test -n "$LIFECYCLE_RESUMED"
+          for IMAGE in gameplay car boat helicopter aeroplane resumed; do test "$(wc -c < "qa/qatar-runtime/$IMAGE.png")" -gt 10000; done
           test "$SCENE_EXIT" -eq 0
           test -n "$OSM_READY"
           test -n "$PACK_READY"

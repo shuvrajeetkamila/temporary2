@@ -2,9 +2,9 @@
 
 A fresh Android open-world project built from the definitive Qatar prompt book in this repository. The active application does not reuse the previous Nauru Java sources, package ID, resources, or world binaries.
 
-## Current source milestone: v0.4.0 Qatar-environments preproduction
+## Current source milestone: v0.5.0 Qatar-stability preproduction
 
-This incremental release retains the complete source-derived Qatar road/building and measured-terrain layers, then adds a bounded Qatar environment and Android thermal-control pass:
+This incremental release retains the complete source-derived Qatar road/building, measured-terrain, environment, and five-mode physics foundation, then adds Android installation, lifecycle, and power stability:
 
 - New package: `ai.arena.qatar.peninsula`
 - Android API 26–35, libGDX/OpenGL ES 3, and gdx-bullet
@@ -14,6 +14,9 @@ This incremental release retains the complete source-derived Qatar road/building
 - Deterministic clear, shamal, dust, and rain environment presets with bounded daylight, wind, visibility, and compressed Gulf tide models
 - Coast/water-only animated tide surfaces with deterministic wave normals; terrain-aware boat buoyancy and wind-aware aircraft
 - Android thermal listener with automatic NORMAL 30 fps, WARM 20 fps, and HOT 15 fps streaming/render/collision budgets
+- Battery Saver automatically selects the WARM budget; backgrounding suspends continuous rendering and resume restores it
+- Full-screen MSAA is disabled to reduce GPU bandwidth, battery drain, and heat on modest phones
+- A fixed, explicitly public preproduction certificate lets v0.5+ APKs update each other across clean CI builds
 - Qatar-specific road shoulders, rail/runway/taxiway surfaces, separate roofs/facades/windows, and smoother original player vehicles
 - Complete installed Qatar OpenStreetMap derivative: 88,965 indexed 250 m microcells
 - 182,110 source road ways represented by 1,441,102 road segments
@@ -25,11 +28,11 @@ This incremental release retains the complete source-derived Qatar road/building
 - Explicit 30 fps foreground budget to avoid wasteful 60/90/120 Hz rendering on modest phones
 - Human, 4×4, boat, helicopter, and aeroplane physical prototype modes
 - No Android `INTERNET` permission and no post-install map download
-- Deterministic compilers, provenance/checksums, coverage tests, APK structure checks, all-five-mode emulator physics/camera smoke testing, and SHA-256 publication
+- Deterministic compilers, provenance/checksums, coverage tests, certificate checks, reinstall/lifecycle checks, all-five-mode emulator physics/camera smoke testing, and SHA-256 publication
 
 ## Honest status
 
-v0.4.0 is a playable **incremental prototype**, not a claim that the prompt book’s multi-year AAA end state is complete. It uses real current OSM road vectors/building footprints, measured terrain, authored (not live) Qatar weather presets, and automatic platform thermal downshifts. Survey-grade terrain, hydrodynamic bathymetry, high-fidelity coastline/reclamation work, hero landmarks, final vehicle models/dynamics, traffic/transit/activity, complete Arabic shaping/localization, audio, and broad physical-device profiling remain later milestones.
+v0.5.0 is a playable **incremental preproduction prototype**, not a claim that the prompt book’s multi-year AAA end state is complete. It uses real current OSM road vectors/building footprints, measured terrain, authored (not live) Qatar weather presets, automatic platform thermal/power downshifts, and a public development certificate rather than production signing. Survey-grade terrain, hydrodynamic bathymetry, high-fidelity coastline/reclamation work, hero landmarks, final vehicle models/dynamics, traffic/transit/activity, complete Arabic shaping/localization, audio, and broad physical-device profiling remain later milestones.
 
 See:
 
@@ -39,6 +42,7 @@ See:
 - `QATAR_ENVIRONMENT_REPORT.md`
 - `QATAR_PHYSICS_REPORT.md`
 - `QATAR_RUNTIME_REPORT.md`
+- `QATAR_STABILITY_REPORT.md`
 - `DATA_SOURCES.md`
 - `ASSET_LICENSES.md`
 - `data/qatar/QATAR_OSM_IMPORT.json`

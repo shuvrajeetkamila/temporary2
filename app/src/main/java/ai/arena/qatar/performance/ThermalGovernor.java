@@ -10,5 +10,6 @@ public final class ThermalGovernor {
         Profile(String label,int fps,int radius,int residents,int activation,int collision,float viewScale){this.label=label;targetFps=fps;detailRadiusCells=radius;maxDetailCells=residents;activationBudget=activation;buildingCollisionCells=collision;viewDistanceScale=viewScale;}
     }
     private ThermalGovernor(){}
+    public static int effectiveAndroidStatus(int thermalStatus,boolean powerSaveMode){return powerSaveMode?Math.max(2,thermalStatus):thermalStatus;}
     public static Profile profileForAndroidStatus(int status){if(status>=3)return Profile.HOT;if(status>=2)return Profile.WARM;return Profile.NORMAL;}
 }
