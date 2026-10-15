@@ -25,6 +25,36 @@
     "material": "paved"
   },
   "maximumMarkingMaterialVertices": 14400,
+  "maximumDecoratedFootprintPoints": 16,
+  "maximumBuildingStreamVertices": {
+    "roofs": 12906,
+    "facadeTrim": 13008,
+    "windows": 6212,
+    "roofEquipment": 1680,
+    "mosqueDetails": 768
+  },
+  "maximumBuildingStreamCells": {
+    "roofs": {
+      "x": 222,
+      "y": 330
+    },
+    "facadeTrim": {
+      "x": 303,
+      "y": 397
+    },
+    "windows": {
+      "x": 351,
+      "y": 390
+    },
+    "mosqueDetails": {
+      "x": 379,
+      "y": 345
+    },
+    "roofEquipment": {
+      "x": 336,
+      "y": 401
+    }
+  },
   "conservativePerMaterialVertexLimit": 16384,
   "status": "PASSED"
 }

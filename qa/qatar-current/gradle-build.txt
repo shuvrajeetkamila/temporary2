@@ -61,9 +61,9 @@ Note: Recompile with -Xlint:deprecation for details.
 > Task :app:mergeLibDexDebug
 > Task :app:validateSigningDebug
 > Task :app:writeDebugAppMetadata
-> Task :app:writeDebugSigningConfigVersions
 > Task :app:mergeProjectDexDebug
 > Task :app:mergeDebugNativeLibs
+> Task :app:writeDebugSigningConfigVersions
 
 > Task :app:stripDebugDebugSymbols
 Unable to strip the following libraries, packaging them as they are: libgdx-bullet.so, libgdx.so.
@@ -72,7 +72,7 @@ Unable to strip the following libraries, packaging them as they are: libgdx-bull
 > Task :app:packageDebug
 > Task :app:createDebugApkListingFileRedirect
 > Task :app:assembleDebug
-gradle/actions: Writing build results to /home/runner/work/_temp/.gradle-actions/build-results/compile-1792090629578.json
+gradle/actions: Writing build results to /home/runner/work/_temp/.gradle-actions/build-results/compile-1792091512883.json
 
-BUILD SUCCESSFUL in 1m 32s
+BUILD SUCCESSFUL in 1m 25s
 42 actionable tasks: 41 executed, 1 from cache

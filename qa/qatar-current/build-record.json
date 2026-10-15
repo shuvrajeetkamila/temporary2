@@ -1,8 +1,8 @@
 {
-  "sourceCommit": "73480cf14b44d268b7a5daad9116869b14c2dd29",
+  "sourceCommit": "17789c1148924432de43b835e71b3a61bae6119b",
   "apk": "Qatar-The-Peninsula-REALISTIC-WORLD-v0.8.0.apk",
-  "apkBytes": 38149751,
-  "apkSha256": "421101a19f871bf231e8e2c5e67a2637d795268faf016e9ebf274a3a46743fe5",
+  "apkBytes": 38150455,
+  "apkSha256": "449d82586593292da9e113ddca7465085965ade210e176d201e2eb2cc6b5af5c",
   "packageId": "ai.arena.qatar.peninsula",
   "versionCode": 8,
   "versionName": "0.8.0-realistic-world-preproduction",
@@ -54,6 +54,14 @@
   "terrainFollowingRoadStepMetres": 32.0,
   "maximumRoadMaterialVertices": 11958,
   "maximumMarkingMaterialVertices": 14400,
+  "maximumBuildingStreamVertices": {
+    "roofs": 12906,
+    "facadeTrim": 13008,
+    "windows": 6212,
+    "roofEquipment": 1680,
+    "mosqueDetails": 768
+  },
+  "maximumDecoratedFootprintPoints": 16,
   "visualGeometryAudit": "PASSED",
   "qatarFacadePalettes": 7,
   "proceduralRooftopAndMosqueDetails": true,
