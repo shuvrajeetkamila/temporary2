@@ -118,17 +118,20 @@ public final class NationalMapRoadCache implements Disposable {
             QatarDetailPack.DetailEntry entry=detailPack.entry(cx,cy);
             if(entry==null)continue;
             detailPack.visitRoads(entry,(sourceId,x1,z1,x2,z2,roadClass,lanes,surface,flags,width)->
-                strokes.add(x1,z1,x2,z2,roadClass,width));
+                strokes.add(toGlobal(entry.x(),x1,detailPack.cellMetres),toGlobal(entry.y(),z1,detailPack.cellMetres),
+                    toGlobal(entry.x(),x2,detailPack.cellMetres),toGlobal(entry.y(),z2,detailPack.cellMetres),roadClass,width));
         }
         Pixmap pixmap=new Pixmap(PIXELS_W,PIXELS_H,Pixmap.Format.RGBA8888);
         pixmap.setBlending(Pixmap.Blending.None);pixmap.setColor(0,0,0,0);pixmap.fill();
         pixmap.setBlending(Pixmap.Blending.SourceOver);
-        for(int roadClass=9;roadClass>=0;roadClass--){
+        for(int roadClass=11;roadClass>=0;roadClass--){
             drawClass(pixmap,strokes,view,roadClass,true);
             drawClass(pixmap,strokes,view,roadClass,false);
         }
         return new Result(view.revision(),jobGeneration,pixmap,strokes.size,cells,null);
     }
+
+    static float toGlobal(int cell,float local,int cellMetres){return cell*(float)cellMetres+local;}
 
     private static void drawClass(Pixmap map,StrokeBuffer strokes,NationalMapViewport.Snapshot view,int roadClass,boolean casing){
         setRoadColor(map,roadClass,casing);
@@ -169,7 +172,9 @@ public final class NationalMapRoadCache implements Disposable {
             case 6 -> map.setColor(.76f,.78f,.74f,.86f);
             case 7 -> map.setColor(.65f,.59f,.45f,.80f);
             case 8 -> map.setColor(.38f,.40f,.41f,.92f);
-            case 9 -> map.setColor(.94f,.91f,.79f,.96f);
+            case 9 -> map.setColor(.38f,.40f,.41f,.94f);
+            case 10 -> map.setColor(.94f,.91f,.79f,.96f);
+            case 11 -> map.setColor(.84f,.82f,.73f,.92f);
             default -> map.setColor(.70f,.72f,.68f,.76f);
         }
     }
@@ -212,7 +217,7 @@ public final class NationalMapRoadCache implements Disposable {
         StrokeBuffer(int capacity){x1=new float[capacity];z1=new float[capacity];x2=new float[capacity];z2=new float[capacity];width=new float[capacity];roadClass=new byte[capacity];}
         void add(float ax,float az,float bx,float bz,int type,float metres){
             if(size>=x1.length)return;
-            x1[size]=ax;z1[size]=az;x2[size]=bx;z2[size]=bz;width[size]=metres;roadClass[size]=(byte)Math.max(0,Math.min(9,type));size++;
+            x1[size]=ax;z1[size]=az;x2[size]=bx;z2[size]=bz;width[size]=metres;roadClass[size]=(byte)Math.max(0,Math.min(11,type));size++;
         }
     }
 }
