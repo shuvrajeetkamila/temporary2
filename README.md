@@ -2,9 +2,9 @@
 
 A fresh Android open-world project built from the definitive Qatar prompt book in this repository. The active application does not reuse the previous Nauru Java sources, package ID, resources, or world binaries.
 
-## Current source milestone: v0.8.0 realistic ground-world preproduction
+## Current source milestone: v0.8.1 precision map and world polish
 
-This incremental release preserves the physically confirmed v0.7 smooth-motion and offline street-map systems, then rebuilds the road, terrain, lighting, and building presentation with bounded mobile geometry and original procedural materials:
+This release preserves the physically confirmed v0.7 smooth-motion implementation and the complete v0.8 realistic ground world, then adds a gesture-safe, close-detail offline Qatar map for accurate destination placement:
 
 - New package: `ai.arena.qatar.peninsula`
 - Android API 26–35, libGDX/OpenGL ES 3, and gdx-bullet
@@ -33,22 +33,28 @@ This incremental release preserves the physically confirmed v0.7 smooth-motion a
 - 60 Hz fixed-step pose interpolation with direct interpolated horizontal camera tracking and vertical-only contact damping; physics speed is not reduced
 - A single Android/libGDX frame pacer replaces the previous second manual render gate, which could irregularly turn a nominal 30 Hz presentation into roughly 15 Hz
 - The gameplay minimap now renders nearby OSM streets from a throttled 256×256 vector cache, with water/land context and a heading arrow rather than a blind country pin
-- The expanded map overlays a deterministic 550×1030 national atlas generated from all 1,441,102 packaged OSM road segments; no Google map data, tiles, or network service is used
+- The expanded map opens at a complete-Qatar fit using the deterministic 550×1030 national atlas generated from all 1,441,102 packaged OSM road segments; no Google map data, tiles, or network service is used
+- Two-pointer anchor-preserving pinch zoom from ×1 to ×64, one-pointer bounded pan, large zoom controls, and an explicit VIEW ALL QATAR reset
+- At ×12 and closer, a debounced single background worker reads only intersecting 250 m QTOD cells and rasterizes a cached 384×720 vector layer; the magnified overview is removed once crisp detail is ready
+- Hard precision-map limits of 3,200 candidate cells and 120,000 road segments prevent any HUD frame from decoding or traversing the installed 1.44 million-road set
+- Tap or stationary long-press places a persistent geographically anchored pin; pan/pinch movement suppresses accidental selection and CONFIRM TELEPORT remains a separate action
+- The map displays local and EPSG:32639 coordinates, nearest named area, zoom, view size, scale, detail-cell/road counts, mode-safe placement policy, and safe-placement adjustment
 - The street minimap remains a touch target that opens the complete-country map with explicit CLOSE/Back navigation
-- Touch destination selection with EPSG:32639 coordinate display and mode-safe teleportation: ground/road for human and car, Gulf water for boat, and exact elevated placement for aircraft
+- Destination confirmation uses mode-safe teleportation: ground/road for human and car, Gulf water for boat, and exact elevated placement for aircraft
 - Long-distance teleport resets stale prediction queues, evicts old local geometry, preserves bounded streaming, zeroes forces, and establishes temporary support while destination chunks arrive
 - No Android `INTERNET` permission and no post-install map download
 - Deterministic compilers, provenance/checksums, coverage tests, certificate checks, reinstall/lifecycle checks, all-five-mode emulator physics/camera smoke testing, and SHA-256 publication
 
 ## Validated Android APK
 
-- File: `artifacts/Qatar-The-Peninsula-REALISTIC-WORLD-v0.8.0.apk`
-- SHA-256: `17da8a2ee366d4f13b02189306e5040045c94a24109ee0ae33201ea50ce0e6ba`
-- Direct GitHub download: <https://github.com/shuvrajeetkamila/temporary2/raw/refs/heads/arena/8288058f-temporary2/artifacts/Qatar-The-Peninsula-REALISTIC-WORLD-v0.8.0.apk>
+- File: `artifacts/Qatar-The-Peninsula-PRECISION-MAP-v0.8.1.apk`
+- SHA-256: `de8dd4cd1f99e099d573841df70b42ff81ec87fff60e01c38152388ec97c612c`
+- Package/version: `ai.arena.qatar.peninsula`, code `9`, `0.8.1-precision-map-world-polish`
+- Direct GitHub download: <https://github.com/shuvrajeetkamila/temporary2/raw/refs/heads/arena/8288058f-temporary2/artifacts/Qatar-The-Peninsula-PRECISION-MAP-v0.8.1.apk>
 
 ## Honest status
 
-v0.8.0 is a playable **incremental preproduction prototype**, not a claim that the prompt book’s multi-year AAA end state is complete. It uses real current OSM road vectors/building footprints, measured terrain, original procedural materials and geometry, authored (not live) Qatar weather presets, automatic platform thermal/power downshifts, the accepted v0.7 fixed-step/single-pacer camera presentation, locally rendered offline OSM street maps, and a public development certificate rather than production signing. Survey-grade terrain, hydrodynamic bathymetry, reclamation-by-reclamation coastline work, hero landmark models, the planned v0.9 character/vehicle overhaul, traffic/transit/activity, complete Arabic shaping/localization, audio, and broad physical-device profiling remain later milestones.
+v0.8.1 is a playable **incremental preproduction prototype**, not a claim that the prompt book’s multi-year AAA end state is complete. It uses real current OSM road vectors/building footprints, measured terrain, original procedural materials and geometry, authored (not live) Qatar weather presets, automatic platform thermal/power downshifts, the accepted v0.7 fixed-step/single-pacer camera presentation, locally rendered offline OSM street maps, a bounded precision-map cache, and a public development certificate rather than production signing. Automated Android validation proves install/reinstall, ×16 zoom, pan, close-vector loading, precise pinning, safe teleport, lifecycle, thermal switching, and all-five-mode cadence on an emulator; subjective touch feel, ARM-phone heat, and compositor smoothness still require physical-device confirmation. Survey-grade terrain, hydrodynamic bathymetry, reclamation-by-reclamation coastline work, hero landmark models, the planned v0.9 character/vehicle overhaul, traffic/transit/activity, complete Arabic shaping/localization, audio, and broad physical-device profiling remain later milestones.
 
 See:
 
@@ -62,6 +68,7 @@ See:
 - `QATAR_CAMERA_MAP_REPORT.md`
 - `QATAR_SMOOTH_STREET_MAP_REPORT.md`
 - `QATAR_REALISTIC_WORLD_REPORT.md`
+- `QATAR_PRECISION_MAP_REPORT.md`
 - `DATA_SOURCES.md`
 - `ASSET_LICENSES.md`
 - `data/qatar/QATAR_OSM_IMPORT.json`
