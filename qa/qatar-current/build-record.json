@@ -1,8 +1,8 @@
 {
-  "sourceCommit": "25c9cc3bbcf8bfd98db57a015f6964025cd497be",
+  "sourceCommit": "c5118414579f99ae78d98c12d94d17af26facf3b",
   "apk": "Qatar-The-Peninsula-PRECISION-MAP-v0.8.1.apk",
-  "apkBytes": 38163915,
-  "apkSha256": "340588bba7e310bc5a6f593056872a120b77c076536b7cb8b887eb651f9ce622",
+  "apkBytes": 38164179,
+  "apkSha256": "de8dd4cd1f99e099d573841df70b42ff81ec87fff60e01c38152388ec97c612c",
   "packageId": "ai.arena.qatar.peninsula",
   "versionCode": 9,
   "versionName": "0.8.1-precision-map-world-polish",
