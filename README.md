@@ -2,10 +2,15 @@
 
 A fresh Android open-world project built from the definitive Qatar prompt book in this repository. The active application does not reuse the previous Nauru Java sources, package ID, resources, or world binaries.
 
-## Current source milestone: v0.9.1 streaming, boat-placement & palette corrective
+## Current source milestone: v0.9.2 full-screen precision map & arrival pin
 
-This certified corrective release preserves the complete v0.9 character/coastal/world update, the physically confirmed v0.7 smooth-motion implementation, and the approved v0.8.1 precision map. It adds:
+This certified map release preserves the complete v0.9.1 corrective update, the physically confirmed v0.7 smooth-motion implementation, and all complete-Qatar offline data. It adds:
 
+- A true edge-to-edge interactive Qatar map entered by touching the street minimap
+- A large top-right X plus Android Back support that returns to live gameplay without teleporting
+- Pre-confirmation resolution of the final mode-safe arrival coordinate, so the displayed pin is the exact point used in gameplay
+- A 30-second 3D arrival ring and persistent minimap destination marker after confirmation
+- Machine-checked preview-to-gameplay coordinate equality for every certified teleport
 - Exact regression coverage and Android runtime activation for reported OSM detail cell `378,362`
 - Isolated per-cell geometry builders, atomic detail activation, bounded retries, reduced-geometry recovery, and useful exception-class diagnostics instead of `failed: null`
 - BOAT mode cycling at the current visible X/Z with zero hidden teleport and no streamer reset; explicit confirmed map teleport remains mode-aware
@@ -51,31 +56,32 @@ The retained major-release feature set includes:
 - 60 Hz fixed-step pose interpolation with direct interpolated horizontal camera tracking and vertical-only contact damping; physics speed is not reduced
 - A single Android/libGDX frame pacer replaces the previous second manual render gate, which could irregularly turn a nominal 30 Hz presentation into roughly 15 Hz
 - The gameplay minimap now renders nearby OSM streets from a throttled 256×256 vector cache, with water/land context and a heading arrow rather than a blind country pin
-- The expanded map opens at a complete-Qatar fit using the deterministic 550×1030 national atlas generated from all 1,441,102 packaged OSM road segments; no Google map data, tiles, or network service is used
+- The edge-to-edge full-screen map opens at a complete-Qatar fit using the deterministic 550×1030 national atlas generated from all 1,441,102 packaged OSM road segments; no Google map data, tiles, or network service is used
 - Two-pointer anchor-preserving pinch zoom from ×1 to ×64, one-pointer bounded pan, large zoom controls, and an explicit VIEW ALL QATAR reset
 - At ×12 and closer, a debounced single background worker reads only intersecting 250 m QTOD cells and rasterizes a cached 384×720 vector layer; the magnified overview is removed once crisp detail is ready
 - Hard precision-map limits of 3,200 candidate cells and 120,000 road segments prevent any HUD frame from decoding or traversing the installed 1.44 million-road set
-- Tap or stationary long-press places a persistent geographically anchored pin; pan/pinch movement suppresses accidental selection and CONFIRM TELEPORT remains a separate action
-- The map displays local and EPSG:32639 coordinates, nearest named area, zoom, view size, scale, detail-cell/road counts, mode-safe placement policy, and safe-placement adjustment
-- The street minimap remains a touch target that opens the complete-country map with explicit CLOSE/Back navigation
-- Destination confirmation uses mode-safe teleportation: ground/road for human and car, Gulf water for boat, and exact elevated placement for aircraft
+- Tap or stationary long-press resolves and displays the final geographically anchored safe pin before confirmation; pan/pinch movement suppresses accidental selection and CONFIRM TELEPORT remains a separate action
+- The map displays local and EPSG:32639 coordinates, nearest named area, zoom, view size, scale, detail-cell/road counts, mode-safe placement policy, and final safe-placement adjustment
+- The street minimap opens the complete-country full-screen map; a visible top-right X or Android Back returns to gameplay without teleporting
+- Destination confirmation uses the already-previewed exact coordinate: ground/road for human and car, Gulf water for boat, and elevated placement for aircraft
+- The confirmed point appears in gameplay as a pulsing 3D arrival ring for 30 seconds and remains marked on the street minimap
 - Long-distance teleport resets stale prediction queues, evicts old local geometry, preserves bounded streaming, zeroes forces, and establishes temporary support while destination chunks arrive
 - No Android `INTERNET` permission and no post-install map download
 - Deterministic compilers, provenance/checksums, coverage tests, certificate checks, reinstall/lifecycle checks, all-five-mode emulator physics/camera smoke testing, and SHA-256 publication
 
 ## Validated Android APK
 
-- File: `artifacts/Qatar-The-Peninsula-CORRECTIVE-v0.9.1.apk`
-- Size: `38,195,643` bytes
-- SHA-256: `e11230ec9da473ea332bdd4724386e209bf541f532b9aecb47553f89f0cf8c8e`
-- Package/version: `ai.arena.qatar.peninsula`, code `11`, `0.9.1-streaming-boat-palette-fix`
-- APK source: `6a9551820e6e6e01dd772a03696b571df36005ab`
-- Build/runtime: GitHub Actions `38910393950` / `38910741046`
-- Direct GitHub download: <https://github.com/shuvrajeetkamila/temporary2/raw/refs/heads/arena/8288058f-temporary2/artifacts/Qatar-The-Peninsula-CORRECTIVE-v0.9.1.apk>
+- File: `artifacts/Qatar-The-Peninsula-FULLSCREEN-MAP-v0.9.2.apk`
+- Size: `38,197,847` bytes
+- SHA-256: `cab1934d6bb99331e2c8addf600c1328fc64d65d2315b1365e966b91d7f3d31a`
+- Package/version: `ai.arena.qatar.peninsula`, code `12`, `0.9.2-fullscreen-map-arrival-pin`
+- APK source: `428c222fc0840988004e7ba24629e3b4e3757f0b`
+- Build/runtime: GitHub Actions `38941901370` / `38942340627`
+- Direct GitHub download: <https://github.com/shuvrajeetkamila/temporary2/raw/refs/heads/arena/8288058f-temporary2/artifacts/Qatar-The-Peninsula-FULLSCREEN-MAP-v0.9.2.apk>
 
 ## Honest status
 
-v0.9.1 is a playable **corrective preproduction prototype**, not a claim that the prompt book’s multi-year photorealistic AAA end state is complete. It uses real current OSM roads/building footprints, measured terrain, original procedural models/materials, authored weather, automatic thermal/power downshifts, accepted v0.7 fixed-step/single-pacer motion, and a public development certificate. Automated Android validation proves install/reinstall, exact cell `378,362` activation without fallback, all five rigs and stable mode states, current-screen BOAT switching, runway/land transitions, bounded ambience, precision mapping, lifecycle, thermal switching, cadence, and fatal-free execution. Subjective graphics, touch feel, sustained heat, and compositor behaviour still require testing across multiple physical ARM phones. Production signing, audio, complete Arabic shaping/localisation, denser authored landmark detail, and broad device profiling remain future work.
+v0.9.2 is a playable **map-focused preproduction prototype**, not a claim that the prompt book’s multi-year photorealistic AAA end state is complete. It uses real current OSM roads/building footprints, measured terrain, original procedural models/materials, authored weather, automatic thermal/power downshifts, accepted v0.7 fixed-step/single-pacer motion, and a public development certificate. Automated Android validation proves the edge-to-edge map, X return without teleport, exact preview-to-gameplay destination equality, visible world/minimap arrival pins, cell `378,362` activation without fallback, all five stable modes, current-screen BOAT switching, lifecycle, thermal switching, cadence, and fatal-free execution. Subjective touch feel, sustained heat, and compositor behaviour still require testing across multiple physical ARM phones. Production signing, audio, complete Arabic shaping/localisation, denser authored landmark detail, and broad device profiling remain future work.
 
 See:
 
@@ -92,6 +98,7 @@ See:
 - `QATAR_PRECISION_MAP_REPORT.md`
 - `QATAR_V09_CHARACTER_COAST_ACTIVITY_REPORT.md`
 - `QATAR_V091_STREAMING_BOAT_CORRECTIVE_REPORT.md`
+- `QATAR_V092_FULLSCREEN_MAP_REPORT.md`
 - `DATA_SOURCES.md`
 - `ASSET_LICENSES.md`
 - `data/qatar/QATAR_OSM_IMPORT.json`
@@ -119,4 +126,4 @@ sha256sum -c data/qatar/TERRAIN_SHA256SUMS
 
 ## Clean CI build
 
-GitHub Actions verifies both data packs and source checksums, runs unit tests plus the cell `378,362`/BOAT corrective audit, compiles a fresh Android APK, validates ZIP/manifest/native libraries, and confirms both `.qpak` and `.qod` remain uncompressed for true asset random access. The Android workflow then targets the reported cell and proves current-screen BOAT switching before certification. Only a passing APK is published under `artifacts/`.
+GitHub Actions verifies both data packs and source checksums, runs unit tests plus the cell/BOAT/full-screen-map audit, compiles a fresh Android APK, validates ZIP/manifest/native libraries, and confirms both `.qpak` and `.qod` remain uncompressed for true asset random access. The Android workflow then proves X return without teleport, preview-to-gameplay coordinate identity, visible arrival pins, target-cell activation, and current-screen BOAT switching. Only a passing APK is published under `artifacts/`.
