@@ -914,7 +914,7 @@ public final class QatarWorldRenderer implements WorldStreamer.Listener, QatarDe
     private void updateFocusAnimation(float delta){
         applyFocusLod();focusAnimationTime+=Math.min(.1f,Math.max(0,delta));focusTransition=Math.min(1f,focusTransition+delta*2.7f);
         Vector3 velocity=physics.velocity();float speed=(float)Math.hypot(velocity.x,velocity.z),phase=focusAnimationTime*(2.4f+speed*1.5f);
-        Node shadow=focusNode("contact-shadow");if(shadow!=null){boolean visible=performanceProfile!=ThermalGovernor.Profile.HOT&&physics.heightAboveGround()<2.4f&&!(renderedMode==PhysicsWorld.Mode.BOAT&&physics.hasWaterSupport());shadow.scale.set(visible?1f:0f);}
+        Node shadow=focusNode("contact-shadow");if(shadow!=null){boolean visible=performanceProfile!=ThermalGovernor.Profile.HOT&&physics.heightAboveGround()<2.4f&&!(renderedMode==PhysicsWorld.Mode.BOAT&&physics.hasWaterSupport());float scale=visible?1f:0f;shadow.scale.set(scale,scale,scale);}
         switch(renderedMode){
             case WALK->{
                 float stride=Math.min(42f,speed*9f)*(float)Math.sin(phase),counter=-stride;
