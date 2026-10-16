@@ -1,0 +1,127 @@
+{
+  "format": "QatarCoastalFeatureAudit",
+  "version": 1,
+  "epsg": 32639,
+  "qpakSha256": "014c8235725b9d2c29fc675e4db5529e01b782b12aa3312e6ccab0a185d1af1a",
+  "qodSha256": "c48a62e1e8f1498bb64bde2864e4ae7894380f5185bc0a3a39ebf47012d9ba00",
+  "designHighWaterMetres": 0.55,
+  "minimumDryFeatureMetres": 0.75,
+  "buildings": {
+    "total": 189446,
+    "centreOutsideLandMask": 297,
+    "footprintTouchesWaterMask": 424,
+    "entireFootprintOutsideLandMask": 228,
+    "belowDesignDryLevel": 1819,
+    "runtimeFoundationsRequired": 2146,
+    "unresolvedAfterPolicy": 0
+  },
+  "roads": {
+    "total": 1441102,
+    "sampleOutsideLandMask": 10467,
+    "bridgeSegmentsOutsideLandMask": 119,
+    "belowDesignDryLevel": 39631,
+    "runtimePadsRequired": 30715,
+    "unresolvedAfterPolicy": 0
+  },
+  "runways": {
+    "segments": 147,
+    "outsideLandMask": 0,
+    "belowDesignDryLevel": 22,
+    "runtimePadsRequired": 22,
+    "unresolvedAfterPolicy": 0
+  },
+  "legtaifiya": {
+    "name": "Legtaifiya Metro Station",
+    "latitude": 25.3581942,
+    "longitude": 51.5077315,
+    "localX": 85085.928385,
+    "localZ": 106707.982144,
+    "auditRadiusMetres": 2000.0,
+    "stationLandMask": true,
+    "stationTerrainMetres": 7.582066,
+    "buildings": 957,
+    "buildingsOutsideLandMask": 48,
+    "roads": 15442,
+    "roadsOutsideLandMask": 672,
+    "runways": 0,
+    "featuresRequiringDryCorrection": 744,
+    "unresolvedAfterPolicy": 0
+  },
+  "adm0Components": [
+    {
+      "id": "mainland",
+      "sourceComponent": 4,
+      "areaSquareKilometres": 11537.506161,
+      "buildings": 188531,
+      "roadSegments": 1425487,
+      "runwaySegments": 147,
+      "minimumFeatureTerrainMetres": -2.866
+    },
+    {
+      "id": "island-1",
+      "sourceComponent": 3,
+      "areaSquareKilometres": 4.917418,
+      "buildings": 843,
+      "roadSegments": 12730,
+      "runwaySegments": 0,
+      "minimumFeatureTerrainMetres": -2.0
+    },
+    {
+      "id": "island-2",
+      "sourceComponent": 0,
+      "areaSquareKilometres": 1.386421,
+      "buildings": 0,
+      "roadSegments": 43,
+      "runwaySegments": 0,
+      "minimumFeatureTerrainMetres": 0.293467
+    },
+    {
+      "id": "island-3",
+      "sourceComponent": 1,
+      "areaSquareKilometres": 1.32594,
+      "buildings": 0,
+      "roadSegments": 0,
+      "runwaySegments": 0,
+      "minimumFeatureTerrainMetres": null
+    },
+    {
+      "id": "island-4",
+      "sourceComponent": 2,
+      "areaSquareKilometres": 1.199085,
+      "buildings": 72,
+      "roadSegments": 2842,
+      "runwaySegments": 0,
+      "minimumFeatureTerrainMetres": 0.546602
+    },
+    {
+      "id": "island-5",
+      "sourceComponent": 5,
+      "areaSquareKilometres": 1.068897,
+      "buildings": 0,
+      "roadSegments": 0,
+      "runwaySegments": 0,
+      "minimumFeatureTerrainMetres": null
+    },
+    {
+      "id": "island-6",
+      "sourceComponent": 6,
+      "areaSquareKilometres": 1.054314,
+      "buildings": 0,
+      "roadSegments": 0,
+      "runwaySegments": 0,
+      "minimumFeatureTerrainMetres": null
+    }
+  ],
+  "runtimePolicy": {
+    "coastWaterMeshHonours16x16LandMask": true,
+    "buildingFootprintsReceiveDryFoundations": true,
+    "permanentTransportReceivesDryPads": true,
+    "bridgesReceiveClearanceAndEdgeBarriers": true
+  },
+  "status": "PASSED",
+  "limitations": [
+    "The 125 m legal-land mask and 250 m DEM are game-scale data, not survey, cadastral, aviation, or navigation data.",
+    "Feature support corrects rendering/collision clearance without claiming a revised legal coastline.",
+    "Legtaifiya is audited within a 2 km gameplay neighbourhood around the packaged OSM station coordinate."
+  ]
+}
