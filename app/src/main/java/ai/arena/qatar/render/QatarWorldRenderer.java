@@ -836,7 +836,7 @@ public final class QatarWorldRenderer implements WorldStreamer.Listener, QatarDe
                 addPilot(skin,cloth,0,.63f,-.25f);
             }
             case BOAT->{
-                MeshPartBuilder hull=rigPart("boat-hull",pearl,0,-.20f,0);hull.setVertexTransform(new Matrix4().setToScale(1f,.43f,1f));hull.sphere(3.05f,1.45f,7.75f,22,11);hull.setVertexTransform(null);
+                MeshPartBuilder hull=rigPart("boat-hull",pearl,0,-.20f,0);hull.setVertexTransform(new Matrix4().setToScaling(1f,.43f,1f));hull.sphere(3.05f,1.45f,7.75f,22,11);hull.setVertexTransform(null);
                 MeshPartBuilder stripe=rigPart("boat-stripe",maroon,0,.02f,0);stripe.box(0,0,0,2.86f,.20f,5.9f);
                 MeshPartBuilder deck=rigPart("boat-deck",pearl,0,.32f,-.18f);deck.box(0,0,0,2.72f,.16f,5.55f);
                 MeshPartBuilder cabin=rigPart("boat-cabin",glass,0,.88f,-.75f);cabin.box(0,0,0,2.02f,1.02f,2.35f);
