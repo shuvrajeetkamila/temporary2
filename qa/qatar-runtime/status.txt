@@ -4,35 +4,35 @@ start_exit=0
 resume_exit=0
 power_save_command_exit=0
 power_save_warm_profile=yes
-pid_before_lifecycle=3672
-pid=3672
+pid_before_lifecycle=3588
+pid=3588
 lifecycle_process_preserved=yes
 lifecycle_callbacks=yes
-screenshot_bytes=278647
+screenshot_bytes=279082
 scene_validation_exit=0
 street_map_validation_exit=0
-precision_map_validation_exit=0
+precision_map_validation_exit=1
 offline_street_atlas_ready=yes
 walk_cadence_smooth=yes
-walk_cadence=10-16 07:46:21.938  3672  3735 I QatarFrameCadence: CADENCE mode=WALK profile=NORMAL samples=229 averageMs=21.919989 maxMs=37.182278 extraRenderGate=no smooth=yes
+walk_cadence=10-16 07:55:29.881  3588  3639 I QatarFrameCadence: CADENCE mode=WALK profile=NORMAL samples=177 averageMs=28.375195 maxMs=62.95003 extraRenderGate=no smooth=yes
 car_cadence_smooth=yes
-car_cadence=10-16 07:46:36.552  3672  3735 I QatarFrameCadence: CADENCE mode=CAR profile=NORMAL samples=239 averageMs=20.953709 maxMs=34.500687 extraRenderGate=no smooth=yes
+car_cadence=10-16 07:55:48.378  3588  3639 I QatarFrameCadence: CADENCE mode=CAR profile=NORMAL samples=187 averageMs=26.877563 maxMs=45.76423 extraRenderGate=no smooth=yes
 boat_cadence_smooth=yes
-boat_cadence=10-16 07:46:51.055  3672  3735 I QatarFrameCadence: CADENCE mode=BOAT profile=NORMAL samples=241 averageMs=20.818827 maxMs=32.26742 extraRenderGate=no smooth=yes
+boat_cadence=10-16 07:55:58.404  3588  3639 I QatarFrameCadence: CADENCE mode=BOAT profile=NORMAL samples=188 averageMs=26.624292 maxMs=45.939568 extraRenderGate=no smooth=yes
 heli_cadence_smooth=yes
-heli_cadence=10-16 07:47:03.843  3672  3735 I QatarFrameCadence: CADENCE mode=HELICOPTER profile=NORMAL samples=231 averageMs=21.730412 maxMs=37.339603 extraRenderGate=no smooth=yes
+heli_cadence=10-16 07:56:11.683  3588  3639 I QatarFrameCadence: CADENCE mode=HELICOPTER profile=NORMAL samples=201 averageMs=24.879671 maxMs=33.70835 extraRenderGate=no smooth=yes
 plane_cadence_smooth=yes
-plane_cadence=10-16 07:48:08.175  3672  3735 I QatarFrameCadence: CADENCE mode=AEROPLANE profile=NORMAL samples=206 averageMs=24.380312 maxMs=34.64482 extraRenderGate=no smooth=yes
+plane_cadence=10-16 07:57:19.485  3588  3639 I QatarFrameCadence: CADENCE mode=AEROPLANE profile=NORMAL samples=172 averageMs=29.240162 maxMs=42.78403 extraRenderGate=no smooth=yes
 map_open_screenshot_bytes=233807
-map_zoomed_screenshot_bytes=157305
-map_panned_screenshot_bytes=154724
-map_selected_screenshot_bytes=164649
-teleported_screenshot_bytes=223171
-car_screenshot_bytes=248577
-boat_screenshot_bytes=275800
-helicopter_screenshot_bytes=551856
-aeroplane_screenshot_bytes=323549
-resumed_screenshot_bytes=332021
+map_zoomed_screenshot_bytes=58170
+map_panned_screenshot_bytes=57554
+map_selected_screenshot_bytes=66402
+teleported_screenshot_bytes=223230
+car_screenshot_bytes=246892
+boat_screenshot_bytes=277104
+helicopter_screenshot_bytes=553652
+aeroplane_screenshot_bytes=334815
+resumed_screenshot_bytes=336319
 national_map_opened=yes
 national_map_selected=yes
 precision_map_zoomed=yes
@@ -40,21 +40,21 @@ precision_map_panned=yes
 precision_map_qtod_ready=yes
 national_map_closed=yes
 national_teleport_completed=yes
-teleport_state=10-16 07:46:05.551  3672  3735 I QatarTeleport: TELEPORT mode=WALK requestedX=54229.0859375 requestedZ=103619.46875 x=53503.8698334329 z=103831.63275039311 surface=42.439877 water=no adjustment=755.6136318655635 basis=nearest clear OSM roadside
+teleport_state=10-16 07:55:11.029  3588  3639 I QatarTeleport: TELEPORT mode=WALK requestedX=54229.0859375 requestedZ=103619.46875 x=53503.8698334329 z=103831.63275039311 surface=42.439877 water=no adjustment=755.6136318655635 basis=nearest clear OSM roadside
 osm_detail_rendered=yes
 realistic_visual_pipeline_ready=yes
-visual_pipeline=10-16 07:44:40.193  3672  3735 I QatarVisual: V08_PIPELINE mipmappedSurfaces=5 mipmappedFacades=2 roadSegments=81 joinedCaps=78 markingStrips=0 roadHeightFallback=residentClamp buildings=4 roofDetails=16 boundedJointCap=384
+visual_pipeline=10-16 07:53:45.298  3588  3639 I QatarVisual: V08_PIPELINE mipmappedSurfaces=5 mipmappedFacades=2 roadSegments=81 joinedCaps=78 markingStrips=0 roadHeightFallback=residentClamp buildings=4 roofDetails=16 boundedJointCap=384
 terrain_pack_loaded=yes
 qatar_environment_ready=yes
 thermal_governor_ready=yes
 walk_runtime_stable=yes
-walk_state=10-16 07:46:20.166  3672  3735 I QatarRuntime: STATE mode=WALK heightAboveGround=0.9707222 supportClearance=0.9707222 water=no speed=5.8115706E-6 cameraDistance=8.381528 stable=yes
+walk_state=10-16 07:55:27.901  3588  3639 I QatarRuntime: STATE mode=WALK heightAboveGround=0.9707222 supportClearance=0.9707222 water=no speed=5.8115706E-6 cameraDistance=8.381527 stable=yes
 car_runtime_stable=yes
-car_state=10-16 07:46:40.184  3672  3735 I QatarRuntime: STATE mode=CAR heightAboveGround=0.7599983 supportClearance=0.7599983 water=no speed=1.3603492 cameraDistance=12.617864 stable=yes
+car_state=10-16 07:55:48.008  3588  3639 I QatarRuntime: STATE mode=CAR heightAboveGround=0.7599983 supportClearance=0.7599983 water=no speed=1.0257455 cameraDistance=12.617784 stable=yes
 boat_runtime_stable=yes
-boat_state=10-16 07:46:50.193  3672  3735 I QatarRuntime: STATE mode=BOAT heightAboveGround=0.6899986 supportClearance=0.6899986 water=no speed=0.55753964 cameraDistance=12.924393 stable=yes
+boat_state=10-16 07:55:58.019  3588  3639 I QatarRuntime: STATE mode=BOAT heightAboveGround=0.6899986 supportClearance=0.6899986 water=no speed=0.37685925 cameraDistance=12.9244 stable=yes
 heli_runtime_stable=yes
-heli_state=10-16 07:47:00.200  3672  3735 I QatarRuntime: STATE mode=HELICOPTER heightAboveGround=21.911533 supportClearance=21.911533 water=no speed=3.5540574 cameraDistance=28.663794 stable=yes
+heli_state=10-16 07:56:08.035  3588  3639 I QatarRuntime: STATE mode=HELICOPTER heightAboveGround=21.812763 supportClearance=21.812763 water=no speed=3.6539361 cameraDistance=28.662066 stable=yes
 plane_runtime_stable=yes
-plane_state=10-16 07:48:05.300  3672  3735 I QatarRuntime: STATE mode=AEROPLANE heightAboveGround=0.6899986 supportClearance=0.6899986 water=no speed=0.11268124 cameraDistance=13.328162 stable=yes
+plane_state=10-16 07:57:21.318  3588  3639 I QatarRuntime: STATE mode=AEROPLANE heightAboveGround=0.6899986 supportClearance=0.6899986 water=no speed=0.060562775 cameraDistance=13.328185 stable=yes
 fatal_log=no

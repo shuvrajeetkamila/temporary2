@@ -1,3 +1,1 @@
-zoomed: street_texture=yes edge_density=0.0896 colour_bins=151
-panned: street_texture=yes edge_density=0.0863 colour_bins=142
-viewport: zoom_difference=79.58 pan_difference=20.87 bounded_detail=yes
+precision-map: valid=no error=pan did not visibly move viewport: mean_difference=0.06
