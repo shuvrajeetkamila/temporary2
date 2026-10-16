@@ -191,7 +191,11 @@ public final class HudRenderer implements Disposable {
         float u1=(float)(view.minX()/pack.worldWidth),u2=(float)(view.maxX()/pack.worldWidth);
         float v1=(float)(1.0-view.maxZ()/pack.worldHeight),v2=(float)(1.0-view.minZ()/pack.worldHeight);
         nationalRoadRegion.setRegion(u1,v1,u2,v2);
-        sprites.begin();sprites.setColor(Color.WHITE);sprites.draw(nationalRoadRegion,map.x(),map.y(),map.width(),map.height());
+        sprites.begin();sprites.setColor(Color.WHITE);
+        // The low-resolution country atlas is only a loading/overview layer.
+        // Once close-view QTOD vectors are ready, remove the magnified atlas so
+        // its pixels cannot obscure the newly rasterized street geometry.
+        if(!nationalRoads.ready(view))sprites.draw(nationalRoadRegion,map.x(),map.y(),map.width(),map.height());
         nationalRoads.draw(sprites,view,map.x(),map.y(),map.width(),map.height());sprites.end();
 
         shapes.begin(ShapeRenderer.ShapeType.Line);shapes.setColor(.99f,.91f,.70f,1);drawNationalOutlines(map,view);
