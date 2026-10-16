@@ -1,176 +1,178 @@
 --------- beginning of main
-10-16 09:27:23.075  3896  3896 I qatar.peninsul: Late-enabling -Xcheck:jni
-10-16 09:27:23.150  3896  3896 E qatar.peninsul: Unknown bits set in runtime_flags: 0x8000
-10-16 09:27:23.150  3896  3896 W qatar.peninsul: Unexpected CPU variant for X86 using defaults: x86_64
-10-16 09:27:23.496  3896  3896 D libEGL  : Emulator has host GPU support, qemu.gles is set to 1.
-10-16 09:27:23.496  3896  3896 W libc    : Unable to set property "qemu.gles" to "1": connection failed; errno=13 (Permission denied)
-10-16 09:27:23.499  3896  3896 D libEGL  : loaded /vendor/lib64/egl/libEGL_emulation.so
-10-16 09:27:23.500  3896  3896 D libEGL  : loaded /vendor/lib64/egl/libGLESv1_CM_emulation.so
-10-16 09:27:23.500  3896  3896 D libEGL  : loaded /vendor/lib64/egl/libGLESv2_emulation.so
-10-16 09:27:23.509  3896  3896 D HostConnection: HostConnection::get() New Host Connection established 0x74c9434589c0, tid 3896
-10-16 09:27:23.511  3896  3896 D HostConnection: HostComposition ext ANDROID_EMU_CHECKSUM_HELPER_v1 ANDROID_EMU_native_sync_v2 ANDROID_EMU_dma_v1 ANDROID_EMU_direct_mem ANDROID_EMU_host_composition_v1 ANDROID_EMU_host_composition_v2 ANDROID_EMU_vulkan ANDROID_EMU_deferred_vulkan_commands ANDROID_EMU_vulkan_null_optional_strings ANDROID_EMU_vulkan_create_resources_with_requirements ANDROID_EMU_YUV_Cache ANDROID_EMU_vulkan_ignored_handles ANDROID_EMU_vulkan_free_memory_sync ANDROID_EMU_vulkan_shader_float16_int8 ANDROID_EMU_vulkan_async_queue_submit ANDROID_EMU_sync_buffer_data ANDROID_EMU_vulkan_async_qsri ANDROID_EMU_hwc_color_transform GL_OES_EGL_image_external_essl3 GL_OES_vertex_array_object GL_KHR_texture_compression_astc_ldr ANDROID_EMU_host_side_tracing ANDROID_EMU_gles_max_version_3_0 
-10-16 09:27:23.582  3896  3896 I AndroidInput: sensor listener setup
-10-16 09:27:23.900  3896  3935 D HostConnection: HostConnection::get() New Host Connection established 0x74c943458600, tid 3935
-10-16 09:27:23.902  3896  3935 D HostConnection: HostComposition ext ANDROID_EMU_CHECKSUM_HELPER_v1 ANDROID_EMU_native_sync_v2 ANDROID_EMU_dma_v1 ANDROID_EMU_direct_mem ANDROID_EMU_host_composition_v1 ANDROID_EMU_host_composition_v2 ANDROID_EMU_vulkan ANDROID_EMU_deferred_vulkan_commands ANDROID_EMU_vulkan_null_optional_strings ANDROID_EMU_vulkan_create_resources_with_requirements ANDROID_EMU_YUV_Cache ANDROID_EMU_vulkan_ignored_handles ANDROID_EMU_vulkan_free_memory_sync ANDROID_EMU_vulkan_shader_float16_int8 ANDROID_EMU_vulkan_async_queue_submit ANDROID_EMU_sync_buffer_data ANDROID_EMU_vulkan_async_qsri ANDROID_EMU_hwc_color_transform GL_OES_EGL_image_external_essl3 GL_OES_vertex_array_object GL_KHR_texture_compression_astc_ldr ANDROID_EMU_host_side_tracing ANDROID_EMU_gles_max_version_3_0 
-10-16 09:27:23.904  3896  3935 D EGL_emulation: eglCreateContext: 0x74c9434586a0: maj 3 min 0 rcv 3
-10-16 09:27:23.905  3896  3935 D EGL_emulation: eglMakeCurrent: 0x74c9434586a0: ver 3 0 (tinfo 0x74c8b33a0a00)
-10-16 09:27:23.914  3896  3942 D HostConnection: HostConnection::get() New Host Connection established 0x74c8b3a32400, tid 3942
-10-16 09:27:23.916  3896  3942 D HostConnection: HostComposition ext ANDROID_EMU_CHECKSUM_HELPER_v1 ANDROID_EMU_native_sync_v2 ANDROID_EMU_dma_v1 ANDROID_EMU_direct_mem ANDROID_EMU_host_composition_v1 ANDROID_EMU_host_composition_v2 ANDROID_EMU_vulkan ANDROID_EMU_deferred_vulkan_commands ANDROID_EMU_vulkan_null_optional_strings ANDROID_EMU_vulkan_create_resources_with_requirements ANDROID_EMU_YUV_Cache ANDROID_EMU_vulkan_ignored_handles ANDROID_EMU_vulkan_free_memory_sync ANDROID_EMU_vulkan_shader_float16_int8 ANDROID_EMU_vulkan_async_queue_submit ANDROID_EMU_sync_buffer_data ANDROID_EMU_vulkan_async_qsri ANDROID_EMU_hwc_color_transform GL_OES_EGL_image_external_essl3 GL_OES_vertex_array_object GL_KHR_texture_compression_astc_ldr ANDROID_EMU_host_side_tracing ANDROID_EMU_gles_max_version_3_0 
-10-16 09:27:23.916  3896  3942 W GL2JNIView: creating OpenGL ES 3.0 context
-10-16 09:27:23.918  3896  3942 D EGL_emulation: eglCreateContext: 0x74c8b3a324a0: maj 3 min 0 rcv 3
-10-16 09:27:23.918  3896  3942 W GL2JNIView: Returning a GLES 3 context
-10-16 09:27:23.919  3896  3942 W Gralloc3: mapper 3.x is not supported
-10-16 09:27:23.920  3896  3942 D HostConnection: createUnique: call
-10-16 09:27:23.958  3896  3935 D HostConnection: createUnique: call
-10-16 09:27:23.959  3896  3942 D HostConnection: HostConnection::get() New Host Connection established 0x74c8b3a325e0, tid 3942
-10-16 09:27:23.959  3896  3935 D HostConnection: HostConnection::get() New Host Connection established 0x74c8b3409580, tid 3935
-10-16 09:27:23.959  3896  3942 D HostConnection: HostComposition ext ANDROID_EMU_CHECKSUM_HELPER_v1 ANDROID_EMU_native_sync_v2 ANDROID_EMU_dma_v1 ANDROID_EMU_direct_mem ANDROID_EMU_host_composition_v1 ANDROID_EMU_host_composition_v2 ANDROID_EMU_vulkan ANDROID_EMU_deferred_vulkan_commands ANDROID_EMU_vulkan_null_optional_strings ANDROID_EMU_vulkan_create_resources_with_requirements ANDROID_EMU_YUV_Cache ANDROID_EMU_vulkan_ignored_handles ANDROID_EMU_vulkan_free_memory_sync ANDROID_EMU_vulkan_shader_float16_int8 ANDROID_EMU_vulkan_async_queue_submit ANDROID_EMU_sync_buffer_data ANDROID_EMU_vulkan_async_qsri ANDROID_EMU_hwc_color_transform GL_OES_EGL_image_external_essl3 GL_OES_vertex_array_object GL_KHR_texture_compression_astc_ldr ANDROID_EMU_host_side_tracing ANDROID_EMU_gles_max_version_3_0 
-10-16 09:27:23.960  3896  3942 D eglCodecCommon: allocate: Ask for block of size 0x1000
-10-16 09:27:23.960  3896  3942 D eglCodecCommon: allocate: ioctl allocate returned offset 0x3ff805000 size 0x2000
-10-16 09:27:23.962  3896  3942 D EGL_emulation: eglMakeCurrent: 0x74c8b3a324a0: ver 3 0 (tinfo 0x74c8b3a18cc0)
-10-16 09:27:23.974  3896  3935 D HostConnection: HostComposition ext ANDROID_EMU_CHECKSUM_HELPER_v1 ANDROID_EMU_native_sync_v2 ANDROID_EMU_dma_v1 ANDROID_EMU_direct_mem ANDROID_EMU_host_composition_v1 ANDROID_EMU_host_composition_v2 ANDROID_EMU_vulkan ANDROID_EMU_deferred_vulkan_commands ANDROID_EMU_vulkan_null_optional_strings ANDROID_EMU_vulkan_create_resources_with_requirements ANDROID_EMU_YUV_Cache ANDROID_EMU_vulkan_ignored_handles ANDROID_EMU_vulkan_free_memory_sync ANDROID_EMU_vulkan_shader_float16_int8 ANDROID_EMU_vulkan_async_queue_submit ANDROID_EMU_sync_buffer_data ANDROID_EMU_vulkan_async_qsri ANDROID_EMU_hwc_color_transform GL_OES_EGL_image_external_essl3 GL_OES_vertex_array_object GL_KHR_texture_compression_astc_ldr ANDROID_EMU_host_side_tracing ANDROID_EMU_gles_max_version_3_0 
-10-16 09:27:23.979  3896  3935 D EGL_emulation: eglMakeCurrent: 0x74c9434586a0: ver 3 0 (tinfo 0x74c8b33a0a00)
-10-16 09:27:24.090  3896  3942 W qatar.peninsul: Verification of boolean com.badlogic.gdx.backends.android.AndroidGL20.glIsShader(int) took 117.660ms
-10-16 09:27:24.119  3896  3942 I AndroidGraphics: OGL renderer: Android Emulator OpenGL ES Translator (Google SwiftShader)
-10-16 09:27:24.119  3896  3942 I AndroidGraphics: OGL vendor: Google (Google Inc.)
-10-16 09:27:24.205  3896  3942 I AndroidGraphics: OGL version: OpenGL ES 3.0 (OpenGL ES 3.0 SwiftShader 4.0.0.1)
-10-16 09:27:24.205  3896  3942 I AndroidGraphics: OGL extensions: GL_EXT_debug_marker GL_EXT_robustness GL_OES_EGL_sync GL_OES_EGL_image GL_OES_EGL_image_external GL_OES_depth24 GL_OES_depth32 GL_OES_element_index_uint GL_OES_texture_float GL_OES_texture_float_linear GL_OES_compressed_paletted_texture GL_OES_compressed_ETC1_RGB8_texture GL_OES_depth_texture GL_OES_texture_half_float GL_OES_texture_half_float_linear GL_OES_packed_depth_stencil GL_OES_vertex_half_float GL_OES_standard_derivatives GL_OES_texture_npot GL_OES_rgb8_rgba8 GL_EXT_color_buffer_float GL_EXT_color_buffer_half_float GL_EXT_texture_format_BGRA8888 GL_APPLE_texture_format_BGRA8888 ANDROID_EMU_CHECKSUM_HELPER_v1 ANDROID_EMU_native_sync_v2 ANDROID_EMU_dma_v1 ANDROID_EMU_direct_mem ANDROID_EMU_host_composition_v1 ANDROID_EMU_host_composition_v2 ANDROID_EMU_vulkan ANDROID_EMU_deferred_vulkan_commands ANDROID_EMU_vulkan_null_optional_strings ANDROID_EMU_vulkan_create_resources_with_requirements ANDROID_EMU_YUV_Cache ANDROID_EMU_vulkan_ignored_handles ANDROID_EMU_vulkan_free_memory_sync ANDROID_EMU_vulkan_shader_float16_int8 ANDROID_EMU_vulkan_async_queue_submit ANDROID_EMU_sync_buffer_data ANDROID_EMU_vulkan_async_qsri ANDROID_EMU_hwc_color_transform GL_OES_EGL_image_external_essl3 GL_OES_vertex_array_object GL_KHR_texture_compression_astc_ldr ANDROID_EMU_host_side_tracing ANDROID_EMU_gles_max_version_3_0 
-10-16 09:27:24.205  3896  3942 I AndroidGraphics: framebuffer: (8, 8, 8, 8)
-10-16 09:27:24.205  3896  3942 I AndroidGraphics: depthbuffer: (24)
-10-16 09:27:24.205  3896  3942 I AndroidGraphics: stencilbuffer: (8)
-10-16 09:27:24.205  3896  3942 I AndroidGraphics: samples: (0)
-10-16 09:27:24.205  3896  3942 I AndroidGraphics: coverage sampling: (false)
-10-16 09:27:24.244  3896  3942 I AndroidGraphics: Managed meshes/app: { }
-10-16 09:27:24.244  3896  3942 I AndroidGraphics: Managed textures/app: { }
-10-16 09:27:24.244  3896  3942 I AndroidGraphics: Managed cubemap/app: { }
-10-16 09:27:24.244  3896  3942 I AndroidGraphics: Managed shaders/app: { }
-10-16 09:27:24.244  3896  3942 I AndroidGraphics: Managed buffers/app: { }
-10-16 09:27:24.348  3896  3942 W qatar.peninsul: Accessing hidden field Ljava/nio/Buffer;->position:I (greylist, JNI, allowed)
-10-16 09:27:24.348  3896  3942 W qatar.peninsul: Accessing hidden field Ljava/nio/Buffer;->limit:I (greylist, JNI, allowed)
-10-16 09:27:24.348  3896  3942 W qatar.peninsul: Accessing hidden field Ljava/nio/Buffer;->_elementSizeShift:I (greylist, JNI, allowed)
-10-16 09:27:24.348  3896  3942 W qatar.peninsul: Accessing hidden field Ljava/nio/Buffer;->address:J (greylist, JNI, allowed)
-10-16 09:27:23.480  3896  3896 W qatar.peninsula: type=1400 audit(0.0:30): avc: denied { write } for name="property_service" dev="tmpfs" ino=7825 scontext=u:r:untrusted_app:s0:c146,c256,c512,c768 tcontext=u:object_r:property_socket:s0 tclass=sock_file permissive=0 app=ai.arena.qatar.peninsula
-10-16 09:27:25.304  3896  3924 I qatar.peninsul: Background young concurrent copying GC freed 35404(4012KB) AllocSpace objects, 1(20KB) LOS objects, 38% free, 9875KB/15MB, paused 583us total 151.602ms
-10-16 09:27:26.819  3896  3924 I qatar.peninsul: Background concurrent copying GC freed 175738(2841KB) AllocSpace objects, 4(400KB) LOS objects, 21% free, 22MB/28MB, paused 399us total 1.111s
-10-16 09:27:27.984  3896  3924 I qatar.peninsul: Background young concurrent copying GC freed 481643(8543KB) AllocSpace objects, 0(0B) LOS objects, 22% free, 20MB/26MB, paused 745us total 226.650ms
-10-16 09:27:28.232  3896  3942 I QatarStreaming: PACK_READY epoch=2026-10-14-srtm-osm-v0.3 terrainSample=10.4493065m OSM=1441102/189446
-10-16 09:27:28.232  3896  3942 I QatarStreaming: SPAWN_READY x=78079.34507326268 z=101953.34731172574 elevation=10.4493065 roadClass=6 basis=nearest clear OSM roadside
-10-16 09:27:28.950  3896  4109 D ProfileInstaller: Installing profile for ai.arena.qatar.peninsula
-10-16 09:27:29.584  3896  3942 I QatarLandmarks: V09_LANDMARK_LAYER_READY originalModels=5 placements=6 Legtaifiya=85085.928385,106707.982144 boundedLOD=yes
-10-16 09:27:29.687  3896  3942 I QatarVisual: V09_FOCUS_RIG mode=WALK articulated=yes smoothSurfaces=yes contactShadow=yes scalableLOD=yes originalProcedural=yes transition=yes speedPreserved=yes
-10-16 09:27:29.867  3896  3942 I QatarMap: STREET_ATLAS_READY source=offline-OSM segments=1441102 localMinimap=vector-cache
-10-16 09:27:29.867  3896  3942 I QatarThermal: PROFILE NORMAL fps=30 detailRadius=3
-10-16 09:27:29.867  3896  3942 I QatarEnvironment: ENV_READY presets=CLEAR,SHAMAL,DUST,RAIN tide=dynamic wind=enabled
-10-16 09:27:30.846  3896  3942 I QatarVisual: V09_WORLD_PIPELINE roadSegments=81 joinedCaps=78 markingStrips=0 streetlights=0 signs=0 bridgeBarriers=0 tunnelPortals=0 buildings=4 roofDetails=16 bounded=yes
-10-16 09:27:30.847  3896  3942 I QatarStreaming: OSM_READY cell=312,407 roads=81 buildings=4
-10-16 09:27:31.065  3896  3942 I QatarActivity: V09_ACTIVITY_READY trafficRoutes=30 pedestrianRoutes=34 runwayRoutes=0 caps=10/8/2 nonColliding=yes thermalBounded=yes
-10-16 09:27:31.769  3896  3942 I QatarCoast: FEATURE_SUPPORT_READY cell=311,408 transportPads=162 buildingFoundations=3 highWater=0.55 dryLevel=0.75 waterMaskAligned=yes
-10-16 09:27:32.037  3896  3924 I qatar.peninsul: Background young concurrent copying GC freed 143874(3247KB) AllocSpace objects, 17(1400KB) LOS objects, 14% free, 22MB/26MB, paused 15.373ms total 29.745ms
-10-16 09:27:36.775  3896  3942 I QatarFrameCadence: CADENCE mode=WALK profile=NORMAL samples=79 averageMs=63.383087 maxMs=100.0 extraRenderGate=no smooth=no
-10-16 09:27:41.894  3896  3942 I QatarFrameCadence: CADENCE mode=WALK profile=NORMAL samples=106 averageMs=47.87853 maxMs=100.0 extraRenderGate=no smooth=yes
-10-16 09:27:41.922  3896  3942 I QatarRuntime: STATE mode=WALK heightAboveGround=0.96000004 supportClearance=0.96000004 water=no speed=0.0019107541 cameraDistance=7.3336606 stable=yes
-10-16 09:27:46.964  3896  3942 I QatarFrameCadence: CADENCE mode=WALK profile=NORMAL samples=98 averageMs=51.353626 maxMs=100.0 extraRenderGate=no smooth=yes
-10-16 09:27:52.159  3896  3942 I QatarRuntime: STATE mode=WALK heightAboveGround=0.96000004 supportClearance=0.96000004 water=no speed=0.0 cameraDistance=7.337503 stable=yes
-10-16 09:27:52.183  3896  3942 I QatarFrameCadence: CADENCE mode=WALK profile=NORMAL samples=100 averageMs=50.27405 maxMs=100.0 extraRenderGate=no smooth=yes
-10-16 09:27:57.421  3896  3942 I QatarFrameCadence: CADENCE mode=WALK profile=NORMAL samples=105 averageMs=47.630085 maxMs=100.0 extraRenderGate=no smooth=yes
-10-16 09:28:02.435  3896  3942 I QatarFrameCadence: CADENCE mode=WALK profile=NORMAL samples=121 averageMs=41.443268 maxMs=85.07761 extraRenderGate=no smooth=yes
-10-16 09:28:02.500  3896  3942 I QatarRuntime: STATE mode=WALK heightAboveGround=0.96000004 supportClearance=0.96000004 water=no speed=2.973775E-5 cameraDistance=7.337773 stable=yes
-10-16 09:28:07.515  3896  3942 I QatarFrameCadence: CADENCE mode=WALK profile=NORMAL samples=118 averageMs=42.785366 maxMs=100.0 extraRenderGate=no smooth=yes
-10-16 09:28:12.508  3896  3942 I QatarRuntime: STATE mode=WALK heightAboveGround=0.96000004 supportClearance=0.96000004 water=no speed=0.0 cameraDistance=7.337466 stable=yes
-10-16 09:28:12.544  3896  3942 I QatarFrameCadence: CADENCE mode=WALK profile=NORMAL samples=130 averageMs=38.683987 maxMs=82.63819 extraRenderGate=no smooth=yes
-10-16 09:28:15.596  3896  3942 I QatarTeleport: MAP_OPEN playerX=78083.93356231831 playerZ=101932.26545404446 zoom=1.0 fullQatar=yes
-10-16 09:28:17.584  3896  3942 I QatarFrameCadence: CADENCE mode=WALK profile=NORMAL samples=123 averageMs=40.817326 maxMs=100.0 extraRenderGate=no smooth=yes
-10-16 09:28:19.346  3896  3942 I QatarTeleport: MAP_CLOSE gameplay=resumed
-10-16 09:28:21.664  3896  3942 I QatarTeleport: MAP_OPEN playerX=78083.93356231831 playerZ=101932.26545404446 zoom=1.0 fullQatar=yes
-10-16 09:28:22.602  3896  3942 I QatarFrameCadence: CADENCE mode=WALK profile=NORMAL samples=131 averageMs=38.30205 maxMs=89.43244 extraRenderGate=no smooth=yes
-10-16 09:28:24.183  3896  3942 I QatarMap: MAP_VIEW action=ZOOM_IN zoom=2.0 centerX=55000.0 centerZ=103000.0 bounded=yes
-10-16 09:28:25.583  3896  3942 I QatarMap: MAP_VIEW action=ZOOM_IN zoom=4.0 centerX=55000.0 centerZ=103000.0 bounded=yes
-10-16 09:28:27.040  3896  3942 I QatarMap: MAP_VIEW action=ZOOM_IN zoom=8.0 centerX=55000.0 centerZ=103000.0 bounded=yes
-10-16 09:28:27.651  3896  3942 I QatarFrameCadence: CADENCE mode=WALK profile=NORMAL samples=96 averageMs=52.558613 maxMs=100.0 extraRenderGate=no smooth=yes
-10-16 09:28:28.652  3896  3942 I QatarMap: MAP_VIEW action=ZOOM_IN zoom=16.0 centerX=55000.0 centerZ=103000.0 bounded=yes
-10-16 09:28:29.246  3896  3942 I QatarMap: PRECISION_ATLAS_READY zoom=16.00 cells=530 roads=5970 bounded=true
-10-16 09:28:32.687  3896  3942 I QatarFrameCadence: CADENCE mode=WALK profile=NORMAL samples=112 averageMs=44.963745 maxMs=100.0 extraRenderGate=no smooth=yes
-10-16 09:28:37.690  3896  3942 I QatarFrameCadence: CADENCE mode=WALK profile=NORMAL samples=124 averageMs=40.348553 maxMs=74.60796 extraRenderGate=no smooth=yes
-10-16 09:28:41.227  3896  3942 I QatarMap: MAP_VIEW action=PAN zoom=16.0 centerX=54925.66396911112 centerZ=103049.55735413759 bounded=yes
-10-16 09:28:41.269  3896  3942 I QatarMap: MAP_VIEW action=PAN zoom=16.0 centerX=54900.88529214816 centerZ=103049.55735413759 bounded=yes
-10-16 09:28:41.326  3896  3942 I QatarMap: MAP_VIEW action=PAN zoom=16.0 centerX=54801.77058429632 centerZ=103123.89338534398 bounded=yes
-10-16 09:28:41.362  3896  3942 I QatarMap: MAP_VIEW action=PAN zoom=16.0 centerX=54776.99190733336 centerZ=103148.67206241278 bounded=yes
-10-16 09:28:41.406  3896  3942 I QatarMap: MAP_VIEW action=PAN zoom=16.0 centerX=54702.655876444485 centerZ=103198.22941655037 bounded=yes
-10-16 09:28:41.445  3896  3942 I QatarMap: MAP_VIEW action=PAN zoom=16.0 centerX=54653.098522518565 centerZ=103247.78677068796 bounded=yes
-10-16 09:28:41.489  3896  3942 I QatarMap: MAP_VIEW action=PAN zoom=16.0 centerX=54628.319845555605 centerZ=103247.78677068796 bounded=yes
-10-16 09:28:41.530  3896  3942 I QatarMap: MAP_VIEW action=PAN zoom=16.0 centerX=54553.98381466673 centerZ=103322.12280189435 bounded=yes
-10-16 09:28:41.569  3896  3942 I QatarMap: MAP_VIEW action=PAN zoom=16.0 centerX=54529.20513770377 centerZ=103346.90147896315 bounded=yes
-10-16 09:28:41.609  3896  3942 I QatarMap: MAP_VIEW action=PAN zoom=16.0 centerX=54430.09042985194 centerZ=103396.45883310074 bounded=yes
-10-16 09:28:41.652  3896  3942 I QatarMap: MAP_VIEW action=PAN zoom=16.0 centerX=54405.31175288898 centerZ=103421.23751016954 bounded=yes
-10-16 09:28:41.717  3896  3942 I QatarMap: MAP_VIEW action=PAN zoom=16.0 centerX=54306.197045037145 centerZ=103495.57354137592 bounded=yes
-10-16 09:28:41.776  3896  3942 I QatarMap: MAP_VIEW action=PAN zoom=16.0 centerX=54231.861014148264 centerZ=103545.13089551352 bounded=yes
-10-16 09:28:42.325  3896  3942 I QatarMap: PRECISION_ATLAS_READY zoom=16.00 cells=505 roads=5709 bounded=true
-10-16 09:28:42.793  3896  3942 I QatarFrameCadence: CADENCE mode=WALK profile=NORMAL samples=110 averageMs=45.699493 maxMs=100.0 extraRenderGate=no smooth=yes
-10-16 09:28:47.836  3896  3942 I QatarFrameCadence: CADENCE mode=WALK profile=NORMAL samples=120 averageMs=42.024227 maxMs=76.745346 extraRenderGate=no smooth=yes
-10-16 09:28:52.802  3896  3942 I QatarTeleport: MAP_SELECT x=54229.086 z=103619.47 zoom=16.0 gestureSuppressed=yes utmE=520229.0859375 utmN=2801619.46875
-10-16 09:28:52.841  3896  3942 I QatarFrameCadence: CADENCE mode=WALK profile=NORMAL samples=120 averageMs=41.70209 maxMs=67.93257 extraRenderGate=no smooth=yes
-10-16 09:28:55.612  3896  3942 I QatarTeleport: TELEPORT mode=WALK requestedX=54229.0859375 requestedZ=103619.46875 x=53503.8698334329 z=103831.63275039311 surface=42.439877 water=no adjustment=755.6136318655635 basis=nearest clear OSM roadside
-10-16 09:28:55.620  3896  3942 I QatarTeleport: MAP_CLOSE gameplay=resumed
-10-16 09:28:57.856  3896  3942 I QatarFrameCadence: CADENCE mode=WALK profile=NORMAL samples=158 averageMs=31.7448 maxMs=80.0587 extraRenderGate=no smooth=yes
-10-16 09:29:00.170  3896  3942 I QatarRuntime: STATE mode=WALK heightAboveGround=0.9707222 supportClearance=0.9707222 water=no speed=5.8115706E-6 cameraDistance=7.337576 stable=yes
-10-16 09:29:02.874  3896  3942 I QatarFrameCadence: CADENCE mode=WALK profile=NORMAL samples=237 averageMs=21.174019 maxMs=92.264404 extraRenderGate=no smooth=yes
-10-16 09:29:07.884  3896  3942 I QatarFrameCadence: CADENCE mode=WALK profile=NORMAL samples=268 averageMs=18.692766 maxMs=40.49015 extraRenderGate=no smooth=yes
-10-16 09:29:10.183  3896  3942 I QatarRuntime: STATE mode=WALK heightAboveGround=0.9707222 supportClearance=0.9707222 water=no speed=5.8115716E-6 cameraDistance=7.337576 stable=yes
-10-16 09:29:11.255  3896  3924 I qatar.peninsul: Background young concurrent copying GC freed 74135(1855KB) AllocSpace objects, 0(0B) LOS objects, 7% free, 24MB/26MB, paused 5.001ms total 16.824ms
-10-16 09:29:12.898  3896  3942 I QatarFrameCadence: CADENCE mode=WALK profile=NORMAL samples=272 averageMs=18.434937 maxMs=33.42807 extraRenderGate=no smooth=yes
-10-16 09:29:16.104  3896  3942 I QatarMode: SAFE_TRANSITION from=WALK to=CAR placement=nearest clear OSM roadside adjustment=8.646244545331125E-5 water=no movementPacing=preserved
-10-16 09:29:16.123  3896  3942 I QatarVisual: V09_FOCUS_RIG mode=CAR articulated=yes smoothSurfaces=yes contactShadow=yes scalableLOD=yes originalProcedural=yes transition=yes speedPreserved=yes
-10-16 09:29:20.236  3896  3942 I QatarRuntime: STATE mode=CAR heightAboveGround=0.7599983 supportClearance=0.7599983 water=no speed=3.411673 cameraDistance=10.530426 stable=yes
-10-16 09:29:21.172  3896  3942 I QatarFrameCadence: CADENCE mode=CAR profile=NORMAL samples=268 averageMs=18.710764 maxMs=100.0 extraRenderGate=no smooth=yes
-10-16 09:29:26.187  3896  3942 I QatarFrameCadence: CADENCE mode=CAR profile=NORMAL samples=279 averageMs=17.97566 maxMs=26.65906 extraRenderGate=no smooth=yes
-10-16 09:29:30.092  3896  3942 I QatarMode: SAFE_TRANSITION from=CAR to=BOAT placement=nearest navigable Gulf water adjustment=31489.966668579775 water=yes movementPacing=preserved
-10-16 09:29:30.099  3896  3942 I QatarVisual: V09_FOCUS_RIG mode=BOAT articulated=yes smoothSurfaces=yes contactShadow=yes scalableLOD=yes originalProcedural=yes transition=yes speedPreserved=yes
-10-16 09:29:30.310  3896  3942 I QatarRuntime: STATE mode=BOAT heightAboveGround=-0.096348405 supportClearance=1.0956008 water=yes speed=0.2848983 cameraDistance=15.674895 stable=yes
-10-16 09:29:35.076  3896  3942 I QatarFrameCadence: CADENCE mode=BOAT profile=NORMAL samples=153 averageMs=32.798973 maxMs=63.748634 extraRenderGate=no smooth=yes
-10-16 09:29:40.100  3896  3942 I QatarFrameCadence: CADENCE mode=BOAT profile=NORMAL samples=167 averageMs=30.086432 maxMs=38.20111 extraRenderGate=no smooth=yes
-10-16 09:29:40.299  3896  3942 I QatarRuntime: STATE mode=BOAT heightAboveGround=0.013836741 supportClearance=1.1890657 water=yes speed=1.406769 cameraDistance=15.738539 stable=yes
-10-16 09:29:42.511  3896  3942 I QatarMode: SAFE_TRANSITION from=BOAT to=HELICOPTER placement=rotor-clearance movementPacing=preserved
-10-16 09:29:42.515  3896  3942 I QatarVisual: V09_FOCUS_RIG mode=HELICOPTER articulated=yes smoothSurfaces=yes contactShadow=yes scalableLOD=yes originalProcedural=yes transition=yes speedPreserved=yes
-10-16 09:29:47.515  3896  3942 I QatarFrameCadence: CADENCE mode=HELICOPTER profile=NORMAL samples=160 averageMs=31.274834 maxMs=56.588715 extraRenderGate=no smooth=yes
-10-16 09:29:50.334  3896  3942 I QatarRuntime: STATE mode=HELICOPTER heightAboveGround=25.9865 supportClearance=25.9865 water=yes speed=2.918317 cameraDistance=23.29495 stable=yes
-10-16 09:29:52.533  3896  3942 I QatarFrameCadence: CADENCE mode=HELICOPTER profile=NORMAL samples=166 averageMs=30.22661 maxMs=41.783512 extraRenderGate=no smooth=yes
-10-16 09:29:55.835  3896  3942 I QatarMode: SAFE_TRANSITION from=HELICOPTER to=AEROPLANE placement=packaged OSM runway at Hamad International Airport (width 60 m) adjustment=16488.348129118913 water=no movementPacing=preserved
-10-16 09:29:55.841  3896  3942 I QatarVisual: V09_FOCUS_RIG mode=AEROPLANE articulated=yes smoothSurfaces=yes contactShadow=yes scalableLOD=yes originalProcedural=yes transition=yes speedPreserved=yes
-10-16 09:29:58.237  3896  3924 I qatar.peninsul: Background young concurrent copying GC freed 80838(2083KB) AllocSpace objects, 12(512KB) LOS objects, 13% free, 18MB/21MB, paused 7.766ms total 30.910ms
-10-16 09:30:00.336  3896  3942 I QatarRuntime: STATE mode=AEROPLANE heightAboveGround=0.69000006 supportClearance=0.69000006 water=no speed=4.0950933 cameraDistance=12.001649 stable=yes
-10-16 09:30:00.763  3896  3942 I QatarFrameCadence: CADENCE mode=AEROPLANE profile=NORMAL samples=178 averageMs=28.130787 maxMs=92.41598 extraRenderGate=no smooth=yes
-10-16 09:30:05.780  3896  3942 I QatarFrameCadence: CADENCE mode=AEROPLANE profile=NORMAL samples=192 averageMs=26.131115 maxMs=37.67532 extraRenderGate=no smooth=yes
-10-16 09:30:09.144  3896  3942 I QatarMode: SAFE_TRANSITION from=AEROPLANE to=WALK placement=nearest clear OSM roadside adjustment=465.88309790169814 water=no movementPacing=preserved
-10-16 09:30:09.148  3896  3942 I QatarVisual: V09_FOCUS_RIG mode=WALK articulated=yes smoothSurfaces=yes contactShadow=yes scalableLOD=yes originalProcedural=yes transition=yes speedPreserved=yes
-10-16 09:30:10.349  3896  3942 I QatarRuntime: STATE mode=WALK heightAboveGround=0.96000004 supportClearance=0.96000004 water=no speed=2.1520668E-14 cameraDistance=7.337403 stable=yes
-10-16 09:30:14.125  3896  3942 I QatarFrameCadence: CADENCE mode=WALK profile=NORMAL samples=204 averageMs=24.580196 maxMs=52.254112 extraRenderGate=no smooth=yes
-10-16 09:30:19.132  3896  3942 I QatarFrameCadence: CADENCE mode=WALK profile=NORMAL samples=205 averageMs=24.427834 maxMs=41.30727 extraRenderGate=no smooth=yes
-10-16 09:30:20.385  3896  3942 I QatarRuntime: STATE mode=WALK heightAboveGround=0.96000004 supportClearance=0.96000004 water=no speed=0.0 cameraDistance=7.3375573 stable=yes
-10-16 09:30:21.585  3896  3942 I QatarThermal: PROFILE WARM fps=20 detailRadius=2
-10-16 09:30:21.832  3896  3935 D EGL_emulation: eglMakeCurrent: 0x74c9434586a0: ver 3 0 (tinfo 0x74c8b33a0a00)
-10-16 09:30:21.851  3896  3935 D EGL_emulation: eglMakeCurrent: 0x74c9434586a0: ver 3 0 (tinfo 0x74c8b33a0a00)
-10-16 09:30:24.166  3896  3942 I QatarFrameCadence: CADENCE mode=WALK profile=WARM samples=197 averageMs=25.45822 maxMs=100.0 extraRenderGate=no smooth=yes
-10-16 09:30:29.180  3896  3942 I QatarFrameCadence: CADENCE mode=WALK profile=WARM samples=233 averageMs=21.522076 maxMs=31.352621 extraRenderGate=no smooth=yes
-10-16 09:30:30.392  3896  3942 I QatarRuntime: STATE mode=WALK heightAboveGround=0.96000004 supportClearance=0.96000004 water=no speed=0.0 cameraDistance=7.337583 stable=yes
-10-16 09:30:33.884  3896  3896 I AndroidInput: sensor listener tear down
-10-16 09:30:33.886  3896  3942 I QatarLifecycle: PAUSED mode=WALK rendering=suspended
-10-16 09:30:33.886  3896  3942 I AndroidGraphics: paused
-10-16 09:30:34.031  3896  3935 D EGL_emulation: eglMakeCurrent: 0x74c9434586a0: ver 3 0 (tinfo 0x74c8b33a0a00)
-10-16 09:30:36.950  3896  3896 I AndroidInput: sensor listener setup
-10-16 09:30:37.007  3896  3942 D EGL_emulation: eglMakeCurrent: 0x74c8b3a324a0: ver 3 0 (tinfo 0x74c8b3a18cc0)
-10-16 09:30:37.008  3896  3942 I QatarLifecycle: RESUMED mode=WALK rendering=active
-10-16 09:30:37.008  3896  3942 I AndroidGraphics: resumed
-10-16 09:30:37.038  3896  3942 D EGL_emulation: eglMakeCurrent: 0x74c8b3a324a0: ver 3 0 (tinfo 0x74c8b3a18cc0)
-10-16 09:30:37.066  3896  3935 D EGL_emulation: eglMakeCurrent: 0x74c9434586a0: ver 3 0 (tinfo 0x74c8b33a0a00)
-10-16 09:30:37.359  3896  3942 I QatarFrameCadence: CADENCE mode=WALK profile=WARM samples=229 averageMs=21.886173 maxMs=85.480736 extraRenderGate=no smooth=yes
-10-16 09:30:42.371  3896  3942 I QatarFrameCadence: CADENCE mode=WALK profile=WARM samples=233 averageMs=21.511604 maxMs=31.700361 extraRenderGate=no smooth=yes
-10-16 09:30:43.568  3896  3942 I QatarRuntime: STATE mode=WALK heightAboveGround=0.96000004 supportClearance=0.96000004 water=no speed=0.0 cameraDistance=7.3375607 stable=yes
-10-16 09:30:47.374  3896  3942 I QatarFrameCadence: CADENCE mode=WALK profile=WARM samples=229 averageMs=21.845295 maxMs=33.64681 extraRenderGate=no smooth=yes
-10-16 09:30:47.474  3896  3942 I QatarThermal: PROFILE NORMAL fps=30 detailRadius=3
-10-16 09:30:47.569  3896  3935 D EGL_emulation: eglMakeCurrent: 0x74c9434586a0: ver 3 0 (tinfo 0x74c8b33a0a00)
-10-16 09:30:47.571  3896  3935 D EGL_emulation: eglMakeCurrent: 0x74c9434586a0: ver 3 0 (tinfo 0x74c8b33a0a00)
-10-16 09:30:52.446  3896  3942 I QatarFrameCadence: CADENCE mode=WALK profile=NORMAL samples=142 averageMs=35.306114 maxMs=100.0 extraRenderGate=no smooth=yes
-10-16 09:30:53.635  3896  3942 I QatarRuntime: STATE mode=WALK heightAboveGround=0.96000004 supportClearance=0.96000004 water=no speed=0.0 cameraDistance=7.337566 stable=yes
-10-16 09:30:57.459  3896  3942 I QatarFrameCadence: CADENCE mode=WALK profile=NORMAL samples=179 averageMs=28.00417 maxMs=40.159874 extraRenderGate=no smooth=yes
-10-16 09:31:02.461  3896  3942 I QatarFrameCadence: CADENCE mode=WALK profile=NORMAL samples=181 averageMs=27.636406 maxMs=40.292038 extraRenderGate=no smooth=yes
-10-16 09:31:03.647  3896  3942 I QatarRuntime: STATE mode=WALK heightAboveGround=0.96000004 supportClearance=0.96000004 water=no speed=0.0 cameraDistance=7.3375506 stable=yes
+10-16 12:45:48.879  3553  3553 I qatar.peninsul: Late-enabling -Xcheck:jni
+10-16 12:45:48.971  3553  3553 E qatar.peninsul: Unknown bits set in runtime_flags: 0x8000
+10-16 12:45:48.972  3553  3553 W qatar.peninsul: Unexpected CPU variant for X86 using defaults: x86_64
+10-16 12:45:49.573  3553  3553 D libEGL  : Emulator has host GPU support, qemu.gles is set to 1.
+10-16 12:45:49.573  3553  3553 W libc    : Unable to set property "qemu.gles" to "1": connection failed; errno=13 (Permission denied)
+10-16 12:45:49.575  3553  3553 D libEGL  : loaded /vendor/lib64/egl/libEGL_emulation.so
+10-16 12:45:49.575  3553  3553 D libEGL  : loaded /vendor/lib64/egl/libGLESv1_CM_emulation.so
+10-16 12:45:49.576  3553  3553 D libEGL  : loaded /vendor/lib64/egl/libGLESv2_emulation.so
+10-16 12:45:49.585  3553  3553 D HostConnection: HostConnection::get() New Host Connection established 0x787624be1080, tid 3553
+10-16 12:45:49.586  3553  3553 D HostConnection: HostComposition ext ANDROID_EMU_CHECKSUM_HELPER_v1 ANDROID_EMU_native_sync_v2 ANDROID_EMU_dma_v1 ANDROID_EMU_direct_mem ANDROID_EMU_host_composition_v1 ANDROID_EMU_host_composition_v2 ANDROID_EMU_vulkan ANDROID_EMU_deferred_vulkan_commands ANDROID_EMU_vulkan_null_optional_strings ANDROID_EMU_vulkan_create_resources_with_requirements ANDROID_EMU_YUV_Cache ANDROID_EMU_vulkan_ignored_handles ANDROID_EMU_vulkan_free_memory_sync ANDROID_EMU_vulkan_shader_float16_int8 ANDROID_EMU_vulkan_async_queue_submit ANDROID_EMU_sync_buffer_data ANDROID_EMU_vulkan_async_qsri ANDROID_EMU_hwc_color_transform GL_OES_EGL_image_external_essl3 GL_OES_vertex_array_object GL_KHR_texture_compression_astc_ldr ANDROID_EMU_host_side_tracing ANDROID_EMU_gles_max_version_3_0 
+10-16 12:45:49.638  3553  3553 I AndroidInput: sensor listener setup
+10-16 12:45:49.660  3553  3637 D HostConnection: HostConnection::get() New Host Connection established 0x78762687e640, tid 3637
+10-16 12:45:49.661  3553  3637 D HostConnection: HostComposition ext ANDROID_EMU_CHECKSUM_HELPER_v1 ANDROID_EMU_native_sync_v2 ANDROID_EMU_dma_v1 ANDROID_EMU_direct_mem ANDROID_EMU_host_composition_v1 ANDROID_EMU_host_composition_v2 ANDROID_EMU_vulkan ANDROID_EMU_deferred_vulkan_commands ANDROID_EMU_vulkan_null_optional_strings ANDROID_EMU_vulkan_create_resources_with_requirements ANDROID_EMU_YUV_Cache ANDROID_EMU_vulkan_ignored_handles ANDROID_EMU_vulkan_free_memory_sync ANDROID_EMU_vulkan_shader_float16_int8 ANDROID_EMU_vulkan_async_queue_submit ANDROID_EMU_sync_buffer_data ANDROID_EMU_vulkan_async_qsri ANDROID_EMU_hwc_color_transform GL_OES_EGL_image_external_essl3 GL_OES_vertex_array_object GL_KHR_texture_compression_astc_ldr ANDROID_EMU_host_side_tracing ANDROID_EMU_gles_max_version_3_0 
+10-16 12:45:49.664  3553  3637 D EGL_emulation: eglCreateContext: 0x78762687e6e0: maj 3 min 0 rcv 3
+10-16 12:45:49.665  3553  3637 D EGL_emulation: eglMakeCurrent: 0x78762687e6e0: ver 3 0 (tinfo 0x7876268185e0)
+10-16 12:45:49.680  3553  3641 D HostConnection: HostConnection::get() New Host Connection established 0x787624be2de0, tid 3641
+10-16 12:45:49.680  3553  3641 D HostConnection: HostComposition ext ANDROID_EMU_CHECKSUM_HELPER_v1 ANDROID_EMU_native_sync_v2 ANDROID_EMU_dma_v1 ANDROID_EMU_direct_mem ANDROID_EMU_host_composition_v1 ANDROID_EMU_host_composition_v2 ANDROID_EMU_vulkan ANDROID_EMU_deferred_vulkan_commands ANDROID_EMU_vulkan_null_optional_strings ANDROID_EMU_vulkan_create_resources_with_requirements ANDROID_EMU_YUV_Cache ANDROID_EMU_vulkan_ignored_handles ANDROID_EMU_vulkan_free_memory_sync ANDROID_EMU_vulkan_shader_float16_int8 ANDROID_EMU_vulkan_async_queue_submit ANDROID_EMU_sync_buffer_data ANDROID_EMU_vulkan_async_qsri ANDROID_EMU_hwc_color_transform GL_OES_EGL_image_external_essl3 GL_OES_vertex_array_object GL_KHR_texture_compression_astc_ldr ANDROID_EMU_host_side_tracing ANDROID_EMU_gles_max_version_3_0 
+10-16 12:45:49.681  3553  3641 W GL2JNIView: creating OpenGL ES 3.0 context
+10-16 12:45:49.682  3553  3641 D EGL_emulation: eglCreateContext: 0x787624d1a360: maj 3 min 0 rcv 3
+10-16 12:45:49.682  3553  3641 W GL2JNIView: Returning a GLES 3 context
+10-16 12:45:49.685  3553  3637 W Gralloc3: mapper 3.x is not supported
+10-16 12:45:49.686  3553  3637 D HostConnection: createUnique: call
+10-16 12:45:49.686  3553  3637 D HostConnection: HostConnection::get() New Host Connection established 0x78762687e820, tid 3637
+10-16 12:45:49.693  3553  3637 D HostConnection: HostComposition ext ANDROID_EMU_CHECKSUM_HELPER_v1 ANDROID_EMU_native_sync_v2 ANDROID_EMU_dma_v1 ANDROID_EMU_direct_mem ANDROID_EMU_host_composition_v1 ANDROID_EMU_host_composition_v2 ANDROID_EMU_vulkan ANDROID_EMU_deferred_vulkan_commands ANDROID_EMU_vulkan_null_optional_strings ANDROID_EMU_vulkan_create_resources_with_requirements ANDROID_EMU_YUV_Cache ANDROID_EMU_vulkan_ignored_handles ANDROID_EMU_vulkan_free_memory_sync ANDROID_EMU_vulkan_shader_float16_int8 ANDROID_EMU_vulkan_async_queue_submit ANDROID_EMU_sync_buffer_data ANDROID_EMU_vulkan_async_qsri ANDROID_EMU_hwc_color_transform GL_OES_EGL_image_external_essl3 GL_OES_vertex_array_object GL_KHR_texture_compression_astc_ldr ANDROID_EMU_host_side_tracing ANDROID_EMU_gles_max_version_3_0 
+10-16 12:45:49.693  3553  3637 D eglCodecCommon: allocate: Ask for block of size 0x1000
+10-16 12:45:49.693  3553  3637 D eglCodecCommon: allocate: ioctl allocate returned offset 0x3ffc6a000 size 0x2000
+10-16 12:45:49.696  3553  3637 D EGL_emulation: eglMakeCurrent: 0x78762687e6e0: ver 3 0 (tinfo 0x7876268185e0)
+10-16 12:45:49.698  3553  3641 D EGL_emulation: eglMakeCurrent: 0x787624d1a360: ver 3 0 (tinfo 0x787624c62880)
+10-16 12:45:49.836  3553  3641 W qatar.peninsul: Verification of void com.badlogic.gdx.backends.android.AndroidGL20.glUniform3fv(int, int, float[], int) took 129.258ms
+10-16 12:45:49.841  3553  3641 I AndroidGraphics: OGL renderer: Android Emulator OpenGL ES Translator (Google SwiftShader)
+10-16 12:45:49.841  3553  3641 I AndroidGraphics: OGL vendor: Google (Google Inc.)
+10-16 12:45:49.842  3553  3641 I AndroidGraphics: OGL version: OpenGL ES 3.0 (OpenGL ES 3.0 SwiftShader 4.0.0.1)
+10-16 12:45:49.842  3553  3641 I AndroidGraphics: OGL extensions: GL_EXT_debug_marker GL_EXT_robustness GL_OES_EGL_sync GL_OES_EGL_image GL_OES_EGL_image_external GL_OES_depth24 GL_OES_depth32 GL_OES_element_index_uint GL_OES_texture_float GL_OES_texture_float_linear GL_OES_compressed_paletted_texture GL_OES_compressed_ETC1_RGB8_texture GL_OES_depth_texture GL_OES_texture_half_float GL_OES_texture_half_float_linear GL_OES_packed_depth_stencil GL_OES_vertex_half_float GL_OES_standard_derivatives GL_OES_texture_npot GL_OES_rgb8_rgba8 GL_EXT_color_buffer_float GL_EXT_color_buffer_half_float GL_EXT_texture_format_BGRA8888 GL_APPLE_texture_format_BGRA8888 ANDROID_EMU_CHECKSUM_HELPER_v1 ANDROID_EMU_native_sync_v2 ANDROID_EMU_dma_v1 ANDROID_EMU_direct_mem ANDROID_EMU_host_composition_v1 ANDROID_EMU_host_composition_v2 ANDROID_EMU_vulkan ANDROID_EMU_deferred_vulkan_commands ANDROID_EMU_vulkan_null_optional_strings ANDROID_EMU_vulkan_create_resources_with_requirements ANDROID_EMU_YUV_Cache ANDROID_EMU_vulkan_ignored_handles ANDROID_EMU_vulkan_free_memory_sync ANDROID_EMU_vulkan_shader_float16_int8 ANDROID_EMU_vulkan_async_queue_submit ANDROID_EMU_sync_buffer_data ANDROID_EMU_vulkan_async_qsri ANDROID_EMU_hwc_color_transform GL_OES_EGL_image_external_essl3 GL_OES_vertex_array_object GL_KHR_texture_compression_astc_ldr ANDROID_EMU_host_side_tracing ANDROID_EMU_gles_max_version_3_0 
+10-16 12:45:49.842  3553  3641 I AndroidGraphics: framebuffer: (8, 8, 8, 8)
+10-16 12:45:49.842  3553  3641 I AndroidGraphics: depthbuffer: (24)
+10-16 12:45:49.842  3553  3641 I AndroidGraphics: stencilbuffer: (8)
+10-16 12:45:49.842  3553  3641 I AndroidGraphics: samples: (0)
+10-16 12:45:49.842  3553  3641 I AndroidGraphics: coverage sampling: (false)
+10-16 12:45:50.130  3553  3641 I AndroidGraphics: Managed meshes/app: { }
+10-16 12:45:50.199  3553  3641 I AndroidGraphics: Managed textures/app: { }
+10-16 12:45:50.199  3553  3641 I AndroidGraphics: Managed cubemap/app: { }
+10-16 12:45:50.210  3553  3641 I AndroidGraphics: Managed shaders/app: { }
+10-16 12:45:50.210  3553  3641 I AndroidGraphics: Managed buffers/app: { }
+10-16 12:45:50.439  3553  3641 W qatar.peninsul: Accessing hidden field Ljava/nio/Buffer;->position:I (greylist, JNI, allowed)
+10-16 12:45:50.439  3553  3641 W qatar.peninsul: Accessing hidden field Ljava/nio/Buffer;->limit:I (greylist, JNI, allowed)
+10-16 12:45:50.439  3553  3641 W qatar.peninsul: Accessing hidden field Ljava/nio/Buffer;->_elementSizeShift:I (greylist, JNI, allowed)
+10-16 12:45:50.439  3553  3641 W qatar.peninsul: Accessing hidden field Ljava/nio/Buffer;->address:J (greylist, JNI, allowed)
+10-16 12:45:51.556  3553  3610 I qatar.peninsul: Background young concurrent copying GC freed 19762(3446KB) AllocSpace objects, 0(0B) LOS objects, 74% free, 2133KB/8277KB, paused 805us total 583.561ms
+10-16 12:45:52.514  3553  3610 I qatar.peninsul: Background concurrent copying GC freed 13014(290KB) AllocSpace objects, 4(240KB) LOS objects, 37% free, 10123KB/15MB, paused 16.549ms total 230.568ms
+10-16 12:45:49.560  3553  3553 W qatar.peninsula: type=1400 audit(0.0:30): avc: denied { write } for name="property_service" dev="tmpfs" ino=7423 scontext=u:r:untrusted_app:s0:c146,c256,c512,c768 tcontext=u:object_r:property_socket:s0 tclass=sock_file permissive=0 app=ai.arena.qatar.peninsula
+10-16 12:45:53.934  3553  3610 I qatar.peninsul: Background young concurrent copying GC freed 88784(1455KB) AllocSpace objects, 0(0B) LOS objects, 0% free, 20MB/20MB, paused 419us total 769.408ms
+10-16 12:45:54.590  3553  3634 I qatar.peninsul: Waiting for a blocking GC ProfileSaver
+10-16 12:45:55.246  3553  3610 I qatar.peninsul: Background concurrent copying GC freed 137635(2875KB) AllocSpace objects, 2(2964KB) LOS objects, 24% free, 18MB/24MB, paused 4.707ms total 1.305s
+10-16 12:45:55.246  3553  3634 I qatar.peninsul: WaitForGcToComplete blocked ProfileSaver on ClassLinker for 656.256ms
+10-16 12:45:55.663  3553  3983 D ProfileInstaller: Installing profile for ai.arena.qatar.peninsula
+10-16 12:45:56.805  3553  3610 I qatar.peninsul: Background young concurrent copying GC freed 472688(7816KB) AllocSpace objects, 0(0B) LOS objects, 25% free, 17MB/23MB, paused 10.195ms total 218.600ms
+10-16 12:45:57.035  3553  3641 I QatarStreaming: PACK_READY epoch=2026-10-14-srtm-osm-v0.3 terrainSample=10.4493065m OSM=1441102/189446
+10-16 12:45:57.035  3553  3641 I QatarStreaming: SPAWN_READY x=78079.34507326268 z=101953.34731172574 elevation=10.4493065 roadClass=6 basis=nearest clear OSM roadside
+10-16 12:45:59.202  3553  3641 I QatarLandmarks: V09_LANDMARK_LAYER_READY originalModels=5 placements=6 Legtaifiya=85085.928385,106707.982144 boundedLOD=yes
+10-16 12:45:59.247  3553  3641 I QatarVisual: V09_FOCUS_RIG mode=WALK articulated=yes smoothSurfaces=yes contactShadow=yes scalableLOD=yes originalProcedural=yes transition=yes speedPreserved=yes
+10-16 12:45:59.414  3553  3641 I QatarMap: STREET_ATLAS_READY source=offline-OSM segments=1441102 localMinimap=vector-cache
+10-16 12:45:59.414  3553  3641 I QatarThermal: PROFILE NORMAL fps=30 detailRadius=3
+10-16 12:45:59.414  3553  3641 I QatarEnvironment: ENV_READY presets=CLEAR,SHAMAL,DUST,RAIN tide=dynamic wind=enabled
+10-16 12:46:00.207  3553  3641 I QatarVisual: V09_WORLD_PIPELINE roadSegments=81 joinedCaps=78 markingStrips=0 streetlights=0 signs=0 bridgeBarriers=0 tunnelPortals=0 buildings=4 roofDetails=16 bounded=yes
+10-16 12:46:00.219  3553  3641 I QatarStreaming: OSM_READY cell=312,407 roads=81 buildings=4
+10-16 12:46:00.491  3553  3641 I QatarActivity: V09_ACTIVITY_READY trafficRoutes=30 pedestrianRoutes=34 runwayRoutes=0 caps=10/8/2 nonColliding=yes thermalBounded=yes
+10-16 12:46:01.315  3553  3641 I QatarCoast: FEATURE_SUPPORT_READY cell=311,408 transportPads=162 buildingFoundations=3 highWater=0.55 dryLevel=0.75 waterMaskAligned=yes
+10-16 12:46:06.120  3553  3641 I QatarFrameCadence: CADENCE mode=WALK profile=NORMAL samples=71 averageMs=70.459816 maxMs=100.0 extraRenderGate=no smooth=no
+10-16 12:46:06.272  3553  3610 I qatar.peninsul: Background young concurrent copying GC freed 90735(2175KB) AllocSpace objects, 7(784KB) LOS objects, 12% free, 20MB/23MB, paused 3.155ms total 108.604ms
+10-16 12:46:11.527  3553  3641 I QatarFrameCadence: CADENCE mode=WALK profile=NORMAL samples=76 averageMs=65.914696 maxMs=100.0 extraRenderGate=no smooth=no
+10-16 12:46:11.568  3553  3641 I QatarRuntime: STATE mode=WALK heightAboveGround=0.96000004 supportClearance=0.96000004 water=no speed=0.3151976 cameraDistance=7.335532 stable=yes
+10-16 12:46:16.633  3553  3641 I QatarFrameCadence: CADENCE mode=WALK profile=NORMAL samples=93 averageMs=54.21121 maxMs=100.0 extraRenderGate=no smooth=yes
+10-16 12:46:21.910  3553  3641 I QatarRuntime: STATE mode=WALK heightAboveGround=0.96000004 supportClearance=0.96000004 water=no speed=0.0 cameraDistance=7.3374386 stable=yes
+10-16 12:46:21.927  3553  3641 I QatarFrameCadence: CADENCE mode=WALK profile=NORMAL samples=81 averageMs=62.152378 maxMs=100.0 extraRenderGate=no smooth=no
+10-16 12:46:27.024  3553  3641 I QatarFrameCadence: CADENCE mode=WALK profile=NORMAL samples=95 averageMs=53.281765 maxMs=100.0 extraRenderGate=no smooth=yes
+10-16 12:46:32.375  3553  3641 I QatarRuntime: STATE mode=WALK heightAboveGround=0.96000004 supportClearance=0.96000004 water=no speed=2.2175627E-10 cameraDistance=7.3377757 stable=yes
+10-16 12:46:32.474  3553  3641 I QatarFrameCadence: CADENCE mode=WALK profile=NORMAL samples=78 averageMs=64.425766 maxMs=100.0 extraRenderGate=no smooth=no
+10-16 12:46:37.623  3553  3641 I QatarFrameCadence: CADENCE mode=WALK profile=NORMAL samples=102 averageMs=49.25883 maxMs=100.0 extraRenderGate=no smooth=yes
+10-16 12:46:42.632  3553  3641 I QatarRuntime: STATE mode=WALK heightAboveGround=0.96000004 supportClearance=0.96000004 water=no speed=0.0 cameraDistance=7.3375926 stable=yes
+10-16 12:46:42.716  3553  3641 I QatarFrameCadence: CADENCE mode=WALK profile=NORMAL samples=111 averageMs=45.331768 maxMs=100.0 extraRenderGate=no smooth=yes
+10-16 12:46:43.981  3553  3641 I QatarTeleport: MAP_OPEN playerX=78083.93356136464 playerZ=101932.26545404446 zoom=1.0 fullQatar=yes
+10-16 12:46:47.788  3553  3641 I QatarFrameCadence: CADENCE mode=WALK profile=NORMAL samples=86 averageMs=58.3355 maxMs=100.0 extraRenderGate=no smooth=no
+10-16 12:46:47.849  3553  3641 I QatarTeleport: MAP_CLOSE gameplay=resumed
+10-16 12:46:50.635  3553  3641 I QatarTeleport: MAP_OPEN playerX=78083.93356136464 playerZ=101932.26545404446 zoom=1.0 fullQatar=yes
+10-16 12:46:52.942  3553  3641 I QatarFrameCadence: CADENCE mode=WALK profile=NORMAL samples=97 averageMs=52.31067 maxMs=100.0 extraRenderGate=no smooth=yes
+10-16 12:46:53.166  3553  3641 I QatarMap: MAP_VIEW action=ZOOM_IN zoom=2.0 centerX=55000.0 centerZ=103000.0 bounded=yes
+10-16 12:46:54.878  3553  3641 I QatarMap: MAP_VIEW action=ZOOM_IN zoom=4.0 centerX=55000.0 centerZ=103000.0 bounded=yes
+10-16 12:46:56.304  3553  3641 I QatarMap: MAP_VIEW action=ZOOM_IN zoom=8.0 centerX=55000.0 centerZ=103000.0 bounded=yes
+10-16 12:46:57.821  3553  3641 I QatarMap: MAP_VIEW action=ZOOM_IN zoom=16.0 centerX=55000.0 centerZ=103000.0 bounded=yes
+10-16 12:46:58.029  3553  3641 I QatarFrameCadence: CADENCE mode=WALK profile=NORMAL samples=92 averageMs=54.80439 maxMs=100.0 extraRenderGate=no smooth=yes
+10-16 12:46:58.381  3553  3641 I QatarMap: PRECISION_ATLAS_READY zoom=16.00 cells=530 roads=5970 bounded=true
+10-16 12:47:03.069  3553  3641 I QatarFrameCadence: CADENCE mode=WALK profile=NORMAL samples=100 averageMs=50.259354 maxMs=100.0 extraRenderGate=no smooth=yes
+10-16 12:47:08.073  3553  3641 I QatarFrameCadence: CADENCE mode=WALK profile=NORMAL samples=110 averageMs=45.486805 maxMs=78.10356 extraRenderGate=no smooth=yes
+10-16 12:47:10.141  3553  3641 I QatarMap: MAP_VIEW action=PAN zoom=16.0 centerX=54876.10661518521 centerZ=103074.33603120639 bounded=yes
+10-16 12:47:10.182  3553  3641 I QatarMap: MAP_VIEW action=PAN zoom=16.0 centerX=54851.327938222246 centerZ=103099.11470827518 bounded=yes
+10-16 12:47:10.226  3553  3641 I QatarMap: MAP_VIEW action=PAN zoom=16.0 centerX=54776.991907333366 centerZ=103148.67206241278 bounded=yes
+10-16 12:47:10.269  3553  3641 I QatarMap: MAP_VIEW action=PAN zoom=16.0 centerX=54727.434553407445 centerZ=103198.22941655037 bounded=yes
+10-16 12:47:10.310  3553  3641 I QatarMap: MAP_VIEW action=PAN zoom=16.0 centerX=54677.877199481525 centerZ=103223.00809361917 bounded=yes
+10-16 12:47:10.346  3553  3641 I QatarMap: MAP_VIEW action=PAN zoom=16.0 centerX=54628.319845555605 centerZ=103272.56544775676 bounded=yes
+10-16 12:47:10.384  3553  3641 I QatarMap: MAP_VIEW action=PAN zoom=16.0 centerX=54603.541168592645 centerZ=103272.56544775676 bounded=yes
+10-16 12:47:10.423  3553  3641 I QatarMap: MAP_VIEW action=PAN zoom=16.0 centerX=54504.42646074081 centerZ=103346.90147896315 bounded=yes
+10-16 12:47:10.519  3553  3641 I QatarMap: MAP_VIEW action=PAN zoom=16.0 centerX=54405.311752888985 centerZ=103421.23751016954 bounded=yes
+10-16 12:47:10.561  3553  3641 I QatarMap: MAP_VIEW action=PAN zoom=16.0 centerX=54330.975722000105 centerZ=103470.79486430713 bounded=yes
+10-16 12:47:10.607  3553  3641 I QatarMap: MAP_VIEW action=PAN zoom=16.0 centerX=54281.418368074184 centerZ=103495.57354137592 bounded=yes
+10-16 12:47:10.648  3553  3641 I QatarMap: MAP_VIEW action=PAN zoom=16.0 centerX=54256.639691111224 centerZ=103520.35221844472 bounded=yes
+10-16 12:47:11.248  3553  3641 I QatarMap: PRECISION_ATLAS_READY zoom=16.00 cells=505 roads=5709 bounded=true
+10-16 12:47:13.082  3553  3641 I QatarFrameCadence: CADENCE mode=WALK profile=NORMAL samples=111 averageMs=45.127396 maxMs=92.79933 extraRenderGate=no smooth=yes
+10-16 12:47:18.086  3553  3641 I QatarFrameCadence: CADENCE mode=WALK profile=NORMAL samples=105 averageMs=47.65361 maxMs=86.97859 extraRenderGate=no smooth=yes
+10-16 12:47:22.303  3553  3641 I QatarTeleport: MAP_SELECT x=54253.863 z=103594.69 zoom=16.0 gestureSuppressed=yes utmE=520253.86328125 utmN=2801594.6875
+10-16 12:47:23.133  3553  3641 I QatarFrameCadence: CADENCE mode=WALK profile=NORMAL samples=92 averageMs=54.450855 maxMs=100.0 extraRenderGate=no smooth=yes
+10-16 12:47:25.564  3553  3641 I QatarTeleport: TELEPORT mode=WALK requestedX=54253.86328125 requestedZ=103594.6875 x=54253.86328125 z=103594.6875 surface=42.938496 water=no adjustment=0.0 basis=public hub fallback; no clear OSM road candidate
+10-16 12:47:25.572  3553  3641 I QatarTeleport: MAP_CLOSE gameplay=resumed
+10-16 12:47:28.169  3553  3641 I QatarFrameCadence: CADENCE mode=WALK profile=NORMAL samples=158 averageMs=31.813726 maxMs=100.0 extraRenderGate=no smooth=yes
+10-16 12:47:29.216  3553  3610 I qatar.peninsul: Background young concurrent copying GC freed 79084(2085KB) AllocSpace objects, 8(320KB) LOS objects, 10% free, 20MB/23MB, paused 19.658ms total 28.998ms
+10-16 12:47:31.350  3553  3641 I QatarRuntime: STATE mode=WALK heightAboveGround=0.9599991 supportClearance=0.9599991 water=no speed=0.0014068403 cameraDistance=7.3375726 stable=yes
+10-16 12:47:33.211  3553  3641 I QatarFrameCadence: CADENCE mode=WALK profile=NORMAL samples=204 averageMs=24.71594 maxMs=68.4526 extraRenderGate=no smooth=yes
+10-16 12:47:38.232  3553  3641 I QatarFrameCadence: CADENCE mode=WALK profile=NORMAL samples=209 averageMs=24.027319 maxMs=55.23006 extraRenderGate=no smooth=yes
+10-16 12:47:41.369  3553  3641 I QatarRuntime: STATE mode=WALK heightAboveGround=0.9599991 supportClearance=0.9599991 water=no speed=0.0013721315 cameraDistance=7.3375897 stable=yes
+10-16 12:47:43.240  3553  3641 I QatarFrameCadence: CADENCE mode=WALK profile=NORMAL samples=213 averageMs=23.512074 maxMs=49.697647 extraRenderGate=no smooth=yes
+10-16 12:47:46.467  3553  3641 I QatarMode: SAFE_TRANSITION from=WALK to=CAR placement=public hub fallback; no clear OSM road candidate adjustment=0.0 water=no movementPacing=preserved
+10-16 12:47:46.499  3553  3641 I QatarVisual: V09_FOCUS_RIG mode=CAR articulated=yes smoothSurfaces=yes contactShadow=yes scalableLOD=yes originalProcedural=yes transition=yes speedPreserved=yes
+10-16 12:47:51.555  3553  3641 I QatarRuntime: STATE mode=CAR heightAboveGround=0.7599983 supportClearance=0.7599983 water=no speed=3.1810977 cameraDistance=10.530045 stable=yes
+10-16 12:47:51.665  3553  3641 I QatarFrameCadence: CADENCE mode=CAR profile=NORMAL samples=222 averageMs=22.612612 maxMs=100.0 extraRenderGate=no smooth=yes
+10-16 12:47:56.662  3553  3641 I QatarFrameCadence: CADENCE mode=CAR profile=NORMAL samples=231 averageMs=21.669487 maxMs=36.151806 extraRenderGate=no smooth=yes
+10-16 12:48:01.171  3553  3641 I QatarMode: SAFE_TRANSITION from=CAR to=BOAT placement=nearest navigable Gulf water adjustment=30790.13713838373 water=yes movementPacing=preserved
+10-16 12:48:01.175  3553  3641 I QatarVisual: V09_FOCUS_RIG mode=BOAT articulated=yes smoothSurfaces=yes contactShadow=yes scalableLOD=yes originalProcedural=yes transition=yes speedPreserved=yes
+10-16 12:48:01.655  3553  3641 I QatarRuntime: STATE mode=BOAT heightAboveGround=-0.70277333 supportClearance=0.611532 water=yes speed=0.27644756 cameraDistance=15.549849 stable=yes
+10-16 12:48:06.199  3553  3641 I QatarFrameCadence: CADENCE mode=BOAT profile=NORMAL samples=156 averageMs=32.098988 maxMs=100.0 extraRenderGate=no smooth=yes
+10-16 12:48:11.221  3553  3641 I QatarFrameCadence: CADENCE mode=BOAT profile=NORMAL samples=161 averageMs=31.189137 maxMs=42.81509 extraRenderGate=no smooth=yes
+10-16 12:48:11.662  3553  3641 I QatarRuntime: STATE mode=BOAT heightAboveGround=-0.9125957 supportClearance=0.399414 water=yes speed=0.14772953 cameraDistance=15.483059 stable=yes
+10-16 12:48:13.785  3553  3641 I QatarMode: SAFE_TRANSITION from=BOAT to=HELICOPTER placement=rotor-clearance movementPacing=preserved
+10-16 12:48:13.797  3553  3641 I QatarVisual: V09_FOCUS_RIG mode=HELICOPTER articulated=yes smoothSurfaces=yes contactShadow=yes scalableLOD=yes originalProcedural=yes transition=yes speedPreserved=yes
+10-16 12:48:18.796  3553  3641 I QatarFrameCadence: CADENCE mode=HELICOPTER profile=NORMAL samples=154 averageMs=32.53764 maxMs=44.085285 extraRenderGate=no smooth=yes
+10-16 12:48:21.672  3553  3641 I QatarRuntime: STATE mode=HELICOPTER heightAboveGround=26.420523 supportClearance=26.420523 water=yes speed=3.027925 cameraDistance=23.29355 stable=yes
+10-16 12:48:23.797  3553  3641 I QatarFrameCadence: CADENCE mode=HELICOPTER profile=NORMAL samples=157 averageMs=31.857487 maxMs=43.215767 extraRenderGate=no smooth=yes
+10-16 12:48:27.303  3553  3641 I QatarMode: SAFE_TRANSITION from=HELICOPTER to=AEROPLANE placement=packaged OSM runway at Hamad International Airport (width 60 m) adjustment=16486.073944602125 water=no movementPacing=preserved
+10-16 12:48:27.307  3553  3641 I QatarVisual: V09_FOCUS_RIG mode=AEROPLANE articulated=yes smoothSurfaces=yes contactShadow=yes scalableLOD=yes originalProcedural=yes transition=yes speedPreserved=yes
+10-16 12:48:31.683  3553  3641 I QatarRuntime: STATE mode=AEROPLANE heightAboveGround=0.69000006 supportClearance=0.69000006 water=no speed=4.0678988 cameraDistance=12.001676 stable=yes
+10-16 12:48:32.240  3553  3641 I QatarFrameCadence: CADENCE mode=AEROPLANE profile=NORMAL samples=163 averageMs=30.840418 maxMs=100.0 extraRenderGate=no smooth=yes
+10-16 12:48:37.261  3553  3641 I QatarFrameCadence: CADENCE mode=AEROPLANE profile=NORMAL samples=171 averageMs=29.361406 maxMs=51.06214 extraRenderGate=no smooth=yes
+10-16 12:48:40.808  3553  3641 I QatarMode: SAFE_TRANSITION from=AEROPLANE to=WALK placement=nearest clear OSM roadside adjustment=465.795536889328 water=no movementPacing=preserved
+10-16 12:48:40.813  3553  3641 I QatarVisual: V09_FOCUS_RIG mode=WALK articulated=yes smoothSurfaces=yes contactShadow=yes scalableLOD=yes originalProcedural=yes transition=yes speedPreserved=yes
+10-16 12:48:41.699  3553  3641 I QatarRuntime: STATE mode=WALK heightAboveGround=0.96000004 supportClearance=0.96000004 water=no speed=2.7804885E-14 cameraDistance=7.3360085 stable=yes
+10-16 12:48:45.764  3553  3641 I QatarFrameCadence: CADENCE mode=WALK profile=NORMAL samples=181 averageMs=27.63775 maxMs=59.06552 extraRenderGate=no smooth=yes
+10-16 12:48:50.781  3553  3641 I QatarFrameCadence: CADENCE mode=WALK profile=NORMAL samples=184 averageMs=27.266706 maxMs=42.88616 extraRenderGate=no smooth=yes
+10-16 12:48:51.721  3553  3641 I QatarRuntime: STATE mode=WALK heightAboveGround=0.96000004 supportClearance=0.96000004 water=no speed=0.0 cameraDistance=7.3375907 stable=yes
+10-16 12:48:53.284  3553  3641 I QatarThermal: PROFILE WARM fps=20 detailRadius=2
+10-16 12:48:53.651  3553  3637 D EGL_emulation: eglMakeCurrent: 0x78762687e6e0: ver 3 0 (tinfo 0x7876268185e0)
+10-16 12:48:53.702  3553  3637 D EGL_emulation: eglMakeCurrent: 0x78762687e6e0: ver 3 0 (tinfo 0x7876268185e0)
+10-16 12:48:55.793  3553  3641 I QatarFrameCadence: CADENCE mode=WALK profile=WARM samples=177 averageMs=28.315676 maxMs=83.827995 extraRenderGate=no smooth=yes
+10-16 12:49:00.805  3553  3641 I QatarFrameCadence: CADENCE mode=WALK profile=WARM samples=218 averageMs=22.99434 maxMs=30.64908 extraRenderGate=no smooth=yes
+10-16 12:49:01.729  3553  3641 I QatarRuntime: STATE mode=WALK heightAboveGround=0.96000004 supportClearance=0.96000004 water=no speed=0.0 cameraDistance=7.3375735 stable=yes
+10-16 12:49:05.814  3553  3641 I QatarFrameCadence: CADENCE mode=WALK profile=WARM samples=221 averageMs=22.663288 maxMs=33.231632 extraRenderGate=no smooth=yes
+10-16 12:49:05.883  3553  3553 I AndroidInput: sensor listener tear down
+10-16 12:49:05.893  3553  3641 I QatarLifecycle: PAUSED mode=WALK rendering=suspended
+10-16 12:49:05.893  3553  3641 I AndroidGraphics: paused
+10-16 12:49:06.231  3553  3637 D EGL_emulation: eglMakeCurrent: 0x78762687e6e0: ver 3 0 (tinfo 0x7876268185e0)
+10-16 12:49:08.929  3553  3553 I AndroidInput: sensor listener setup
+10-16 12:49:08.963  3553  3641 D EGL_emulation: eglMakeCurrent: 0x787624d1a360: ver 3 0 (tinfo 0x787624c62880)
+10-16 12:49:08.964  3553  3641 I QatarLifecycle: RESUMED mode=WALK rendering=active
+10-16 12:49:08.964  3553  3641 I AndroidGraphics: resumed
+10-16 12:49:09.035  3553  3641 D EGL_emulation: eglMakeCurrent: 0x787624d1a360: ver 3 0 (tinfo 0x787624c62880)
+10-16 12:49:09.062  3553  3637 D EGL_emulation: eglMakeCurrent: 0x78762687e6e0: ver 3 0 (tinfo 0x7876268185e0)
+10-16 12:49:13.946  3553  3641 I QatarFrameCadence: CADENCE mode=WALK profile=WARM samples=203 averageMs=24.696512 maxMs=77.411476 extraRenderGate=no smooth=yes
+10-16 12:49:14.867  3553  3641 I QatarRuntime: STATE mode=WALK heightAboveGround=0.96000004 supportClearance=0.96000004 water=no speed=0.0 cameraDistance=7.337552 stable=yes
+10-16 12:49:18.953  3553  3641 I QatarFrameCadence: CADENCE mode=WALK profile=WARM samples=219 averageMs=22.86167 maxMs=39.94244 extraRenderGate=no smooth=yes
+10-16 12:49:19.679  3553  3641 I QatarThermal: PROFILE NORMAL fps=30 detailRadius=3
+10-16 12:49:19.748  3553  3637 D EGL_emulation: eglMakeCurrent: 0x78762687e6e0: ver 3 0 (tinfo 0x7876268185e0)
+10-16 12:49:19.752  3553  3637 D EGL_emulation: eglMakeCurrent: 0x78762687e6e0: ver 3 0 (tinfo 0x7876268185e0)
+10-16 12:49:23.980  3553  3641 I QatarFrameCadence: CADENCE mode=WALK profile=NORMAL samples=146 averageMs=34.429817 maxMs=92.563934 extraRenderGate=no smooth=yes
+10-16 12:49:24.901  3553  3641 I QatarRuntime: STATE mode=WALK heightAboveGround=0.96000004 supportClearance=0.96000004 water=no speed=0.0 cameraDistance=7.3375754 stable=yes
+10-16 12:49:28.995  3553  3641 I QatarFrameCadence: CADENCE mode=WALK profile=NORMAL samples=169 averageMs=29.659237 maxMs=50.73598 extraRenderGate=no smooth=yes
+10-16 12:49:33.996  3553  3641 I QatarFrameCadence: CADENCE mode=WALK profile=NORMAL samples=169 averageMs=29.607164 maxMs=45.44329 extraRenderGate=no smooth=yes
+10-16 12:49:34.915  3553  3641 I QatarRuntime: STATE mode=WALK heightAboveGround=0.96000004 supportClearance=0.96000004 water=no speed=0.0 cameraDistance=7.3375764 stable=yes
+10-16 12:49:39.007  3553  3641 I QatarFrameCadence: CADENCE mode=WALK profile=NORMAL samples=172 averageMs=29.134731 maxMs=46.35519 extraRenderGate=no smooth=yes
+10-16 12:49:44.015  3553  3641 I QatarFrameCadence: CADENCE mode=WALK profile=NORMAL samples=172 averageMs=29.119158 maxMs=43.12387 extraRenderGate=no smooth=yes
+10-16 12:49:44.931  3553  3641 I QatarRuntime: STATE mode=WALK heightAboveGround=0.96000004 supportClearance=0.96000004 water=no speed=0.0 cameraDistance=7.3375707 stable=yes

@@ -27,7 +27,7 @@ INFO         |   Checking: hasSufficientSystem
 INFO         |      Ok: System requirements to run avd: `qatar_runtime` are met
 WARNING      | Feature QuickbootFileBacked is disabled due to stability issues, if you really want that, the environment variable ANDROID_EMU_FORCE_QUICKBOOT_FILE_BACKED need to set to 1
 WARNING      | FeatureControl is requesting a non existing feature.
-INFO         | Storing crashdata in: /tmp/android-runner/emu-crash-37.2.12.db, detection is enabled for process: 2333
+INFO         | Storing crashdata in: /tmp/android-runner/emu-crash-37.2.12.db, detection is enabled for process: 2553
 INFO         | Initializing gfxstream backend
 INFO         | startOpenglesRendererImpl: gpu info
 INFO         | 
@@ -59,7 +59,7 @@ INFO         |     enable Ycbcr emulation: false
 INFO         |     guestVulkanOnly: false
 INFO         |     useDedicatedAllocations: false
 INFO         |     guestVulkanMaxApiVersion: 1.3.0
-INFO         WARNING: cannnot unmap ptr 0x7ff1e4c01000 as it is in the protected range from 0x7ff164c00000 to 0x7ff1e4e00000
+INFO         WARNING: cannnot unmap ptr 0x7f5900a01000 as it is in the protected range from 0x7f5880a00000 to 0x7f5900c00000
 |     enableProtectedMemoryEmulation: false
 INFO         | Graphics Adapter Vendor Google (Google Inc.)
 INFO         | Graphics Adapter Android Emulator OpenGL ES Translator (Google SwiftShader)
@@ -97,15 +97,15 @@ INFO         |   qemu.wifi=1
 INFO         | Monitoring duration of emulator setup.
 WARNING      | The emulator now requires a signed jwt token for gRPC access! Use the -grpc flag if you really want an open unprotected grpc port
 INFO         | Using security allow list from: /usr/local/lib/android/sdk/emulator/lib/emulator_access.json
-INFO         | The active JSON Web Key Sets can be found here: /run/user/1001/avd/running/2333/jwks/eede05e0-7212-44cd-a666-482b3706d951/active.jwk
-INFO         | Scanning /run/user/1001/avd/running/2333/jwks/eede05e0-7212-44cd-a666-482b3706d951 for jwk keys.
+INFO         | The active JSON Web Key Sets can be found here: /run/user/1001/avd/running/2553/jwks/715f0533-694f-44c9-96c7-ae617d5f9c48/active.jwk
+INFO         | Scanning /run/user/1001/avd/running/2553/jwks/715f0533-694f-44c9-96c7-ae617d5f9c48 for jwk keys.
 INFO         | Started GRPC server at 127.0.0.1:8554, security: Local, auth: +token
-INFO         | Advertising in: /run/user/1001/avd/running/pid_2333.ini
+INFO         | Advertising in: /run/user/1001/avd/running/pid_2553.ini
 INFO         | Setting display: 0 configuration to: 1080x1920, dpi: 420x420 
 INFO         | setDisplayActiveConfig: id:0, 1080x1920
 INFO         | emulatorSetupEnvironment: Environment scene is not required
 USER_INFO    | Emulator is performing a full startup. This may take upto two minutes, or more.
 WARNING      | Failed to process .ini file /home/runner/.android/emu-update-last-check.ini for reading.
 WARNING      | Failed to process .ini file /home/runner/.android/emu-update-last-check.ini for reading.
-INFO         | Boot completed in 17470 ms
+INFO         | Boot completed in 23771 ms
 INFO         | Increasing screen off timeout, logcat buffer size to 2M.
