@@ -214,7 +214,12 @@ public final class QatarPack implements AutoCloseable {
         public boolean hasLand() { return (flags & 1) != 0; }
         public boolean isCoast() { return (flags & 2) != 0; }
     }
-    public record Road(float x1, float z1, float x2, float z2, int roadClass, int lanes, float width) { }
+    public record Road(float x1,float z1,float x2,float z2,int roadClass,int lanes,float width,int surface,int flags) {
+        public Road(float x1,float z1,float x2,float z2,int roadClass,int lanes,float width){this(x1,z1,x2,z2,roadClass,lanes,width,0,0);}
+        public boolean bridge(){return (flags&1)!=0;}
+        public boolean tunnel(){return (flags&2)!=0;}
+        public boolean oneWay(){return (flags&4)!=0;}
+    }
     public record Building(float x, float z, float width, float depth, float height, float yaw,
                            int archetype, int flags, long sourceId, float[] footprint) {
         public boolean hasSourceFootprint() { return footprint != null && footprint.length >= 6; }

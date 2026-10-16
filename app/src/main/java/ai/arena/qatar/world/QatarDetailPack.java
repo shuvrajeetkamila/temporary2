@@ -85,7 +85,7 @@ public final class QatarDetailPack implements AutoCloseable {
             int roadClass=Byte.toUnsignedInt(data.get()),lanes=Byte.toUnsignedInt(data.get());
             int surface=Byte.toUnsignedInt(data.get()),flags=Byte.toUnsignedInt(data.get());
             float width=Short.toUnsignedInt(data.getShort())/10f;
-            roads[i]=new QatarPack.Road(x1,z1,x2,z2,roadClass,lanes,width);
+            roads[i]=new QatarPack.Road(x1,z1,x2,z2,roadClass,lanes,width,surface,flags);
         }
         int buildingCount=data.getInt();
         if(buildingCount!=entry.buildingCount||buildingCount<0||buildingCount>100_000)throw new IOException("QTOD building header mismatch");

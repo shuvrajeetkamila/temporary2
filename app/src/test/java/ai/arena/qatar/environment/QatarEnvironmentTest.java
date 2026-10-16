@@ -20,5 +20,8 @@ public class QatarEnvironmentTest {
         assertEquals(2,ThermalGovernor.effectiveAndroidStatus(0,true));
         assertEquals(3,ThermalGovernor.effectiveAndroidStatus(3,true));
         assertTrue(ThermalGovernor.Profile.HOT.maxDetailCells<ThermalGovernor.Profile.NORMAL.maxDetailCells);
+        assertTrue(ThermalGovernor.Profile.HOT.ambientCars<ThermalGovernor.Profile.WARM.ambientCars);
+        assertTrue(ThermalGovernor.Profile.WARM.ambientPedestrians<ThermalGovernor.Profile.NORMAL.ambientPedestrians);
+        assertEquals(0,ThermalGovernor.Profile.HOT.ambientBoats);
     }
 }

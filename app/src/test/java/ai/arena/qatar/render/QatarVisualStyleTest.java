@@ -31,6 +31,10 @@ public class QatarVisualStyleTest {
         assertTrue(QatarVisualStyle.ROAD_JOINT_DIVISIONS<=8);
         assertTrue(QatarVisualStyle.MAX_MARKING_STRIPS_PER_CELL*6<16384);
         assertTrue(QatarVisualStyle.MAX_ROAD_SUBDIVISIONS<=16);
+        assertTrue(QatarVisualStyle.MAX_BRIDGE_BARRIER_PIECES_PER_CELL<=96);
+        assertTrue(QatarVisualStyle.MAX_STREETLIGHTS_PER_CELL<=10);
+        assertTrue(QatarVisualStyle.MAX_DIRECTION_SIGNS_PER_CELL<=4);
+        assertTrue(QatarVisualStyle.MAX_TUNNEL_PORTALS_PER_CELL<=12);
         assertTrue(QatarVisualStyle.rooftopEquipment(building(1,1,20,20,30)));
         assertTrue(QatarVisualStyle.mosqueDetails(building(6,2,20,15,12)));
         assertTrue(QatarVisualStyle.parapet(building(3,3,10,8,7)));

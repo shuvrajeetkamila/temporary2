@@ -20,6 +20,7 @@ import com.badlogic.gdx.graphics.g3d.Material;
 import com.badlogic.gdx.graphics.g3d.Model;
 import com.badlogic.gdx.graphics.g3d.ModelBatch;
 import com.badlogic.gdx.graphics.g3d.ModelInstance;
+import com.badlogic.gdx.graphics.g3d.model.Node;
 import com.badlogic.gdx.graphics.g3d.attributes.ColorAttribute;
 import com.badlogic.gdx.graphics.g3d.attributes.FloatAttribute;
 import com.badlogic.gdx.graphics.g3d.attributes.TextureAttribute;
@@ -56,6 +57,8 @@ public final class QatarWorldRenderer implements WorldStreamer.Listener, QatarDe
     private final Map<Long, RenderChunk> detailCells = new HashMap<>();
     private final Map<Long, QatarDetailPack.DetailChunk> detailData = new HashMap<>();
     private final EarClippingTriangulator footprintTriangulator = new EarClippingTriangulator();
+    private final AmbientWorldActivity activity;
+    private final QatarLandmarkLayer landmarks;
     private final Texture sandTexture=createSurfaceTexture(0x51f15e,0);
     private final Texture gravelTexture=createSurfaceTexture(0x34a29b,1);
     private final Texture saltTexture=createSurfaceTexture(0x72c41d,2);
@@ -72,6 +75,12 @@ public final class QatarWorldRenderer implements WorldStreamer.Listener, QatarDe
     private final Material taxiwayMaterial=diffuse(.22f,.225f,.23f,1);
     private final Material markingMaterial=diffuse(.96f,.94f,.84f,1);
     private final Material edgeMarkingMaterial=diffuse(.98f,.98f,.94f,1);
+    private final Material reclamationMaterial=diffuse(.67f,.63f,.55f,1);
+    private final Material concreteBarrierMaterial=diffuse(.78f,.77f,.72f,1);
+    private final Material tunnelMouthMaterial=diffuse(.045f,.048f,.050f,1);
+    private final Material streetFurnitureMaterial=diffuse(.20f,.22f,.23f,1);
+    private final Material signMaterial=diffuse(.18f,.38f,.42f,1);
+    private final Material lampMaterial=new Material(ColorAttribute.createDiffuse(new Color(.95f,.86f,.55f,1)),ColorAttribute.createEmissive(new Color(.32f,.24f,.08f,1)));
     private final Material roofMaterial=diffuse(.74f,.70f,.62f,1);
     private final Material roofDetailMaterial=diffuse(.61f,.61f,.58f,1);
     private final Material facadeTrimMaterial=diffuse(.94f,.89f,.78f,1);
@@ -83,10 +92,14 @@ public final class QatarWorldRenderer implements WorldStreamer.Listener, QatarDe
     private final Material industrialMaterial=facade(.70f,.71f,.68f,stoneFacadeTexture);
     private final Material farmMaterial=diffuse(.62f,.65f,.47f,1);
     private final Material civicMaterial=facade(.92f,.88f,.79f,stoneFacadeTexture);
-    private final Material waterMaterial=new Material(ColorAttribute.createDiffuse(new Color(.035f,.34f,.44f,1)),ColorAttribute.createSpecular(new Color(.72f,.88f,.91f,1)),FloatAttribute.createShininess(96));
+    private final Material waterMaterial=new Material(ColorAttribute.createDiffuse(new Color(.035f,.30f,.42f,1)),ColorAttribute.createSpecular(new Color(.72f,.88f,.91f,1)),FloatAttribute.createShininess(96));
+    private final Material shallowWaterMaterial=new Material(ColorAttribute.createDiffuse(new Color(.075f,.53f,.57f,1)),ColorAttribute.createSpecular(new Color(.72f,.92f,.91f,1)),FloatAttribute.createShininess(80));
+    private final Material beachMaterial=diffuse(.91f,.81f,.62f,1);
     private Model focusModel;
     private ModelInstance focusInstance;
+    private final Map<String,Node> focusNodes=new HashMap<>();
     private PhysicsWorld.Mode renderedMode;
+    private float focusAnimationTime,focusTransition=1f;
     private String fatalStreamingError="";
     private final CameraMotionFilter cameraFilter=new CameraMotionFilter();
     private final Vector3 renderFocus=new Vector3();
@@ -97,6 +110,7 @@ public final class QatarWorldRenderer implements WorldStreamer.Listener, QatarDe
     private float lastCameraDistance;
     private boolean loggedRealDetail;
     private boolean loggedVisualPipeline;
+    private boolean loggedCoastalSupport;
     private long detailMapRevision;
     private ThermalGovernor.Profile performanceProfile=ThermalGovernor.Profile.NORMAL;
 
@@ -105,7 +119,7 @@ public final class QatarWorldRenderer implements WorldStreamer.Listener, QatarDe
         camera=new PerspectiveCamera(64,Gdx.graphics.getWidth(),Gdx.graphics.getHeight());
         camera.near=.15f; camera.far=14_000f;
         environment.set(ambientLight);environment.add(sun);environment.add(skyFill);
-        initialiseMaterials();
+        initialiseMaterials();activity=new AmbientWorldActivity(physics,this);landmarks=new QatarLandmarkLayer(pack,physics,this);
         rebuildFocusModel();
     }
 
@@ -124,7 +138,7 @@ public final class QatarWorldRenderer implements WorldStreamer.Listener, QatarDe
 
     public void render(float delta) {
         if (renderedMode != physics.mode()) rebuildFocusModel();
-        updateTransforms();
+        updateTransforms();updateFocusAnimation(delta);
         updateCamera(delta);updateAtmosphere();
         Gdx.gl.glViewport(0,0,Gdx.graphics.getWidth(),Gdx.graphics.getHeight());
         Gdx.gl.glEnable(GL20.GL_DEPTH_TEST);
@@ -133,8 +147,10 @@ public final class QatarWorldRenderer implements WorldStreamer.Listener, QatarDe
         batch.begin(camera);
         for(RenderChunk chunk:chunks.values()){batch.render(chunk.instance,environment);if(chunk.waterInstance!=null)batch.render(chunk.waterInstance,environment);}
         for (RenderChunk detail:detailCells.values()) batch.render(detail.instance,environment);
+        activity.render(batch,environment,detailData,detailMapRevision,performanceProfile,delta,climate.seaLevelMetres());landmarks.render(batch,environment,performanceProfile);
         focusInstance.transform.set(physics.renderTransform(renderFocusTransform));
-        batch.render(focusInstance,environment);
+        float transitionScale=.72f+.28f*smoothStep(focusTransition);focusInstance.transform.scale(transitionScale,transitionScale,transitionScale);
+        focusInstance.calculateTransforms();batch.render(focusInstance,environment);
         batch.end();
     }
 
@@ -257,7 +273,8 @@ public final class QatarWorldRenderer implements WorldStreamer.Listener, QatarDe
 
     private ChunkModels buildChunk(QatarPack.WorldChunk chunk) {
         float size=pack.chunkMetres;builder.begin();
-        MeshPartBuilder land=builder.part("terrain-"+chunk.entry().biome(),GL20.GL_TRIANGLES,ATTRS,terrainMaterials.get(chunk.entry().biome()));float sub=size/16f;
+        MeshPartBuilder land=builder.part("terrain-"+chunk.entry().biome(),GL20.GL_TRIANGLES,ATTRS,terrainMaterials.get(chunk.entry().biome()));
+        MeshPartBuilder beaches=builder.part("coastal-beach-bands",GL20.GL_TRIANGLES,ATTRS,beachMaterial);float sub=size/16f;
         if(!chunk.entry().hasLand())land.box(size/2,-80,size/2,size,.1f,size);
         for(int row=0;row<16;row++){
             int bits=chunk.landRows()[row];
@@ -265,16 +282,22 @@ public final class QatarWorldRenderer implements WorldStreamer.Listener, QatarDe
                 if((bits&(1<<col))==0)continue;float x0=col*sub,x1=(col+1)*sub,z0=row*sub,z1=(row+1)*sub;
                 float h00=pack.terrainHeight(chunk,x0,z0),h10=pack.terrainHeight(chunk,x1,z0),h11=pack.terrainHeight(chunk,x1,z1),h01=pack.terrainHeight(chunk,x0,z1);
                 terrainTriangle(land,x0,h00,z0,x0,h01,z1,x1,h11,z1);terrainTriangle(land,x1,h11,z1,x1,h10,z0,x0,h00,z0);
+                addBeachBands(beaches,chunk,row,col,x0,z0,sub);
             }
         }
         Model terrain=builder.end(),water=null;
         if(!chunk.entry().hasLand()||chunk.entry().isCoast()){
-            builder.begin();MeshPartBuilder surface=builder.part("gulf-water",GL20.GL_TRIANGLES,ATTRS,waterMaterial);float waterSub=size/8f;
+            builder.begin();MeshPartBuilder surface=builder.part("gulf-water-mask-aligned",GL20.GL_TRIANGLES,ATTRS,waterMaterial);MeshPartBuilder shallow=builder.part("gulf-shallow-water-bands",GL20.GL_TRIANGLES,ATTRS,shallowWaterMaterial);float waterSub=size/16f;
             double originX=chunk.entry().x()*(double)pack.chunkMetres,originZ=chunk.entry().y()*(double)pack.chunkMetres;
-            for(int row=0;row<8;row++)for(int col=0;col<8;col++){
+            // Coast water must never cover cells declared as land. The previous
+            // full-chunk plane could visually flood low reclaimed runways and
+            // coastal buildings even though their land collision was present.
+            for(int row=0;row<16;row++)for(int col=0;col<16;col++){
+                if((chunk.landRows()[row]&(1<<col))!=0)continue;
                 float x0=col*waterSub,x1=(col+1)*waterSub,z0=row*waterSub,z1=(row+1)*waterSub;
                 float h00=staticWave(originX+x0,originZ+z0),h10=staticWave(originX+x1,originZ+z0),h11=staticWave(originX+x1,originZ+z1),h01=staticWave(originX+x0,originZ+z1);
                 terrainTriangle(surface,x0,h00,z0,x0,h01,z1,x1,h11,z1);terrainTriangle(surface,x1,h11,z1,x1,h10,z0,x0,h00,z0);
+                addShallowWaterBands(shallow,chunk,row,col,x0,z0,waterSub,originX,originZ);
             }
             water=builder.end();
         }
@@ -282,6 +305,34 @@ public final class QatarWorldRenderer implements WorldStreamer.Listener, QatarDe
     }
 
     private static float staticWave(double x,double z){return .055f*(float)Math.sin(x*.012+z*.005)+.025f*(float)Math.sin(z*.021-x*.004);}
+
+    private void addBeachBands(MeshPartBuilder part,QatarPack.WorldChunk chunk,int row,int col,float x0,float z0,float size){
+        float band=Math.min(42f,size*.14f),x1=x0+size,z1=z0+size;
+        if(isWaterCell(chunk,row-1,col))terrainPatch(part,chunk,x0,z0,x1,z0+band,.035f);
+        if(isWaterCell(chunk,row+1,col))terrainPatch(part,chunk,x0,z1-band,x1,z1,.035f);
+        if(isWaterCell(chunk,row,col-1))terrainPatch(part,chunk,x0,z0,x0+band,z1,.037f);
+        if(isWaterCell(chunk,row,col+1))terrainPatch(part,chunk,x1-band,z0,x1,z1,.037f);
+    }
+
+    private void terrainPatch(MeshPartBuilder part,QatarPack.WorldChunk chunk,float x0,float z0,float x1,float z1,float offset){
+        float h00=pack.terrainHeight(chunk,x0,z0)+offset,h10=pack.terrainHeight(chunk,x1,z0)+offset,h11=pack.terrainHeight(chunk,x1,z1)+offset,h01=pack.terrainHeight(chunk,x0,z1)+offset;
+        terrainTriangle(part,x0,h00,z0,x0,h01,z1,x1,h11,z1);terrainTriangle(part,x1,h11,z1,x1,h10,z0,x0,h00,z0);
+    }
+
+    private void addShallowWaterBands(MeshPartBuilder part,QatarPack.WorldChunk chunk,int row,int col,float x0,float z0,float size,double originX,double originZ){
+        float band=Math.min(95f,size*.24f),x1=x0+size,z1=z0+size;
+        if(isLandCell(chunk,row-1,col))waterPatch(part,x0,z0,x1,z0+band,originX,originZ);
+        if(isLandCell(chunk,row+1,col))waterPatch(part,x0,z1-band,x1,z1,originX,originZ);
+        if(isLandCell(chunk,row,col-1))waterPatch(part,x0,z0,x0+band,z1,originX,originZ);
+        if(isLandCell(chunk,row,col+1))waterPatch(part,x1-band,z0,x1,z1,originX,originZ);
+    }
+
+    private static boolean isLandCell(QatarPack.WorldChunk chunk,int row,int col){return row>=0&&row<16&&col>=0&&col<16&&(chunk.landRows()[row]&(1<<col))!=0;}
+    private static boolean isWaterCell(QatarPack.WorldChunk chunk,int row,int col){return row>=0&&row<16&&col>=0&&col<16&&(chunk.landRows()[row]&(1<<col))==0;}
+    private static void waterPatch(MeshPartBuilder part,float x0,float z0,float x1,float z1,double originX,double originZ){
+        float h00=staticWave(originX+x0,originZ+z0)+.028f,h10=staticWave(originX+x1,originZ+z0)+.028f,h11=staticWave(originX+x1,originZ+z1)+.028f,h01=staticWave(originX+x0,originZ+z1)+.028f;
+        terrainTriangle(part,x0,h00,z0,x0,h01,z1,x1,h11,z1);terrainTriangle(part,x1,h11,z1,x1,h10,z0,x0,h00,z0);
+    }
 
 
     @Override public void activateDetail(QatarDetailPack.DetailChunk chunk){
@@ -314,8 +365,15 @@ public final class QatarWorldRenderer implements WorldStreamer.Listener, QatarDe
     private Model buildDetailCell(QatarDetailPack.DetailChunk chunk){
         builder.begin();
         double cellOriginX=chunk.entry().x()*(double)detailCellMetres,cellOriginZ=chunk.entry().y()*(double)detailCellMetres;
-        int renderedJoints=0,renderedMarkingStrips=0,roofDetails=0;
+        int renderedJoints=0,renderedMarkingStrips=0,roofDetails=0,coastalPads=0,bridgeBarrierPieces=0,tunnelPortals=0,streetlights=0,directionSigns=0,buildingFoundations=0;
         if(chunk.roads().length>0){
+            MeshPartBuilder supports=builder.part("osm-dry-transport-support",GL20.GL_TRIANGLES,ATTRS,reclamationMaterial);
+            MeshPartBuilder barriers=builder.part("osm-bridge-barriers",GL20.GL_TRIANGLES,ATTRS,concreteBarrierMaterial);
+            MeshPartBuilder tunnelFrames=builder.part("osm-tunnel-portals",GL20.GL_TRIANGLES,ATTRS,concreteBarrierMaterial);
+            MeshPartBuilder tunnelMouths=builder.part("osm-tunnel-mouths",GL20.GL_TRIANGLES,ATTRS,tunnelMouthMaterial);
+            MeshPartBuilder furniture=builder.part("osm-streetlight-poles",GL20.GL_TRIANGLES,ATTRS,streetFurnitureMaterial);
+            MeshPartBuilder lamps=builder.part("osm-streetlight-lamps",GL20.GL_TRIANGLES,ATTRS,lampMaterial);
+            MeshPartBuilder signs=builder.part("osm-direction-signs",GL20.GL_TRIANGLES,ATTRS,signMaterial);
             MeshPartBuilder shoulders=builder.part("osm-road-shoulders",GL20.GL_TRIANGLES,ATTRS,shoulderMaterial);
             MeshPartBuilder roads=builder.part("osm-paved-roads",GL20.GL_TRIANGLES,ATTRS,roadMaterial);
             MeshPartBuilder paths=builder.part("osm-paths-tracks",GL20.GL_TRIANGLES,ATTRS,pathMaterial);
@@ -323,7 +381,18 @@ public final class QatarWorldRenderer implements WorldStreamer.Listener, QatarDe
             MeshPartBuilder runways=builder.part("osm-runways",GL20.GL_TRIANGLES,ATTRS,runwayMaterial);
             MeshPartBuilder taxiways=builder.part("osm-taxiways",GL20.GL_TRIANGLES,ATTRS,taxiwayMaterial);
             Map<EndpointKey,RoadJoint> joints=collectRoadJoints(chunk.roads());
-            for(QatarPack.Road road:chunk.roads()){
+            for(int roadIndex=0;roadIndex<chunk.roads().length;roadIndex++){
+                QatarPack.Road road=chunk.roads()[roadIndex];
+                if(roadNeedsDrySupport(road,cellOriginX,cellOriginZ)){
+                    float supportWidth=road.width()+(road.roadClass()==10?8f:road.roadClass()==11?4f:3f);
+                    roadQuad(supports,road,cellOriginX,cellOriginZ,.025f,supportWidth);coastalPads++;
+                }
+                if(road.bridge()&&bridgeBarrierPieces<QatarVisualStyle.MAX_BRIDGE_BARRIER_PIECES_PER_CELL)
+                    bridgeBarrierPieces+=addBridgeBarriers(barriers,road,cellOriginX,cellOriginZ,QatarVisualStyle.MAX_BRIDGE_BARRIER_PIECES_PER_CELL-bridgeBarrierPieces);
+                if(road.tunnel()&&tunnelPortals+2<=QatarVisualStyle.MAX_TUNNEL_PORTALS_PER_CELL){addTunnelPortals(tunnelFrames,tunnelMouths,road,cellOriginX,cellOriginZ);tunnelPortals+=2;}
+                if(streetlights<QatarVisualStyle.MAX_STREETLIGHTS_PER_CELL&&road.roadClass()<=3&&roadLength(road)>=42f&&Math.floorMod(roadIndex*31+chunk.entry().x()*7+chunk.entry().y(),5)==0){
+                    addStreetlight(furniture,lamps,road,cellOriginX,cellOriginZ,streetlights);streetlights++;
+                }
                 if(QatarVisualStyle.roadNeedsShoulder(road))roadQuad(shoulders,road,cellOriginX,cellOriginZ,.105f,QatarVisualStyle.shoulderWidth(road));
                 if(road.roadClass()==9){
                     roadQuad(paths,road,cellOriginX,cellOriginZ,.112f,road.width()+1.4f);
@@ -338,10 +407,11 @@ public final class QatarWorldRenderer implements WorldStreamer.Listener, QatarDe
             for(int pass=0;pass<2&&renderedJoints<QatarVisualStyle.MAX_ROAD_JOINTS_PER_CELL;pass++){
                 for(RoadJoint joint:joints.values()){
                     if((pass==0)!=(joint.count>1)||joint.roadClass==9)continue;
-                    if(joint.roadClass<=4)roadDisc(shoulders,joint.x,joint.z,cellOriginX,cellOriginZ,.105f,(joint.width+(joint.roadClass<=2?3f:2.2f))*.5f);
+                    if(joint.roadClass<=4)roadDisc(shoulders,joint.x,joint.z,cellOriginX,cellOriginZ,.105f,(joint.width+(joint.roadClass<=2?3f:2.2f))*.5f,joint.roadClass,joint.flags);
                     MeshPartBuilder target=switch(joint.roadClass){case 7,8->paths;case 10->runways;case 11->taxiways;default->roads;};
-                    roadDisc(target,joint.x,joint.z,cellOriginX,cellOriginZ,.13f,joint.width*.5f);
+                    roadDisc(target,joint.x,joint.z,cellOriginX,cellOriginZ,.13f,joint.width*.5f,joint.roadClass,joint.flags);
                     renderedJoints++;
+                    if(joint.count>1&&joint.roadClass<=4&&directionSigns<QatarVisualStyle.MAX_DIRECTION_SIGNS_PER_CELL&&Math.floorMod(Math.round(joint.x+joint.z),3)==0){addDirectionSign(signs,furniture,joint,cellOriginX,cellOriginZ);directionSigns++;}
                     if(renderedJoints>=QatarVisualStyle.MAX_ROAD_JOINTS_PER_CELL)break;
                 }
             }
@@ -378,6 +448,7 @@ public final class QatarWorldRenderer implements WorldStreamer.Listener, QatarDe
                 }
             }
         }
+        MeshPartBuilder foundations=builder.part("osm-coastal-building-foundations",GL20.GL_TRIANGLES,ATTRS,reclamationMaterial);
         MeshPartBuilder limestone=builder.part("osm-limestone-facades",GL20.GL_TRIANGLES,ATTRS,limestoneMaterial);
         MeshPartBuilder sandstone=builder.part("osm-sandstone-facades",GL20.GL_TRIANGLES,ATTRS,sandstoneMaterial);
         MeshPartBuilder plaster=builder.part("osm-white-plaster-facades",GL20.GL_TRIANGLES,ATTRS,plasterMaterial);
@@ -400,7 +471,12 @@ public final class QatarWorldRenderer implements WorldStreamer.Listener, QatarDe
                 case QatarVisualStyle.FACADE_CIVIC->civic;
                 default->limestone;
             };
-            float baseHeight=terrainHeight(cellOriginX+building.x(),cellOriginZ+building.z());
+            double buildingGlobalX=cellOriginX+building.x(),buildingGlobalZ=cellOriginZ+building.z();
+            float measuredBase=terrainHeight(buildingGlobalX,buildingGlobalZ);boolean landMask=nationalLandAt(buildingGlobalX,buildingGlobalZ);
+            float baseHeight=CoastalFeaturePolicy.buildingBase(measuredBase,landMask);
+            if(CoastalFeaturePolicy.needsBuildingFoundation(measuredBase,landMask)){
+                addBuildingFoundation(foundations,building,baseHeight,measuredBase,landMask);buildingFoundations++;
+            }
             if(building.hasSourceFootprint())roofDetails+=extrudeFootprint(target,roofs,windows,facadeTrim,roofEquipment,civicRoofDetails,building,baseHeight);
             else{
                 target.setVertexTransform(new Matrix4().setToTranslation(building.x(),baseHeight+building.height()/2,building.z()).rotate(Vector3.Y,(float)Math.toDegrees(building.yaw())));
@@ -410,9 +486,30 @@ public final class QatarWorldRenderer implements WorldStreamer.Listener, QatarDe
         }
         if(!loggedVisualPipeline&&(chunk.roads().length>0||chunk.buildings().length>0)){
             loggedVisualPipeline=true;
-            Gdx.app.log("QatarVisual","V08_PIPELINE mipmappedSurfaces=5 mipmappedFacades=2 roadSegments="+chunk.roads().length+" joinedCaps="+renderedJoints+" markingStrips="+renderedMarkingStrips+" roadHeightFallback=residentClamp buildings="+chunk.buildings().length+" roofDetails="+roofDetails+" boundedJointCap="+QatarVisualStyle.MAX_ROAD_JOINTS_PER_CELL);
+            Gdx.app.log("QatarVisual","V09_WORLD_PIPELINE roadSegments="+chunk.roads().length+" joinedCaps="+renderedJoints+" markingStrips="+renderedMarkingStrips+" streetlights="+streetlights+" signs="+directionSigns+" bridgeBarriers="+bridgeBarrierPieces+" tunnelPortals="+tunnelPortals+" buildings="+chunk.buildings().length+" roofDetails="+roofDetails+" bounded=yes");
+        }
+        if(!loggedCoastalSupport&&(coastalPads>0||buildingFoundations>0)){
+            loggedCoastalSupport=true;
+            Gdx.app.log("QatarCoast","FEATURE_SUPPORT_READY cell="+chunk.entry().x()+","+chunk.entry().y()+" transportPads="+coastalPads+" buildingFoundations="+buildingFoundations+" highWater="+CoastalFeaturePolicy.DESIGN_HIGH_WATER_METRES+" dryLevel="+CoastalFeaturePolicy.MINIMUM_DRY_FEATURE_METRES+" waterMaskAligned=yes");
         }
         return builder.end();
+    }
+
+    private void addBuildingFoundation(MeshPartBuilder foundations,QatarPack.Building building,float baseHeight,float measuredBase,boolean landMask){
+        float supportedBottom=landMask&&Float.isFinite(measuredBase)?Math.max(CoastalFeaturePolicy.FOUNDATION_BOTTOM_METRES,measuredBase):CoastalFeaturePolicy.FOUNDATION_BOTTOM_METRES;
+        float bottom=Math.min(baseHeight-.08f,supportedBottom);
+        if(!building.hasSourceFootprint()){
+            float height=Math.max(.10f,baseHeight-bottom);
+            foundations.setVertexTransform(new Matrix4().setToTranslation(building.x(),bottom+height*.5f,building.z()).rotate(Vector3.Y,(float)Math.toDegrees(building.yaw())));
+            foundations.box(0,0,0,building.width()+1.2f,height,building.depth()+1.2f);foundations.setVertexTransform(null);return;
+        }
+        float[] polygon=building.footprint();ShortArray triangles=footprintTriangulator.computeTriangles(polygon);
+        for(int i=0;i<triangles.size;i+=3){int ia=triangles.get(i)*2,ib=triangles.get(i+1)*2,ic=triangles.get(i+2)*2;
+            terrainTriangle(foundations,polygon[ia],baseHeight-.025f,polygon[ia+1],polygon[ib],baseHeight-.025f,polygon[ib+1],polygon[ic],baseHeight-.025f,polygon[ic+1]);
+        }
+        int points=polygon.length/2;float signedArea=0;for(int i=0;i<points;i++){int j=(i+1)%points;signedArea+=polygon[i*2]*polygon[j*2+1]-polygon[j*2]*polygon[i*2+1];}
+        boolean ccw=signedArea>0;
+        for(int i=0;i<points;i++){int j=(i+1)%points;float ax=polygon[i*2],az=polygon[i*2+1],bx=polygon[j*2],bz=polygon[j*2+1],dx=bx-ax,dz=bz-az,length=(float)Math.hypot(dx,dz);if(length<.02f)continue;float direction=ccw?1:-1,nx=direction*dz/length,nz=-direction*dx/length;facadeRect(foundations,ax,bottom,az,bx,baseHeight,bz,nx,nz,ccw);}
     }
 
     private int extrudeFootprint(MeshPartBuilder part,MeshPartBuilder roofs,MeshPartBuilder windows,MeshPartBuilder trim,MeshPartBuilder roofEquipment,MeshPartBuilder civicRoofDetails,QatarPack.Building building,float baseHeight){
@@ -515,18 +612,71 @@ public final class QatarWorldRenderer implements WorldStreamer.Listener, QatarDe
         int group=road.roadClass()<=6?0:road.roadClass()<=8?1:road.roadClass()==9?2:road.roadClass()==10?3:4;
         EndpointKey key=new EndpointKey(Math.round(x*4),Math.round(z*4),group);
         RoadJoint joint=joints.get(key);
-        if(joint==null)joints.put(key,new RoadJoint(x,z,road.width(),road.roadClass()));
-        else{joint.count++;joint.width=Math.max(joint.width,road.width());joint.roadClass=Math.min(joint.roadClass,road.roadClass());}
+        if(joint==null)joints.put(key,new RoadJoint(x,z,road.width(),road.roadClass(),road.flags()));
+        else{joint.count++;joint.width=Math.max(joint.width,road.width());joint.roadClass=Math.min(joint.roadClass,road.roadClass());joint.flags|=road.flags();}
+    }
+
+    private boolean roadNeedsDrySupport(QatarPack.Road road,double cellOriginX,double cellOriginZ){
+        float x=(road.x1()+road.x2())*.5f,z=(road.z1()+road.z2())*.5f;
+        double globalX=cellOriginX+x,globalZ=cellOriginZ+z;
+        float measured=detailTerrainHeight(globalX,globalZ,cellOriginX,cellOriginZ);
+        return CoastalFeaturePolicy.needsTransportPad(measured,nationalLandAt(globalX,globalZ),road.roadClass(),road.flags());
+    }
+
+    private static float roadLength(QatarPack.Road road){return (float)Math.hypot(road.x2()-road.x1(),road.z2()-road.z1());}
+
+    private int addBridgeBarriers(MeshPartBuilder barriers,QatarPack.Road road,double cellOriginX,double cellOriginZ,int remaining){
+        float dx=road.x2()-road.x1(),dz=road.z2()-road.z1(),length=(float)Math.hypot(dx,dz);if(length<1||remaining<2)return 0;
+        int pieces=Math.min(roadPieceCount(length),remaining/2);float nx=-dz/length,nz=dx/length,lateral=road.width()*.5f+.32f;
+        int built=0;
+        for(int piece=0;piece<pieces;piece++){
+            float a=piece/(float)pieces,b=(piece+1)/(float)pieces,m=(a+b)*.5f,pieceLength=length*(b-a)+.08f;
+            float centreX=road.x1()+dx*m,centreZ=road.z1()+dz*m;
+            float base=transportHeight(cellOriginX+centreX,cellOriginZ+centreZ,cellOriginX,cellOriginZ,road.roadClass(),road.flags())+.16f;
+            float heading=(float)Math.toDegrees(Math.atan2(dx,dz));
+            for(float side:new float[]{-1f,1f}){
+                barriers.setVertexTransform(new Matrix4().setToTranslation(centreX+nx*lateral,base+.38f,centreZ+nz*lateral).rotate(Vector3.Y,heading));
+                barriers.box(0,0,0,.24f,.76f,pieceLength);built++;
+            }
+        }
+        barriers.setVertexTransform(null);return built;
+    }
+
+    private void addTunnelPortals(MeshPartBuilder frames,MeshPartBuilder mouths,QatarPack.Road road,double cellOriginX,double cellOriginZ){
+        float dx=road.x2()-road.x1(),dz=road.z2()-road.z1(),length=(float)Math.hypot(dx,dz);if(length<1)return;float heading=(float)Math.toDegrees(Math.atan2(dx,dz));
+        for(int endpoint=0;endpoint<2;endpoint++){
+            float x=endpoint==0?road.x1():road.x2(),z=endpoint==0?road.z1():road.z2();
+            float base=transportHeight(cellOriginX+x,cellOriginZ+z,cellOriginX,cellOriginZ,road.roadClass(),road.flags());float half=road.width()*.5f+.6f;
+            Matrix4 transform=new Matrix4().setToTranslation(x,base,z).rotate(Vector3.Y,heading+(endpoint==0?0:180));
+            frames.setVertexTransform(transform);frames.box(-half,1.65f,0,.55f,3.3f,.65f);frames.box(half,1.65f,0,.55f,3.3f,.65f);frames.box(0,3.25f,0,road.width()+1.75f,.55f,.70f);frames.setVertexTransform(null);
+            mouths.setVertexTransform(transform);mouths.box(0,1.42f,.20f,road.width()+.65f,2.65f,.16f);mouths.setVertexTransform(null);
+        }
+    }
+
+    private void addStreetlight(MeshPartBuilder poles,MeshPartBuilder lamps,QatarPack.Road road,double cellOriginX,double cellOriginZ,int index){
+        float dx=road.x2()-road.x1(),dz=road.z2()-road.z1(),length=(float)Math.hypot(dx,dz);if(length<1)return;
+        float nx=-dz/length,nz=dx/length,side=(index&1)==0?1f:-1f,lateral=road.width()*.5f+1.35f;
+        float x=(road.x1()+road.x2())*.5f+nx*lateral*side,z=(road.z1()+road.z2())*.5f+nz*lateral*side;
+        float base=transportHeight(cellOriginX+x,cellOriginZ+z,cellOriginX,cellOriginZ,road.roadClass(),road.flags());
+        poles.setVertexTransform(new Matrix4().setToTranslation(x,base+3.25f,z));poles.cylinder(.16f,6.5f,.16f,7);poles.setVertexTransform(null);
+        lamps.setVertexTransform(new Matrix4().setToTranslation(x,base+6.55f,z));lamps.box(0,0,0,.72f,.16f,.28f);lamps.setVertexTransform(null);
+    }
+
+    private void addDirectionSign(MeshPartBuilder signs,MeshPartBuilder poles,RoadJoint joint,double cellOriginX,double cellOriginZ){
+        float base=transportHeight(cellOriginX+joint.x,cellOriginZ+joint.z,cellOriginX,cellOriginZ,joint.roadClass,joint.flags);
+        float x=joint.x+joint.width*.5f+1.1f,z=joint.z;
+        poles.setVertexTransform(new Matrix4().setToTranslation(x,base+1.45f,z));poles.cylinder(.13f,2.9f,.13f,7);poles.setVertexTransform(null);
+        signs.setVertexTransform(new Matrix4().setToTranslation(x,base+2.7f,z));signs.box(0,0,0,1.7f,.72f,.12f);signs.setVertexTransform(null);
     }
 
     private void roadQuad(MeshPartBuilder part,QatarPack.Road road,double cellOriginX,double cellOriginZ,float offset,float width){
-        stripQuad(part,road.x1(),road.z1(),road.x2(),road.z2(),cellOriginX,cellOriginZ,offset,width);
+        stripQuad(part,road.x1(),road.z1(),road.x2(),road.z2(),cellOriginX,cellOriginZ,offset,width,road.roadClass(),road.flags());
     }
 
     private int roadLine(MeshPartBuilder part,QatarPack.Road road,double cellOriginX,double cellOriginZ,float offset,float width,float lateral){
         float dx=road.x2()-road.x1(),dz=road.z2()-road.z1(),length=(float)Math.hypot(dx,dz);if(length<.01f)return 0;
         float nx=-dz/length,nz=dx/length;
-        return stripQuad(part,road.x1()+nx*lateral,road.z1()+nz*lateral,road.x2()+nx*lateral,road.z2()+nz*lateral,cellOriginX,cellOriginZ,offset,width);
+        return stripQuad(part,road.x1()+nx*lateral,road.z1()+nz*lateral,road.x2()+nx*lateral,road.z2()+nz*lateral,cellOriginX,cellOriginZ,offset,width,road.roadClass(),road.flags());
     }
 
     private int roadDashes(MeshPartBuilder part,QatarPack.Road road,double cellOriginX,double cellOriginZ,float offset,float width,float lateral,float dashLength,float gapLength,int remainingBudget){
@@ -540,27 +690,27 @@ public final class QatarWorldRenderer implements WorldStreamer.Listener, QatarDe
             int pieces=roadPieceCount(end-cursor);if(strips+pieces>remainingBudget)break;
             float x1=road.x1()+ux*cursor+nx*lateral,z1=road.z1()+uz*cursor+nz*lateral;
             float x2=road.x1()+ux*end+nx*lateral,z2=road.z1()+uz*end+nz*lateral;
-            strips+=stripQuad(part,x1,z1,x2,z2,cellOriginX,cellOriginZ,offset,width);dashes++;
+            strips+=stripQuad(part,x1,z1,x2,z2,cellOriginX,cellOriginZ,offset,width,road.roadClass(),road.flags());dashes++;
         }
         return strips;
     }
 
-    private void roadDisc(MeshPartBuilder part,float x,float z,double cellOriginX,double cellOriginZ,float offset,float radius){
-        float centreHeight=detailTerrainHeight(cellOriginX+x,cellOriginZ+z,cellOriginX,cellOriginZ)+offset;
+    private void roadDisc(MeshPartBuilder part,float x,float z,double cellOriginX,double cellOriginZ,float offset,float radius,int roadClass,int flags){
+        float centreHeight=transportHeight(cellOriginX+x,cellOriginZ+z,cellOriginX,cellOriginZ,roadClass,flags)+offset;
         for(int side=0;side<QatarVisualStyle.ROAD_JOINT_DIVISIONS;side++){
             double a=Math.PI*2*side/QatarVisualStyle.ROAD_JOINT_DIVISIONS,b=Math.PI*2*(side+1)/QatarVisualStyle.ROAD_JOINT_DIVISIONS;
             float ax=x+(float)Math.cos(a)*radius,az=z+(float)Math.sin(a)*radius,bx=x+(float)Math.cos(b)*radius,bz=z+(float)Math.sin(b)*radius;
-            float ah=detailTerrainHeight(cellOriginX+ax,cellOriginZ+az,cellOriginX,cellOriginZ)+offset,bh=detailTerrainHeight(cellOriginX+bx,cellOriginZ+bz,cellOriginX,cellOriginZ)+offset;
+            float ah=transportHeight(cellOriginX+ax,cellOriginZ+az,cellOriginX,cellOriginZ,roadClass,flags)+offset,bh=transportHeight(cellOriginX+bx,cellOriginZ+bz,cellOriginX,cellOriginZ,roadClass,flags)+offset;
             terrainTriangle(part,x,centreHeight,z,ax,ah,az,bx,bh,bz);
         }
     }
 
-    private int stripQuad(MeshPartBuilder part,float x1,float z1,float x2,float z2,double cellOriginX,double cellOriginZ,float offset,float width){
+    private int stripQuad(MeshPartBuilder part,float x1,float z1,float x2,float z2,double cellOriginX,double cellOriginZ,float offset,float width,int roadClass,int flags){
         float dx=x2-x1,dz=z2-z1,length=(float)Math.hypot(dx,dz);if(length<.01f)return 0;
         int pieces=roadPieceCount(length);
         for(int piece=0;piece<pieces;piece++){
             float a=piece/(float)pieces,b=(piece+1)/(float)pieces;
-            stripQuadPiece(part,x1+dx*a,z1+dz*a,x1+dx*b,z1+dz*b,cellOriginX,cellOriginZ,offset,width);
+            stripQuadPiece(part,x1+dx*a,z1+dz*a,x1+dx*b,z1+dz*b,cellOriginX,cellOriginZ,offset,width,roadClass,flags);
         }
         return pieces;
     }
@@ -568,18 +718,33 @@ public final class QatarWorldRenderer implements WorldStreamer.Listener, QatarDe
     private static int roadPieceCount(QatarPack.Road road){return roadPieceCount((float)Math.hypot(road.x2()-road.x1(),road.z2()-road.z1()));}
     private static int roadPieceCount(float length){return Math.min(QatarVisualStyle.MAX_ROAD_SUBDIVISIONS,Math.max(1,(int)Math.ceil(length/QatarVisualStyle.ROAD_TERRAIN_STEP_METRES)));}
 
-    private void stripQuadPiece(MeshPartBuilder part,float x1,float z1,float x2,float z2,double cellOriginX,double cellOriginZ,float offset,float width){
+    private void stripQuadPiece(MeshPartBuilder part,float x1,float z1,float x2,float z2,double cellOriginX,double cellOriginZ,float offset,float width,int roadClass,int flags){
         float dx=x2-x1,dz=z2-z1,length=(float)Math.hypot(dx,dz);if(length<.01f)return;
         float px=-dz/length*width/2,pz=dx/length*width/2;
         float x1a=x1+px,z1a=z1+pz,x1b=x1-px,z1b=z1-pz;
         float x2b=x2-px,z2b=z2-pz,x2a=x2+px,z2a=z2+pz;
-        float h1a=detailTerrainHeight(cellOriginX+x1a,cellOriginZ+z1a,cellOriginX,cellOriginZ)+offset,h1b=detailTerrainHeight(cellOriginX+x1b,cellOriginZ+z1b,cellOriginX,cellOriginZ)+offset;
-        float h2b=detailTerrainHeight(cellOriginX+x2b,cellOriginZ+z2b,cellOriginX,cellOriginZ)+offset,h2a=detailTerrainHeight(cellOriginX+x2a,cellOriginZ+z2a,cellOriginX,cellOriginZ)+offset;
+        float h1a=transportHeight(cellOriginX+x1a,cellOriginZ+z1a,cellOriginX,cellOriginZ,roadClass,flags)+offset,h1b=transportHeight(cellOriginX+x1b,cellOriginZ+z1b,cellOriginX,cellOriginZ,roadClass,flags)+offset;
+        float h2b=transportHeight(cellOriginX+x2b,cellOriginZ+z2b,cellOriginX,cellOriginZ,roadClass,flags)+offset,h2a=transportHeight(cellOriginX+x2a,cellOriginZ+z2a,cellOriginX,cellOriginZ,roadClass,flags)+offset;
         terrainTriangle(part,x1a,h1a,z1a,x2a,h2a,z2a,x2b,h2b,z2b);
         terrainTriangle(part,x2b,h2b,z2b,x1b,h1b,z1b,x1a,h1a,z1a);
     }
 
-    public float terrainHeightAt(double globalX,double globalZ){return terrainHeightOr(globalX,globalZ,Float.NaN);}
+    public float terrainHeightAt(double globalX,double globalZ){
+        float result=terrainHeightOr(globalX,globalZ,Float.NaN);if(!Float.isFinite(result))return result;
+        int cellX=(int)Math.floor(globalX/detailCellMetres),cellZ=(int)Math.floor(globalZ/detailCellMetres);
+        for(QatarDetailPack.DetailChunk chunk:detailData.values()){
+            if(Math.abs(chunk.entry().x()-cellX)>1||Math.abs(chunk.entry().y()-cellZ)>1)continue;
+            double originX=chunk.entry().x()*(double)detailCellMetres,originZ=chunk.entry().y()*(double)detailCellMetres;
+            for(QatarPack.Road road:chunk.roads()){
+                if(!CoastalFeaturePolicy.isPermanentTransport(road.roadClass())||road.tunnel())continue;
+                double distance=pointSegmentDistance(globalX,globalZ,originX+road.x1(),originZ+road.z1(),originX+road.x2(),originZ+road.z2());
+                if(distance<=road.width()*.5+1.2)result=Math.max(result,CoastalFeaturePolicy.transportBase(result,nationalLandAt(globalX,globalZ),road.roadClass(),road.flags()));
+            }
+        }
+        return result;
+    }
+    float rawTerrainHeightAt(double globalX,double globalZ){return terrainHeightOr(globalX,globalZ,0);}
+    boolean landMaskAt(double globalX,double globalZ){return nationalLandAt(globalX,globalZ);}
     public boolean waterAt(double globalX,double globalZ){
         int chunkX=pack.chunkX(globalX),chunkY=pack.chunkY(globalZ);QatarPack.WorldChunk chunk=nationalData.get(key(chunkX,chunkY));if(chunk==null)return false;
         if(!chunk.entry().hasLand())return true;float sub=pack.chunkMetres/16f;int column=Math.max(0,Math.min(15,(int)((globalX-chunkX*(double)pack.chunkMetres)/sub)));int row=Math.max(0,Math.min(15,(int)((globalZ-chunkY*(double)pack.chunkMetres)/sub)));
@@ -606,6 +771,20 @@ public final class QatarWorldRenderer implements WorldStreamer.Listener, QatarDe
         return terrainHeightOr(cellOriginX+detailCellMetres*.5,cellOriginZ+detailCellMetres*.5,0);
     }
 
+    private float transportHeight(double globalX,double globalZ,double cellOriginX,double cellOriginZ,int roadClass,int flags){
+        float measured=detailTerrainHeight(globalX,globalZ,cellOriginX,cellOriginZ);
+        return CoastalFeaturePolicy.transportBase(measured,nationalLandAt(globalX,globalZ),roadClass,flags);
+    }
+
+    private boolean nationalLandAt(double globalX,double globalZ){
+        int chunkX=pack.chunkX(globalX),chunkY=pack.chunkY(globalZ);QatarPack.WorldChunk chunk=nationalData.get(key(chunkX,chunkY));
+        if(chunk==null||!chunk.entry().hasLand())return false;
+        float sub=pack.chunkMetres/16f;
+        int column=Math.max(0,Math.min(15,(int)Math.floor((globalX-chunkX*(double)pack.chunkMetres)/sub)));
+        int row=Math.max(0,Math.min(15,(int)Math.floor((globalZ-chunkY*(double)pack.chunkMetres)/sub)));
+        return (chunk.landRows()[row]&(1<<column))!=0;
+    }
+
     private float terrainHeightOr(double globalX,double globalZ,float absent){
         int chunkX=pack.chunkX(globalX),chunkY=pack.chunkY(globalZ);
         QatarPack.WorldChunk terrain=nationalData.get(key(chunkX,chunkY));
@@ -617,53 +796,123 @@ public final class QatarWorldRenderer implements WorldStreamer.Listener, QatarDe
     }
 
     private void rebuildFocusModel(){
-        if(focusModel!=null)focusModel.dispose();
-        renderedMode=physics.mode();
-        Material maroon=diffuse(.45f,.035f,.12f,1),dark=diffuse(.10f,.12f,.13f,1),white=diffuse(.88f,.86f,.78f,1),glass=new Material(ColorAttribute.createDiffuse(new Color(.08f,.18f,.21f,1)),ColorAttribute.createSpecular(new Color(.7f,.8f,.82f,1)),FloatAttribute.createShininess(80));
+        if(focusModel!=null)focusModel.dispose();focusNodes.clear();
+        renderedMode=physics.mode();focusTransition=0;
+        Material maroon=new Material(ColorAttribute.createDiffuse(new Color(.48f,.035f,.12f,1)),ColorAttribute.createSpecular(new Color(.45f,.18f,.20f,1)),FloatAttribute.createShininess(32));
+        Material pearl=new Material(ColorAttribute.createDiffuse(new Color(.88f,.86f,.78f,1)),ColorAttribute.createSpecular(new Color(.55f,.56f,.53f,1)),FloatAttribute.createShininess(26));
+        Material dark=diffuse(.075f,.085f,.09f,1),rubber=diffuse(.035f,.04f,.042f,1),skin=diffuse(.62f,.42f,.29f,1),cloth=diffuse(.16f,.19f,.21f,1);
+        Material glass=new Material(ColorAttribute.createDiffuse(new Color(.07f,.18f,.22f,1)),ColorAttribute.createSpecular(new Color(.76f,.86f,.89f,1)),ColorAttribute.createEmissive(new Color(.012f,.025f,.03f,1)),FloatAttribute.createShininess(92));
+        Material lights=new Material(ColorAttribute.createDiffuse(new Color(.98f,.88f,.60f,1)),ColorAttribute.createEmissive(new Color(.38f,.27f,.08f,1)));
+        Material redLights=new Material(ColorAttribute.createDiffuse(new Color(.85f,.035f,.025f,1)),ColorAttribute.createEmissive(new Color(.35f,.01f,.005f,1)));
+        Material wake=diffuse(.66f,.84f,.88f,1);
         builder.begin();
         switch(renderedMode){
             case WALK->{
-                MeshPartBuilder torso=builder.part("body",GL20.GL_TRIANGLES,ATTRS,maroon);
-                torso.setVertexTransform(new Matrix4().setToTranslation(0,1.34f,0));
-                torso.sphere(.72f,1.12f,.46f,14,10);torso.setVertexTransform(null);
-                MeshPartBuilder skin=builder.part("skin",GL20.GL_TRIANGLES,ATTRS,white);
-                skin.setVertexTransform(new Matrix4().setToTranslation(0,2.08f,0));
-                skin.sphere(.50f,.54f,.50f,16,12);skin.setVertexTransform(null);
-                MeshPartBuilder limbs=builder.part("limbs",GL20.GL_TRIANGLES,ATTRS,dark);
-                limbs.setVertexTransform(new Matrix4().setToTranslation(-.19f,.52f,0));limbs.capsule(.13f,1.04f,10);
-                limbs.setVertexTransform(new Matrix4().setToTranslation(.19f,.52f,0));limbs.capsule(.13f,1.04f,10);
-                limbs.setVertexTransform(new Matrix4().setToTranslation(-.47f,1.32f,0));limbs.capsule(.11f,.94f,10);
-                limbs.setVertexTransform(new Matrix4().setToTranslation(.47f,1.32f,0));limbs.capsule(.11f,.94f,10);
-                limbs.setVertexTransform(null);
+                MeshPartBuilder pelvis=rigPart("pelvis",cloth,0,-.16f,0);pelvis.box(0,0,0,.48f,.34f,.30f);
+                MeshPartBuilder torso=rigPart("torso",maroon,0,.16f,0);torso.setVertexTransform(new Matrix4().setToTranslation(0,.28f,0));torso.capsule(.31f,.82f,14);torso.setVertexTransform(null);
+                MeshPartBuilder neck=rigPart("neck",skin,0,.72f,0);neck.cylinder(.20f,.22f,.20f,10);
+                MeshPartBuilder head=rigPart("head",skin,0,.98f,0);head.sphere(.39f,.48f,.37f,16,12);
+                MeshPartBuilder hair=rigPart("hair",dark,0,1.17f,-.015f);hair.sphere(.40f,.20f,.38f,14,7);
+                for(float side:new float[]{-1f,1f}){
+                    String prefix=side<0?"left":"right";
+                    MeshPartBuilder arm=rigPart(prefix+"-arm",maroon,side*.40f,.50f,0);arm.setVertexTransform(new Matrix4().setToTranslation(0,-.32f,0));arm.capsule(.105f,.72f,10);arm.setVertexTransform(null);
+                    MeshPartBuilder hand=rigPart(prefix+"-hand",skin,side*.40f,-.18f,0);hand.sphere(.19f,.24f,.17f,10,7);
+                    MeshPartBuilder leg=rigPart(prefix+"-leg",cloth,side*.17f,-.30f,0);leg.setVertexTransform(new Matrix4().setToTranslation(0,-.32f,0));leg.capsule(.14f,.78f,11);leg.setVertexTransform(null);
+                    MeshPartBuilder shoe=rigPart(prefix+"-shoe",dark,side*.17f,-.91f,.08f);shoe.box(0,0,0,.27f,.18f,.45f);
+                }
             }
             case CAR->{
-                builder.part("4x4-body",GL20.GL_TRIANGLES,ATTRS,maroon).box(0,.72f,0,2.05f,.82f,4.35f);
-                MeshPartBuilder cabin=builder.part("4x4-glass-cabin",GL20.GL_TRIANGLES,ATTRS,glass);cabin.box(0,1.35f,-.30f,1.72f,.82f,2.18f);
-                MeshPartBuilder wheels=builder.part("4x4-wheels",GL20.GL_TRIANGLES,ATTRS,dark);
-                for(float x:new float[]{-1.04f,1.04f})for(float z:new float[]{-1.38f,1.38f}){wheels.setVertexTransform(new Matrix4().setToTranslation(x,.48f,z).rotate(Vector3.Z,90));wheels.cylinder(.68f,.30f,.68f,16);}wheels.setVertexTransform(null);
+                MeshPartBuilder chassis=rigPart("car-chassis",maroon,0,0,0);chassis.box(0,-.02f,0,2.08f,.62f,4.38f);chassis.box(0,.33f,1.18f,1.95f,.35f,1.55f);
+                MeshPartBuilder cabin=rigPart("car-cabin",glass,0,.58f,-.35f);cabin.box(0,0,0,1.78f,.78f,2.03f);
+                MeshPartBuilder roof=rigPart("car-roof",maroon,0,1.02f,-.38f);roof.box(0,0,0,1.88f,.13f,2.15f);
+                MeshPartBuilder bumpers=rigPart("car-bumpers",dark,0,-.18f,0);bumpers.box(0,0,2.22f,2.12f,.25f,.18f);bumpers.box(0,0,-2.22f,2.12f,.25f,.18f);
+                for(float x:new float[]{-1.08f,1.08f})for(float z:new float[]{-1.42f,1.42f}){
+                    String id="wheel-"+(x<0?"l":"r")+(z>0?"f":"r");MeshPartBuilder wheel=rigPart(id,rubber,x,-.43f,z);
+                    wheel.setVertexTransform(new Matrix4().rotate(Vector3.Z,90));wheel.cylinder(.82f,.32f,.82f,18);wheel.setVertexTransform(null);
+                    MeshPartBuilder hub=rigPart(id+"-hub",pearl,x,-.43f,z);hub.setVertexTransform(new Matrix4().rotate(Vector3.Z,90));hub.cylinder(.36f,.34f,.36f,14);hub.setVertexTransform(null);
+                }
+                MeshPartBuilder frontLights=rigPart("car-headlights",lights,0,.10f,2.23f);frontLights.box(-.65f,0,0,.46f,.24f,.10f);frontLights.box(.65f,0,0,.46f,.24f,.10f);
+                MeshPartBuilder rearLights=rigPart("car-tail-lights",redLights,0,.08f,-2.23f);rearLights.box(-.67f,0,0,.40f,.22f,.10f);rearLights.box(.67f,0,0,.40f,.22f,.10f);
+                addPilot(skin,cloth,0,.63f,-.25f);
             }
             case BOAT->{
-                MeshPartBuilder hull=builder.part("hull",GL20.GL_TRIANGLES,ATTRS,white);hull.setVertexTransform(new Matrix4().setToTranslation(0,.38f,0));hull.sphere(3.15f,1.20f,7.9f,20,10);hull.setVertexTransform(null);
-                builder.part("deck",GL20.GL_TRIANGLES,ATTRS,maroon).box(0,.92f,-.25f,2.65f,.18f,5.0f);builder.part("cabin",GL20.GL_TRIANGLES,ATTRS,glass).box(0,1.55f,-.65f,2.0f,1.15f,2.45f);
+                MeshPartBuilder hull=rigPart("boat-hull",pearl,0,-.20f,0);hull.setVertexTransform(new Matrix4().setToScale(1f,.43f,1f));hull.sphere(3.05f,1.45f,7.75f,22,11);hull.setVertexTransform(null);
+                MeshPartBuilder stripe=rigPart("boat-stripe",maroon,0,.02f,0);stripe.box(0,0,0,2.86f,.20f,5.9f);
+                MeshPartBuilder deck=rigPart("boat-deck",pearl,0,.32f,-.18f);deck.box(0,0,0,2.72f,.16f,5.55f);
+                MeshPartBuilder cabin=rigPart("boat-cabin",glass,0,.88f,-.75f);cabin.box(0,0,0,2.02f,1.02f,2.35f);
+                MeshPartBuilder roof=rigPart("boat-roof",maroon,0,1.44f,-.78f);roof.box(0,0,0,2.22f,.13f,2.55f);
+                MeshPartBuilder prop=rigPart("boat-propeller",dark,0,-.42f,-3.72f);prop.box(0,0,0,1.12f,.11f,.15f);prop.box(0,0,0,.11f,1.12f,.15f);
+                MeshPartBuilder rudder=rigPart("boat-rudder",maroon,0,-.30f,-3.48f);rudder.box(0,0,0,.10f,.72f,.62f);
+                MeshPartBuilder wakePart=rigPart("boat-wake",wake,0,-.48f,-4.4f);wakePart.box(0,0,0,2.6f,.025f,4.8f);
+                addPilot(skin,cloth,0,.98f,-.35f);
             }
             case HELICOPTER->{
-                MeshPartBuilder fuselage=builder.part("fuselage",GL20.GL_TRIANGLES,ATTRS,maroon);fuselage.setVertexTransform(new Matrix4().setToTranslation(0,.62f,-.55f));fuselage.sphere(2.55f,1.55f,3.7f,20,12);fuselage.setVertexTransform(null);
-                builder.part("cockpit",GL20.GL_TRIANGLES,ATTRS,glass).box(0,.82f,1.05f,2.10f,1.02f,1.55f);builder.part("tail",GL20.GL_TRIANGLES,ATTRS,maroon).box(0,.66f,-3.05f,.38f,.38f,3.45f);builder.part("rotor",GL20.GL_TRIANGLES,ATTRS,dark).box(0,1.58f,-.3f,9f,.055f,.18f);
+                MeshPartBuilder fuselage=rigPart("heli-fuselage",maroon,0,.05f,-.55f);fuselage.sphere(2.45f,1.48f,3.65f,22,13);
+                MeshPartBuilder cockpit=rigPart("heli-cockpit",glass,0,.18f,1.08f);cockpit.sphere(2.08f,1.20f,1.72f,20,11);
+                MeshPartBuilder tail=rigPart("heli-tail",maroon,0,.10f,-2.75f);tail.box(0,0,-.55f,.36f,.34f,3.60f);
+                MeshPartBuilder fin=rigPart("heli-fin",maroon,0,.60f,-4.35f);fin.box(0,0,0,.16f,1.60f,.72f);
+                MeshPartBuilder skids=rigPart("heli-skids",dark,0,-.68f,-.25f);skids.box(-.88f,0,0,.12f,.12f,3.18f);skids.box(.88f,0,0,.12f,.12f,3.18f);skids.box(0,0,1.05f,2.0f,.10f,.10f);skids.box(0,0,-1.05f,2.0f,.10f,.10f);
+                MeshPartBuilder rotor=rigPart("main-rotor",dark,0,1.12f,-.25f);rotor.box(0,0,0,9.8f,.045f,.16f);rotor.box(0,0,0,.16f,.045f,9.8f);
+                MeshPartBuilder tailRotor=rigPart("tail-rotor",dark,.25f,.55f,-4.42f);tailRotor.box(0,0,0,.06f,1.75f,.13f);tailRotor.box(0,0,0,.06f,.13f,1.75f);
+                MeshPartBuilder beacon=rigPart("heli-beacon",redLights,0,1.02f,-1.0f);beacon.sphere(.20f,.18f,.20f,8,5);
+                addPilot(skin,cloth,0,.36f,.72f);
             }
             case AEROPLANE->{
-                MeshPartBuilder body=builder.part("airframe",GL20.GL_TRIANGLES,ATTRS,white);body.setVertexTransform(new Matrix4().setToTranslation(0,.52f,0).rotate(Vector3.X,90));body.capsule(.67f,7.7f,18);body.setVertexTransform(null);
-                builder.part("wing",GL20.GL_TRIANGLES,ATTRS,maroon).box(0,.48f,.15f,9.0f,.14f,1.32f);builder.part("tailplane",GL20.GL_TRIANGLES,ATTRS,maroon).box(0,.78f,-3.05f,3.5f,.12f,.70f);builder.part("cockpit",GL20.GL_TRIANGLES,ATTRS,glass).box(0,.78f,2.55f,.92f,.48f,1.18f);
+                MeshPartBuilder fuselage=rigPart("plane-fuselage",pearl,0,0,0);fuselage.setVertexTransform(new Matrix4().rotate(Vector3.X,90));fuselage.capsule(.66f,7.85f,20);fuselage.setVertexTransform(null);
+                MeshPartBuilder leftWing=rigPart("plane-left-wing",maroon,-2.36f,.02f,.10f);leftWing.box(0,0,0,4.72f,.14f,1.25f);
+                MeshPartBuilder rightWing=rigPart("plane-right-wing",maroon,2.36f,.02f,.10f);rightWing.box(0,0,0,4.72f,.14f,1.25f);
+                MeshPartBuilder leftElevator=rigPart("plane-left-elevator",maroon,-.91f,.25f,-3.15f);leftElevator.box(0,0,0,1.82f,.11f,.68f);
+                MeshPartBuilder rightElevator=rigPart("plane-right-elevator",maroon,.91f,.25f,-3.15f);rightElevator.box(0,0,0,1.82f,.11f,.68f);
+                MeshPartBuilder fin=rigPart("plane-fin",maroon,0,.82f,-3.20f);fin.box(0,0,0,.15f,1.75f,.82f);
+                MeshPartBuilder cockpit=rigPart("plane-cockpit",glass,0,.50f,2.42f);cockpit.sphere(.90f,.52f,1.30f,15,8);
+                MeshPartBuilder prop=rigPart("plane-propeller",dark,0,0,4.12f);prop.box(0,0,0,2.75f,.13f,.10f);prop.box(0,0,0,.13f,2.75f,.10f);
+                MeshPartBuilder gear=rigPart("plane-gear",dark,0,-.57f,-.25f);gear.box(-1.25f,0,0,.11f,.75f,.11f);gear.box(1.25f,0,0,.11f,.75f,.11f);gear.box(0,0,2.55f,.10f,.62f,.10f);
+                for(float x:new float[]{-1.25f,1.25f}){MeshPartBuilder wheel=rigPart("plane-wheel-"+(x<0?"l":"r"),rubber,x,-.88f,-.25f);wheel.setVertexTransform(new Matrix4().rotate(Vector3.Z,90));wheel.cylinder(.48f,.20f,.48f,14);wheel.setVertexTransform(null);}
+                addPilot(skin,cloth,0,.50f,2.15f);
             }
         }
-        focusModel=builder.end();focusInstance=new ModelInstance(focusModel);cameraFilter.reset();
+        focusModel=builder.end();focusInstance=new ModelInstance(focusModel);
+        collectFocusNodes(focusInstance.nodes);cameraFilter.reset();
+        Gdx.app.log("QatarVisual","V09_FOCUS_RIG mode="+renderedMode+" articulated=yes originalProcedural=yes transition=yes speedPreserved=yes");
     }
+
+    private MeshPartBuilder rigPart(String id,Material material,float x,float y,float z){Node node=builder.node();node.id=id;node.translation.set(x,y,z);return builder.part(id,GL20.GL_TRIANGLES,ATTRS,material);}
+    private void addPilot(Material skin,Material uniform,float x,float y,float z){MeshPartBuilder body=rigPart("pilot-body",uniform,x,y,z);body.capsule(.20f,.62f,10);MeshPartBuilder head=rigPart("pilot-head",skin,x,y+.48f,z+.04f);head.sphere(.30f,.34f,.30f,11,8);}
+    private void collectFocusNodes(Iterable<Node> nodes){for(Node node:nodes){if(node.id!=null)focusNodes.put(node.id,node);for(int i=0;i<node.getChildCount();i++)collectFocusNode(node.getChild(i));}}
+    private void collectFocusNode(Node node){if(node.id!=null)focusNodes.put(node.id,node);for(int i=0;i<node.getChildCount();i++)collectFocusNode(node.getChild(i));}
+    private Node focusNode(String id){return focusNodes.get(id);}
+
+    private void updateFocusAnimation(float delta){
+        focusAnimationTime+=Math.min(.1f,Math.max(0,delta));focusTransition=Math.min(1f,focusTransition+delta*2.7f);
+        Vector3 velocity=physics.velocity();float speed=(float)Math.hypot(velocity.x,velocity.z),phase=focusAnimationTime*(2.4f+speed*1.5f);
+        switch(renderedMode){
+            case WALK->{
+                float stride=Math.min(42f,speed*9f)*(float)Math.sin(phase),counter=-stride;
+                rotateNode("left-leg",Vector3.X,stride);rotateNode("right-leg",Vector3.X,counter);rotateNode("left-arm",Vector3.X,counter*.75f);rotateNode("right-arm",Vector3.X,stride*.75f);
+                Node torso=focusNode("torso");if(torso!=null)torso.translation.y=.16f+Math.min(.045f,speed*.008f)*Math.abs((float)Math.sin(phase*2));
+            }
+            case CAR->{
+                float spin=-focusAnimationTime*speed*75f,steer=physics.visualSteering()*24f;
+                for(String id:new String[]{"wheel-lf","wheel-rf","wheel-lr","wheel-rr"}){Node node=focusNode(id);if(node!=null){node.rotation.idt();if(id.endsWith("f"))node.rotation.mul(new com.badlogic.gdx.math.Quaternion(Vector3.Y,steer));node.rotation.mul(new com.badlogic.gdx.math.Quaternion(Vector3.X,spin));}}
+            }
+            case BOAT->{rotateNode("boat-propeller",Vector3.Z,focusAnimationTime*(220+speed*24));rotateNode("boat-rudder",Vector3.Y,-physics.visualSteering()*28f);Node wake=focusNode("boat-wake");if(wake!=null)wake.scale.set(.5f+Math.min(1f,speed*.08f),1,.25f+Math.min(1.8f,speed*.12f));}
+            case HELICOPTER->{rotateNode("main-rotor",Vector3.Y,focusAnimationTime*760f);rotateNode("tail-rotor",Vector3.X,focusAnimationTime*980f);}
+            case AEROPLANE->{
+                rotateNode("plane-propeller",Vector3.Z,focusAnimationTime*(650+speed*8));float control=physics.visualLiftControl()*13f,roll=physics.visualSteering()*8f;
+                rotateNode("plane-left-wing",Vector3.Z,roll);rotateNode("plane-right-wing",Vector3.Z,-roll);rotateNode("plane-left-elevator",Vector3.X,control);rotateNode("plane-right-elevator",Vector3.X,control);
+            }
+        }
+    }
+
+    private void rotateNode(String id,Vector3 axis,float degrees){Node node=focusNode(id);if(node!=null)node.rotation.setFromAxis(axis,degrees);}
+    private static float smoothStep(float value){float t=Math.max(0,Math.min(1,value));return t*t*(3-2*t);}
 
     public void resetCamera(){cameraFilter.reset();}
     public PerspectiveCamera camera(){return camera;}
     public String fatalStreamingError(){return fatalStreamingError;}
     public int renderChunkCount(){return chunks.size();}
 
-    @Override public void dispose(){for(RenderChunk value:chunks.values()){value.model.dispose();if(value.waterModel!=null)value.waterModel.dispose();}for(RenderChunk value:detailCells.values())value.model.dispose();chunks.clear();nationalData.clear();detailCells.clear();detailData.clear();if(focusModel!=null)focusModel.dispose();sandTexture.dispose();gravelTexture.dispose();saltTexture.dispose();urbanTexture.dispose();vegetationTexture.dispose();stoneFacadeTexture.dispose();glassFacadeTexture.dispose();batch.dispose();}
+    @Override public void dispose(){activity.dispose();landmarks.dispose();for(RenderChunk value:chunks.values()){value.model.dispose();if(value.waterModel!=null)value.waterModel.dispose();}for(RenderChunk value:detailCells.values())value.model.dispose();chunks.clear();nationalData.clear();detailCells.clear();detailData.clear();if(focusModel!=null)focusModel.dispose();sandTexture.dispose();gravelTexture.dispose();saltTexture.dispose();urbanTexture.dispose();vegetationTexture.dispose();stoneFacadeTexture.dispose();glassFacadeTexture.dispose();batch.dispose();}
     private Material textured(float r,float g,float b,Texture texture){return new Material(ColorAttribute.createDiffuse(new Color(r,g,b,1)),TextureAttribute.createDiffuse(texture));}
     private static Material facade(float r,float g,float b,Texture texture){return new Material(ColorAttribute.createDiffuse(new Color(r,g,b,1)),TextureAttribute.createDiffuse(texture));}
     private static Texture createSurfaceTexture(int seed,int style){
@@ -695,13 +944,14 @@ public final class QatarWorldRenderer implements WorldStreamer.Listener, QatarDe
         }
         Texture texture=new Texture(pixmap,true);pixmap.dispose();texture.setWrap(Texture.TextureWrap.Repeat,Texture.TextureWrap.Repeat);texture.setFilter(Texture.TextureFilter.MipMapLinearLinear,Texture.TextureFilter.Linear);return texture;
     }
+    private static double pointSegmentDistance(double px,double pz,double ax,double az,double bx,double bz){double dx=bx-ax,dz=bz-az,length=dx*dx+dz*dz;if(length<1e-9)return Math.hypot(px-ax,pz-az);double t=Math.max(0,Math.min(1,((px-ax)*dx+(pz-az)*dz)/length));return Math.hypot(px-(ax+t*dx),pz-(az+t*dz));}
     private static float clampColour(float value){return Math.max(.05f,Math.min(1f,value));}
     private static Material diffuse(float r,float g,float b,float a){return new Material(ColorAttribute.createDiffuse(new Color(r,g,b,a)));}
     private static long key(int x,int y){return ((long)x<<32)^(y&0xffffffffL);}
     private record EndpointKey(int xQuarterMetres,int zQuarterMetres,int group){}
     private static final class RoadJoint{
-        final float x,z;float width;int roadClass,count=1;
-        RoadJoint(float x,float z,float width,int roadClass){this.x=x;this.z=z;this.width=width;this.roadClass=roadClass;}
+        final float x,z;float width;int roadClass,flags,count=1;
+        RoadJoint(float x,float z,float width,int roadClass,int flags){this.x=x;this.z=z;this.width=width;this.roadClass=roadClass;this.flags=flags;}
     }
     private record ChunkModels(Model terrain,Model water){}
     private record RenderChunk(double x,double z,Model model,ModelInstance instance,Model waterModel,ModelInstance waterInstance){}

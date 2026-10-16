@@ -59,7 +59,7 @@ jobs:
         run: |
           set +e
           ADB="$ANDROID_HOME/platform-tools/adb"
-          APK='artifacts/Qatar-The-Peninsula-PRECISION-MAP-v0.8.1.apk'
+          APK='artifacts/Qatar-The-Peninsula-CHARACTER-WORLD-v0.9.0.apk'
           "$ADB" install -r "$APK" > qa/qatar-runtime/install.txt 2>&1
           INSTALL_EXIT=$?
           "$ADB" install -r "$APK" > qa/qatar-runtime/reinstall.txt 2>&1
@@ -144,7 +144,14 @@ jobs:
           MAP_CLOSE_READY="$(grep 'QatarTeleport.*MAP_CLOSE gameplay=resumed' qa/qatar-runtime/logcat.txt | head -1 || true)"
           TELEPORT_READY="$(grep 'QatarTeleport.*TELEPORT mode=WALK' qa/qatar-runtime/logcat.txt | tail -1 || true)"
           STREET_MAP_READY="$(grep 'QatarMap.*STREET_ATLAS_READY.*offline-OSM' qa/qatar-runtime/logcat.txt | tail -1 || true)"
-          VISUAL_READY="$(grep 'QatarVisual.*V08_PIPELINE.*mipmappedSurfaces=5.*joinedCaps=.*boundedJointCap=384' qa/qatar-runtime/logcat.txt | tail -1 || true)"
+          VISUAL_READY="$(grep 'QatarVisual.*V09_WORLD_PIPELINE.*streetlights=.*bridgeBarriers=.*bounded=yes' qa/qatar-runtime/logcat.txt | tail -1 || true)"
+          ACTIVITY_READY="$(grep 'QatarActivity.*V09_ACTIVITY_READY.*thermalBounded=yes' qa/qatar-runtime/logcat.txt | tail -1 || true)"
+          LANDMARK_READY="$(grep 'QatarLandmarks.*V09_LANDMARK_LAYER_READY.*Legtaifiya=.*boundedLOD=yes' qa/qatar-runtime/logcat.txt | tail -1 || true)"
+          WALK_RIG="$(grep 'QatarVisual.*V09_FOCUS_RIG mode=WALK.*articulated=yes' qa/qatar-runtime/logcat.txt | tail -1 || true)"
+          CAR_RIG="$(grep 'QatarVisual.*V09_FOCUS_RIG mode=CAR.*articulated=yes' qa/qatar-runtime/logcat.txt | tail -1 || true)"
+          BOAT_RIG="$(grep 'QatarVisual.*V09_FOCUS_RIG mode=BOAT.*articulated=yes' qa/qatar-runtime/logcat.txt | tail -1 || true)"
+          HELI_RIG="$(grep 'QatarVisual.*V09_FOCUS_RIG mode=HELICOPTER.*articulated=yes' qa/qatar-runtime/logcat.txt | tail -1 || true)"
+          PLANE_RIG="$(grep 'QatarVisual.*V09_FOCUS_RIG mode=AEROPLANE.*articulated=yes' qa/qatar-runtime/logcat.txt | tail -1 || true)"
           WALK_CADENCE="$(grep 'QatarFrameCadence.*mode=WALK.*extraRenderGate=no smooth=yes' qa/qatar-runtime/logcat.txt | tail -1 || true)"
           CAR_CADENCE="$(grep 'QatarFrameCadence.*mode=CAR.*extraRenderGate=no smooth=yes' qa/qatar-runtime/logcat.txt | tail -1 || true)"
           BOAT_CADENCE="$(grep 'QatarFrameCadence.*mode=BOAT.*extraRenderGate=no smooth=yes' qa/qatar-runtime/logcat.txt | tail -1 || true)"
@@ -187,6 +194,9 @@ jobs:
             if [ -n "$OSM_READY" ]; then echo 'osm_detail_rendered=yes'; else echo 'osm_detail_rendered=no'; fi
             if [ -n "$VISUAL_READY" ]; then echo 'realistic_visual_pipeline_ready=yes'; else echo 'realistic_visual_pipeline_ready=no'; fi
             echo "visual_pipeline=$VISUAL_READY"
+            if [ -n "$ACTIVITY_READY" ]; then echo 'bounded_world_activity_ready=yes'; else echo 'bounded_world_activity_ready=no'; fi
+            if [ -n "$LANDMARK_READY" ]; then echo 'original_landmark_layer_ready=yes'; else echo 'original_landmark_layer_ready=no'; fi
+            for MODE in WALK CAR BOAT HELI PLANE; do RIG_VAR="${MODE}_RIG"; RIG_VALUE="${!RIG_VAR}"; if [ -n "$RIG_VALUE" ]; then echo "${MODE,,}_articulated_rig_ready=yes"; else echo "${MODE,,}_articulated_rig_ready=no"; fi; done
             if [ -n "$PACK_READY" ]; then echo 'terrain_pack_loaded=yes'; else echo 'terrain_pack_loaded=no'; fi
             if [ -n "$ENV_READY" ]; then echo 'qatar_environment_ready=yes'; else echo 'qatar_environment_ready=no'; fi
             if [ -n "$THERMAL_READY" ]; then echo 'thermal_governor_ready=yes'; else echo 'thermal_governor_ready=no'; fi
@@ -219,6 +229,9 @@ jobs:
           test -n "$TELEPORT_READY"
           test -n "$OSM_READY"
           test -n "$VISUAL_READY"
+          test -n "$ACTIVITY_READY"
+          test -n "$LANDMARK_READY"
+          for RIG in "$WALK_RIG" "$CAR_RIG" "$BOAT_RIG" "$HELI_RIG" "$PLANE_RIG"; do test -n "$RIG"; done
           test -n "$PACK_READY"
           test -n "$ENV_READY"
           test -n "$THERMAL_READY"

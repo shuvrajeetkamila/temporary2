@@ -18,6 +18,10 @@ public final class QatarVisualStyle {
     public static final int MAX_ROAD_SUBDIVISIONS=16;
     public static final float ROAD_TERRAIN_STEP_METRES=32f;
     public static final int MAX_DECORATED_FOOTPRINT_POINTS=16;
+    public static final int MAX_BRIDGE_BARRIER_PIECES_PER_CELL=96;
+    public static final int MAX_STREETLIGHTS_PER_CELL=10;
+    public static final int MAX_DIRECTION_SIGNS_PER_CELL=4;
+    public static final int MAX_TUNNEL_PORTALS_PER_CELL=12;
 
     private QatarVisualStyle(){}
 

@@ -29,6 +29,11 @@ public class PhysicsFoundationTest {
                 physics.teleport(80_000,150_000,12,.25f,false);
                 assertTrue(Math.abs(physics.globalX()-80_000)<.01);
                 assertTrue(Math.abs(physics.globalZ()-150_000)<.01);
+                for(PhysicsWorld.Mode mode:new PhysicsWorld.Mode[]{PhysicsWorld.Mode.CAR,PhysicsWorld.Mode.BOAT,PhysicsWorld.Mode.HELICOPTER,PhysicsWorld.Mode.AEROPLANE}){
+                    physics.switchMode(mode,null);assertTrue(physics.position().y>=12);assertTrue(Float.isFinite(physics.velocity().len()));
+                }
+                physics.switchMode(PhysicsWorld.Mode.WALK,null);
+                assertTrue("aircraft-to-walk transition must return to support surface",physics.position().y<14);
                 for(int i=0;i<30;i++)physics.step(1f/30f);
                 Vector3 rendered=physics.renderPosition(new Vector3());
                 assertTrue(Float.isFinite(rendered.x)&&Float.isFinite(rendered.y)&&Float.isFinite(rendered.z));

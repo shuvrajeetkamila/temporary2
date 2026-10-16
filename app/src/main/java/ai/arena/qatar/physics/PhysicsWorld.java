@@ -1,5 +1,6 @@
 package ai.arena.qatar.physics;
 
+import ai.arena.qatar.render.CoastalFeaturePolicy;
 import ai.arena.qatar.world.QatarDetailPack;
 import ai.arena.qatar.world.QatarPack;
 import ai.arena.qatar.world.WorldStreamer;
@@ -159,11 +160,19 @@ public final class PhysicsWorld implements Disposable {
     public void switchMode(Mode requested,QatarPack pack) {
         if(requested==mode)return;
         Vector3 current=position(),velocity=velocity();mode=requested;
-        float lift=requested==Mode.HELICOPTER?2.5f:requested==Mode.AEROPLANE?1.5f:.8f;
-        float requestedY=Math.max(current.y+lift,groundReference+supportHeight(requested)+(requested==Mode.HELICOPTER?2.5f:requested==Mode.AEROPLANE?1.0f:.2f));
+        // Ground and water modes board at their valid support surface rather than
+        // inheriting an unsafe airborne altitude. Aircraft retain altitude and
+        // gain only the clearance needed to avoid intersecting the previous rig.
+        float requestedY=switch(requested){
+            case WALK,CAR->groundReference+supportHeight(requested)+.22f;
+            case BOAT->(waterAvailable?waterSurface:groundReference)+supportHeight(requested)+.18f;
+            case HELICOPTER->Math.max(current.y+2.5f,groundReference+supportHeight(requested)+2.5f);
+            case AEROPLANE->Math.max(current.y+1.5f,groundReference+supportHeight(requested)+1.0f);
+        };
         createFocusBody(requested,current.x,requestedY,current.z);
         velocity.y=requested==Mode.HELICOPTER||requested==Mode.AEROPLANE?Math.max(0,velocity.y*.25f):0;
-        focusBody.setLinearVelocity(velocity.scl(requested==Mode.WALK?.35f:1));
+        float retainedSpeed=requested==Mode.WALK?.35f:requested==Mode.CAR||requested==Mode.BOAT?.72f:1f;
+        focusBody.setLinearVelocity(velocity.scl(retainedSpeed));
         accumulator=0;temporaryFloorTime=0;renderPose.reset(position(),headingRadians);
     }
 
@@ -385,9 +394,11 @@ public final class PhysicsWorld implements Disposable {
         btCompoundShape compound=new btCompoundShape();List<btCollisionShape> children=new ArrayList<>(buildings.size());
         for(QatarPack.Building building:buildings){
             btBoxShape shape=new btBoxShape(new Vector3(building.width()/2,building.height()/2,building.depth()/2));children.add(shape);
-            float base=detail.terrain()==null?0:sampleTerrain(detail.terrain(),detail.pack().chunkMetres,
-                    (float)(cellX+building.x()-detail.terrain().entry().x()*(double)detail.pack().chunkMetres),
-                    (float)(cellZ+building.z()-detail.terrain().entry().y()*(double)detail.pack().chunkMetres));
+            float localNationalX=detail.terrain()==null?0:(float)(cellX+building.x()-detail.terrain().entry().x()*(double)detail.pack().chunkMetres);
+            float localNationalZ=detail.terrain()==null?0:(float)(cellZ+building.z()-detail.terrain().entry().y()*(double)detail.pack().chunkMetres);
+            float measured=detail.terrain()==null?Float.NaN:sampleTerrain(detail.terrain(),detail.pack().chunkMetres,localNationalX,localNationalZ);
+            boolean landMask=detail.terrain()!=null&&terrainLandAt(detail.terrain(),detail.pack().chunkMetres,localNationalX,localNationalZ);
+            float base=CoastalFeaturePolicy.buildingBase(measured,landMask);
             Matrix4 child=new Matrix4().setToTranslation(building.x(),base+building.height()/2,building.z()).rotate(Vector3.Y,(float)Math.toDegrees(building.yaw()));
             compound.addChildShape(child,shape);
         }
@@ -443,6 +454,8 @@ public final class PhysicsWorld implements Disposable {
     public float heightAboveGround(){return position().y-groundReference;}
     public float supportClearance(){return mode==Mode.BOAT&&waterAvailable?position().y-waterSurface:heightAboveGround();}
     public boolean hasWaterSupport(){return waterAvailable;}
+    public float visualSteering(){return steering;}
+    public float visualLiftControl(){return liftControl;}
     public double originX() { return originX; }
     public double originZ() { return originZ; }
     public float headingRadians() { return headingRadians; }
@@ -462,6 +475,10 @@ public final class PhysicsWorld implements Disposable {
         @SuppressWarnings("unused") final Object backingData;
         ChunkCollision(btRigidBody body,btCollisionShape shape,List<btCollisionShape> children,double globalX,float globalY,double globalZ,Object backingData){this.body=body;this.shape=shape;this.children=children;this.globalX=globalX;this.globalY=globalY;this.globalZ=globalZ;this.backingData=backingData;}
         void dispose(btDiscreteDynamicsWorld world){world.removeRigidBody(body);body.dispose();shape.dispose();for(btCollisionShape child:children)child.dispose();}
+    }
+    private static boolean terrainLandAt(QatarPack.WorldChunk chunk,int chunkMetres,float localX,float localZ){
+        float sub=chunkMetres/16f;int column=Math.max(0,Math.min(15,(int)Math.floor(localX/sub))),row=Math.max(0,Math.min(15,(int)Math.floor(localZ/sub)));
+        return (chunk.landRows()[row]&(1<<column))!=0;
     }
     private static float sampleTerrain(QatarPack.WorldChunk chunk,int chunkMetres,float localX,float localZ){
         float interval=chunkMetres/8f,gx=Math.max(0,Math.min(8,localX/interval)),gz=Math.max(0,Math.min(8,localZ/interval));
