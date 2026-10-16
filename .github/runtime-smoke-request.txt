@@ -1,5 +1,1 @@
-Qatar Android v0.8.0 final facade-legibility runtime request
-Build source commit: 35fd496546faa5419828bcb44977f5aa628a04f7
-Published APK SHA-256: 17da8a2ee366d4f13b02189306e5040045c94a24109ee0ae33201ea50ce0e6ba
-Requested: 2026-10-16 Asia/Calcutta
-Validation focus: long-range stone/glass window-to-frame contrast and all preserved runtime gates
+Qatar Android v0.8.1 precision-map runtime request: full-country reset, x16 zoom, bounded pan, asynchronous QTOD vectors, persistent precise pin, confirmed safe teleport, lifecycle, thermal, cadence, and all modes
