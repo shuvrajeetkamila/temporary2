@@ -1,1 +1,1 @@
-Qatar Android v0.8.1 final crisp-vector precision-map runtime request: full-country reset, x16 zoom without magnified overview pixels, bounded pan, asynchronous QTOD vectors, persistent precise pin, confirmed safe teleport, lifecycle, thermal, cadence, and all modes
+Qatar Android v0.8.1 final QTOD-coordinate precision-map runtime request: full-country reset, x16 crisp global street vectors, bounded pan, persistent precise pin, confirmed safe teleport, lifecycle, thermal, cadence, and all modes
