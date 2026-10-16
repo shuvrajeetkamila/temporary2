@@ -32,6 +32,11 @@ public class QatarOpenDataPackTest {
             QatarDetailPack.DetailEntry densest=detail.entries().values().stream().max(Comparator.comparingInt(e->e.roadCount()+e.buildingCount())).orElseThrow();
             QatarDetailPack.DetailChunk chunk=detail.load(densest);
             assertEquals(densest.roadCount(),chunk.roads().length);assertEquals(densest.buildingCount(),chunk.buildings().length);
+            int[] visited={0};
+            detail.visitRoads(densest,(sourceId,x1,z1,x2,z2,roadClass,lanes,surface,flags,width)->{
+                assertTrue(sourceId!=0);assertTrue(width>0);visited[0]++;
+            });
+            assertEquals(densest.roadCount(),visited[0]);
             for(QatarPack.Building building:chunk.buildings()){assertTrue(building.sourceId()!=0);assertTrue(building.hasSourceFootprint());}
             int checked=0;
             for(QatarDetailPack.DetailEntry entry:detail.entries().values())if((checked++%997)==0){QatarDetailPack.DetailChunk sample=detail.load(entry);assertNotNull(sample.roads());assertNotNull(sample.buildings());}

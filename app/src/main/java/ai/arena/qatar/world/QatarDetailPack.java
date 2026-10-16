@@ -74,17 +74,7 @@ public final class QatarDetailPack implements AutoCloseable {
     public int cellY(double globalZ){return (int)Math.floor(globalZ/cellMetres);}
 
     public DetailChunk load(DetailEntry entry)throws IOException{
-        if(entry==null)throw new IOException("Missing QTOD cell");
-        byte[] packed=source.readFully(entry.offset,entry.packedLength);
-        ByteArrayOutputStream output=new ByteArrayOutputStream(entry.rawLength);
-        try(InflaterInputStream inflater=new InflaterInputStream(new ByteArrayInputStream(packed))){
-            byte[] buffer=new byte[8192];int read;
-            while((read=inflater.read(buffer))>=0){if(read>0)output.write(buffer,0,read);if(output.size()>entry.rawLength)throw new IOException("QTOD inflation overflow");}
-        }
-        byte[] raw=output.toByteArray();
-        if(raw.length!=entry.rawLength)throw new IOException("QTOD raw length mismatch");
-        CRC32 crc=new CRC32();crc.update(raw);if(crc.getValue()!=entry.crc32)throw new IOException("QTOD checksum mismatch");
-        ByteBuffer data=little(raw);requireMagic(data,'Q','D','E','T');
+        ByteBuffer data=readBlock(entry);
         int x=data.getInt(),y=data.getInt(),roadsCount=data.getInt();
         if(x!=entry.x||y!=entry.y||roadsCount!=entry.roadCount||roadsCount<0||roadsCount>100_000)throw new IOException("QTOD road header mismatch");
         QatarPack.Road[] roads=new QatarPack.Road[roadsCount];
@@ -114,6 +104,50 @@ public final class QatarDetailPack implements AutoCloseable {
         return new DetailChunk(entry,roads,roadSourceIds,buildings);
     }
 
+    /**
+     * Streams one cell's road vectors without allocating building or road
+     * objects. This is used by the asynchronous precision-map rasterizer and
+     * still validates the complete compressed cell payload and its CRC.
+     */
+    public void visitRoads(DetailEntry entry,RoadVisitor visitor)throws IOException{
+        ByteBuffer data=readBlock(entry);
+        int x=data.getInt(),y=data.getInt(),roadsCount=data.getInt();
+        if(x!=entry.x||y!=entry.y||roadsCount!=entry.roadCount||roadsCount<0||roadsCount>100_000)throw new IOException("QTOD road header mismatch");
+        for(int i=0;i<roadsCount;i++){
+            long sourceId=data.getLong();
+            float x1=data.getInt()/10f,z1=data.getInt()/10f,x2=data.getInt()/10f,z2=data.getInt()/10f;
+            int roadClass=Byte.toUnsignedInt(data.get()),lanes=Byte.toUnsignedInt(data.get());
+            int surface=Byte.toUnsignedInt(data.get()),flags=Byte.toUnsignedInt(data.get());
+            float width=Short.toUnsignedInt(data.getShort())/10f;
+            visitor.road(sourceId,x1,z1,x2,z2,roadClass,lanes,surface,flags,width);
+        }
+        int buildingCount=data.getInt();
+        if(buildingCount!=entry.buildingCount||buildingCount<0||buildingCount>100_000)throw new IOException("QTOD building header mismatch");
+        for(int i=0;i<buildingCount;i++){
+            if(data.remaining()<34)throw new EOFException("Truncated QTOD building");
+            data.position(data.position()+32);
+            int vertices=Short.toUnsignedInt(data.getShort());
+            if(vertices<3||vertices>192||vertices*8L>data.remaining())throw new IOException("Unsafe QTOD footprint vertex count");
+            data.position(data.position()+vertices*8);
+        }
+        if(data.hasRemaining())throw new IOException("Unexpected QTOD payload tail "+data.remaining());
+    }
+
+    private ByteBuffer readBlock(DetailEntry entry)throws IOException{
+        if(entry==null)throw new IOException("Missing QTOD cell");
+        byte[] packed=source.readFully(entry.offset,entry.packedLength);
+        ByteArrayOutputStream output=new ByteArrayOutputStream(entry.rawLength);
+        try(InflaterInputStream inflater=new InflaterInputStream(new ByteArrayInputStream(packed))){
+            byte[] buffer=new byte[8192];int read;
+            while((read=inflater.read(buffer))>=0){if(read>0)output.write(buffer,0,read);if(output.size()>entry.rawLength)throw new IOException("QTOD inflation overflow");}
+        }
+        byte[] raw=output.toByteArray();
+        if(raw.length!=entry.rawLength)throw new IOException("QTOD raw length mismatch");
+        CRC32 crc=new CRC32();crc.update(raw);if(crc.getValue()!=entry.crc32)throw new IOException("QTOD checksum mismatch");
+        ByteBuffer data=little(raw);requireMagic(data,'Q','D','E','T');
+        return data;
+    }
+
     public void verifyCompatible(QatarPack national)throws IOException{
         if(epsg!=national.epsg||Math.abs(originEasting-national.originEasting)>.01||Math.abs(originNorthing-national.originNorthing)>.01||
                 Math.abs(worldWidth-national.worldWidth)>.01||Math.abs(worldHeight-national.worldHeight)>.01)throw new IOException("QTOD and national QTPK coordinate contracts differ");
@@ -125,6 +159,9 @@ public final class QatarDetailPack implements AutoCloseable {
     private static String readString(ByteBuffer data)throws IOException{if(data.remaining()<2)throw new EOFException();int n=Short.toUnsignedInt(data.getShort());if(n>data.remaining())throw new EOFException();byte[] b=new byte[n];data.get(b);return new String(b,StandardCharsets.UTF_8);}
     private static void requireMagic(ByteBuffer data,char a,char b,char c,char d)throws IOException{if(data.remaining()<4||data.get()!=(byte)a||data.get()!=(byte)b||data.get()!=(byte)c||data.get()!=(byte)d)throw new IOException("Invalid detail-pack magic");}
 
+    @FunctionalInterface public interface RoadVisitor{
+        void road(long sourceId,float x1,float z1,float x2,float z2,int roadClass,int lanes,int surface,int flags,float width);
+    }
     public record DetailEntry(int x,int y,long offset,int packedLength,int rawLength,long crc32,int roadCount,int buildingCount){}
     public record DetailChunk(DetailEntry entry,QatarPack.Road[] roads,long[] roadSourceIds,QatarPack.Building[] buildings){}
 }

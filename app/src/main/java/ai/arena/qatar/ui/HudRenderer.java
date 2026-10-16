@@ -47,20 +47,27 @@ public final class HudRenderer implements Disposable {
     private final Texture minimapStreetTexture=new Texture(minimapPixmap);
     private final Texture nationalRoadAtlas=new Texture(Gdx.files.internal("ui/qatar-road-atlas.png"));
     private final TextureRegion nationalRoadRegion=new TextureRegion(nationalRoadAtlas);
+    private final NationalMapRoadCache nationalRoads;
     private long minimapRoadRevision=-1,lastMinimapBuildMillis;
     private double minimapCentreX,minimapCentreZ;
     private float minimapRadius=-1;
     private boolean hasMapSelection;
     private double mapSelectionX,mapSelectionZ;
-    private String mapStatus="Touch anywhere on Qatar, then press TELEPORT";
+    private String mapStatus="Tap Qatar to place a pin, then confirm teleport";
+    private String mapPlacementDetail="pending confirmation";
 
     public HudRenderer(QatarPack pack,QatarDetailPack detailPack,PhysicsWorld physics,WorldStreamer streamer,QatarDetailStreamer detailStreamer,QatarWorldRenderer renderer,TouchController controls,QatarEnvironment climate){
         this.pack=pack;this.detailPack=detailPack;this.physics=physics;this.streamer=streamer;this.detailStreamer=detailStreamer;this.renderer=renderer;this.controls=controls;this.climate=climate;
+        nationalRoads=new NationalMapRoadCache(detailPack);
         font.getData().setScale(1.02f);minimapStreetTexture.setFilter(Texture.TextureFilter.Linear,Texture.TextureFilter.Linear);nationalRoadAtlas.setFilter(Texture.TextureFilter.Linear,Texture.TextureFilter.Linear);
         Gdx.app.log("QatarMap","STREET_ATLAS_READY source=offline-OSM segments="+detailPack.roadSegmentCount+" localMinimap=vector-cache");
     }
     public void setPerformanceProfile(ThermalGovernor.Profile profile){performanceProfile=profile;}
-    public void setMapSelection(double x,double z){hasMapSelection=true;mapSelectionX=x;mapSelectionZ=z;mapStatus="Destination selected - press TELEPORT";}
+    public void setMapSelection(double x,double z){hasMapSelection=true;mapSelectionX=x;mapSelectionZ=z;mapPlacementDetail="pending confirmation";mapStatus="Pin fixed - press CONFIRM TELEPORT";}
+    public void setResolvedMapSelection(double x,double z,double adjustment,String basis){
+        hasMapSelection=true;mapSelectionX=x;mapSelectionZ=z;
+        mapPlacementDetail=adjustment<1?"no adjustment ("+basis+")":Math.round(adjustment)+" m adjustment ("+basis+")";
+    }
     public void setMapStatus(String status){mapStatus=status==null?"":status;}
     public boolean hasMapSelection(){return hasMapSelection;}
     public double mapSelectionX(){return mapSelectionX;}
@@ -68,6 +75,7 @@ public final class HudRenderer implements Disposable {
 
     public void render(){
         int width=Gdx.graphics.getWidth(),height=Gdx.graphics.getHeight();
+        nationalRoads.update(controls.mapViewport(),controls.mapOpen());
         Gdx.gl.glDisable(GL20.GL_DEPTH_TEST);Gdx.gl.glEnable(GL20.GL_BLEND);Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA,GL20.GL_ONE_MINUS_SRC_ALPHA);
         shapes.getProjectionMatrix().setToOrtho2D(0,0,width,height);
         shapes.begin(ShapeRenderer.ShapeType.Filled);
@@ -155,52 +163,85 @@ public final class HudRenderer implements Disposable {
     };}
 
     private void drawNationalMapWindow(int width,int height){
+        NationalMapViewport view=controls.mapViewport();
         NationalMapLayout.Layout layout=NationalMapLayout.fullscreen(width,height,pack.worldWidth,pack.worldHeight);
         NationalMapLayout.Rect panel=layout.panel(),map=layout.map(),close=layout.close(),teleport=layout.teleport();
         shapes.begin(ShapeRenderer.ShapeType.Filled);
-        shapes.setColor(.005f,.014f,.020f,.92f);shapes.rect(0,0,width,height);
+        shapes.setColor(.005f,.014f,.020f,.94f);shapes.rect(0,0,width,height);
         shapes.setColor(.025f,.060f,.072f,1);shapes.rect(panel.x(),panel.y(),panel.width(),panel.height());
         shapes.setColor(.035f,.25f,.34f,1);shapes.rect(map.x(),map.y(),map.width(),map.height());
         for(QatarPack.ChunkEntry entry:pack.entries().values()){
-            if(!entry.hasLand())continue;Color colour=MUNICIPALITY_COLOURS[entry.municipality()%MUNICIPALITY_COLOURS.length];shapes.setColor(colour);
-            float x=map.x()+(float)(entry.x()*pack.chunkMetres/pack.worldWidth)*map.width();
-            float y=map.y()+(float)(entry.y()*pack.chunkMetres/pack.worldHeight)*map.height();
-            float w=(float)(pack.chunkMetres/pack.worldWidth)*map.width()+.35f,h=(float)(pack.chunkMetres/pack.worldHeight)*map.height()+.35f;
-            shapes.rect(x,y,w,h);
+            if(!entry.hasLand())continue;
+            double x1=entry.x()*(double)pack.chunkMetres,z1=entry.y()*(double)pack.chunkMetres;
+            double x2=Math.min(pack.worldWidth,x1+pack.chunkMetres),z2=Math.min(pack.worldHeight,z1+pack.chunkMetres);
+            if(x2<view.minX()||x1>view.maxX()||z2<view.minZ()||z1>view.maxZ())continue;
+            Color colour=MUNICIPALITY_COLOURS[entry.municipality()%MUNICIPALITY_COLOURS.length];shapes.setColor(colour);
+            float sx1=Math.max(map.x(),view.worldToScreenX(x1,map.x(),map.width()));
+            float sy1=Math.max(map.y(),view.worldToScreenY(z1,map.y(),map.height()));
+            float sx2=Math.min(map.right(),view.worldToScreenX(x2,map.x(),map.width()));
+            float sy2=Math.min(map.top(),view.worldToScreenY(z2,map.y(),map.height()));
+            if(sx2>sx1&&sy2>sy1)shapes.rect(sx1,sy1,sx2-sx1+.35f,sy2-sy1+.35f);
         }
         shapes.setColor(.54f,.08f,.22f,1);shapes.rect(close.x(),close.y(),close.width(),close.height());
+        shapes.setColor(.11f,.15f,.17f,1);shapes.rect(layout.zoomOut().x(),layout.zoomOut().y(),layout.zoomOut().width(),layout.zoomOut().height());shapes.rect(layout.zoomIn().x(),layout.zoomIn().y(),layout.zoomIn().width(),layout.zoomIn().height());
+        shapes.setColor(.10f,.27f,.31f,1);shapes.rect(layout.viewAll().x(),layout.viewAll().y(),layout.viewAll().width(),layout.viewAll().height());
         shapes.setColor(hasMapSelection?.54f:.20f,hasMapSelection?.08f:.22f,hasMapSelection?.22f:.24f,1f);shapes.rect(teleport.x(),teleport.y(),teleport.width(),teleport.height());
         shapes.end();
-        sprites.begin();sprites.setColor(Color.WHITE);sprites.draw(nationalRoadRegion,map.x(),map.y(),map.width(),map.height());sprites.end();
 
-        shapes.begin(ShapeRenderer.ShapeType.Line);shapes.setColor(.99f,.91f,.70f,1);drawNationalOutlines(map);
-        shapes.setColor(.73f,.85f,.86f,.55f);shapes.rect(map.x(),map.y(),map.width(),map.height());shapes.end();
+        float u1=(float)(view.minX()/pack.worldWidth),u2=(float)(view.maxX()/pack.worldWidth);
+        float v1=(float)(1.0-view.maxZ()/pack.worldHeight),v2=(float)(1.0-view.minZ()/pack.worldHeight);
+        nationalRoadRegion.setRegion(u1,v1,u2,v2);
+        sprites.begin();sprites.setColor(Color.WHITE);sprites.draw(nationalRoadRegion,map.x(),map.y(),map.width(),map.height());
+        nationalRoads.draw(sprites,view,map.x(),map.y(),map.width(),map.height());sprites.end();
+
+        shapes.begin(ShapeRenderer.ShapeType.Line);shapes.setColor(.99f,.91f,.70f,1);drawNationalOutlines(map,view);
+        shapes.setColor(.73f,.85f,.86f,.72f);shapes.rect(map.x(),map.y(),map.width(),map.height());shapes.end();
 
         shapes.begin(ShapeRenderer.ShapeType.Filled);
-        for(QatarPack.Hub hub:pack.hubs){NationalMapLayout.worldToScreen(map,hub.x(),hub.z(),pack.worldWidth,pack.worldHeight,mapPoint);shapes.setColor(.12f,.16f,.17f,.9f);shapes.circle(mapPoint.x,mapPoint.y,2.4f,10);}
-        NationalMapLayout.worldToScreen(map,physics.globalX(),physics.globalZ(),pack.worldWidth,pack.worldHeight,mapPoint);shapes.setColor(.15f,1f,.55f,1);shapes.circle(mapPoint.x,mapPoint.y,6,18);
-        if(hasMapSelection){NationalMapLayout.worldToScreen(map,mapSelectionX,mapSelectionZ,pack.worldWidth,pack.worldHeight,mapPoint);shapes.setColor(1f,.08f,.22f,1);shapes.circle(mapPoint.x,mapPoint.y,7,20);shapes.setColor(Color.WHITE);shapes.circle(mapPoint.x,mapPoint.y,2.5f,12);}
+        for(QatarPack.Hub hub:pack.hubs)if(view.contains(hub.x(),hub.z())){
+            mapPoint.set(view.worldToScreenX(hub.x(),map.x(),map.width()),view.worldToScreenY(hub.z(),map.y(),map.height()));
+            shapes.setColor(.12f,.16f,.17f,.9f);shapes.circle(mapPoint.x,mapPoint.y,view.zoom()>8?3.2f:2.4f,10);
+        }
+        if(view.contains(physics.globalX(),physics.globalZ())){
+            mapPoint.set(view.worldToScreenX(physics.globalX(),map.x(),map.width()),view.worldToScreenY(physics.globalZ(),map.y(),map.height()));
+            shapes.setColor(.15f,1f,.55f,1);shapes.circle(mapPoint.x,mapPoint.y,6,18);
+        }
+        if(hasMapSelection&&view.contains(mapSelectionX,mapSelectionZ)){
+            mapPoint.set(view.worldToScreenX(mapSelectionX,map.x(),map.width()),view.worldToScreenY(mapSelectionZ,map.y(),map.height()));
+            shapes.setColor(1f,.08f,.22f,1);shapes.circle(mapPoint.x,mapPoint.y,9,24);shapes.setColor(Color.WHITE);shapes.circle(mapPoint.x,mapPoint.y,3,14);
+        }
         shapes.end();
+        if(hasMapSelection&&view.contains(mapSelectionX,mapSelectionZ)){
+            mapPoint.set(view.worldToScreenX(mapSelectionX,map.x(),map.width()),view.worldToScreenY(mapSelectionZ,map.y(),map.height()));
+            shapes.begin(ShapeRenderer.ShapeType.Line);shapes.setColor(1f,.90f,.90f,1);shapes.circle(mapPoint.x,mapPoint.y,13,28);shapes.line(mapPoint.x-17,mapPoint.y,mapPoint.x-7,mapPoint.y);shapes.line(mapPoint.x+7,mapPoint.y,mapPoint.x+17,mapPoint.y);shapes.line(mapPoint.x,mapPoint.y-17,mapPoint.x,mapPoint.y-7);shapes.line(mapPoint.x,mapPoint.y+7,mapPoint.x,mapPoint.y+17);shapes.end();
+        }
 
-        sprites.begin();font.getData().setScale(1.25f);font.setColor(Color.WHITE);font.draw(sprites,"QATAR NATIONAL MAP",panel.x()+24,panel.top()-27);
-        font.getData().setScale(.88f);font.setColor(.92f,.86f,.69f,1);font.draw(sprites,"Complete offline OSM street atlas | EPSG:32639 | north is up",panel.x()+24,panel.top()-51);
+        sprites.begin();font.getData().setScale(1.25f);font.setColor(Color.WHITE);font.draw(sprites,"QATAR PRECISION MAP",panel.x()+24,panel.top()-27);
+        font.getData().setScale(.88f);font.setColor(.92f,.86f,.69f,1);font.draw(sprites,"Complete packaged Qatar | offline OpenStreetMap vectors | EPSG:32639 | north up",panel.x()+24,panel.top()-51);
         font.setColor(Color.WHITE);font.draw(sprites,"CLOSE",close.x()+29,close.y()+27);
-        font.getData().setScale(1.0f);font.draw(sprites,"TOUCH-TO-TELEPORT",layout.sideX(),panel.top()-98);
-        font.getData().setScale(.84f);font.setColor(.83f,.89f,.89f,1);
-        font.draw(sprites,"1. Touch a visible street or destination",layout.sideX(),panel.top()-132);
-        font.draw(sprites,"2. Check the red destination marker",layout.sideX(),panel.top()-158);
-        font.draw(sprites,"3. Press TELEPORT, or CLOSE to cancel",layout.sideX(),panel.top()-184);
-        font.setColor(.98f,.86f,.64f,1);font.draw(sprites,"Placement for "+physics.mode().label+": "+placementDescription(),layout.sideX(),panel.top()-226);
+        font.getData().setScale(1.15f);font.draw(sprites,"-",layout.zoomOut().x()+19,layout.zoomOut().y()+28);font.draw(sprites,"+",layout.zoomIn().x()+18,layout.zoomIn().y()+29);
+        font.getData().setScale(.78f);font.draw(sprites,"VIEW ALL QATAR",layout.viewAll().x()+15,layout.viewAll().y()+26);
+
+        font.getData().setScale(1.0f);font.draw(sprites,"PRECISE DESTINATION",layout.sideX(),panel.top()-98);
+        font.getData().setScale(.82f);font.setColor(.83f,.89f,.89f,1);
+        font.draw(sprites,"Pinch to zoom  |  drag to pan",layout.sideX(),panel.top()-130);
+        font.draw(sprites,"Tap or long-press to place the fixed red pin",layout.sideX(),panel.top()-155);
+        font.draw(sprites,"TELEPORT confirms  |  CLOSE / Back cancels",layout.sideX(),panel.top()-180);
+        font.setColor(.98f,.86f,.64f,1);
+        font.draw(sprites,String.format(java.util.Locale.ROOT,"ZOOM x%.2f  |  VIEW %.1f x %.1f km",view.zoom(),view.visibleWidth()/1000.0,view.visibleHeight()/1000.0),layout.sideX(),panel.top()-218);
+        font.draw(sprites,String.format(java.util.Locale.ROOT,"SCALE ~%.1f m/pixel  |  %s",view.visibleWidth()/map.width(),nationalRoads.status(view)),layout.sideX(),panel.top()-243);
+        font.setColor(.98f,.86f,.64f,1);font.draw(sprites,"Placement for "+physics.mode().label+": "+placementDescription(),layout.sideX(),panel.top()-278);
         if(hasMapSelection){
-            font.setColor(Color.WHITE);font.draw(sprites,"Selected local: "+Math.round(mapSelectionX)+" E / "+Math.round(mapSelectionZ)+" N",layout.sideX(),panel.top()-268);
-            font.draw(sprites,"UTM 39N: "+Math.round(pack.originEasting+mapSelectionX)+" E",layout.sideX(),panel.top()-294);
-            font.draw(sprites,"             "+Math.round(pack.originNorthing+mapSelectionZ)+" N",layout.sideX(),panel.top()-320);
-            QatarPack.Hub hub=nearestHub(mapSelectionX,mapSelectionZ);font.setColor(.82f,.89f,.90f,1);font.draw(sprites,"Nearest named area: "+hub.english(),layout.sideX(),panel.top()-354);
-        }else{font.setColor(.73f,.80f,.81f,1);font.draw(sprites,"No destination selected yet",layout.sideX(),panel.top()-268);}
+            font.setColor(Color.WHITE);font.draw(sprites,"Selected local: "+Math.round(mapSelectionX)+" E / "+Math.round(mapSelectionZ)+" N",layout.sideX(),panel.top()-315);
+            font.draw(sprites,"UTM 39N: "+Math.round(pack.originEasting+mapSelectionX)+" E",layout.sideX(),panel.top()-340);
+            font.draw(sprites,"             "+Math.round(pack.originNorthing+mapSelectionZ)+" N",layout.sideX(),panel.top()-365);
+            QatarPack.Hub hub=nearestHub(mapSelectionX,mapSelectionZ);font.setColor(.82f,.89f,.90f,1);font.draw(sprites,"Nearest named area: "+hub.english(),layout.sideX(),panel.top()-395);
+            font.draw(sprites,"Safe placement: "+mapPlacementDetail,layout.sideX(),panel.top()-420);
+            if(!view.contains(mapSelectionX,mapSelectionZ)){font.setColor(.98f,.54f,.42f,1);font.draw(sprites,"Pin is outside this view - VIEW ALL reveals it",layout.sideX(),panel.top()-449);}
+        }else{font.setColor(.73f,.80f,.81f,1);font.draw(sprites,"No destination selected yet",layout.sideX(),panel.top()-315);}
         font.setColor(.92f,.88f,.73f,1);font.draw(sprites,mapStatus,layout.sideX(),teleport.top()+28);
-        font.getData().setScale(1.06f);font.setColor(Color.WHITE);font.draw(sprites,"TELEPORT",teleport.x()+teleport.width()/2-48,teleport.y()+35);
-        font.getData().setScale(.76f);font.setColor(.78f,.86f,.87f,1);font.draw(sprites,"Green = player    Red = selected destination",panel.x()+24,panel.y()+53);
-        font.draw(sprites,"CLOSE and Android Back return to gameplay",panel.x()+24,panel.y()+31);
+        font.getData().setScale(1.06f);font.setColor(Color.WHITE);font.draw(sprites,"CONFIRM TELEPORT",teleport.x()+teleport.width()/2-88,teleport.y()+35);
+        font.getData().setScale(.72f);font.setColor(.78f,.86f,.87f,1);font.draw(sprites,"Overview atlas + bounded close-view vectors; no network or satellite imagery",layout.sideX(),teleport.top()+55);
         font.getData().setScale(1.02f);sprites.end();
     }
 
@@ -213,14 +254,33 @@ public final class HudRenderer implements Disposable {
         };
     }
 
-    private void drawNationalOutlines(NationalMapLayout.Rect map){
+    private void drawNationalOutlines(NationalMapLayout.Rect map,NationalMapViewport view){
         for(float[] polygon:pack.nationalPolygons){
             if(polygon.length<4)continue;
             for(int i=2;i<polygon.length;i+=2){
-                float x1=map.x()+polygon[i-2]/(float)pack.worldWidth*map.width(),y1=map.y()+polygon[i-1]/(float)pack.worldHeight*map.height();
-                float x2=map.x()+polygon[i]/(float)pack.worldWidth*map.width(),y2=map.y()+polygon[i+1]/(float)pack.worldHeight*map.height();shapes.line(x1,y1,x2,y2);
+                float x1=view.worldToScreenX(polygon[i-2],map.x(),map.width()),y1=view.worldToScreenY(polygon[i-1],map.y(),map.height());
+                float x2=view.worldToScreenX(polygon[i],map.x(),map.width()),y2=view.worldToScreenY(polygon[i+1],map.y(),map.height());
+                drawClippedLine(map,x1,y1,x2,y2);
             }
         }
+    }
+
+    private void drawClippedLine(NationalMapLayout.Rect map,float x1,float y1,float x2,float y2){
+        int c1=clipCode(map,x1,y1),c2=clipCode(map,x2,y2);
+        for(int guard=0;guard<8;guard++){
+            if((c1|c2)==0){shapes.line(x1,y1,x2,y2);return;}
+            if((c1&c2)!=0)return;
+            int code=c1!=0?c1:c2;float x=0,y=0;
+            if((code&8)!=0){x=x1+(x2-x1)*(map.top()-y1)/(y2-y1);y=map.top();}
+            else if((code&4)!=0){x=x1+(x2-x1)*(map.y()-y1)/(y2-y1);y=map.y();}
+            else if((code&2)!=0){y=y1+(y2-y1)*(map.right()-x1)/(x2-x1);x=map.right();}
+            else {y=y1+(y2-y1)*(map.x()-x1)/(x2-x1);x=map.x();}
+            if(code==c1){x1=x;y1=y;c1=clipCode(map,x1,y1);}else{x2=x;y2=y;c2=clipCode(map,x2,y2);}
+        }
+    }
+
+    private static int clipCode(NationalMapLayout.Rect map,float x,float y){
+        int code=0;if(x<map.x())code|=1;else if(x>map.right())code|=2;if(y<map.y())code|=4;else if(y>map.top())code|=8;return code;
     }
 
     private QatarPack.Hub nearestHub(double x,double z){
@@ -229,5 +289,5 @@ public final class HudRenderer implements Disposable {
         return result;
     }
     private String localBiome(){QatarPack.ChunkEntry entry=pack.entry(pack.chunkX(physics.globalX()),pack.chunkY(physics.globalZ()));return entry==null?"OUTSIDE PACK":pack.biomes.get(entry.biome());}
-    @Override public void dispose(){font.dispose();sprites.dispose();shapes.dispose();minimapStreetTexture.dispose();minimapPixmap.dispose();nationalRoadAtlas.dispose();}
+    @Override public void dispose(){nationalRoads.dispose();font.dispose();sprites.dispose();shapes.dispose();minimapStreetTexture.dispose();minimapPixmap.dispose();nationalRoadAtlas.dispose();}
 }

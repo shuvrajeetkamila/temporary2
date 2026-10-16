@@ -59,7 +59,7 @@ jobs:
         run: |
           set +e
           ADB="$ANDROID_HOME/platform-tools/adb"
-          APK='artifacts/Qatar-The-Peninsula-REALISTIC-WORLD-v0.8.0.apk'
+          APK='artifacts/Qatar-The-Peninsula-PRECISION-MAP-v0.8.1.apk'
           "$ADB" install -r "$APK" > qa/qatar-runtime/install.txt 2>&1
           INSTALL_EXIT=$?
           "$ADB" install -r "$APK" > qa/qatar-runtime/reinstall.txt 2>&1
@@ -81,8 +81,14 @@ jobs:
           "$ADB" exec-out screencap -p > qa/qatar-runtime/map-open.png
           "$ADB" shell input tap 1150 63; sleep 2
           "$ADB" shell input tap 1170 200; sleep 2
-          # Select northern Qatar, require a visible marker, then invoke the large TELEPORT button.
-          "$ADB" shell input tap 378 187; sleep 2
+          # Exercise accessible zoom to x16; this shares the same bounded viewport transform as pinch.
+          for STEP in 1 2 3 4; do "$ADB" shell input tap 325 650; sleep 1; done
+          sleep 10
+          "$ADB" exec-out screencap -p > qa/qatar-runtime/map-zoomed.png
+          # Pan at close zoom, wait for the bounded asynchronous QTOD raster, then place a precise pin.
+          "$ADB" shell input swipe 378 360 420 390 800; sleep 10
+          "$ADB" exec-out screencap -p > qa/qatar-runtime/map-panned.png
+          "$ADB" shell input tap 378 350; sleep 2
           "$ADB" exec-out screencap -p > qa/qatar-runtime/map-selected.png
           "$ADB" shell input tap 970 648; sleep 20
           "$ADB" exec-out screencap -p > qa/qatar-runtime/teleported.png
@@ -112,10 +118,12 @@ jobs:
           "$ADB" exec-out screencap -p > qa/qatar-runtime/resumed.png
           "$ADB" shell cmd power set-mode 0 || true
           "$ADB" shell dumpsys battery reset || true
-          python3 tools/check_png_scene.py qa/qatar-runtime/{gameplay,map-open,map-selected,teleported,car,boat,helicopter,aeroplane,resumed}.png | tee qa/qatar-runtime/scene-validation.txt
+          python3 tools/check_png_scene.py qa/qatar-runtime/{gameplay,map-open,map-zoomed,map-panned,map-selected,teleported,car,boat,helicopter,aeroplane,resumed}.png | tee qa/qatar-runtime/scene-validation.txt
           SCENE_EXIT=${PIPESTATUS[0]}
           python3 tools/check_street_map.py qa/qatar-runtime/gameplay.png qa/qatar-runtime/map-open.png | tee qa/qatar-runtime/street-map-validation.txt
           STREET_MAP_EXIT=${PIPESTATUS[0]}
+          python3 tools/check_precision_map.py qa/qatar-runtime/map-open.png qa/qatar-runtime/map-zoomed.png qa/qatar-runtime/map-panned.png | tee qa/qatar-runtime/precision-map-validation.txt
+          PRECISION_MAP_EXIT=${PIPESTATUS[0]}
           if [ -n "$PID" ]; then "$ADB" logcat -d --pid="$PID" > qa/qatar-runtime/logcat.txt; else "$ADB" logcat -d > qa/qatar-runtime/logcat.txt; fi
           "$ADB" shell dumpsys activity activities > qa/qatar-runtime/activity-dump.txt
           printf '%s\n' "$PID" > qa/qatar-runtime/app-pid.txt
@@ -129,7 +137,10 @@ jobs:
           THERMAL_READY="$(grep 'QatarThermal.*PROFILE NORMAL fps=30' qa/qatar-runtime/logcat.txt || true)"
           POWER_SAVE_READY="$(grep 'QatarThermal.*PROFILE WARM fps=20' qa/qatar-runtime/logcat.txt || true)"
           MAP_OPEN_READY="$(grep 'QatarTeleport.*MAP_OPEN' qa/qatar-runtime/logcat.txt | tail -1 || true)"
-          MAP_SELECT_READY="$(grep 'QatarTeleport.*MAP_SELECT' qa/qatar-runtime/logcat.txt | tail -1 || true)"
+          MAP_SELECT_READY="$(grep 'QatarTeleport.*MAP_SELECT.*zoom=16\.0.*gestureSuppressed=yes' qa/qatar-runtime/logcat.txt | tail -1 || true)"
+          MAP_ZOOM_READY="$(grep 'QatarMap.*MAP_VIEW action=ZOOM_IN zoom=16\.0.*bounded=yes' qa/qatar-runtime/logcat.txt | tail -1 || true)"
+          MAP_PAN_READY="$(grep 'QatarMap.*MAP_VIEW action=PAN zoom=16\.0.*bounded=yes' qa/qatar-runtime/logcat.txt | tail -1 || true)"
+          PRECISION_ATLAS_READY="$(grep 'QatarMap.*PRECISION_ATLAS_READY zoom=16\.00.*bounded=true' qa/qatar-runtime/logcat.txt | tail -1 || true)"
           MAP_CLOSE_READY="$(grep 'QatarTeleport.*MAP_CLOSE gameplay=resumed' qa/qatar-runtime/logcat.txt | head -1 || true)"
           TELEPORT_READY="$(grep 'QatarTeleport.*TELEPORT mode=WALK' qa/qatar-runtime/logcat.txt | tail -1 || true)"
           STREET_MAP_READY="$(grep 'QatarMap.*STREET_ATLAS_READY.*offline-OSM' qa/qatar-runtime/logcat.txt | tail -1 || true)"
@@ -161,11 +172,15 @@ jobs:
             echo "screenshot_bytes=$(wc -c < qa/qatar-runtime/gameplay.png)"
             echo "scene_validation_exit=$SCENE_EXIT"
             echo "street_map_validation_exit=$STREET_MAP_EXIT"
+            echo "precision_map_validation_exit=$PRECISION_MAP_EXIT"
             if [ -n "$STREET_MAP_READY" ]; then echo 'offline_street_atlas_ready=yes'; else echo 'offline_street_atlas_ready=no'; fi
             for MODE in WALK CAR BOAT HELI PLANE; do CADENCE_VAR="${MODE}_CADENCE"; CADENCE_VALUE="${!CADENCE_VAR}"; if [ -n "$CADENCE_VALUE" ]; then echo "${MODE,,}_cadence_smooth=yes"; else echo "${MODE,,}_cadence_smooth=no"; fi; echo "${MODE,,}_cadence=$CADENCE_VALUE"; done
-            for IMAGE in map-open map-selected teleported car boat helicopter aeroplane resumed; do IMAGE_BYTES="$(wc -c < "qa/qatar-runtime/$IMAGE.png")"; echo "${IMAGE//-/_}_screenshot_bytes=$IMAGE_BYTES"; done
+            for IMAGE in map-open map-zoomed map-panned map-selected teleported car boat helicopter aeroplane resumed; do IMAGE_BYTES="$(wc -c < "qa/qatar-runtime/$IMAGE.png")"; echo "${IMAGE//-/_}_screenshot_bytes=$IMAGE_BYTES"; done
             if [ -n "$MAP_OPEN_READY" ]; then echo 'national_map_opened=yes'; else echo 'national_map_opened=no'; fi
             if [ -n "$MAP_SELECT_READY" ]; then echo 'national_map_selected=yes'; else echo 'national_map_selected=no'; fi
+            if [ -n "$MAP_ZOOM_READY" ]; then echo 'precision_map_zoomed=yes'; else echo 'precision_map_zoomed=no'; fi
+            if [ -n "$MAP_PAN_READY" ]; then echo 'precision_map_panned=yes'; else echo 'precision_map_panned=no'; fi
+            if [ -n "$PRECISION_ATLAS_READY" ]; then echo 'precision_map_qtod_ready=yes'; else echo 'precision_map_qtod_ready=no'; fi
             if [ -n "$MAP_CLOSE_READY" ]; then echo 'national_map_closed=yes'; else echo 'national_map_closed=no'; fi
             if [ -n "$TELEPORT_READY" ]; then echo 'national_teleport_completed=yes'; else echo 'national_teleport_completed=no'; fi
             echo "teleport_state=$TELEPORT_READY"
@@ -189,13 +204,17 @@ jobs:
           test "$PID_BEFORE_LIFECYCLE" = "$PID"
           test -n "$LIFECYCLE_PAUSED"
           test -n "$LIFECYCLE_RESUMED"
-          for IMAGE in gameplay map-open map-selected teleported car boat helicopter aeroplane resumed; do test "$(wc -c < "qa/qatar-runtime/$IMAGE.png")" -gt 10000; done
+          for IMAGE in gameplay map-open map-zoomed map-panned map-selected teleported car boat helicopter aeroplane resumed; do test "$(wc -c < "qa/qatar-runtime/$IMAGE.png")" -gt 10000; done
           test "$SCENE_EXIT" -eq 0
           test "$STREET_MAP_EXIT" -eq 0
+          test "$PRECISION_MAP_EXIT" -eq 0
           test -n "$STREET_MAP_READY"
           for CADENCE in "$WALK_CADENCE" "$CAR_CADENCE" "$BOAT_CADENCE" "$HELI_CADENCE" "$PLANE_CADENCE"; do test -n "$CADENCE"; done
           test -n "$MAP_OPEN_READY"
           test -n "$MAP_SELECT_READY"
+          test -n "$MAP_ZOOM_READY"
+          test -n "$MAP_PAN_READY"
+          test -n "$PRECISION_ATLAS_READY"
           test -n "$MAP_CLOSE_READY"
           test -n "$TELEPORT_READY"
           test -n "$OSM_READY"

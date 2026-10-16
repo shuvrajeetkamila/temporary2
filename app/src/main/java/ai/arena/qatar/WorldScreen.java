@@ -7,7 +7,6 @@ import ai.arena.qatar.physics.PhysicsHealth;
 import ai.arena.qatar.physics.PhysicsWorld;
 import ai.arena.qatar.render.QatarWorldRenderer;
 import ai.arena.qatar.ui.HudRenderer;
-import ai.arena.qatar.ui.NationalMapLayout;
 import ai.arena.qatar.world.QatarDetailPack;
 import ai.arena.qatar.world.QatarDetailStreamer;
 import ai.arena.qatar.world.QatarPack;
@@ -108,15 +107,18 @@ final class WorldScreen extends ScreenAdapter {
 
     private void processMapInput(){
         if(controls.consumeMapOpenedRequested()){
-            hud.setMapStatus("Touch anywhere on Qatar, then press TELEPORT");
-            Gdx.app.log("QatarTeleport","MAP_OPEN playerX="+physics.globalX()+" playerZ="+physics.globalZ());
+            hud.setMapStatus("Pinch, pan, then tap a street to place the fixed pin");
+            Gdx.app.log("QatarTeleport","MAP_OPEN playerX="+physics.globalX()+" playerZ="+physics.globalZ()+" zoom=1.0 fullQatar=yes");
         }
         if(controls.consumeMapClosedRequested())Gdx.app.log("QatarTeleport","MAP_CLOSE gameplay=resumed");
+        if(controls.consumeMapViewChangedRequested()){
+            hud.setMapStatus("View changed by "+controls.mapViewAction()+" - destination pin stays geographically fixed");
+            Gdx.app.log("QatarMap","MAP_VIEW action="+controls.mapViewAction()+" zoom="+controls.mapViewport().zoom()+" centerX="+controls.mapViewport().centerX()+" centerZ="+controls.mapViewport().centerZ()+" bounded=yes");
+        }
         if(controls.consumeMapSelectionRequested()){
-            NationalMapLayout.Layout layout=NationalMapLayout.fullscreen(Gdx.graphics.getWidth(),Gdx.graphics.getHeight(),pack.worldWidth,pack.worldHeight);
-            NationalMapLayout.screenToWorld(layout.map(),controls.mapSelectionScreenX(),controls.mapSelectionScreenY(),pack.worldWidth,pack.worldHeight,selectedWorld);
+            selectedWorld.set(controls.mapSelectionWorldX(),controls.mapSelectionWorldZ());
             hud.setMapSelection(selectedWorld.x,selectedWorld.y);
-            Gdx.app.log("QatarTeleport","MAP_SELECT x="+selectedWorld.x+" z="+selectedWorld.y+" utmE="+(pack.originEasting+selectedWorld.x)+" utmN="+(pack.originNorthing+selectedWorld.y));
+            Gdx.app.log("QatarTeleport","MAP_SELECT x="+selectedWorld.x+" z="+selectedWorld.y+" zoom="+controls.mapViewport().zoom()+" gestureSuppressed=yes utmE="+(pack.originEasting+selectedWorld.x)+" utmN="+(pack.originNorthing+selectedWorld.y));
         }
         if(controls.consumeTeleportRequested())teleportFromMap();
     }
@@ -129,7 +131,7 @@ final class WorldScreen extends ScreenAdapter {
             detailStreamer.resetForTeleport();streamer.resetForTeleport();
             physics.teleport(destination.x(),destination.z(),destination.surfaceHeight(),climate.seaLevelMetres(),destination.water());
             renderer.resetCamera();teleportFallbackGround=destination.surfaceHeight();teleportFallbackWater=destination.water();teleportSupportSeconds=8f;
-            hud.setMapSelection(destination.x(),destination.z());
+            hud.setResolvedMapSelection(destination.x(),destination.z(),destination.adjustmentMetres(),destination.basis());
             hud.setMapStatus(destination.adjustmentMetres()<1?"Teleported to selected location":"Teleported safely (adjusted "+Math.round(destination.adjustmentMetres())+" m)");
             controls.closeMap();
             Gdx.app.log("QatarTeleport","TELEPORT mode="+physics.mode()+" requestedX="+destination.requestedX()+" requestedZ="+destination.requestedZ()+" x="+destination.x()+" z="+destination.z()+" surface="+destination.surfaceHeight()+" water="+(destination.water()?"yes":"no")+" adjustment="+destination.adjustmentMetres()+" basis="+destination.basis());

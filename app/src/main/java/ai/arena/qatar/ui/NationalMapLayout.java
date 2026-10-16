@@ -25,7 +25,10 @@ public final class NationalMapLayout {
         Rect close=new Rect(panel.right()-134,panel.top()-58,112,40);
         float sideX=panel.x+mapAreaWidth+34,sideWidth=Math.max(170,panel.right()-sideX-28);
         Rect teleport=new Rect(sideX,panel.y+20,sideWidth,54);
-        return new Layout(panel,map,close,teleport,sideX,sideWidth);
+        Rect zoomOut=new Rect(map.x,map.y-58,52,40);
+        Rect zoomIn=new Rect(map.x+60,map.y-58,52,40);
+        Rect viewAll=new Rect(map.x+120,map.y-58,Math.max(132,map.width-120),40);
+        return new Layout(panel,map,close,teleport,zoomOut,zoomIn,viewAll,sideX,sideWidth);
     }
 
     public static Vector2 worldToScreen(Rect map,double worldX,double worldZ,double worldWidth,double worldHeight,Vector2 out){
@@ -45,5 +48,5 @@ public final class NationalMapLayout {
         public float top(){return y+height;}
         public boolean contains(float px,float py){return px>=x&&px<=right()&&py>=y&&py<=top();}
     }
-    public record Layout(Rect panel,Rect map,Rect close,Rect teleport,float sideX,float sideWidth){}
+    public record Layout(Rect panel,Rect map,Rect close,Rect teleport,Rect zoomOut,Rect zoomIn,Rect viewAll,float sideX,float sideWidth){}
 }

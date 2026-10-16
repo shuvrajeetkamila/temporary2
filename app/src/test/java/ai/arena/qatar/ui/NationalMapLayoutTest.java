@@ -18,6 +18,11 @@ public class NationalMapLayoutTest {
         assertEquals(72_345,world.x,.05);assertEquals(154_321,world.y,.05);
         assertFalse(layout.map().contains(layout.close().x(),layout.close().y()));
         assertFalse(layout.map().contains(layout.teleport().x(),layout.teleport().y()));
+        assertFalse(layout.map().contains(layout.zoomIn().x(),layout.zoomIn().y()));
+        assertFalse(layout.map().contains(layout.zoomOut().x(),layout.zoomOut().y()));
+        assertFalse(layout.map().contains(layout.viewAll().x(),layout.viewAll().y()));
+        assertTrue(layout.zoomIn().width()>=48&&layout.zoomIn().height()>=38);
+        assertTrue(layout.viewAll().width()>=120);
     }
 
     @Test public void northIsHigherOnMapAndMinimapIsLargeEnoughForTouch(){
