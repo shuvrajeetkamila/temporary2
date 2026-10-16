@@ -59,7 +59,7 @@ jobs:
         run: |
           set +e
           ADB="$ANDROID_HOME/platform-tools/adb"
-          APK='artifacts/Qatar-The-Peninsula-CHARACTER-WORLD-v0.9.0.apk'
+          APK='artifacts/Qatar-The-Peninsula-CORRECTIVE-v0.9.1.apk'
           "$ADB" install -r "$APK" > qa/qatar-runtime/install.txt 2>&1
           INSTALL_EXIT=$?
           "$ADB" install -r "$APK" > qa/qatar-runtime/reinstall.txt 2>&1
@@ -80,6 +80,13 @@ jobs:
           "$ADB" shell input tap 1170 200; sleep 3
           "$ADB" exec-out screencap -p > qa/qatar-runtime/map-open.png
           "$ADB" shell input tap 1150 63; sleep 2
+          # Regression target: full-map point (94625,90625) is the centre of
+          # QTOD cell 378,362, which was reported after a long play session.
+          "$ADB" shell input tap 1170 200; sleep 2
+          "$ADB" shell input tap 478 384; sleep 2
+          "$ADB" exec-out screencap -p > qa/qatar-runtime/map-cell-378-362-selected.png
+          "$ADB" shell input tap 970 648; sleep 24
+          "$ADB" exec-out screencap -p > qa/qatar-runtime/cell-378-362.png
           "$ADB" shell input tap 1170 200; sleep 2
           # Exercise accessible zoom to x16; this shares the same bounded viewport transform as pinch.
           for STEP in 1 2 3 4; do "$ADB" shell input tap 325 650; sleep 1; done
@@ -121,7 +128,7 @@ jobs:
           "$ADB" exec-out screencap -p > qa/qatar-runtime/resumed.png
           "$ADB" shell cmd power set-mode 0 || true
           "$ADB" shell dumpsys battery reset || true
-          python3 tools/check_png_scene.py qa/qatar-runtime/{gameplay,map-open,map-zoomed,map-panned,map-selected,teleported,car,boat,helicopter,aeroplane,walk-return,resumed}.png | tee qa/qatar-runtime/scene-validation.txt
+          python3 tools/check_png_scene.py qa/qatar-runtime/{gameplay,map-open,map-cell-378-362-selected,cell-378-362,map-zoomed,map-panned,map-selected,teleported,car,boat,helicopter,aeroplane,walk-return,resumed}.png | tee qa/qatar-runtime/scene-validation.txt
           SCENE_EXIT=${PIPESTATUS[0]}
           python3 tools/check_street_map.py qa/qatar-runtime/gameplay.png qa/qatar-runtime/map-open.png | tee qa/qatar-runtime/street-map-validation.txt
           STREET_MAP_EXIT=${PIPESTATUS[0]}
@@ -134,7 +141,9 @@ jobs:
           "$ADB" shell dumpsys gfxinfo ai.arena.qatar.peninsula > qa/qatar-runtime/gfxinfo.txt
           if [ -n "$PID" ]; then "$ADB" shell cat "/proc/$PID/status" > qa/qatar-runtime/process-status.txt; fi
           FATALS="$(grep -E 'FATAL EXCEPTION|Fatal signal|Process: ai\.arena\.qatar\.peninsula|UnsatisfiedLinkError' qa/qatar-runtime/logcat.txt || true)"
+          DETAIL_ERRORS="$(grep -E 'OSM_FULL_DETAIL_FALLBACK|OSM detail cell [0-9]+,[0-9]+ (failed|skipped)' qa/qatar-runtime/logcat.txt || true)"
           OSM_READY="$(grep 'QatarStreaming.*OSM_READY' qa/qatar-runtime/logcat.txt || true)"
+          REGRESSION_CELL_READY="$(grep 'QatarStreaming.*OSM_REGRESSION_CELL_READY cell=378,362 roads=31 buildings=2 activation=atomic' qa/qatar-runtime/logcat.txt | tail -1 || true)"
           PACK_READY="$(grep 'QatarStreaming.*PACK_READY epoch=2026-10-14-srtm-osm-v0.3' qa/qatar-runtime/logcat.txt || true)"
           ENV_READY="$(grep 'QatarEnvironment.*ENV_READY' qa/qatar-runtime/logcat.txt || true)"
           THERMAL_READY="$(grep 'QatarThermal.*PROFILE NORMAL fps=30' qa/qatar-runtime/logcat.txt || true)"
@@ -155,7 +164,7 @@ jobs:
           BOAT_RIG="$(grep 'QatarVisual.*V09_FOCUS_RIG mode=BOAT.*articulated=yes' qa/qatar-runtime/logcat.txt | tail -1 || true)"
           HELI_RIG="$(grep 'QatarVisual.*V09_FOCUS_RIG mode=HELICOPTER.*articulated=yes' qa/qatar-runtime/logcat.txt | tail -1 || true)"
           PLANE_RIG="$(grep 'QatarVisual.*V09_FOCUS_RIG mode=AEROPLANE.*articulated=yes' qa/qatar-runtime/logcat.txt | tail -1 || true)"
-          BOAT_TRANSITION="$(grep 'QatarMode.*SAFE_TRANSITION from=CAR to=BOAT.*water=yes.*movementPacing=preserved' qa/qatar-runtime/logcat.txt | tail -1 || true)"
+          BOAT_TRANSITION="$(grep 'QatarMode.*SAFE_TRANSITION from=CAR to=BOAT.*placement=current-screen.*locationDelta=0\.0.*streamReset=no.*movementPacing=preserved' qa/qatar-runtime/logcat.txt | tail -1 || true)"
           PLANE_TRANSITION="$(grep 'QatarMode.*SAFE_TRANSITION from=HELICOPTER to=AEROPLANE.*runway.*water=no.*movementPacing=preserved' qa/qatar-runtime/logcat.txt | tail -1 || true)"
           WALK_RETURN_TRANSITION="$(grep 'QatarMode.*SAFE_TRANSITION from=AEROPLANE to=WALK.*water=no.*movementPacing=preserved' qa/qatar-runtime/logcat.txt | tail -1 || true)"
           WALK_CADENCE="$(grep 'QatarFrameCadence.*mode=WALK.*extraRenderGate=no smooth=yes' qa/qatar-runtime/logcat.txt | tail -1 || true)"
@@ -188,7 +197,7 @@ jobs:
             echo "precision_map_validation_exit=$PRECISION_MAP_EXIT"
             if [ -n "$STREET_MAP_READY" ]; then echo 'offline_street_atlas_ready=yes'; else echo 'offline_street_atlas_ready=no'; fi
             for MODE in WALK CAR BOAT HELI PLANE; do CADENCE_VAR="${MODE}_CADENCE"; CADENCE_VALUE="${!CADENCE_VAR}"; if [ -n "$CADENCE_VALUE" ]; then echo "${MODE,,}_cadence_smooth=yes"; else echo "${MODE,,}_cadence_smooth=no"; fi; echo "${MODE,,}_cadence=$CADENCE_VALUE"; done
-            for IMAGE in map-open map-zoomed map-panned map-selected teleported car boat helicopter aeroplane walk-return resumed; do IMAGE_BYTES="$(wc -c < "qa/qatar-runtime/$IMAGE.png")"; echo "${IMAGE//-/_}_screenshot_bytes=$IMAGE_BYTES"; done
+            for IMAGE in map-open map-cell-378-362-selected cell-378-362 map-zoomed map-panned map-selected teleported car boat helicopter aeroplane walk-return resumed; do IMAGE_BYTES="$(wc -c < "qa/qatar-runtime/$IMAGE.png")"; echo "${IMAGE//-/_}_screenshot_bytes=$IMAGE_BYTES"; done
             if [ -n "$MAP_OPEN_READY" ]; then echo 'national_map_opened=yes'; else echo 'national_map_opened=no'; fi
             if [ -n "$MAP_SELECT_READY" ]; then echo 'national_map_selected=yes'; else echo 'national_map_selected=no'; fi
             if [ -n "$MAP_ZOOM_READY" ]; then echo 'precision_map_zoomed=yes'; else echo 'precision_map_zoomed=no'; fi
@@ -198,12 +207,14 @@ jobs:
             if [ -n "$TELEPORT_READY" ]; then echo 'national_teleport_completed=yes'; else echo 'national_teleport_completed=no'; fi
             echo "teleport_state=$TELEPORT_READY"
             if [ -n "$OSM_READY" ]; then echo 'osm_detail_rendered=yes'; else echo 'osm_detail_rendered=no'; fi
+            if [ -n "$REGRESSION_CELL_READY" ]; then echo 'osm_cell_378_362_atomic_activation=yes'; else echo 'osm_cell_378_362_atomic_activation=no'; fi
+            if [ -z "$DETAIL_ERRORS" ]; then echo 'osm_detail_fallback_or_skip=no'; else echo 'osm_detail_fallback_or_skip=yes'; fi
             if [ -n "$VISUAL_READY" ]; then echo 'realistic_visual_pipeline_ready=yes'; else echo 'realistic_visual_pipeline_ready=no'; fi
             echo "visual_pipeline=$VISUAL_READY"
             if [ -n "$ACTIVITY_READY" ]; then echo 'bounded_world_activity_ready=yes'; else echo 'bounded_world_activity_ready=no'; fi
             if [ -n "$LANDMARK_READY" ]; then echo 'original_landmark_layer_ready=yes'; else echo 'original_landmark_layer_ready=no'; fi
             for MODE in WALK CAR BOAT HELI PLANE; do RIG_VAR="${MODE}_RIG"; RIG_VALUE="${!RIG_VAR}"; if [ -n "$RIG_VALUE" ]; then echo "${MODE,,}_articulated_rig_ready=yes"; else echo "${MODE,,}_articulated_rig_ready=no"; fi; done
-            if [ -n "$BOAT_TRANSITION" ]; then echo 'boat_transition_to_water=yes'; else echo 'boat_transition_to_water=no'; fi
+            if [ -n "$BOAT_TRANSITION" ]; then echo 'boat_transition_current_screen_no_reset=yes'; else echo 'boat_transition_current_screen_no_reset=no'; fi
             if [ -n "$PLANE_TRANSITION" ]; then echo 'plane_transition_to_runway=yes'; else echo 'plane_transition_to_runway=no'; fi
             if [ -n "$WALK_RETURN_TRANSITION" ]; then echo 'aircraft_return_to_land=yes'; else echo 'aircraft_return_to_land=no'; fi
             if [ -n "$PACK_READY" ]; then echo 'terrain_pack_loaded=yes'; else echo 'terrain_pack_loaded=no'; fi
@@ -223,7 +234,7 @@ jobs:
           test "$PID_BEFORE_LIFECYCLE" = "$PID"
           test -n "$LIFECYCLE_PAUSED"
           test -n "$LIFECYCLE_RESUMED"
-          for IMAGE in gameplay map-open map-zoomed map-panned map-selected teleported car boat helicopter aeroplane walk-return resumed; do test "$(wc -c < "qa/qatar-runtime/$IMAGE.png")" -gt 10000; done
+          for IMAGE in gameplay map-open map-cell-378-362-selected cell-378-362 map-zoomed map-panned map-selected teleported car boat helicopter aeroplane walk-return resumed; do test "$(wc -c < "qa/qatar-runtime/$IMAGE.png")" -gt 10000; done
           test "$SCENE_EXIT" -eq 0
           test "$STREET_MAP_EXIT" -eq 0
           test "$PRECISION_MAP_EXIT" -eq 0
@@ -237,6 +248,8 @@ jobs:
           test -n "$MAP_CLOSE_READY"
           test -n "$TELEPORT_READY"
           test -n "$OSM_READY"
+          test -n "$REGRESSION_CELL_READY"
+          test -z "$DETAIL_ERRORS"
           test -n "$VISUAL_READY"
           test -n "$ACTIVITY_READY"
           test -n "$LANDMARK_READY"

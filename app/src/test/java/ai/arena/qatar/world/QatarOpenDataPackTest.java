@@ -43,6 +43,26 @@ public class QatarOpenDataPackTest {
         }
     }
 
+    @Test public void reportedLongSessionCell378362DecodesExactlyAndSafely()throws Exception{
+        try(QatarDetailPack detail=new QatarDetailPack(new FileSource(locate("qatar-osm-current.qod")))){
+            QatarDetailPack.DetailEntry entry=detail.entry(378,362);assertNotNull(entry);
+            assertEquals(31,entry.roadCount());assertEquals(2,entry.buildingCount());
+            assertEquals(461,entry.packedLength());assertEquals(1162,entry.rawLength());
+            QatarDetailPack.DetailChunk chunk=detail.load(entry); // inflation, CRC and full-tail validation
+            assertEquals(31,chunk.roads().length);assertEquals(31,chunk.roadSourceIds().length);assertEquals(2,chunk.buildings().length);
+            int footprintVertices=0,maximumFootprint=0;
+            for(QatarPack.Road road:chunk.roads()){
+                assertTrue(Float.isFinite(road.x1())&&Float.isFinite(road.z1())&&Float.isFinite(road.x2())&&Float.isFinite(road.z2()));
+                assertTrue(road.width()>0);
+            }
+            for(QatarPack.Building building:chunk.buildings()){
+                assertTrue(building.hasSourceFootprint());assertTrue(building.height()>0);
+                int vertices=building.footprint().length/2;footprintVertices+=vertices;maximumFootprint=Math.max(maximumFootprint,vertices);
+            }
+            assertEquals(18,footprintVertices);assertEquals(12,maximumFootprint);
+        }
+    }
+
     @Test public void nationalAndDetailCoordinateContractsMatch()throws Exception{
         try(QatarPack national=new QatarPack(new FileSource(locate("qatar-national.qpak")));
             QatarDetailPack detail=new QatarDetailPack(new FileSource(locate("qatar-osm-current.qod")))){

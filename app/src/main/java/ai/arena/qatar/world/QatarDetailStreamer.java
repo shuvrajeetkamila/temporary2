@@ -18,6 +18,9 @@ import java.util.concurrent.Future;
 /** Streams 250 m OSM microcells independently of the 2 km safety terrain. */
 public final class QatarDetailStreamer implements Disposable {
     private static final int MAX_IN_FLIGHT_CELLS=12;
+    private static final int FAILURE_ATTEMPTS_BEFORE_WARNING=3;
+    private static final long RETRY_BASE_NANOS=750_000_000L;
+    private static final long QUARANTINE_NANOS=60_000_000_000L;
     public interface Listener {
         void activateDetail(QatarDetailPack.DetailChunk chunk);
         void deactivateDetail(QatarDetailPack.DetailChunk chunk);
@@ -31,6 +34,8 @@ public final class QatarDetailStreamer implements Disposable {
     private final ExecutorService decoder=Executors.newSingleThreadExecutor(r->{Thread t=new Thread(r,"Qatar-OSM-microcell-decoder");t.setDaemon(true);t.setPriority(Thread.NORM_PRIORITY-1);return t;});
     private final Map<Long,Resident> residents=new HashMap<>();
     private final Map<Long,Future<?>> inFlight=new HashMap<>();
+    private final Map<Long,Integer> failureAttempts=new HashMap<>();
+    private final Map<Long,Long> retryAfterNanos=new HashMap<>();
     private final ConcurrentLinkedQueue<Ready> ready=new ConcurrentLinkedQueue<>();
     private String lastError="";
     private int radiusCap=3,maxResidentCells=64,activationBudget=2;
@@ -47,8 +52,8 @@ public final class QatarDetailStreamer implements Disposable {
         float speed=(float)Math.hypot(velocityX,velocityZ);int leadX=0,leadY=0;
         if(speed>3){float lead=switch(mode){case WALK->1;case CAR,BOAT->3;case HELICOPTER->4;case AEROPLANE->6;};leadX=Math.round(velocityX/speed*lead);leadY=Math.round(velocityZ/speed*lead);}
         Set<Long> required=new HashSet<>();List<QatarDetailPack.DetailEntry> missing=new ArrayList<>();
-        addDisc(required,missing,cx,cy,radius);
-        if(leadX!=0||leadY!=0)addDisc(required,missing,cx+leadX,cy+leadY,Math.max(1,radius-1));
+        addDisc(required,missing,cx,cy,radius,now);
+        if(leadX!=0||leadY!=0)addDisc(required,missing,cx+leadX,cy+leadY,Math.max(1,radius-1),now);
         for(long key:required){Resident resident=residents.get(key);if(resident!=null)resident.lastRequired=now;}
         missing.sort(Comparator.comparingDouble(e->square(e.x()-cx,e.y()-cy)));
         for(QatarDetailPack.DetailEntry entry:missing){
@@ -74,22 +79,41 @@ public final class QatarDetailStreamer implements Disposable {
         }
     }
 
-    private void addDisc(Set<Long> required,List<QatarDetailPack.DetailEntry> missing,int cx,int cy,int radius){
+    private void addDisc(Set<Long> required,List<QatarDetailPack.DetailEntry> missing,int cx,int cy,int radius,long now){
         for(int y=cy-radius;y<=cy+radius;y++)for(int x=cx-radius;x<=cx+radius;x++){
             if(square(x-cx,y-cy)>radius*radius+.75)continue;
             QatarDetailPack.DetailEntry entry=pack.entry(x,y);if(entry==null)continue;long key=key(x,y);
-            if(required.add(key)&&!residents.containsKey(key)&&!inFlight.containsKey(key))missing.add(entry);
+            if(!required.add(key)||residents.containsKey(key)||inFlight.containsKey(key))continue;
+            if(retryAfterNanos.getOrDefault(key,0L)>now)continue;
+            missing.add(entry);
         }
     }
     private void drain(long now,int activationBudget){
         for(int i=0;i<activationBudget;i++){
             Ready item=ready.poll();if(item==null)break;if(item.generation!=generation)continue;long key=key(item.entry.x(),item.entry.y());inFlight.remove(key);
-            if(item.error!=null){lastError=item.entry.x()+","+item.entry.y()+": "+item.error.getMessage();listener.detailCellFailed(item.entry,item.error);}
+            if(item.error!=null)recordFailure(item.entry,item.error,key,now);
             else if(!residents.containsKey(key)){
-                try{listener.activateDetail(item.chunk);residents.put(key,new Resident(item.chunk,now));}
-                catch(Throwable error){lastError=item.entry.x()+","+item.entry.y()+": "+error.getMessage();listener.detailCellFailed(item.entry,error);}
+                try{
+                    listener.activateDetail(item.chunk);residents.put(key,new Resident(item.chunk,now));
+                    failureAttempts.remove(key);retryAfterNanos.remove(key);lastError="";
+                }catch(Throwable error){recordFailure(item.entry,error,key,now);}
             }
         }
+    }
+
+    private void recordFailure(QatarDetailPack.DetailEntry entry,Throwable error,long key,long now){
+        int attempts=failureAttempts.getOrDefault(key,0)+1;failureAttempts.put(key,attempts);
+        lastError=entry.x()+","+entry.y()+": "+errorSummary(error)+" (attempt "+attempts+")";
+        if(attempts>=FAILURE_ATTEMPTS_BEFORE_WARNING){
+            retryAfterNanos.put(key,now+QUARANTINE_NANOS);
+            listener.detailCellFailed(entry,error);
+        }else retryAfterNanos.put(key,now+RETRY_BASE_NANOS*attempts);
+    }
+
+    private static String errorSummary(Throwable error){
+        if(error==null)return "UnknownFailure(no throwable)";
+        String message=error.getMessage();
+        return error.getClass().getSimpleName()+((message==null||message.trim().isEmpty())?"(no message)":": "+message);
     }
     /** Drops old microcells and ignores decoder completions from before a national teleport. */
     public void resetForTeleport(){
@@ -100,7 +124,7 @@ public final class QatarDetailStreamer implements Disposable {
     public int residentCount(){return residents.size();}
     public int pendingCount(){return inFlight.size()+ready.size();}
     public String lastError(){return lastError;}
-    @Override public void dispose(){for(Future<?> f:inFlight.values())f.cancel(true);decoder.shutdownNow();for(Resident r:residents.values())listener.deactivateDetail(r.chunk);residents.clear();inFlight.clear();ready.clear();}
+    @Override public void dispose(){for(Future<?> f:inFlight.values())f.cancel(true);decoder.shutdownNow();for(Resident r:residents.values())listener.deactivateDetail(r.chunk);residents.clear();inFlight.clear();failureAttempts.clear();retryAfterNanos.clear();ready.clear();}
     private static double square(double x,double y){return x*x+y*y;}
     private static long key(int x,int y){return ((long)x<<32)^(y&0xffffffffL);}
 }

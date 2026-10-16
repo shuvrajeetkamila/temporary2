@@ -30,7 +30,9 @@ public class PhysicsFoundationTest {
                 assertTrue(Math.abs(physics.globalX()-80_000)<.01);
                 assertTrue(Math.abs(physics.globalZ()-150_000)<.01);
                 for(PhysicsWorld.Mode mode:new PhysicsWorld.Mode[]{PhysicsWorld.Mode.CAR,PhysicsWorld.Mode.BOAT,PhysicsWorld.Mode.HELICOPTER,PhysicsWorld.Mode.AEROPLANE}){
+                    double beforeX=physics.globalX(),beforeZ=physics.globalZ();
                     physics.switchMode(mode,null);assertTrue(physics.position().y>=12);assertTrue(Float.isFinite(physics.velocity().len()));
+                    assertTrue("mode body replacement must preserve visible X/Z",Math.hypot(physics.globalX()-beforeX,physics.globalZ()-beforeZ)<.01);
                 }
                 physics.placeOnSurface(81_000,151_000,12,.25f,false);
                 assertTrue("runway boarding must place an aeroplane on support",physics.position().y<14);

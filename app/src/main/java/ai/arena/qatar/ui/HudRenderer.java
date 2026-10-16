@@ -94,7 +94,8 @@ public final class HudRenderer implements Disposable {
         font.draw(sprites,"SWITCH MODE",width-228,height-46);font.draw(sprites,"RECOVER",width-445,height-46);
         font.setColor(.92f,.88f,.74f,1);font.draw(sprites,"Left control: move / steer     Right control: lift / action",24,30);
         font.draw(sprites,"Offline | OpenStreetMap contributors | terrain Mapzen/USGS/NOAA | geoBoundaries/NE",width-760,30);
-        String fatal=renderer.fatalStreamingError();if(!fatal.isEmpty()){font.setColor(Color.SCARLET);font.draw(sprites,fatal,25,height-140);}sprites.end();
+        String fatal=renderer.fatalStreamingError();if(!fatal.isEmpty()){font.setColor(Color.SCARLET);font.draw(sprites,fatal,25,height-140);}
+        String detailWarning=renderer.detailStreamingWarning();if(!detailWarning.isEmpty()){font.setColor(Color.ORANGE);font.draw(sprites,detailWarning,25,height-(fatal.isEmpty()?140:166));}sprites.end();
         if(controls.mapOpen())drawNationalMapWindow(width,height);
     }
 

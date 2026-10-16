@@ -7,6 +7,7 @@ import ai.arena.qatar.physics.PhysicsHealth;
 import ai.arena.qatar.physics.PhysicsWorld;
 import ai.arena.qatar.render.QatarWorldRenderer;
 import ai.arena.qatar.ui.HudRenderer;
+import ai.arena.qatar.world.ModeTransitionPolicy;
 import ai.arena.qatar.world.QatarDetailPack;
 import ai.arena.qatar.world.QatarDetailStreamer;
 import ai.arena.qatar.world.QatarPack;
@@ -107,16 +108,24 @@ final class WorldScreen extends ScreenAdapter {
 
     private void switchModeSafely(){
         PhysicsWorld.Mode from=physics.mode(),requested=from.next();double requestedX=physics.globalX(),requestedZ=physics.globalZ();
+        ModeTransitionPolicy.Placement placement=ModeTransitionPolicy.placementFor(requested);
         physics.switchMode(requested,pack);
-        if(requested==PhysicsWorld.Mode.HELICOPTER){
+        if(placement==ModeTransitionPolicy.Placement.CURRENT_SCREEN){
+            // Mode cycling must never force a national stream reset. The boat
+            // appears at the current screen position, whether that is land or
+            // water; map teleport remains an explicit user action.
+            double locationDelta=Math.hypot(physics.globalX()-requestedX,physics.globalZ()-requestedZ);
+            renderer.resetCamera();Gdx.app.log("QatarMode","SAFE_TRANSITION from="+from+" to="+requested+" placement=current-screen locationDelta="+locationDelta+" water="+(physics.hasWaterSupport()?"yes":"no")+" streamReset=no movementPacing=preserved");return;
+        }
+        if(placement==ModeTransitionPolicy.Placement.ROTOR_CLEARANCE){
             renderer.resetCamera();Gdx.app.log("QatarMode","SAFE_TRANSITION from="+from+" to="+requested+" placement=rotor-clearance movementPacing=preserved");return;
         }
         try{
-            QatarTeleportResolver.Destination destination=requested==PhysicsWorld.Mode.AEROPLANE
+            QatarTeleportResolver.Destination destination=placement==ModeTransitionPolicy.Placement.RUNWAY
                     ?QatarTeleportResolver.resolveRunway(pack,detailPack,requestedX,requestedZ,climate.seaLevelMetres())
                     :QatarTeleportResolver.resolve(pack,detailPack,requested,requestedX,requestedZ,climate.seaLevelMetres());
             detailStreamer.resetForTeleport();streamer.resetForTeleport();
-            if(requested==PhysicsWorld.Mode.AEROPLANE)physics.placeOnSurface(destination.x(),destination.z(),destination.surfaceHeight(),climate.seaLevelMetres(),false);
+            if(placement==ModeTransitionPolicy.Placement.RUNWAY)physics.placeOnSurface(destination.x(),destination.z(),destination.surfaceHeight(),climate.seaLevelMetres(),false);
             else physics.teleport(destination.x(),destination.z(),destination.surfaceHeight(),climate.seaLevelMetres(),destination.water());
             teleportFallbackGround=destination.surfaceHeight();teleportFallbackWater=destination.water();teleportSupportSeconds=8f;renderer.resetCamera();
             Gdx.app.log("QatarMode","SAFE_TRANSITION from="+from+" to="+requested+" placement="+destination.basis()+" adjustment="+destination.adjustmentMetres()+" water="+(destination.water()?"yes":"no")+" movementPacing=preserved");
