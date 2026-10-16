@@ -25,6 +25,10 @@
     "detailGeometryFallback": "reduced bounded cell",
     "messageLessThrowableDiagnostic": "class + no-message marker",
     "transportPalette": "grey with dull-red accents",
-    "walkClothing": "white"
+    "walkClothing": "white",
+    "precisionMapWindow": "edge-to-edge full screen",
+    "mapExitControl": "top-right cross and Android Back",
+    "teleportPreview": "resolved final safe pin before confirmation",
+    "gameplayArrivalPin": "30-second world ring plus minimap marker"
   }
 }
