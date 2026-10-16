@@ -32,6 +32,8 @@ public class PhysicsFoundationTest {
                 for(PhysicsWorld.Mode mode:new PhysicsWorld.Mode[]{PhysicsWorld.Mode.CAR,PhysicsWorld.Mode.BOAT,PhysicsWorld.Mode.HELICOPTER,PhysicsWorld.Mode.AEROPLANE}){
                     physics.switchMode(mode,null);assertTrue(physics.position().y>=12);assertTrue(Float.isFinite(physics.velocity().len()));
                 }
+                physics.placeOnSurface(81_000,151_000,12,.25f,false);
+                assertTrue("runway boarding must place an aeroplane on support",physics.position().y<14);
                 physics.switchMode(PhysicsWorld.Mode.WALK,null);
                 assertTrue("aircraft-to-walk transition must return to support surface",physics.position().y<14);
                 for(int i=0;i<30;i++)physics.step(1f/30f);

@@ -414,15 +414,18 @@ public final class PhysicsWorld implements Disposable {
     }
 
     /** Moves the current mode to an independently validated national-map destination. */
-    public void teleport(double globalX,double globalZ,float surfaceHeight,float seaLevel,boolean water){
+    public void teleport(double globalX,double globalZ,float surfaceHeight,float seaLevel,boolean water){relocate(globalX,globalZ,surfaceHeight,seaLevel,water,true);}
+    /** Boards the selected mode directly on validated ground/runway support. */
+    public void placeOnSurface(double globalX,double globalZ,float surfaceHeight,float seaLevel,boolean water){relocate(globalX,globalZ,surfaceHeight,seaLevel,water,false);}
+    private void relocate(double globalX,double globalZ,float surfaceHeight,float seaLevel,boolean water,boolean elevatedAircraft){
         setControls(0,0,0,false);originX=globalX;originZ=globalZ;groundReference=surfaceHeight;
         waterSurface=seaLevel;waterAvailable=water;headingRadians=0;relocateChunkBodies();discardTemporaryFloor();
         float y=switch(mode){
             case WALK->surfaceHeight+supportHeight(mode)+.15f;
             case CAR->surfaceHeight+supportHeight(mode)+.12f;
             case BOAT->water?seaLevel+supportHeight(mode):surfaceHeight+supportHeight(mode)+.2f;
-            case HELICOPTER->Math.max(surfaceHeight,seaLevel)+60f;
-            case AEROPLANE->Math.max(surfaceHeight,seaLevel)+120f;
+            case HELICOPTER->elevatedAircraft?Math.max(surfaceHeight,seaLevel)+60f:surfaceHeight+supportHeight(mode)+.15f;
+            case AEROPLANE->elevatedAircraft?Math.max(surfaceHeight,seaLevel)+120f:surfaceHeight+supportHeight(mode)+.15f;
         };
         Matrix4 at=new Matrix4().setToTranslation(0,y,0).rotate(Vector3.Y,0);
         focusBody.setWorldTransform(at);focusBody.setLinearVelocity(Vector3.Zero);focusBody.setAngularVelocity(Vector3.Zero);

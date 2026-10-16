@@ -21,6 +21,7 @@ import com.badlogic.gdx.graphics.g3d.Model;
 import com.badlogic.gdx.graphics.g3d.ModelBatch;
 import com.badlogic.gdx.graphics.g3d.ModelInstance;
 import com.badlogic.gdx.graphics.g3d.model.Node;
+import com.badlogic.gdx.graphics.g3d.attributes.BlendingAttribute;
 import com.badlogic.gdx.graphics.g3d.attributes.ColorAttribute;
 import com.badlogic.gdx.graphics.g3d.attributes.FloatAttribute;
 import com.badlogic.gdx.graphics.g3d.attributes.TextureAttribute;
@@ -113,6 +114,7 @@ public final class QatarWorldRenderer implements WorldStreamer.Listener, QatarDe
     private boolean loggedCoastalSupport;
     private long detailMapRevision;
     private ThermalGovernor.Profile performanceProfile=ThermalGovernor.Profile.NORMAL;
+    private ThermalGovernor.Profile focusLodProfile;
 
     public QatarWorldRenderer(QatarPack pack,QatarDetailPack detailPack,PhysicsWorld physics,QatarEnvironment climate) {
         this.pack=pack;this.detailCellMetres=detailPack.cellMetres;this.physics=physics;this.climate=climate;
@@ -179,11 +181,11 @@ public final class QatarWorldRenderer implements WorldStreamer.Listener, QatarDe
         float heading=physics.renderHeadingRadians();
         float distance,height,cameraResponse,targetResponse;
         switch(physics.mode()) {
-            case WALK -> {distance=8;height=3.7f;cameraResponse=7.2f;targetResponse=10f;camera.far=6500*performanceProfile.viewDistanceScale;}
-            case CAR -> {distance=12;height=5.1f;cameraResponse=6.5f;targetResponse=9f;camera.far=9000*performanceProfile.viewDistanceScale;}
-            case BOAT -> {boolean afloat=physics.hasWaterSupport();distance=afloat?18:12;height=afloat?7:6;cameraResponse=5.8f;targetResponse=8f;camera.far=11000*performanceProfile.viewDistanceScale;}
-            case HELICOPTER -> {boolean airborne=physics.heightAboveGround()>6;distance=airborne?27:12;height=airborne?11:7;cameraResponse=5.2f;targetResponse=7f;camera.far=14000*performanceProfile.viewDistanceScale;}
-            case AEROPLANE -> {boolean airborne=physics.heightAboveGround()>6;distance=airborne?38:12;height=airborne?13:7;cameraResponse=4.8f;targetResponse=6.5f;camera.far=16000*performanceProfile.viewDistanceScale;}
+            case WALK -> {distance=7;height=3.4f;cameraResponse=7.2f;targetResponse=10f;camera.far=6500*performanceProfile.viewDistanceScale;}
+            case CAR -> {distance=10;height=4.5f;cameraResponse=6.5f;targetResponse=9f;camera.far=9000*performanceProfile.viewDistanceScale;}
+            case BOAT -> {boolean afloat=physics.hasWaterSupport();distance=afloat?15:10;height=afloat?6:5;cameraResponse=5.8f;targetResponse=8f;camera.far=11000*performanceProfile.viewDistanceScale;}
+            case HELICOPTER -> {boolean airborne=physics.heightAboveGround()>6;distance=airborne?22:11;height=airborne?9:6;cameraResponse=5.2f;targetResponse=7f;camera.far=14000*performanceProfile.viewDistanceScale;}
+            case AEROPLANE -> {boolean airborne=physics.heightAboveGround()>6;distance=airborne?30:11;height=airborne?11:6;cameraResponse=4.8f;targetResponse=6.5f;camera.far=16000*performanceProfile.viewDistanceScale;}
             default -> throw new IllegalStateException();
         }
         desiredCamera.set(focus.x-(float)Math.sin(heading)*distance,focus.y+height,focus.z-(float)Math.cos(heading)*distance);
@@ -797,105 +799,134 @@ public final class QatarWorldRenderer implements WorldStreamer.Listener, QatarDe
 
     private void rebuildFocusModel(){
         if(focusModel!=null)focusModel.dispose();focusNodes.clear();
-        renderedMode=physics.mode();focusTransition=0;
+        renderedMode=physics.mode();focusTransition=0;focusLodProfile=null;
         Material maroon=new Material(ColorAttribute.createDiffuse(new Color(.48f,.035f,.12f,1)),ColorAttribute.createSpecular(new Color(.45f,.18f,.20f,1)),FloatAttribute.createShininess(32));
         Material pearl=new Material(ColorAttribute.createDiffuse(new Color(.88f,.86f,.78f,1)),ColorAttribute.createSpecular(new Color(.55f,.56f,.53f,1)),FloatAttribute.createShininess(26));
         Material dark=diffuse(.075f,.085f,.09f,1),rubber=diffuse(.035f,.04f,.042f,1),skin=diffuse(.62f,.42f,.29f,1),cloth=diffuse(.16f,.19f,.21f,1);
-        Material glass=new Material(ColorAttribute.createDiffuse(new Color(.07f,.18f,.22f,1)),ColorAttribute.createSpecular(new Color(.76f,.86f,.89f,1)),ColorAttribute.createEmissive(new Color(.012f,.025f,.03f,1)),FloatAttribute.createShininess(92));
+        Material glass=new Material(ColorAttribute.createDiffuse(new Color(.07f,.18f,.22f,.76f)),ColorAttribute.createSpecular(new Color(.76f,.86f,.89f,1)),ColorAttribute.createEmissive(new Color(.012f,.025f,.03f,1)),FloatAttribute.createShininess(92),new BlendingAttribute(GL20.GL_SRC_ALPHA,GL20.GL_ONE_MINUS_SRC_ALPHA,.76f));
         Material lights=new Material(ColorAttribute.createDiffuse(new Color(.98f,.88f,.60f,1)),ColorAttribute.createEmissive(new Color(.38f,.27f,.08f,1)));
         Material redLights=new Material(ColorAttribute.createDiffuse(new Color(.85f,.035f,.025f,1)),ColorAttribute.createEmissive(new Color(.35f,.01f,.005f,1)));
-        Material wake=diffuse(.66f,.84f,.88f,1);
+        Material greenLights=new Material(ColorAttribute.createDiffuse(new Color(.025f,.72f,.32f,1)),ColorAttribute.createEmissive(new Color(.01f,.24f,.07f,1)));
+        Material wake=new Material(ColorAttribute.createDiffuse(new Color(.68f,.88f,.92f,.72f)),new BlendingAttribute(GL20.GL_SRC_ALPHA,GL20.GL_ONE_MINUS_SRC_ALPHA,.72f));
+        Material shadow=new Material(ColorAttribute.createDiffuse(new Color(.025f,.025f,.022f,.34f)),new BlendingAttribute(GL20.GL_SRC_ALPHA,GL20.GL_ONE_MINUS_SRC_ALPHA,.34f));
+        Material metal=new Material(ColorAttribute.createDiffuse(new Color(.30f,.32f,.33f,1)),ColorAttribute.createSpecular(new Color(.76f,.78f,.77f,1)),FloatAttribute.createShininess(72));
         builder.begin();
+        float shadowY=switch(renderedMode){case WALK->-.97f;case CAR->-.77f;case BOAT->-.70f;case HELICOPTER->-.80f;case AEROPLANE->-.70f;};
+        float shadowWidth=switch(renderedMode){case WALK->.72f;case CAR->2.35f;case BOAT->3.2f;case HELICOPTER->2.8f;case AEROPLANE->9.0f;};
+        float shadowDepth=switch(renderedMode){case WALK->.85f;case CAR->4.55f;case BOAT->7.1f;case HELICOPTER->4.7f;case AEROPLANE->4.8f;};
+        MeshPartBuilder contactShadow=rigPart("contact-shadow",shadow,0,shadowY,0);contactShadow.sphere(shadowWidth,.025f,shadowDepth,22,4);
         switch(renderedMode){
             case WALK->{
-                MeshPartBuilder pelvis=rigPart("pelvis",cloth,0,-.16f,0);pelvis.box(0,0,0,.48f,.34f,.30f);
-                MeshPartBuilder torso=rigPart("torso",maroon,0,.16f,0);torso.setVertexTransform(new Matrix4().setToTranslation(0,.28f,0));torso.capsule(.31f,.82f,14);torso.setVertexTransform(null);
-                MeshPartBuilder neck=rigPart("neck",skin,0,.72f,0);neck.cylinder(.20f,.22f,.20f,10);
-                MeshPartBuilder head=rigPart("head",skin,0,.98f,0);head.sphere(.39f,.48f,.37f,16,12);
-                MeshPartBuilder hair=rigPart("hair",dark,0,1.17f,-.015f);hair.sphere(.40f,.20f,.38f,14,7);
+                MeshPartBuilder pelvis=rigPart("pelvis",cloth,0,-.16f,0);pelvis.sphere(.50f,.36f,.34f,16,9);
+                MeshPartBuilder torso=rigPart("torso",maroon,0,.16f,0);torso.setVertexTransform(new Matrix4().setToTranslation(0,.28f,0));torso.capsule(.31f,.82f,18);torso.setVertexTransform(null);
+                MeshPartBuilder shoulders=rigPart("shoulders",maroon,0,.54f,0);shoulders.setVertexTransform(new Matrix4().rotate(Vector3.Z,90));shoulders.capsule(.13f,.88f,14);shoulders.setVertexTransform(null);
+                MeshPartBuilder neck=rigPart("neck",skin,0,.72f,0);neck.cylinder(.20f,.22f,.20f,12);
+                MeshPartBuilder head=rigPart("head",skin,0,.98f,0);head.sphere(.39f,.48f,.37f,20,14);
+                MeshPartBuilder hair=rigPart("hair",dark,0,1.17f,-.015f);hair.sphere(.40f,.20f,.38f,18,8);
+                MeshPartBuilder face=rigPart("face-details",dark,0,1.02f,.19f);for(float x:new float[]{-.10f,.10f}){face.setVertexTransform(new Matrix4().setToTranslation(x,.04f,0));face.sphere(.045f,.055f,.035f,8,5);}face.setVertexTransform(new Matrix4().setToTranslation(0,-.09f,0));face.sphere(.16f,.025f,.035f,10,4);face.setVertexTransform(null);
                 for(float side:new float[]{-1f,1f}){
                     String prefix=side<0?"left":"right";
-                    MeshPartBuilder arm=rigPart(prefix+"-arm",maroon,side*.40f,.50f,0);arm.setVertexTransform(new Matrix4().setToTranslation(0,-.32f,0));arm.capsule(.105f,.72f,10);arm.setVertexTransform(null);
-                    MeshPartBuilder hand=rigPart(prefix+"-hand",skin,side*.40f,-.18f,0);hand.sphere(.19f,.24f,.17f,10,7);
-                    MeshPartBuilder leg=rigPart(prefix+"-leg",cloth,side*.17f,-.30f,0);leg.setVertexTransform(new Matrix4().setToTranslation(0,-.32f,0));leg.capsule(.14f,.78f,11);leg.setVertexTransform(null);
-                    MeshPartBuilder shoe=rigPart(prefix+"-shoe",dark,side*.17f,-.91f,.08f);shoe.box(0,0,0,.27f,.18f,.45f);
+                    MeshPartBuilder arm=rigPart(prefix+"-arm",maroon,side*.40f,.50f,0);arm.setVertexTransform(new Matrix4().setToTranslation(0,-.32f,0));arm.capsule(.105f,.72f,14);arm.setVertexTransform(null);
+                    MeshPartBuilder hand=rigPart(prefix+"-hand",skin,side*.40f,-.18f,0);hand.sphere(.19f,.24f,.17f,12,8);
+                    MeshPartBuilder leg=rigPart(prefix+"-leg",cloth,side*.17f,-.30f,0);leg.setVertexTransform(new Matrix4().setToTranslation(0,-.32f,0));leg.capsule(.14f,.78f,15);leg.setVertexTransform(null);
+                    MeshPartBuilder shoe=rigPart(prefix+"-shoe",dark,side*.17f,-.91f,.08f);shoe.sphere(.28f,.18f,.48f,12,7);
                 }
             }
             case CAR->{
-                MeshPartBuilder chassis=rigPart("car-chassis",maroon,0,0,0);chassis.box(0,-.02f,0,2.08f,.62f,4.38f);chassis.box(0,.33f,1.18f,1.95f,.35f,1.55f);
-                MeshPartBuilder cabin=rigPart("car-cabin",glass,0,.58f,-.35f);cabin.box(0,0,0,1.78f,.78f,2.03f);
-                MeshPartBuilder roof=rigPart("car-roof",maroon,0,1.02f,-.38f);roof.box(0,0,0,1.88f,.13f,2.15f);
-                MeshPartBuilder bumpers=rigPart("car-bumpers",dark,0,-.18f,0);bumpers.box(0,0,2.22f,2.12f,.25f,.18f);bumpers.box(0,0,-2.22f,2.12f,.25f,.18f);
+                MeshPartBuilder chassis=rigPart("car-chassis",maroon,0,0,0);chassis.sphere(2.12f,.78f,4.36f,26,13);chassis.box(0,-.22f,0,1.98f,.36f,4.30f);chassis.setVertexTransform(new Matrix4().setToTranslation(0,.28f,1.12f));chassis.sphere(1.98f,.58f,1.78f,22,10);chassis.setVertexTransform(null);
+                MeshPartBuilder cabin=rigPart("car-cabin",glass,0,.62f,-.38f);cabin.sphere(1.76f,.96f,2.15f,24,13);
+                MeshPartBuilder roof=rigPart("car-roof",maroon,0,1.08f,-.42f);roof.sphere(1.88f,.18f,2.12f,22,7);
+                MeshPartBuilder rails=rigPart("car-roof-rails",metal,0,1.20f,-.42f);rails.box(-.69f,0,0,.08f,.10f,2.12f);rails.box(.69f,0,0,.08f,.10f,2.12f);
+                MeshPartBuilder mirrors=rigPart("car-mirrors",maroon,0,.63f,.28f);for(float x:new float[]{-1.08f,1.08f}){mirrors.setVertexTransform(new Matrix4().setToTranslation(x,0,0));mirrors.sphere(.28f,.18f,.36f,12,7);}mirrors.setVertexTransform(null);
+                MeshPartBuilder bumpers=rigPart("car-bumpers",metal,0,-.18f,0);bumpers.box(0,0,2.22f,2.12f,.25f,.18f);bumpers.box(0,0,-2.22f,2.12f,.25f,.18f);
                 for(float x:new float[]{-1.08f,1.08f})for(float z:new float[]{-1.42f,1.42f}){
                     String id="wheel-"+(x<0?"l":"r")+(z>0?"f":"r");MeshPartBuilder wheel=rigPart(id,rubber,x,-.43f,z);
                     wheel.setVertexTransform(new Matrix4().rotate(Vector3.Z,90));wheel.cylinder(.82f,.32f,.82f,18);wheel.setVertexTransform(null);
                     MeshPartBuilder hub=rigPart(id+"-hub",pearl,x,-.43f,z);hub.setVertexTransform(new Matrix4().rotate(Vector3.Z,90));hub.cylinder(.36f,.34f,.36f,14);hub.setVertexTransform(null);
                 }
-                MeshPartBuilder frontLights=rigPart("car-headlights",lights,0,.10f,2.23f);frontLights.box(-.65f,0,0,.46f,.24f,.10f);frontLights.box(.65f,0,0,.46f,.24f,.10f);
+                MeshPartBuilder suspension=rigPart("car-suspension",metal,0,-.20f,0);for(float x:new float[]{-.91f,.91f})for(float z:new float[]{-1.42f,1.42f})suspension.box(x,0,z,.10f,.56f,.10f);
+                MeshPartBuilder spare=rigPart("car-spare-wheel",rubber,0,.14f,-2.30f);spare.setVertexTransform(new Matrix4().rotate(Vector3.X,90));spare.cylinder(.78f,.28f,.78f,20);spare.setVertexTransform(null);
+                MeshPartBuilder spareHub=rigPart("car-spare-hub",metal,0,.14f,-2.46f);spareHub.setVertexTransform(new Matrix4().rotate(Vector3.X,90));spareHub.cylinder(.34f,.05f,.34f,14);spareHub.setVertexTransform(null);
+                MeshPartBuilder interior=rigPart("car-interior",dark,0,.52f,-.42f);interior.box(-.46f,0,-.18f,.42f,.65f,.58f);interior.box(.46f,0,-.18f,.42f,.65f,.58f);
+                MeshPartBuilder frontLights=rigPart("car-headlights",lights,0,.10f,2.23f);frontLights.setVertexTransform(new Matrix4().setToTranslation(-.65f,0,0));frontLights.sphere(.46f,.24f,.10f,10,6);frontLights.setVertexTransform(new Matrix4().setToTranslation(.65f,0,0));frontLights.sphere(.46f,.24f,.10f,10,6);frontLights.setVertexTransform(null);
                 MeshPartBuilder rearLights=rigPart("car-tail-lights",redLights,0,.08f,-2.23f);rearLights.box(-.67f,0,0,.40f,.22f,.10f);rearLights.box(.67f,0,0,.40f,.22f,.10f);
+                MeshPartBuilder plate=rigPart("car-rear-plate",pearl,0,-.13f,-2.34f);plate.box(0,0,0,.70f,.24f,.05f);
                 addPilot(skin,cloth,0,.63f,-.25f);
             }
             case BOAT->{
                 MeshPartBuilder hull=rigPart("boat-hull",pearl,0,-.20f,0);hull.setVertexTransform(new Matrix4().setToScaling(1f,.43f,1f));hull.sphere(3.05f,1.45f,7.75f,22,11);hull.setVertexTransform(null);
-                MeshPartBuilder stripe=rigPart("boat-stripe",maroon,0,.02f,0);stripe.box(0,0,0,2.86f,.20f,5.9f);
-                MeshPartBuilder deck=rigPart("boat-deck",pearl,0,.32f,-.18f);deck.box(0,0,0,2.72f,.16f,5.55f);
-                MeshPartBuilder cabin=rigPart("boat-cabin",glass,0,.88f,-.75f);cabin.box(0,0,0,2.02f,1.02f,2.35f);
-                MeshPartBuilder roof=rigPart("boat-roof",maroon,0,1.44f,-.78f);roof.box(0,0,0,2.22f,.13f,2.55f);
-                MeshPartBuilder prop=rigPart("boat-propeller",dark,0,-.42f,-3.72f);prop.box(0,0,0,1.12f,.11f,.15f);prop.box(0,0,0,.11f,1.12f,.15f);
-                MeshPartBuilder rudder=rigPart("boat-rudder",maroon,0,-.30f,-3.48f);rudder.box(0,0,0,.10f,.72f,.62f);
-                MeshPartBuilder wakePart=rigPart("boat-wake",wake,0,-.48f,-4.4f);wakePart.box(0,0,0,2.6f,.025f,4.8f);
+                MeshPartBuilder stripe=rigPart("boat-stripe",maroon,0,.02f,0);stripe.sphere(2.88f,.22f,6.0f,22,7);
+                MeshPartBuilder deck=rigPart("boat-deck",pearl,0,.32f,-.18f);deck.sphere(2.72f,.18f,5.62f,22,7);
+                MeshPartBuilder cabin=rigPart("boat-cabin",glass,0,.88f,-.75f);cabin.sphere(2.04f,1.06f,2.42f,22,12);
+                MeshPartBuilder roof=rigPart("boat-roof",maroon,0,1.44f,-.78f);roof.sphere(2.24f,.16f,2.58f,20,6);
+                MeshPartBuilder rails=rigPart("boat-rails",metal,0,.78f,.85f);rails.box(-1.18f,0,0,.055f,.74f,2.45f);rails.box(1.18f,0,0,.055f,.74f,2.45f);rails.box(0,.35f,2.18f,2.42f,.055f,.055f);
+                MeshPartBuilder motor=rigPart("boat-outboard",dark,0,-.02f,-3.56f);motor.sphere(.70f,1.10f,.64f,14,9);motor.box(0,-.58f,0,.18f,.70f,.35f);
+                MeshPartBuilder prop=rigPart("boat-propeller",metal,0,-.65f,-3.78f);prop.box(0,0,0,1.12f,.11f,.15f);prop.box(0,0,0,.11f,1.12f,.15f);
+                MeshPartBuilder rudder=rigPart("boat-rudder",maroon,0,-.43f,-3.55f);rudder.box(0,0,0,.10f,.72f,.62f);
+                MeshPartBuilder navPort=rigPart("boat-port-light",redLights,-1.18f,1.34f,.08f);navPort.sphere(.16f,.14f,.16f,8,5);
+                MeshPartBuilder navStarboard=rigPart("boat-starboard-light",greenLights,1.18f,1.34f,.08f);navStarboard.sphere(.16f,.14f,.16f,8,5);
+                MeshPartBuilder wakePart=rigPart("boat-wake",wake,0,-.68f,-4.4f);wakePart.sphere(2.8f,.035f,5.3f,18,4);
                 addPilot(skin,cloth,0,.98f,-.35f);
             }
             case HELICOPTER->{
                 MeshPartBuilder fuselage=rigPart("heli-fuselage",maroon,0,.05f,-.55f);fuselage.sphere(2.45f,1.48f,3.65f,22,13);
                 MeshPartBuilder cockpit=rigPart("heli-cockpit",glass,0,.18f,1.08f);cockpit.sphere(2.08f,1.20f,1.72f,20,11);
-                MeshPartBuilder tail=rigPart("heli-tail",maroon,0,.10f,-2.75f);tail.box(0,0,-.55f,.36f,.34f,3.60f);
+                MeshPartBuilder doors=rigPart("heli-doors",metal,0,.05f,-.42f);doors.box(-1.23f,0,0,.06f,.95f,1.42f);doors.box(1.23f,0,0,.06f,.95f,1.42f);
+                MeshPartBuilder tail=rigPart("heli-tail",maroon,0,.10f,-2.70f);tail.setVertexTransform(new Matrix4().rotate(Vector3.X,90));tail.cone(.48f,3.75f,.48f,16);tail.setVertexTransform(null);
                 MeshPartBuilder fin=rigPart("heli-fin",maroon,0,.60f,-4.35f);fin.box(0,0,0,.16f,1.60f,.72f);
-                MeshPartBuilder skids=rigPart("heli-skids",dark,0,-.68f,-.25f);skids.box(-.88f,0,0,.12f,.12f,3.18f);skids.box(.88f,0,0,.12f,.12f,3.18f);skids.box(0,0,1.05f,2.0f,.10f,.10f);skids.box(0,0,-1.05f,2.0f,.10f,.10f);
-                MeshPartBuilder rotor=rigPart("main-rotor",dark,0,1.12f,-.25f);rotor.box(0,0,0,9.8f,.045f,.16f);rotor.box(0,0,0,.16f,.045f,9.8f);
+                MeshPartBuilder skids=rigPart("heli-skids",metal,0,-.68f,-.25f);skids.box(-.88f,0,0,.12f,.12f,3.18f);skids.box(.88f,0,0,.12f,.12f,3.18f);skids.box(0,0,1.05f,2.0f,.10f,.10f);skids.box(0,0,-1.05f,2.0f,.10f,.10f);
+                MeshPartBuilder mast=rigPart("heli-rotor-mast",metal,0,1.10f,-.25f);mast.cylinder(.18f,.72f,.18f,12);
+                MeshPartBuilder rotor=rigPart("main-rotor",dark,0,1.46f,-.25f);rotor.box(0,0,0,9.8f,.045f,.16f);rotor.box(0,0,0,.16f,.045f,9.8f);
                 MeshPartBuilder tailRotor=rigPart("tail-rotor",dark,.25f,.55f,-4.42f);tailRotor.box(0,0,0,.06f,1.75f,.13f);tailRotor.box(0,0,0,.06f,.13f,1.75f);
                 MeshPartBuilder beacon=rigPart("heli-beacon",redLights,0,1.02f,-1.0f);beacon.sphere(.20f,.18f,.20f,8,5);
-                addPilot(skin,cloth,0,.36f,.72f);
+                MeshPartBuilder heliPort=rigPart("heli-port-light",redLights,-1.23f,.20f,-.10f);heliPort.sphere(.14f,.12f,.14f,8,5);MeshPartBuilder heliStarboard=rigPart("heli-starboard-light",greenLights,1.23f,.20f,-.10f);heliStarboard.sphere(.14f,.12f,.14f,8,5);
+                MeshPartBuilder landing=rigPart("heli-landing-light",lights,0,-.38f,1.72f);landing.sphere(.30f,.22f,.16f,10,6);
+                addPilot(skin,cloth,-.36f,.36f,.72f);addPilot(skin,cloth,.36f,.36f,.72f);
             }
             case AEROPLANE->{
                 MeshPartBuilder fuselage=rigPart("plane-fuselage",pearl,0,0,0);fuselage.setVertexTransform(new Matrix4().rotate(Vector3.X,90));fuselage.capsule(.66f,7.85f,20);fuselage.setVertexTransform(null);
-                MeshPartBuilder leftWing=rigPart("plane-left-wing",maroon,-2.36f,.02f,.10f);leftWing.box(0,0,0,4.72f,.14f,1.25f);
-                MeshPartBuilder rightWing=rigPart("plane-right-wing",maroon,2.36f,.02f,.10f);rightWing.box(0,0,0,4.72f,.14f,1.25f);
-                MeshPartBuilder leftElevator=rigPart("plane-left-elevator",maroon,-.91f,.25f,-3.15f);leftElevator.box(0,0,0,1.82f,.11f,.68f);
-                MeshPartBuilder rightElevator=rigPart("plane-right-elevator",maroon,.91f,.25f,-3.15f);rightElevator.box(0,0,0,1.82f,.11f,.68f);
+                MeshPartBuilder leftWing=rigPart("plane-left-wing",maroon,-2.36f,.02f,.10f);leftWing.sphere(4.72f,.16f,1.30f,22,5);
+                MeshPartBuilder rightWing=rigPart("plane-right-wing",maroon,2.36f,.02f,.10f);rightWing.sphere(4.72f,.16f,1.30f,22,5);
+                MeshPartBuilder leftElevator=rigPart("plane-left-elevator",maroon,-.91f,.25f,-3.15f);leftElevator.sphere(1.82f,.13f,.72f,16,5);
+                MeshPartBuilder rightElevator=rigPart("plane-right-elevator",maroon,.91f,.25f,-3.15f);rightElevator.sphere(1.82f,.13f,.72f,16,5);
                 MeshPartBuilder fin=rigPart("plane-fin",maroon,0,.82f,-3.20f);fin.box(0,0,0,.15f,1.75f,.82f);
-                MeshPartBuilder cockpit=rigPart("plane-cockpit",glass,0,.50f,2.42f);cockpit.sphere(.90f,.52f,1.30f,15,8);
+                MeshPartBuilder cockpit=rigPart("plane-cockpit",glass,0,.50f,2.42f);cockpit.sphere(.90f,.52f,1.30f,18,10);
+                MeshPartBuilder cowl=rigPart("plane-engine-cowl",maroon,0,0,3.68f);cowl.sphere(1.12f,.92f,1.10f,18,10);MeshPartBuilder spinner=rigPart("plane-spinner",metal,0,0,4.28f);spinner.setVertexTransform(new Matrix4().rotate(Vector3.X,90));spinner.cone(.42f,.62f,.42f,14);spinner.setVertexTransform(null);
                 MeshPartBuilder prop=rigPart("plane-propeller",dark,0,0,4.12f);prop.box(0,0,0,2.75f,.13f,.10f);prop.box(0,0,0,.13f,2.75f,.10f);
-                MeshPartBuilder gear=rigPart("plane-gear",dark,0,-.57f,-.25f);gear.box(-1.25f,0,0,.11f,.75f,.11f);gear.box(1.25f,0,0,.11f,.75f,.11f);gear.box(0,0,2.55f,.10f,.62f,.10f);
-                for(float x:new float[]{-1.25f,1.25f}){MeshPartBuilder wheel=rigPart("plane-wheel-"+(x<0?"l":"r"),rubber,x,-.88f,-.25f);wheel.setVertexTransform(new Matrix4().rotate(Vector3.Z,90));wheel.cylinder(.48f,.20f,.48f,14);wheel.setVertexTransform(null);}
+                MeshPartBuilder gear=rigPart("plane-gear",metal,0,-.57f,-.25f);gear.box(-1.25f,0,0,.11f,.75f,.11f);gear.box(1.25f,0,0,.11f,.75f,.11f);gear.box(0,0,2.55f,.10f,.62f,.10f);
+                for(float x:new float[]{-1.25f,1.25f}){MeshPartBuilder wheel=rigPart("plane-wheel-"+(x<0?"l":"r"),rubber,x,-.88f,-.25f);wheel.setVertexTransform(new Matrix4().rotate(Vector3.Z,90));wheel.cylinder(.48f,.20f,.48f,16);wheel.setVertexTransform(null);}
+                MeshPartBuilder noseWheel=rigPart("plane-wheel-nose",rubber,0,-.78f,2.55f);noseWheel.setVertexTransform(new Matrix4().rotate(Vector3.Z,90));noseWheel.cylinder(.34f,.16f,.34f,14);noseWheel.setVertexTransform(null);
+                MeshPartBuilder planePort=rigPart("plane-port-light",redLights,-4.70f,.03f,.10f);planePort.sphere(.18f,.14f,.18f,8,5);MeshPartBuilder planeStarboard=rigPart("plane-starboard-light",greenLights,4.70f,.03f,.10f);planeStarboard.sphere(.18f,.14f,.18f,8,5);
                 addPilot(skin,cloth,0,.50f,2.15f);
             }
         }
         focusModel=builder.end();focusInstance=new ModelInstance(focusModel);
         collectFocusNodes(focusInstance.nodes);cameraFilter.reset();
-        Gdx.app.log("QatarVisual","V09_FOCUS_RIG mode="+renderedMode+" articulated=yes originalProcedural=yes transition=yes speedPreserved=yes");
+        Gdx.app.log("QatarVisual","V09_FOCUS_RIG mode="+renderedMode+" articulated=yes smoothSurfaces=yes contactShadow=yes scalableLOD=yes originalProcedural=yes transition=yes speedPreserved=yes");
     }
 
     private MeshPartBuilder rigPart(String id,Material material,float x,float y,float z){Node node=builder.node();node.id=id;node.translation.set(x,y,z);return builder.part(id,GL20.GL_TRIANGLES,ATTRS,material);}
-    private void addPilot(Material skin,Material uniform,float x,float y,float z){MeshPartBuilder body=rigPart("pilot-body",uniform,x,y,z);body.capsule(.20f,.62f,10);MeshPartBuilder head=rigPart("pilot-head",skin,x,y+.48f,z+.04f);head.sphere(.30f,.34f,.30f,11,8);}
+    private void addPilot(Material skin,Material uniform,float x,float y,float z){String suffix=x<-.1f?"-left":x>.1f?"-right":"";MeshPartBuilder body=rigPart("pilot-body"+suffix,uniform,x,y,z);body.capsule(.20f,.62f,12);MeshPartBuilder head=rigPart("pilot-head"+suffix,skin,x,y+.48f,z+.04f);head.sphere(.30f,.34f,.30f,13,9);}
     private void collectFocusNodes(Iterable<Node> nodes){for(Node node:nodes){if(node.id!=null)focusNodes.put(node.id,node);for(int i=0;i<node.getChildCount();i++)collectFocusNode(node.getChild(i));}}
     private void collectFocusNode(Node node){if(node.id!=null)focusNodes.put(node.id,node);for(int i=0;i<node.getChildCount();i++)collectFocusNode(node.getChild(i));}
     private Node focusNode(String id){return focusNodes.get(id);}
 
     private void updateFocusAnimation(float delta){
-        focusAnimationTime+=Math.min(.1f,Math.max(0,delta));focusTransition=Math.min(1f,focusTransition+delta*2.7f);
+        applyFocusLod();focusAnimationTime+=Math.min(.1f,Math.max(0,delta));focusTransition=Math.min(1f,focusTransition+delta*2.7f);
         Vector3 velocity=physics.velocity();float speed=(float)Math.hypot(velocity.x,velocity.z),phase=focusAnimationTime*(2.4f+speed*1.5f);
+        Node shadow=focusNode("contact-shadow");if(shadow!=null){boolean visible=performanceProfile!=ThermalGovernor.Profile.HOT&&physics.heightAboveGround()<2.4f&&!(renderedMode==PhysicsWorld.Mode.BOAT&&physics.hasWaterSupport());shadow.scale.set(visible?1f:0f);}
         switch(renderedMode){
             case WALK->{
                 float stride=Math.min(42f,speed*9f)*(float)Math.sin(phase),counter=-stride;
                 rotateNode("left-leg",Vector3.X,stride);rotateNode("right-leg",Vector3.X,counter);rotateNode("left-arm",Vector3.X,counter*.75f);rotateNode("right-arm",Vector3.X,stride*.75f);
+                swingEndpoint("left-hand",-.40f,.50f,.68f,counter*.75f);swingEndpoint("right-hand",.40f,.50f,.68f,stride*.75f);swingEndpoint("left-shoe",-.17f,-.30f,.61f,stride);swingEndpoint("right-shoe",.17f,-.30f,.61f,counter);
                 Node torso=focusNode("torso");if(torso!=null)torso.translation.y=.16f+Math.min(.045f,speed*.008f)*Math.abs((float)Math.sin(phase*2));
             }
             case CAR->{
                 float spin=-focusAnimationTime*speed*75f,steer=physics.visualSteering()*24f;
-                for(String id:new String[]{"wheel-lf","wheel-rf","wheel-lr","wheel-rr"}){Node node=focusNode(id);if(node!=null){node.rotation.idt();if(id.endsWith("f"))node.rotation.mul(new com.badlogic.gdx.math.Quaternion(Vector3.Y,steer));node.rotation.mul(new com.badlogic.gdx.math.Quaternion(Vector3.X,spin));}}
+                for(String id:new String[]{"wheel-lf","wheel-rf","wheel-lr","wheel-rr","wheel-lf-hub","wheel-rf-hub","wheel-lr-hub","wheel-rr-hub"}){Node node=focusNode(id);if(node!=null){node.rotation.idt();if(id.contains("f"))node.rotation.mul(new com.badlogic.gdx.math.Quaternion(Vector3.Y,steer));node.rotation.mul(new com.badlogic.gdx.math.Quaternion(Vector3.X,spin));}}
             }
-            case BOAT->{rotateNode("boat-propeller",Vector3.Z,focusAnimationTime*(220+speed*24));rotateNode("boat-rudder",Vector3.Y,-physics.visualSteering()*28f);Node wake=focusNode("boat-wake");if(wake!=null)wake.scale.set(.5f+Math.min(1f,speed*.08f),1,.25f+Math.min(1.8f,speed*.12f));}
+            case BOAT->{rotateNode("boat-propeller",Vector3.Z,focusAnimationTime*(220+speed*24));rotateNode("boat-rudder",Vector3.Y,-physics.visualSteering()*28f);Node wake=focusNode("boat-wake");if(wake!=null){if(!physics.hasWaterSupport())wake.scale.set(0,0,0);else wake.scale.set(.5f+Math.min(1f,speed*.08f),1,.25f+Math.min(1.8f,speed*.12f));}}
             case HELICOPTER->{rotateNode("main-rotor",Vector3.Y,focusAnimationTime*760f);rotateNode("tail-rotor",Vector3.X,focusAnimationTime*980f);}
             case AEROPLANE->{
                 rotateNode("plane-propeller",Vector3.Z,focusAnimationTime*(650+speed*8));float control=physics.visualLiftControl()*13f,roll=physics.visualSteering()*8f;
@@ -904,6 +935,11 @@ public final class QatarWorldRenderer implements WorldStreamer.Listener, QatarDe
         }
     }
 
+    private void applyFocusLod(){
+        if(focusLodProfile==performanceProfile)return;focusLodProfile=performanceProfile;boolean detailed=performanceProfile!=ThermalGovernor.Profile.HOT;
+        for(String id:new String[]{"face-details","car-roof-rails","car-mirrors","car-suspension","car-spare-hub","boat-rails","boat-port-light","boat-starboard-light","heli-doors","heli-port-light","heli-starboard-light","plane-port-light","plane-starboard-light"}){Node node=focusNode(id);if(node!=null)for(int i=0;i<node.parts.size;i++)node.parts.get(i).enabled=detailed;}
+    }
+    private void swingEndpoint(String id,float x,float pivotY,float length,float degrees){Node node=focusNode(id);if(node==null)return;float radians=(float)Math.toRadians(degrees);node.translation.set(x,pivotY-(float)Math.cos(radians)*length,-(float)Math.sin(radians)*length);node.rotation.setFromAxis(Vector3.X,degrees);}
     private void rotateNode(String id,Vector3 axis,float degrees){Node node=focusNode(id);if(node!=null)node.rotation.setFromAxis(axis,degrees);}
     private static float smoothStep(float value){float t=Math.max(0,Math.min(1,value));return t*t*(3-2*t);}
 

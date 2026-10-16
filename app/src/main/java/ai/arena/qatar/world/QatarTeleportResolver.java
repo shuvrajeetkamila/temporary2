@@ -42,6 +42,24 @@ public final class QatarTeleportResolver {
         return new Destination(x,z,destination.x,destination.z,destination.surface,!destination.land,adjustment,basis);
     }
 
+    /** Selects a packaged OSM runway near the public Hamad International Airport anchor. */
+    public static Destination resolveRunway(QatarPack pack,QatarDetailPack detailPack,double requestedX,double requestedZ,float seaLevel)throws IOException{
+        QatarPack.Hub airport=pack.hub("Hamad International Airport");int centreX=detailPack.cellX(airport.x()),centreZ=detailPack.cellY(airport.z());
+        double bestScore=Double.POSITIVE_INFINITY,bestX=Double.NaN,bestZ=Double.NaN;float bestWidth=0;
+        for(int radius=0;radius<=12;radius++)for(int z=centreZ-radius;z<=centreZ+radius;z++)for(int x=centreX-radius;x<=centreX+radius;x++){
+            if(radius>0&&Math.abs(x-centreX)!=radius&&Math.abs(z-centreZ)!=radius)continue;QatarDetailPack.DetailEntry entry=detailPack.entry(x,z);if(entry==null)continue;
+            QatarDetailPack.DetailChunk chunk=detailPack.load(entry);double originX=x*(double)detailPack.cellMetres,originZ=z*(double)detailPack.cellMetres;
+            for(QatarPack.Road road:chunk.roads()){
+                if(road.roadClass()!=10)continue;double candidateX=originX+(road.x1()+road.x2())*.5,candidateZ=originZ+(road.z1()+road.z2())*.5;
+                double score=Math.hypot(candidateX-airport.x(),candidateZ-airport.z())-road.width()*18;
+                if(score<bestScore){bestScore=score;bestX=candidateX;bestZ=candidateZ;bestWidth=road.width();}
+            }
+        }
+        if(!Double.isFinite(bestX))throw new IOException("No packaged OSM runway was found near Hamad International Airport");
+        Map<Long,QatarPack.WorldChunk> cache=new HashMap<>();Sample runway=sampleExact(pack,bestX,bestZ,seaLevel,cache);float supportedHeight=Math.max(.75f,runway.surface);
+        return new Destination(requestedX,requestedZ,bestX,bestZ,supportedHeight,false,Math.hypot(bestX-requestedX,bestZ-requestedZ),"packaged OSM runway at Hamad International Airport (width "+Math.round(bestWidth)+" m)");
+    }
+
     private static Sample sampleExact(QatarPack pack,double x,double z,float seaLevel,Map<Long,QatarPack.WorldChunk> cache)throws IOException{
         int chunkX=pack.chunkX(x),chunkZ=pack.chunkY(z);QatarPack.ChunkEntry entry=pack.entry(chunkX,chunkZ);
         if(entry==null)return nearestSurface(pack,x,z,false,seaLevel,cache);

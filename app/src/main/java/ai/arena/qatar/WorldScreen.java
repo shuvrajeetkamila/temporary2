@@ -74,7 +74,7 @@ final class WorldScreen extends ScreenAdapter {
         if(controls.mapOpen()){
             physics.setControls(0,0,0,false);renderer.render(simulationDelta);hud.render();return;
         }
-        if(controls.consumeModeRequested())physics.switchMode(physics.mode().next(),pack);
+        if(controls.consumeModeRequested())switchModeSafely();
         physics.setControls(controls.throttle(),controls.steering(),controls.lift(),controls.action());
         Vector3 velocity=physics.velocity();double focusX=physics.globalX(),focusZ=physics.globalZ();
         streamer.update(focusX,focusZ,velocity.x,velocity.z,physics.mode().streamMode);
@@ -103,6 +103,26 @@ final class WorldScreen extends ScreenAdapter {
         boolean smooth=averageMs<=expectedMs*1.65f&&maximumMs<=150f;
         Gdx.app.log("QatarFrameCadence","CADENCE mode="+current+" profile="+profile.label+" samples="+cadenceSamples+" averageMs="+averageMs+" maxMs="+maximumMs+" extraRenderGate=no smooth="+(smooth?"yes":"no"));
         cadenceSeconds=0;cadenceDeltaSum=0;cadenceMaximumDelta=0;cadenceSamples=0;
+    }
+
+    private void switchModeSafely(){
+        PhysicsWorld.Mode from=physics.mode(),requested=from.next();double requestedX=physics.globalX(),requestedZ=physics.globalZ();
+        physics.switchMode(requested,pack);
+        if(requested==PhysicsWorld.Mode.HELICOPTER){
+            renderer.resetCamera();Gdx.app.log("QatarMode","SAFE_TRANSITION from="+from+" to="+requested+" placement=rotor-clearance movementPacing=preserved");return;
+        }
+        try{
+            QatarTeleportResolver.Destination destination=requested==PhysicsWorld.Mode.AEROPLANE
+                    ?QatarTeleportResolver.resolveRunway(pack,detailPack,requestedX,requestedZ,climate.seaLevelMetres())
+                    :QatarTeleportResolver.resolve(pack,detailPack,requested,requestedX,requestedZ,climate.seaLevelMetres());
+            detailStreamer.resetForTeleport();streamer.resetForTeleport();
+            if(requested==PhysicsWorld.Mode.AEROPLANE)physics.placeOnSurface(destination.x(),destination.z(),destination.surfaceHeight(),climate.seaLevelMetres(),false);
+            else physics.teleport(destination.x(),destination.z(),destination.surfaceHeight(),climate.seaLevelMetres(),destination.water());
+            teleportFallbackGround=destination.surfaceHeight();teleportFallbackWater=destination.water();teleportSupportSeconds=8f;renderer.resetCamera();
+            Gdx.app.log("QatarMode","SAFE_TRANSITION from="+from+" to="+requested+" placement="+destination.basis()+" adjustment="+destination.adjustmentMetres()+" water="+(destination.water()?"yes":"no")+" movementPacing=preserved");
+        }catch(Throwable error){
+            renderer.resetCamera();Gdx.app.error("QatarMode","SAFE_TRANSITION_FALLBACK from="+from+" to="+requested,error);
+        }
     }
 
     private void processMapInput(){
