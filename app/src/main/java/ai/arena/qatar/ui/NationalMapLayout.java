@@ -11,23 +11,25 @@ public final class NationalMapLayout {
     }
 
     public static Layout fullscreen(int width,int height,double worldWidth,double worldHeight){
-        float marginX=Math.max(24,width*.035f),marginY=Math.max(18,height*.035f);
-        Rect panel=new Rect(marginX,marginY,width-marginX*2,height-marginY*2);
-        float topBar=68,bottomBar=82,mapAreaWidth=panel.width*.56f;
-        float maximumMapWidth=Math.max(120,mapAreaWidth-34);
-        float maximumMapHeight=Math.max(160,panel.height-topBar-bottomBar);
+        // The precision map is a true edge-to-edge mode, not a floating dialog.
+        // Controls retain safe insets while every background pixel belongs to it.
+        Rect panel=new Rect(0,0,width,height);
+        float topBar=Math.max(66,height*.10f),bottomBar=Math.max(66,height*.09f),mapAreaWidth=width*.55f;
+        float maximumMapWidth=Math.max(120,mapAreaWidth-32);
+        float maximumMapHeight=Math.max(160,height-topBar-bottomBar);
         float aspect=(float)(worldWidth/worldHeight);
         float mapHeight=maximumMapHeight,mapWidth=mapHeight*aspect;
         if(mapWidth>maximumMapWidth){mapWidth=maximumMapWidth;mapHeight=mapWidth/aspect;}
-        float mapX=panel.x+(mapAreaWidth-mapWidth)/2;
-        float mapY=panel.y+bottomBar+(maximumMapHeight-mapHeight)/2;
+        float mapX=(mapAreaWidth-mapWidth)/2;
+        float mapY=bottomBar+(maximumMapHeight-mapHeight)/2;
         Rect map=new Rect(mapX,mapY,mapWidth,mapHeight);
-        Rect close=new Rect(panel.right()-134,panel.top()-58,112,40);
-        float sideX=panel.x+mapAreaWidth+34,sideWidth=Math.max(170,panel.right()-sideX-28);
-        Rect teleport=new Rect(sideX,panel.y+20,sideWidth,54);
-        Rect zoomOut=new Rect(map.x,map.y-58,52,40);
-        Rect zoomIn=new Rect(map.x+60,map.y-58,52,40);
-        Rect viewAll=new Rect(map.x+120,map.y-58,Math.max(132,map.width-120),40);
+        float closeSize=Math.max(48,Math.min(58,height*.075f));
+        Rect close=new Rect(width-closeSize-16,height-closeSize-16,closeSize,closeSize);
+        float sideX=mapAreaWidth+28,sideWidth=Math.max(170,width-sideX-24);
+        Rect teleport=new Rect(sideX,18,sideWidth,58);
+        Rect zoomOut=new Rect(map.x,16,52,40);
+        Rect zoomIn=new Rect(map.x+60,16,52,40);
+        Rect viewAll=new Rect(map.x+120,16,Math.max(132,map.width-120),40);
         return new Layout(panel,map,close,teleport,zoomOut,zoomIn,viewAll,sideX,sideWidth);
     }
 

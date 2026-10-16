@@ -35,6 +35,9 @@ final class WorldScreen extends ScreenAdapter {
     private final HudRenderer hud;
     private final IntSupplier thermalStatus;
     private final Vector2 selectedWorld=new Vector2();
+    private QatarTeleportResolver.Destination pendingMapDestination;
+    private PhysicsWorld.Mode pendingMapMode;
+    private boolean hasRawMapSelection,mapClosedByTeleport;
     private ThermalGovernor.Profile profile;
     private boolean disposed;
     private float runtimeHealthAccumulator;
@@ -136,38 +139,60 @@ final class WorldScreen extends ScreenAdapter {
 
     private void processMapInput(){
         if(controls.consumeMapOpenedRequested()){
-            hud.setMapStatus("Pinch, pan, then tap a street to place the fixed pin");
-            Gdx.app.log("QatarTeleport","MAP_OPEN playerX="+physics.globalX()+" playerZ="+physics.globalZ()+" zoom=1.0 fullQatar=yes");
+            hud.setMapStatus("Full-screen map active - tap a point, then confirm the final arrival pin");
+            Gdx.app.log("QatarTeleport","MAP_OPEN playerX="+physics.globalX()+" playerZ="+physics.globalZ()+" zoom=1.0 fullQatar=yes fullScreen=yes interactive=yes crossClose=yes");
         }
-        if(controls.consumeMapClosedRequested())Gdx.app.log("QatarTeleport","MAP_CLOSE gameplay=resumed");
+        if(controls.consumeMapClosedRequested()){
+            Gdx.app.log("QatarTeleport","MAP_CLOSE gameplay=resumed fullScreenExited=yes teleport="+(mapClosedByTeleport?"yes":"no"));mapClosedByTeleport=false;
+        }
         if(controls.consumeMapViewChangedRequested()){
             hud.setMapStatus("View changed by "+controls.mapViewAction()+" - destination pin stays geographically fixed");
             Gdx.app.log("QatarMap","MAP_VIEW action="+controls.mapViewAction()+" zoom="+controls.mapViewport().zoom()+" centerX="+controls.mapViewport().centerX()+" centerZ="+controls.mapViewport().centerZ()+" bounded=yes");
         }
         if(controls.consumeMapSelectionRequested()){
-            selectedWorld.set(controls.mapSelectionWorldX(),controls.mapSelectionWorldZ());
+            selectedWorld.set(controls.mapSelectionWorldX(),controls.mapSelectionWorldZ());hasRawMapSelection=true;
             hud.setMapSelection(selectedWorld.x,selectedWorld.y);
             Gdx.app.log("QatarTeleport","MAP_SELECT x="+selectedWorld.x+" z="+selectedWorld.y+" zoom="+controls.mapViewport().zoom()+" gestureSuppressed=yes utmE="+(pack.originEasting+selectedWorld.x)+" utmN="+(pack.originNorthing+selectedWorld.y));
+            previewMapDestination();
         }
         if(controls.consumeTeleportRequested())teleportFromMap();
     }
 
-    private void teleportFromMap(){
-        if(!hud.hasMapSelection()){hud.setMapStatus("Select a destination on the map first");return;}
-        hud.setMapStatus("Resolving safe destination from installed offline data...");
+    private void previewMapDestination(){
+        hud.setMapStatus("Resolving the exact safe arrival point...");pendingMapDestination=null;pendingMapMode=null;
         try{
-            QatarTeleportResolver.Destination destination=QatarTeleportResolver.resolve(pack,detailPack,physics.mode(),hud.mapSelectionX(),hud.mapSelectionZ(),climate.seaLevelMetres());
+            QatarTeleportResolver.Destination destination=QatarTeleportResolver.resolve(pack,detailPack,physics.mode(),selectedWorld.x,selectedWorld.y,climate.seaLevelMetres());
+            pendingMapDestination=destination;pendingMapMode=physics.mode();
+            hud.setResolvedMapSelection(destination.x(),destination.z(),destination.adjustmentMetres(),destination.basis());
+            Gdx.app.log("QatarTeleport","MAP_PREVIEW mode="+physics.mode()+" requestedX="+destination.requestedX()+" requestedZ="+destination.requestedZ()+" finalX="+destination.x()+" finalZ="+destination.z()+" adjustment="+destination.adjustmentMetres()+" visiblePin=yes exactConfirmation=yes");
+        }catch(Throwable error){
+            hud.setMapStatus("Point unavailable: "+errorSummary(error));Gdx.app.error("QatarTeleport","MAP_PREVIEW_FAILED",error);
+        }
+    }
+
+    private void teleportFromMap(){
+        if(!hud.hasMapSelection()||!hasRawMapSelection){hud.setMapStatus("Select a destination on the map first");return;}
+        hud.setMapStatus("Entering the confirmed arrival point...");
+        try{
+            QatarTeleportResolver.Destination destination=pendingMapDestination!=null&&pendingMapMode==physics.mode()
+                    ?pendingMapDestination
+                    :QatarTeleportResolver.resolve(pack,detailPack,physics.mode(),selectedWorld.x,selectedWorld.y,climate.seaLevelMetres());
             detailStreamer.resetForTeleport();streamer.resetForTeleport();
             physics.teleport(destination.x(),destination.z(),destination.surfaceHeight(),climate.seaLevelMetres(),destination.water());
-            renderer.resetCamera();teleportFallbackGround=destination.surfaceHeight();teleportFallbackWater=destination.water();teleportSupportSeconds=8f;
+            renderer.resetCamera();renderer.showDestinationMarker(destination.x(),destination.z(),destination.surfaceHeight());teleportFallbackGround=destination.surfaceHeight();teleportFallbackWater=destination.water();teleportSupportSeconds=8f;
             hud.setResolvedMapSelection(destination.x(),destination.z(),destination.adjustmentMetres(),destination.basis());
-            hud.setMapStatus(destination.adjustmentMetres()<1?"Teleported to selected location":"Teleported safely (adjusted "+Math.round(destination.adjustmentMetres())+" m)");
-            controls.closeMap();
+            hud.setMapStatus("Arrived at the exact confirmed safe pin");
+            mapClosedByTeleport=true;controls.closeMap();
             Gdx.app.log("QatarTeleport","TELEPORT mode="+physics.mode()+" requestedX="+destination.requestedX()+" requestedZ="+destination.requestedZ()+" x="+destination.x()+" z="+destination.z()+" surface="+destination.surfaceHeight()+" water="+(destination.water()?"yes":"no")+" adjustment="+destination.adjustmentMetres()+" basis="+destination.basis());
         }catch(Throwable error){
-            hud.setMapStatus("Teleport unavailable: "+error.getMessage());
+            hud.setMapStatus("Teleport unavailable: "+errorSummary(error));
             Gdx.app.error("QatarTeleport","TELEPORT_FAILED",error);
         }
+    }
+
+    private static String errorSummary(Throwable error){
+        if(error==null)return "UnknownFailure(no throwable)";String message=error.getMessage();
+        return error.getClass().getSimpleName()+((message==null||message.trim().isEmpty())?"(no message)":": "+message);
     }
 
     @Override public void resize(int width,int height){renderer.camera().viewportWidth=width;renderer.camera().viewportHeight=height;renderer.camera().update();renderer.resetCamera();}

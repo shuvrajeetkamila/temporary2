@@ -87,6 +87,7 @@ def audit_source() -> dict:
     streamer = (ROOT / "app/src/main/java/ai/arena/qatar/world/QatarDetailStreamer.java").read_text()
     renderer = (ROOT / "app/src/main/java/ai/arena/qatar/render/QatarWorldRenderer.java").read_text()
     hud = (ROOT / "app/src/main/java/ai/arena/qatar/ui/HudRenderer.java").read_text()
+    layout = (ROOT / "app/src/main/java/ai/arena/qatar/ui/NationalMapLayout.java").read_text()
 
     require("case BOAT -> Placement.CURRENT_SCREEN" in policy, "boat placement policy")
     require("placement==ModeTransitionPolicy.Placement.CURRENT_SCREEN" in screen, "WorldScreen uses current-screen policy")
@@ -101,6 +102,11 @@ def audit_source() -> dict:
     require("detailStreamingWarning" in hud and "fatalStreamingError" in hud, "recoverable/fatal HUD separation")
     require("new Color(.31f,.095f,.11f,1)" in renderer and "new Color(.52f,.53f,.51f,1)" in renderer, "muted transport palette")
     require("rigPart(\"torso\",personWhite" in renderer and "rigPart(prefix+\"-leg\",personWhite" in renderer, "white WALK clothing")
+    require("Rect panel=new Rect(0,0,width,height)" in layout, "edge-to-edge full-screen map panel")
+    require("crossX=close.x()+close.width()/2" in hud and "RETURN TO GAME" in hud, "visible cross return control")
+    require("MAP_PREVIEW" in screen and "exactConfirmation=yes" in screen, "resolved final pin preview")
+    require("showDestinationMarker" in screen and "ARRIVAL_PIN_VISIBLE" in renderer, "confirmed pin appears in gameplay")
+    require("destinationVisible=hasMapSelection" in hud and "FULLSCREEN MAP" in hud, "destination appears on minimap")
     return {
         "boatModePlacement": "CURRENT_SCREEN",
         "boatAutomaticTeleport": False,
@@ -111,6 +117,10 @@ def audit_source() -> dict:
         "messageLessThrowableDiagnostic": "class + no-message marker",
         "transportPalette": "grey with dull-red accents",
         "walkClothing": "white",
+        "precisionMapWindow": "edge-to-edge full screen",
+        "mapExitControl": "top-right cross and Android Back",
+        "teleportPreview": "resolved final safe pin before confirmation",
+        "gameplayArrivalPin": "30-second world ring plus minimap marker",
     }
 
 

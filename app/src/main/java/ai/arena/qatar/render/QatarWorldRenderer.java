@@ -98,6 +98,10 @@ public final class QatarWorldRenderer implements WorldStreamer.Listener, QatarDe
     private final Material beachMaterial=diffuse(.91f,.81f,.62f,1);
     private Model focusModel;
     private ModelInstance focusInstance;
+    private final Model arrivalMarkerModel;
+    private final ModelInstance arrivalMarkerInstance;
+    private double arrivalMarkerX,arrivalMarkerZ;
+    private float arrivalMarkerY,arrivalMarkerSeconds;
     private final Map<String,Node> focusNodes=new HashMap<>();
     private PhysicsWorld.Mode renderedMode;
     private float focusAnimationTime,focusTransition=1f;
@@ -123,8 +127,23 @@ public final class QatarWorldRenderer implements WorldStreamer.Listener, QatarDe
         camera=new PerspectiveCamera(64,Gdx.graphics.getWidth(),Gdx.graphics.getHeight());
         camera.near=.15f; camera.far=14_000f;
         environment.set(ambientLight);environment.add(sun);environment.add(skyFill);
-        initialiseMaterials();activity=new AmbientWorldActivity(physics,this);landmarks=new QatarLandmarkLayer(pack,physics,this);
+        initialiseMaterials();arrivalMarkerModel=buildArrivalMarker();arrivalMarkerInstance=new ModelInstance(arrivalMarkerModel);
+        activity=new AmbientWorldActivity(physics,this);landmarks=new QatarLandmarkLayer(pack,physics,this);
         rebuildFocusModel();
+    }
+
+    private Model buildArrivalMarker(){
+        ModelBuilder markerBuilder=new ModelBuilder();markerBuilder.begin();
+        Material markerMaterial=new Material(ColorAttribute.createDiffuse(new Color(.62f,.045f,.13f,.82f)),ColorAttribute.createEmissive(new Color(.24f,.012f,.035f,1)),new BlendingAttribute(GL20.GL_SRC_ALPHA,GL20.GL_ONE_MINUS_SRC_ALPHA,.82f));
+        MeshPartBuilder ring=markerBuilder.part("confirmed-arrival-pin",GL20.GL_TRIANGLES,ATTRS,markerMaterial);
+        float inner=2.15f,outer=2.85f;
+        for(int segment=0;segment<32;segment++){
+            double a=Math.PI*2*segment/32,b=Math.PI*2*(segment+1)/32;
+            float oax=(float)Math.cos(a)*outer,oaz=(float)Math.sin(a)*outer,obx=(float)Math.cos(b)*outer,obz=(float)Math.sin(b)*outer;
+            float iax=(float)Math.cos(a)*inner,iaz=(float)Math.sin(a)*inner,ibx=(float)Math.cos(b)*inner,ibz=(float)Math.sin(b)*inner;
+            terrainTriangle(ring,oax,.08f,oaz,iax,.08f,iaz,ibx,.08f,ibz);terrainTriangle(ring,oax,.08f,oaz,ibx,.08f,ibz,obx,.08f,obz);
+        }
+        return markerBuilder.end();
     }
 
     private void initialiseMaterials() {
@@ -153,6 +172,11 @@ public final class QatarWorldRenderer implements WorldStreamer.Listener, QatarDe
         for(RenderChunk chunk:chunks.values()){batch.render(chunk.instance,environment);if(chunk.waterInstance!=null)batch.render(chunk.waterInstance,environment);}
         for (RenderChunk detail:detailCells.values()) batch.render(detail.instance,environment);
         activity.render(batch,environment,detailData,detailMapRevision,performanceProfile,delta,climate.seaLevelMetres());landmarks.render(batch,environment,performanceProfile);
+        if(arrivalMarkerSeconds>0){
+            arrivalMarkerSeconds=Math.max(0,arrivalMarkerSeconds-delta);float pulse=1f+.07f*(float)Math.sin(arrivalMarkerSeconds*5f);
+            arrivalMarkerInstance.transform.setToTranslation((float)(arrivalMarkerX-physics.originX()),arrivalMarkerY,(float)(arrivalMarkerZ-physics.originZ())).scale(pulse,1,pulse);
+            batch.render(arrivalMarkerInstance,environment);
+        }
         focusInstance.transform.set(physics.renderTransform(renderFocusTransform));
         float transitionScale=.72f+.28f*smoothStep(focusTransition);focusInstance.transform.scale(transitionScale,transitionScale,transitionScale);
         focusInstance.calculateTransforms();batch.render(focusInstance,environment);
@@ -1002,13 +1026,17 @@ public final class QatarWorldRenderer implements WorldStreamer.Listener, QatarDe
     private void rotateNode(String id,Vector3 axis,float degrees){Node node=focusNode(id);if(node!=null)node.rotation.setFromAxis(axis,degrees);}
     private static float smoothStep(float value){float t=Math.max(0,Math.min(1,value));return t*t*(3-2*t);}
 
+    public void showDestinationMarker(double globalX,double globalZ,float surfaceHeight){
+        arrivalMarkerX=globalX;arrivalMarkerZ=globalZ;arrivalMarkerY=surfaceHeight+.14f;arrivalMarkerSeconds=30f;
+        Gdx.app.log("QatarTeleport","ARRIVAL_PIN_VISIBLE x="+globalX+" z="+globalZ+" seconds=30 minimap=yes world=yes");
+    }
     public void resetCamera(){cameraFilter.reset();}
     public PerspectiveCamera camera(){return camera;}
     public String fatalStreamingError(){return fatalStreamingError;}
     public String detailStreamingWarning(){return detailStreamingWarning;}
     public int renderChunkCount(){return chunks.size();}
 
-    @Override public void dispose(){activity.dispose();landmarks.dispose();for(RenderChunk value:chunks.values()){value.model.dispose();if(value.waterModel!=null)value.waterModel.dispose();}for(RenderChunk value:detailCells.values())value.model.dispose();chunks.clear();nationalData.clear();detailCells.clear();detailData.clear();if(focusModel!=null)focusModel.dispose();sandTexture.dispose();gravelTexture.dispose();saltTexture.dispose();urbanTexture.dispose();vegetationTexture.dispose();stoneFacadeTexture.dispose();glassFacadeTexture.dispose();batch.dispose();}
+    @Override public void dispose(){activity.dispose();landmarks.dispose();for(RenderChunk value:chunks.values()){value.model.dispose();if(value.waterModel!=null)value.waterModel.dispose();}for(RenderChunk value:detailCells.values())value.model.dispose();chunks.clear();nationalData.clear();detailCells.clear();detailData.clear();if(focusModel!=null)focusModel.dispose();arrivalMarkerModel.dispose();sandTexture.dispose();gravelTexture.dispose();saltTexture.dispose();urbanTexture.dispose();vegetationTexture.dispose();stoneFacadeTexture.dispose();glassFacadeTexture.dispose();batch.dispose();}
     private Material textured(float r,float g,float b,Texture texture){return new Material(ColorAttribute.createDiffuse(new Color(r,g,b,1)),TextureAttribute.createDiffuse(texture));}
     private static Material facade(float r,float g,float b,Texture texture){return new Material(ColorAttribute.createDiffuse(new Color(r,g,b,1)),TextureAttribute.createDiffuse(texture));}
     private static Texture createSurfaceTexture(int seed,int style){

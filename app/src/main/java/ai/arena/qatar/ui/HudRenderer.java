@@ -66,7 +66,8 @@ public final class HudRenderer implements Disposable {
     public void setMapSelection(double x,double z){hasMapSelection=true;mapSelectionX=x;mapSelectionZ=z;mapPlacementDetail="pending confirmation";mapStatus="Pin fixed - press CONFIRM TELEPORT";}
     public void setResolvedMapSelection(double x,double z,double adjustment,String basis){
         hasMapSelection=true;mapSelectionX=x;mapSelectionZ=z;
-        mapPlacementDetail=adjustment<1?"no adjustment ("+basis+")":Math.round(adjustment)+" m adjustment ("+basis+")";
+        mapPlacementDetail=adjustment<1?"exact safe point ("+basis+")":Math.round(adjustment)+" m to final safe point ("+basis+")";
+        mapStatus="Final arrival pin fixed - press CONFIRM TELEPORT";
     }
     public void setMapStatus(String status){mapStatus=status==null?"":status;}
     public boolean hasMapSelection(){return hasMapSelection;}
@@ -114,13 +115,20 @@ public final class HudRenderer implements Disposable {
         float markerX=roadX+(float)((physics.globalX()-minimapCentreX+minimapRadius)/(minimapRadius*2))*roadSize;
         float markerY=roadY+(float)((physics.globalZ()-minimapCentreZ+minimapRadius)/(minimapRadius*2))*roadSize;
         markerX=Math.max(roadX+5,Math.min(roadX+roadSize-5,markerX));markerY=Math.max(roadY+5,Math.min(roadY+roadSize-5,markerY));
+        boolean destinationVisible=hasMapSelection&&Math.abs(mapSelectionX-minimapCentreX)<=minimapRadius&&Math.abs(mapSelectionZ-minimapCentreZ)<=minimapRadius;
+        float destinationX=destinationVisible?roadX+(float)((mapSelectionX-minimapCentreX+minimapRadius)/(minimapRadius*2))*roadSize:0;
+        float destinationY=destinationVisible?roadY+(float)((mapSelectionZ-minimapCentreZ+minimapRadius)/(minimapRadius*2))*roadSize:0;
         float heading=physics.renderHeadingRadians(),tipX=markerX+(float)Math.sin(heading)*10,tipY=markerY+(float)Math.cos(heading)*10;
         float leftX=markerX+(float)Math.sin(heading+2.45f)*7,leftY=markerY+(float)Math.cos(heading+2.45f)*7;
         float rightX=markerX+(float)Math.sin(heading-2.45f)*7,rightY=markerY+(float)Math.cos(heading-2.45f)*7;
-        shapes.begin(ShapeRenderer.ShapeType.Filled);shapes.setColor(.08f,.12f,.13f,.9f);shapes.circle(markerX,markerY,7,16);shapes.setColor(1f,.06f,.20f,1);shapes.triangle(tipX,tipY,leftX,leftY,rightX,rightY);
+        shapes.begin(ShapeRenderer.ShapeType.Filled);
+        if(destinationVisible){shapes.setColor(1f,.08f,.22f,.38f);shapes.circle(destinationX,destinationY,13,22);shapes.setColor(1f,.90f,.72f,1);shapes.circle(destinationX,destinationY,4,14);}
+        shapes.setColor(.08f,.12f,.13f,.9f);shapes.circle(markerX,markerY,7,16);shapes.setColor(1f,.06f,.20f,1);shapes.triangle(tipX,tipY,leftX,leftY,rightX,rightY);
         shapes.setColor(.54f,.08f,.22f,.96f);shapes.rect(buttonX,buttonY,buttonW,25);shapes.end();
-        shapes.begin(ShapeRenderer.ShapeType.Line);shapes.setColor(.95f,.84f,.62f,.95f);shapes.rect(roadX,roadY,roadSize,roadSize);shapes.end();
-        sprites.begin();font.getData().setScale(.72f);font.setColor(Color.WHITE);font.draw(sprites,"STREETS  |  OPEN MAP",buttonX+20,buttonY+18);sprites.end();
+        shapes.begin(ShapeRenderer.ShapeType.Line);shapes.setColor(.95f,.84f,.62f,.95f);shapes.rect(roadX,roadY,roadSize,roadSize);
+        if(destinationVisible){shapes.setColor(1f,.12f,.24f,1);shapes.circle(destinationX,destinationY,11,24);shapes.line(destinationX-15,destinationY,destinationX-7,destinationY);shapes.line(destinationX+7,destinationY,destinationX+15,destinationY);}
+        shapes.end();
+        sprites.begin();font.getData().setScale(.72f);font.setColor(Color.WHITE);font.draw(sprites,"STREETS  |  FULLSCREEN MAP",buttonX+8,buttonY+18);sprites.end();
     }
 
     private float minimapRadiusForMode(){return switch(physics.mode()){case WALK->550f;case CAR,BOAT->700f;case HELICOPTER,AEROPLANE->850f;};}
@@ -168,8 +176,9 @@ public final class HudRenderer implements Disposable {
         NationalMapLayout.Layout layout=NationalMapLayout.fullscreen(width,height,pack.worldWidth,pack.worldHeight);
         NationalMapLayout.Rect panel=layout.panel(),map=layout.map(),close=layout.close(),teleport=layout.teleport();
         shapes.begin(ShapeRenderer.ShapeType.Filled);
-        shapes.setColor(.005f,.014f,.020f,.94f);shapes.rect(0,0,width,height);
+        shapes.setColor(.018f,.045f,.056f,1);shapes.rect(0,0,width,height);
         shapes.setColor(.025f,.060f,.072f,1);shapes.rect(panel.x(),panel.y(),panel.width(),panel.height());
+        shapes.setColor(.014f,.032f,.040f,1);shapes.rect(layout.sideX()-18,0,width-layout.sideX()+18,height);
         shapes.setColor(.035f,.25f,.34f,1);shapes.rect(map.x(),map.y(),map.width(),map.height());
         for(QatarPack.ChunkEntry entry:pack.entries().values()){
             if(!entry.hasLand())continue;
@@ -200,7 +209,9 @@ public final class HudRenderer implements Disposable {
         nationalRoads.draw(sprites,view,map.x(),map.y(),map.width(),map.height());sprites.end();
 
         shapes.begin(ShapeRenderer.ShapeType.Line);shapes.setColor(.99f,.91f,.70f,1);drawNationalOutlines(map,view);
-        shapes.setColor(.73f,.85f,.86f,.72f);shapes.rect(map.x(),map.y(),map.width(),map.height());shapes.end();
+        shapes.setColor(.73f,.85f,.86f,.72f);shapes.rect(map.x(),map.y(),map.width(),map.height());
+        float crossX=close.x()+close.width()/2,crossY=close.y()+close.height()/2,crossRadius=close.width()*.22f;
+        shapes.setColor(Color.WHITE);shapes.line(crossX-crossRadius,crossY-crossRadius,crossX+crossRadius,crossY+crossRadius);shapes.line(crossX-crossRadius,crossY+crossRadius,crossX+crossRadius,crossY-crossRadius);shapes.end();
 
         shapes.begin(ShapeRenderer.ShapeType.Filled);
         for(QatarPack.Hub hub:pack.hubs)if(view.contains(hub.x(),hub.z())){
@@ -221,9 +232,9 @@ public final class HudRenderer implements Disposable {
             shapes.begin(ShapeRenderer.ShapeType.Line);shapes.setColor(1f,.90f,.90f,1);shapes.circle(mapPoint.x,mapPoint.y,13,28);shapes.line(mapPoint.x-17,mapPoint.y,mapPoint.x-7,mapPoint.y);shapes.line(mapPoint.x+7,mapPoint.y,mapPoint.x+17,mapPoint.y);shapes.line(mapPoint.x,mapPoint.y-17,mapPoint.x,mapPoint.y-7);shapes.line(mapPoint.x,mapPoint.y+7,mapPoint.x,mapPoint.y+17);shapes.end();
         }
 
-        sprites.begin();font.getData().setScale(1.25f);font.setColor(Color.WHITE);font.draw(sprites,"QATAR PRECISION MAP",panel.x()+24,panel.top()-27);
+        sprites.begin();font.getData().setScale(1.25f);font.setColor(Color.WHITE);font.draw(sprites,"FULL-SCREEN QATAR PRECISION MAP",panel.x()+24,panel.top()-27);
         font.getData().setScale(.88f);font.setColor(.92f,.86f,.69f,1);font.draw(sprites,"Complete packaged Qatar | offline OpenStreetMap vectors | EPSG:32639 | north up",panel.x()+24,panel.top()-51);
-        font.setColor(Color.WHITE);font.draw(sprites,"CLOSE",close.x()+29,close.y()+27);
+        font.getData().setScale(.68f);font.setColor(.90f,.92f,.91f,1);font.draw(sprites,"RETURN TO GAME",close.x()-26,close.y()-7);
         font.getData().setScale(1.15f);font.draw(sprites,"-",layout.zoomOut().x()+19,layout.zoomOut().y()+28);font.draw(sprites,"+",layout.zoomIn().x()+18,layout.zoomIn().y()+29);
         font.getData().setScale(.78f);font.draw(sprites,"VIEW ALL QATAR",layout.viewAll().x()+15,layout.viewAll().y()+26);
 
@@ -231,7 +242,7 @@ public final class HudRenderer implements Disposable {
         font.getData().setScale(.82f);font.setColor(.83f,.89f,.89f,1);
         font.draw(sprites,"Pinch to zoom  |  drag to pan",layout.sideX(),panel.top()-130);
         font.draw(sprites,"Tap or long-press to place the fixed red pin",layout.sideX(),panel.top()-155);
-        font.draw(sprites,"TELEPORT confirms  |  CLOSE / Back cancels",layout.sideX(),panel.top()-180);
+        font.draw(sprites,"CONFIRM enters the point  |  X / Back returns",layout.sideX(),panel.top()-180);
         font.setColor(.98f,.86f,.64f,1);
         font.draw(sprites,String.format(java.util.Locale.ROOT,"ZOOM x%.2f  |  VIEW %.1f x %.1f km",view.zoom(),view.visibleWidth()/1000.0,view.visibleHeight()/1000.0),layout.sideX(),panel.top()-218);
         font.draw(sprites,String.format(java.util.Locale.ROOT,"SCALE ~%.1f m/pixel  |  %s",view.visibleWidth()/map.width(),nationalRoads.status(view)),layout.sideX(),panel.top()-243);

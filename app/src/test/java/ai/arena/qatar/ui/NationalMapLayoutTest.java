@@ -11,6 +11,10 @@ public class NationalMapLayoutTest {
     @Test public void fullCountryProjectionRoundTripsTouchCoordinates(){
         double width=110_000,height=206_000;
         NationalMapLayout.Layout layout=NationalMapLayout.fullscreen(1280,720,width,height);
+        assertEquals(0,layout.panel().x(),0);assertEquals(0,layout.panel().y(),0);
+        assertEquals(1280,layout.panel().width(),0);assertEquals(720,layout.panel().height(),0);
+        assertTrue("cross close must remain in the top-right safe area",layout.close().right()>1200&&layout.close().top()>640);
+        assertEquals(layout.close().width(),layout.close().height(),.01);
         Vector2 screen=new Vector2(),world=new Vector2();
         NationalMapLayout.worldToScreen(layout.map(),72_345,154_321,width,height,screen);
         assertTrue(layout.map().contains(screen.x,screen.y));
@@ -23,6 +27,10 @@ public class NationalMapLayoutTest {
         assertFalse(layout.map().contains(layout.viewAll().x(),layout.viewAll().y()));
         assertTrue(layout.zoomIn().width()>=48&&layout.zoomIn().height()>=38);
         assertTrue(layout.viewAll().width()>=120);
+        assertTrue(layout.close().contains(1240,678));
+        NationalMapLayout.screenToWorld(layout.map(),464,322,width,height,world);
+        assertEquals("runtime regression tap must target QTOD column 378",378,(int)Math.floor(world.x/250));
+        assertEquals("runtime regression tap must target QTOD row 362",362,(int)Math.floor(world.y/250));
     }
 
     @Test public void northIsHigherOnMapAndMinimapIsLargeEnoughForTouch(){
