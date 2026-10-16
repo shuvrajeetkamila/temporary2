@@ -1,0 +1,30 @@
+{
+  "status": "PASSED",
+  "reportedCell": {
+    "x": 378,
+    "y": 362,
+    "packedBytes": 461,
+    "rawBytes": 1162,
+    "crc32": "d7a82d8f",
+    "roads": 31,
+    "roadClasses": {
+      "5": 8,
+      "6": 23
+    },
+    "buildings": 2,
+    "footprintVertices": 18,
+    "maximumFootprintVertices": 12,
+    "payloadTailBytes": 0
+  },
+  "sourceContracts": {
+    "boatModePlacement": "CURRENT_SCREEN",
+    "boatAutomaticTeleport": false,
+    "boatStreamReset": false,
+    "detailFailureAttemptsBeforeWarning": 3,
+    "detailActivation": "atomic",
+    "detailGeometryFallback": "reduced bounded cell",
+    "messageLessThrowableDiagnostic": "class + no-message marker",
+    "transportPalette": "grey with dull-red accents",
+    "walkClothing": "white"
+  }
+}
