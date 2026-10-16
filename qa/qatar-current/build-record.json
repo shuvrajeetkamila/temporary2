@@ -1,8 +1,8 @@
 {
-  "sourceCommit": "1ce9c8c54176b5d50c0cd30ad8a2477565537828",
+  "sourceCommit": "81e37789626d99baee2a97ab9d26e1c5173df162",
   "apk": "Qatar-The-Peninsula-CHARACTER-WORLD-v0.9.0.apk",
-  "apkBytes": 38191627,
-  "apkSha256": "a4bd28c8665621e32600e2d312d25dc307538e647f9a19524eb39477bfbcf1be",
+  "apkBytes": 38191995,
+  "apkSha256": "ccbecfb5ed7c6ff207c2d4d10c5e85b937c10430d16797d0d19557e182dae90f",
   "packageId": "ai.arena.qatar.peninsula",
   "versionCode": 10,
   "versionName": "0.9.0-character-vehicle-coastal-activity",
