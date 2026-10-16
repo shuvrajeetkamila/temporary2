@@ -1,1 +1,1 @@
-Qatar Android v0.8.1 final QTOD-coordinate precision-map runtime request: full-country reset, x16 crisp global street vectors, bounded pan, persistent precise pin, confirmed safe teleport, lifecycle, thermal, cadence, and all modes
+Qatar Android v0.9.0 character, vehicle, coastal, world-activity runtime request: validate install/reinstall, all five articulated rigs and safe transitions, coastal world pipeline, bounded ambient activity, landmark layer, precision map, lifecycle, thermal downshift, frame cadence, and fatal-free Android execution
