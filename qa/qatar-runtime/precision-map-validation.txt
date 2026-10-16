@@ -1,3 +1,3 @@
-zoomed: street_texture=yes edge_density=0.1790 colour_bins=83
-panned: street_texture=yes edge_density=0.1710 colour_bins=81
-viewport: zoom_difference=79.76 pan_difference=19.57 bounded_detail=yes
+zoomed: street_texture=yes edge_density=0.1799 colour_bins=81
+panned: street_texture=yes edge_density=0.1754 colour_bins=85
+viewport: zoom_difference=71.27 pan_difference=21.02 bounded_detail=yes
