@@ -1,2 +1,2 @@
-local-minimap: streets=yes edges=2820 edge_density=0.2049 colour_bins=65
+local-minimap: streets=yes edges=2797 edge_density=0.2033 colour_bins=69
 expanded-map: streets=yes edges=18177 edge_density=0.2459 colour_bins=209
