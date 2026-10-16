@@ -94,7 +94,7 @@ public final class QatarWorldRenderer implements WorldStreamer.Listener, QatarDe
     private final Material farmMaterial=diffuse(.62f,.65f,.47f,1);
     private final Material civicMaterial=facade(.92f,.88f,.79f,stoneFacadeTexture);
     private final Material waterMaterial=new Material(ColorAttribute.createDiffuse(new Color(.035f,.30f,.42f,1)),ColorAttribute.createSpecular(new Color(.72f,.88f,.91f,1)),FloatAttribute.createShininess(96));
-    private final Material shallowWaterMaterial=new Material(ColorAttribute.createDiffuse(new Color(.075f,.53f,.57f,1)),ColorAttribute.createSpecular(new Color(.72f,.92f,.91f,1)),FloatAttribute.createShininess(80));
+    private final Material shallowWaterMaterial=new Material(ColorAttribute.createDiffuse(new Color(.075f,.53f,.57f,.72f)),ColorAttribute.createSpecular(new Color(.72f,.92f,.91f,1)),FloatAttribute.createShininess(80),new BlendingAttribute(GL20.GL_SRC_ALPHA,GL20.GL_ONE_MINUS_SRC_ALPHA,.72f));
     private final Material beachMaterial=diffuse(.91f,.81f,.62f,1);
     private Model focusModel;
     private ModelInstance focusInstance;
@@ -296,9 +296,10 @@ public final class QatarWorldRenderer implements WorldStreamer.Listener, QatarDe
             // coastal buildings even though their land collision was present.
             for(int row=0;row<16;row++)for(int col=0;col<16;col++){
                 if((chunk.landRows()[row]&(1<<col))!=0)continue;
-                float x0=col*waterSub,x1=(col+1)*waterSub,z0=row*waterSub,z1=(row+1)*waterSub;
-                float h00=staticWave(originX+x0,originZ+z0),h10=staticWave(originX+x1,originZ+z0),h11=staticWave(originX+x1,originZ+z1),h01=staticWave(originX+x0,originZ+z1);
-                terrainTriangle(surface,x0,h00,z0,x0,h01,z1,x1,h11,z1);terrainTriangle(surface,x1,h11,z1,x1,h10,z0,x0,h00,z0);
+                float x0=col*waterSub,x1=(col+1)*waterSub,z0=row*waterSub,z1=(row+1)*waterSub,shoreBand=Math.min(30f,waterSub*.24f);
+                float deepX0=isLandCell(chunk,row,col-1)?x0+shoreBand:x0,deepX1=isLandCell(chunk,row,col+1)?x1-shoreBand:x1;
+                float deepZ0=isLandCell(chunk,row-1,col)?z0+shoreBand:z0,deepZ1=isLandCell(chunk,row+1,col)?z1-shoreBand:z1;
+                if(deepX1-deepX0>.5f&&deepZ1-deepZ0>.5f)waterSurfacePatch(surface,deepX0,deepZ0,deepX1,deepZ1,originX,originZ,0);
                 addShallowWaterBands(shallow,chunk,row,col,x0,z0,waterSub,originX,originZ);
             }
             water=builder.end();
@@ -331,8 +332,9 @@ public final class QatarWorldRenderer implements WorldStreamer.Listener, QatarDe
 
     private static boolean isLandCell(QatarPack.WorldChunk chunk,int row,int col){return row>=0&&row<16&&col>=0&&col<16&&(chunk.landRows()[row]&(1<<col))!=0;}
     private static boolean isWaterCell(QatarPack.WorldChunk chunk,int row,int col){return row>=0&&row<16&&col>=0&&col<16&&(chunk.landRows()[row]&(1<<col))==0;}
-    private static void waterPatch(MeshPartBuilder part,float x0,float z0,float x1,float z1,double originX,double originZ){
-        float h00=staticWave(originX+x0,originZ+z0)+.028f,h10=staticWave(originX+x1,originZ+z0)+.028f,h11=staticWave(originX+x1,originZ+z1)+.028f,h01=staticWave(originX+x0,originZ+z1)+.028f;
+    private static void waterPatch(MeshPartBuilder part,float x0,float z0,float x1,float z1,double originX,double originZ){waterSurfacePatch(part,x0,z0,x1,z1,originX,originZ,.028f);}
+    private static void waterSurfacePatch(MeshPartBuilder part,float x0,float z0,float x1,float z1,double originX,double originZ,float lift){
+        float h00=staticWave(originX+x0,originZ+z0)+lift,h10=staticWave(originX+x1,originZ+z0)+lift,h11=staticWave(originX+x1,originZ+z1)+lift,h01=staticWave(originX+x0,originZ+z1)+lift;
         terrainTriangle(part,x0,h00,z0,x0,h01,z1,x1,h11,z1);terrainTriangle(part,x1,h11,z1,x1,h10,z0,x0,h00,z0);
     }
 

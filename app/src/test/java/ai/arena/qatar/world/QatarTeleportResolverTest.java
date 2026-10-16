@@ -25,6 +25,8 @@ public class QatarTeleportResolverTest {
             QatarPack.Hub education=pack.hub("Education City");
             QatarTeleportResolver.Destination boat=QatarTeleportResolver.resolve(pack,null,PhysicsWorld.Mode.BOAT,education.x(),education.z(),.2f);
             assertTrue(boat.water());assertTrue(boat.adjustmentMetres()>0);assertEquals(.2f,boat.surfaceHeight(),.001f);
+            double maskCell=pack.chunkMetres/16.0,boatCellX=Math.floorMod((long)Math.floor(boat.x()),(long)maskCell),boatCellZ=Math.floorMod((long)Math.floor(boat.z()),(long)maskCell);
+            assertTrue(Math.min(boatCellX,maskCell-boatCellX)>=13);assertTrue(Math.min(boatCellZ,maskCell-boatCellZ)>=13);
 
             QatarTeleportResolver.Destination aircraft=QatarTeleportResolver.resolve(pack,null,PhysicsWorld.Mode.AEROPLANE,education.x(),education.z(),.2f);
             assertEquals(education.x(),aircraft.x(),.01);assertEquals(education.z(),aircraft.z(),.01);assertFalse(aircraft.water());

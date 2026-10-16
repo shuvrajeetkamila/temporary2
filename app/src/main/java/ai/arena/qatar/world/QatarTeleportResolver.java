@@ -12,6 +12,7 @@ import java.util.Map;
 /** Resolves a national-map touch to a mode-appropriate, collision-supported destination. */
 public final class QatarTeleportResolver {
     private static final double CELL_EDGE_MARGIN_METRES=2.0;
+    private static final double BOAT_SHORE_CLEARANCE_METRES=14.0;
     private QatarTeleportResolver(){}
 
     public static Destination resolve(QatarPack pack,QatarDetailPack detailPack,PhysicsWorld.Mode mode,
@@ -90,8 +91,8 @@ public final class QatarTeleportResolver {
             QatarPack.ChunkEntry entry=scored.entry;
             double chunkX=entry.x()*(double)pack.chunkMetres,chunkZ=entry.y()*(double)pack.chunkMetres;
             if(!land&&!entry.hasLand()){
-                double candidateX=clampInterior(requestedX,chunkX,chunkX+pack.chunkMetres);
-                double candidateZ=clampInterior(requestedZ,chunkZ,chunkZ+pack.chunkMetres);
+                double candidateX=clampInterior(requestedX,chunkX,chunkX+pack.chunkMetres,BOAT_SHORE_CLEARANCE_METRES);
+                double candidateZ=clampInterior(requestedZ,chunkZ,chunkZ+pack.chunkMetres,BOAT_SHORE_CLEARANCE_METRES);
                 best=closer(best,new Candidate(candidateX,candidateZ,square(candidateX-requestedX,candidateZ-requestedZ),entry,null));
                 continue;
             }
@@ -99,9 +100,9 @@ public final class QatarTeleportResolver {
             for(int row=0;row<16;row++)for(int column=0;column<16;column++){
                 boolean cellLand=(chunk.landRows()[row]&(1<<column))!=0;
                 if(cellLand!=land)continue;
-                double minX=chunkX+column*sub,minZ=chunkZ+row*sub;
-                double candidateX=clampInterior(requestedX,minX,minX+sub);
-                double candidateZ=clampInterior(requestedZ,minZ,minZ+sub);
+                double minX=chunkX+column*sub,minZ=chunkZ+row*sub,clearance=land?CELL_EDGE_MARGIN_METRES:BOAT_SHORE_CLEARANCE_METRES;
+                double candidateX=clampInterior(requestedX,minX,minX+sub,clearance);
+                double candidateZ=clampInterior(requestedZ,minZ,minZ+sub,clearance);
                 best=closer(best,new Candidate(candidateX,candidateZ,square(candidateX-requestedX,candidateZ-requestedZ),entry,chunk));
             }
         }
@@ -125,8 +126,9 @@ public final class QatarTeleportResolver {
         return chunk;
     }
 
-    private static double clampInterior(double value,double min,double max){
-        double margin=Math.min(CELL_EDGE_MARGIN_METRES,(max-min)*.1);
+    private static double clampInterior(double value,double min,double max){return clampInterior(value,min,max,CELL_EDGE_MARGIN_METRES);}
+    private static double clampInterior(double value,double min,double max,double requestedMargin){
+        double margin=Math.min(requestedMargin,(max-min)*.22);
         return clamp(value,min+margin,max-margin);
     }
     private static double distanceToRectangleSquared(double x,double z,double minX,double minZ,double maxX,double maxZ){
