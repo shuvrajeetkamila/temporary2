@@ -59,7 +59,7 @@ INFO         |     enable Ycbcr emulation: false
 INFO         |     guestVulkanOnly: false
 INFO         |     useDedicatedAllocations: false
 INFO         |     guestVulkanMaxApiVersion: 1.3.0
-INFO         WARNING: cannnot unmap ptr 0x7f2b4c801000 as it is in the protected range from 0x7f2acc800000 to 0x7f2b4ca00000
+INFO         WARNING: cannnot unmap ptr 0x7ff1e4c01000 as it is in the protected range from 0x7ff164c00000 to 0x7ff1e4e00000
 |     enableProtectedMemoryEmulation: false
 INFO         | Graphics Adapter Vendor Google (Google Inc.)
 INFO         | Graphics Adapter Android Emulator OpenGL ES Translator (Google SwiftShader)
@@ -97,8 +97,8 @@ INFO         |   qemu.wifi=1
 INFO         | Monitoring duration of emulator setup.
 WARNING      | The emulator now requires a signed jwt token for gRPC access! Use the -grpc flag if you really want an open unprotected grpc port
 INFO         | Using security allow list from: /usr/local/lib/android/sdk/emulator/lib/emulator_access.json
-INFO         | The active JSON Web Key Sets can be found here: /run/user/1001/avd/running/2333/jwks/5973a931-d47f-4ffc-a823-c212ce0ba8a6/active.jwk
-INFO         | Scanning /run/user/1001/avd/running/2333/jwks/5973a931-d47f-4ffc-a823-c212ce0ba8a6 for jwk keys.
+INFO         | The active JSON Web Key Sets can be found here: /run/user/1001/avd/running/2333/jwks/eede05e0-7212-44cd-a666-482b3706d951/active.jwk
+INFO         | Scanning /run/user/1001/avd/running/2333/jwks/eede05e0-7212-44cd-a666-482b3706d951 for jwk keys.
 INFO         | Started GRPC server at 127.0.0.1:8554, security: Local, auth: +token
 INFO         | Advertising in: /run/user/1001/avd/running/pid_2333.ini
 INFO         | Setting display: 0 configuration to: 1080x1920, dpi: 420x420 
@@ -107,5 +107,5 @@ INFO         | emulatorSetupEnvironment: Environment scene is not required
 USER_INFO    | Emulator is performing a full startup. This may take upto two minutes, or more.
 WARNING      | Failed to process .ini file /home/runner/.android/emu-update-last-check.ini for reading.
 WARNING      | Failed to process .ini file /home/runner/.android/emu-update-last-check.ini for reading.
-INFO         | Boot completed in 17063 ms
+INFO         | Boot completed in 17470 ms
 INFO         | Increasing screen off timeout, logcat buffer size to 2M.
