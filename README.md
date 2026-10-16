@@ -2,9 +2,20 @@
 
 A fresh Android open-world project built from the definitive Qatar prompt book in this repository. The active application does not reuse the previous Nauru Java sources, package ID, resources, or world binaries.
 
-## Current source milestone: v0.8.1 precision map and world polish
+## Current source milestone: v0.9.0 character, vehicle, coastal & world activity
 
-This release preserves the physically confirmed v0.7 smooth-motion implementation and the complete v0.8 realistic ground world, then adds a gesture-safe, close-detail offline Qatar map for accurate destination placement:
+This major release preserves the physically confirmed v0.7 smooth-motion implementation and the approved v0.8.1 precision map, then adds original articulated characters and transport, coast-safe infrastructure, hero landmarks, and thermally bounded world activity:
+
+- Original smooth articulated WALK character with animated limbs, attached hands/feet, face and material detail, terrain-aware placement, contact shadow, and thermal LOD
+- Original rounded 4×4 with visible cabin/driver, animated steering wheels and hubs, suspension, mirrors, roof rails, spare wheel, and lights
+- Original curved boat with cabin, rails, outboard propulsion, animated rudder/propeller, navigation lights, wake, water-safe boarding, and shore clearance
+- Original helicopter with dual pilots, glazed cockpit, tapered tail, skids, animated rotors, beacon, navigation and landing lights
+- Original aeroplane with pilot/cockpit, rounded wings, animated propeller/control presentation, landing gear, wingtip lamps, and OSM-runway boarding
+- Safe WALK→CAR→BOAT→HELICOPTER→AEROPLANE→WALK placement using installed offline roads, Gulf water, runway, and land data while preserving accepted movement pacing
+- Mask-aligned coastal water, beaches, translucent shallows, dry building foundations, reclaimed transport pads, bridge clearance/barriers, tunnel portals, signs, and streetlights
+- Original thermally capped Legtaifiya Metro, skyline, airport, port, and heritage hero geometry
+- Deterministic resident-route ambience for traffic, pedestrians, parked vehicles, boats, and aircraft, with NORMAL/WARM/HOT caps and throttled route rebuilding
+- Full-country coastal audit covering every packaged building, road, runway, mainland/island component, and a dedicated 2 km Legtaifiya Metro neighbourhood; unresolved after policy: zero
 
 - New package: `ai.arena.qatar.peninsula`
 - Android API 26–35, libGDX/OpenGL ES 3, and gdx-bullet
@@ -47,14 +58,17 @@ This release preserves the physically confirmed v0.7 smooth-motion implementatio
 
 ## Validated Android APK
 
-- File: `artifacts/Qatar-The-Peninsula-PRECISION-MAP-v0.8.1.apk`
-- SHA-256: `de8dd4cd1f99e099d573841df70b42ff81ec87fff60e01c38152388ec97c612c`
-- Package/version: `ai.arena.qatar.peninsula`, code `9`, `0.8.1-precision-map-world-polish`
-- Direct GitHub download: <https://github.com/shuvrajeetkamila/temporary2/raw/refs/heads/arena/8288058f-temporary2/artifacts/Qatar-The-Peninsula-PRECISION-MAP-v0.8.1.apk>
+- File: `artifacts/Qatar-The-Peninsula-CHARACTER-WORLD-v0.9.0.apk`
+- Size: `38,191,995` bytes
+- SHA-256: `ccbecfb5ed7c6ff207c2d4d10c5e85b937c10430d16797d0d19557e182dae90f`
+- Package/version: `ai.arena.qatar.peninsula`, code `10`, `0.9.0-character-vehicle-coastal-activity`
+- APK source: `81e37789626d99baee2a97ab9d26e1c5173df162`
+- Build/runtime: GitHub Actions `38902242577` / `38902600978`
+- Direct GitHub download: <https://github.com/shuvrajeetkamila/temporary2/raw/refs/heads/arena/8288058f-temporary2/artifacts/Qatar-The-Peninsula-CHARACTER-WORLD-v0.9.0.apk>
 
 ## Honest status
 
-v0.8.1 is a playable **incremental preproduction prototype**, not a claim that the prompt book’s multi-year AAA end state is complete. It uses real current OSM road vectors/building footprints, measured terrain, original procedural materials and geometry, authored (not live) Qatar weather presets, automatic platform thermal/power downshifts, the accepted v0.7 fixed-step/single-pacer camera presentation, locally rendered offline OSM street maps, a bounded precision-map cache, and a public development certificate rather than production signing. Automated Android validation proves install/reinstall, ×16 zoom, pan, close-vector loading, precise pinning, safe teleport, lifecycle, thermal switching, and all-five-mode cadence on an emulator; subjective touch feel, ARM-phone heat, and compositor smoothness still require physical-device confirmation. Survey-grade terrain, hydrodynamic bathymetry, reclamation-by-reclamation coastline work, hero landmark models, the planned v0.9 character/vehicle overhaul, traffic/transit/activity, complete Arabic shaping/localization, audio, and broad physical-device profiling remain later milestones.
+v0.9.0 is a playable **major preproduction prototype**, not a claim that the prompt book’s multi-year photorealistic AAA end state is complete. It uses real current OSM roads/building footprints, measured terrain, original procedural models/materials, authored weather, automatic thermal/power downshifts, accepted v0.7 fixed-step/single-pacer motion, and a public development certificate. Automated Android validation proves install/reinstall, all five rigs and stable mode states, water/runway/land transitions, bounded ambience, precision mapping, lifecycle, thermal switching, cadence, and fatal-free execution. Subjective graphics, touch feel, sustained heat, and compositor behaviour still require testing across multiple physical ARM phones. Production signing, audio, complete Arabic shaping/localisation, denser authored landmark detail, and broad device profiling remain future work.
 
 See:
 
@@ -69,6 +83,7 @@ See:
 - `QATAR_SMOOTH_STREET_MAP_REPORT.md`
 - `QATAR_REALISTIC_WORLD_REPORT.md`
 - `QATAR_PRECISION_MAP_REPORT.md`
+- `QATAR_V09_CHARACTER_COAST_ACTIVITY_REPORT.md`
 - `DATA_SOURCES.md`
 - `ASSET_LICENSES.md`
 - `data/qatar/QATAR_OSM_IMPORT.json`
@@ -84,6 +99,7 @@ python3 tools/compile_qatar_world.py --verify
 python3 tools/import_qatar_osm.py --validate app/src/main/assets/world/qatar-osm-current.qod
 python3 tools/validate_qatar_terrain.py
 python3 tools/audit_qatar_visual_geometry.py
+python3 tools/audit_qatar_coastal_features.py --verify
 sha256sum -c data/qatar/SHA256SUMS
 sha256sum -c data/qatar/OSM_SHA256SUMS
 sha256sum -c data/qatar/DEM_SHA256SUMS
